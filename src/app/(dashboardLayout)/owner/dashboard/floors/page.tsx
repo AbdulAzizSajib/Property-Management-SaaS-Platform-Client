@@ -94,7 +94,12 @@ function FloorsPageInner() {
                                               ? "No buildings yet"
                                               : "Select a building"
                                     }
-                                />
+                                >
+                                    {(value) =>
+                                        buildings?.find((b) => b.id === value)?.name ??
+                                        null
+                                    }
+                                </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
                                 {buildings?.map((b) => (

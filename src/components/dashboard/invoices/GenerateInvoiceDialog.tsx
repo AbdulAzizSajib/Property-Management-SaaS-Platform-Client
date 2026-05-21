@@ -97,7 +97,14 @@ export function GenerateInvoiceDialog({
                             disabled={!!fixedLeaseId}
                         >
                             <SelectTrigger id="g-lease" className="w-full">
-                                <SelectValue placeholder="Select an active lease" />
+                                <SelectValue placeholder="Select an active lease">
+                                    {(value) => {
+                                        const l = activeLeases.find((x) => x.id === value);
+                                        return l
+                                            ? `${l.tenant.name} · ${l.unit.building.name} · ${l.unit.name}`
+                                            : null;
+                                    }}
+                                </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
                                 {activeLeases.length === 0 ? (

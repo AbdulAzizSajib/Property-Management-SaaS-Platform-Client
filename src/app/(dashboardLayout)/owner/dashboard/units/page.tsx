@@ -146,7 +146,15 @@ export default function UnitsListPage() {
                         onValueChange={(v) => setBuildingId(v ?? ALL)}
                     >
                         <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Building" />
+                            <SelectValue placeholder="Building">
+                                {(value) => {
+                                    if (value === ALL) return "All buildings";
+                                    return (
+                                        buildings?.find((b) => b.id === value)?.name ??
+                                        null
+                                    );
+                                }}
+                            </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value={ALL}>All buildings</SelectItem>

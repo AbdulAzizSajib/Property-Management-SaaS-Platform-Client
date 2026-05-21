@@ -73,7 +73,7 @@ export default function BuildingDetailPage() {
 
     if (isError || !building) {
         return (
-            <div className="p-4 sm:p-6 lg:p-8">
+            <div className="p-4 sm:p-6 lg:p-8 ">
                 <Link
                     href="/owner/dashboard/buildings"
                     className="mb-4 inline-flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-700"
@@ -81,7 +81,7 @@ export default function BuildingDetailPage() {
                     <ArrowLeft size={12} />
                     Back to buildings
                 </Link>
-                <Card className="px-6 py-12 text-center">
+                <Card className="px-5 py-12 text-center">
                     <h2 className="text-base font-semibold text-slate-900">
                         Couldn&apos;t load building
                     </h2>
@@ -99,7 +99,7 @@ export default function BuildingDetailPage() {
             : building.type.charAt(0) + building.type.slice(1).toLowerCase();
 
     return (
-        <div className="space-y-6 p-4 sm:p-6 lg:p-8">
+        <div className="space-y-2 p-4 sm:p-6 lg:p-4">
             {/* Back link */}
             <Link
                 href="/owner/dashboard/buildings"
@@ -110,8 +110,8 @@ export default function BuildingDetailPage() {
             </Link>
 
             {/* Hero */}
-            <Card className="overflow-hidden">
-                <div className="relative -mx-px -mt-4 h-44 bg-linear-to-br from-indigo-100 via-violet-100 to-fuchsia-100 sm:h-56">
+            <Card className="gap-0 overflow-hidden py-0">
+                <div className="relative h-40 bg-linear-to-br from-indigo-100 via-violet-100 to-fuchsia-100 sm:h-48">
                     {building.imageUrl ? (
                         /* eslint-disable-next-line @next/next/no-img-element */
                         <img
@@ -126,7 +126,7 @@ export default function BuildingDetailPage() {
                     )}
                 </div>
 
-                <div className="px-6 py-4">
+                <div className="px-5 py-2">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                         <div className="min-w-0">
                             <div className="flex flex-wrap items-center gap-2">
@@ -195,7 +195,7 @@ export default function BuildingDetailPage() {
                     </div>
 
                     {building.description && (
-                        <p className="mt-4 rounded-md bg-slate-50 px-3 py-2 text-sm text-slate-600">
+                        <p className="mt-3 rounded-md bg-slate-50 px-3 py-2 text-sm text-slate-600">
                             {building.description}
                         </p>
                     )}
@@ -239,7 +239,7 @@ export default function BuildingDetailPage() {
                 />
 
                 {/* Caretaker */}
-                <Card className="px-6">
+                <Card className="px-5">
                     <CardHeader className="px-0">
                         <CardTitle>Caretaker</CardTitle>
                         <CardDescription>On-site contact for tenants</CardDescription>
@@ -381,7 +381,7 @@ function StatTile({
     };
 
     return (
-        <Card className="px-5">
+        <Card className="px-5 py-2">
             <div className="flex items-center justify-between gap-3">
                 <div>
                     <p className="text-[11px] font-medium uppercase tracking-wider text-slate-500">

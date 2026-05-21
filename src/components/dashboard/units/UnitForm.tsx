@@ -142,7 +142,11 @@ export function UnitForm({
                                 onValueChange={(v) => set("buildingId", v ?? "")}
                             >
                                 <SelectTrigger id="buildingId" className="w-full">
-                                    <SelectValue placeholder="Select building" />
+                                    <SelectValue placeholder="Select building">
+                                        {(value) =>
+                                            buildings?.find((b) => b.id === value)?.name ?? null
+                                        }
+                                    </SelectValue>
                                 </SelectTrigger>
                                 <SelectContent>
                                     {buildings?.map((b) => (
@@ -173,15 +177,25 @@ export function UnitForm({
                                               ? "No floors available"
                                               : "Select floor"
                                     }
-                                />
+                                >
+                                    {(value) => {
+                                        const f = sortedFloors.find(
+                                            (fl) => fl.id === value,
+                                        );
+                                        if (!f) return null;
+                                        return `${f.floorNumber === 0 ? "G" : f.floorNumber} — ${f.name}`;
+                                    }}
+                                </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
-                                {sortedFloors.map((f) => (
-                                    <SelectItem key={f.id} value={f.id}>
-                                        {f.floorNumber === 0 ? "G" : f.floorNumber} —{" "}
-                                        {f.name}
-                                    </SelectItem>
-                                ))}
+                                {sortedFloors.map((f) => {
+                                    const floorLabel = `${f.floorNumber === 0 ? "G" : f.floorNumber} — ${f.name}`;
+                                    return (
+                                        <SelectItem key={f.id} value={f.id}>
+                                            {floorLabel}
+                                        </SelectItem>
+                                    );
+                                })}
                             </SelectContent>
                         </Select>
                     </div>
@@ -302,7 +316,7 @@ export function UnitForm({
                 </div>
                 <div className="space-y-1.5">
                     <Label htmlFor="serviceCharge">
-                        Service charge (BDT/month) <span className="text-rose-500">*</span>
+                        Service charge (BDT/month) 
                     </Label>
                     <Input
                         id="serviceCharge"
@@ -312,7 +326,7 @@ export function UnitForm({
                         value={values.serviceCharge}
                         onChange={(e) => set("serviceCharge", e.target.value)}
                         placeholder="1500"
-                        required
+                        
                     />
                 </div>
             </div>

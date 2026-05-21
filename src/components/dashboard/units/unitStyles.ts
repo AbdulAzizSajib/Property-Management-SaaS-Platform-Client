@@ -9,9 +9,10 @@ export const unitStatusStyles: Record<UnitStatus, string> = {
 
 export const unitTypeStyles: Record<UnitType, string> = {
     FLAT: "bg-indigo-50 text-indigo-700 border-indigo-200",
-    STUDIO: "bg-violet-50 text-violet-700 border-violet-200",
     SHOP: "bg-emerald-50 text-emerald-700 border-emerald-200",
     OFFICE: "bg-sky-50 text-sky-700 border-sky-200",
+    ROOM: "bg-violet-50 text-violet-700 border-violet-200",
+    GARAGE: "bg-amber-50 text-amber-700 border-amber-200",
     WAREHOUSE: "bg-slate-100 text-slate-700 border-slate-200",
 };
 

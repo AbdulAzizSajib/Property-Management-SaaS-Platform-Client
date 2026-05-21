@@ -146,7 +146,12 @@ export function LeaseForm({
                             disabled={!!fixedTenantId}
                         >
                             <SelectTrigger id="l-tenant" className="w-full">
-                                <SelectValue placeholder="Select tenant" />
+                                <SelectValue placeholder="Select tenant">
+                                    {(value) => {
+                                        const t = activeTenants.find((x) => x.id === value);
+                                        return t ? `${t.name} — ${t.phone}` : null;
+                                    }}
+                                </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
                                 {activeTenants.length === 0 ? (
@@ -174,7 +179,14 @@ export function LeaseForm({
                             disabled={!!fixedUnitId}
                         >
                             <SelectTrigger id="l-unit" className="w-full">
-                                <SelectValue placeholder="Select vacant unit" />
+                                <SelectValue placeholder="Select vacant unit">
+                                    {(value) => {
+                                        const u = units.find((x) => x.id === value);
+                                        return u
+                                            ? `${u.building.name} · ${u.name}`
+                                            : null;
+                                    }}
+                                </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
                                 {units.length === 0 ? (

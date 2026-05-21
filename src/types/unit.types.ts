@@ -1,7 +1,13 @@
 import type { Building } from "./building.types";
 import type { Floor } from "./floor.types";
 
-export type UnitType = "FLAT" | "STUDIO" | "SHOP" | "OFFICE" | "WAREHOUSE";
+export type UnitType =
+    | "FLAT"
+    | "SHOP"
+    | "OFFICE"
+    | "ROOM"
+    | "GARAGE"
+    | "WAREHOUSE";
 
 export type UnitStatus =
     | "VACANT"
@@ -11,9 +17,10 @@ export type UnitStatus =
 
 export const UNIT_TYPE_OPTIONS: { value: UnitType; label: string }[] = [
     { value: "FLAT", label: "Flat" },
-    { value: "STUDIO", label: "Studio" },
     { value: "SHOP", label: "Shop" },
     { value: "OFFICE", label: "Office" },
+    { value: "ROOM", label: "Room (hostel / mess)" },
+    { value: "GARAGE", label: "Garage" },
     { value: "WAREHOUSE", label: "Warehouse" },
 ];
 

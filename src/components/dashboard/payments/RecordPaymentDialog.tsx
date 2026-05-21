@@ -127,7 +127,16 @@ export function RecordPaymentDialog({
                             disabled={!!fixedInvoiceId}
                         >
                             <SelectTrigger id="p-invoice" className="w-full">
-                                <SelectValue placeholder="Select an outstanding invoice" />
+                                <SelectValue placeholder="Select an outstanding invoice">
+                                    {(value) => {
+                                        const i = outstandingInvoices.find(
+                                            (x) => x.id === value,
+                                        );
+                                        return i
+                                            ? `${i.invoiceNumber} · ${i.tenant.name}`
+                                            : null;
+                                    }}
+                                </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
                                 {outstandingInvoices.length === 0 ? (
