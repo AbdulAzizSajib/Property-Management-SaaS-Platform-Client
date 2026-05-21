@@ -2,8 +2,9 @@
 
 import { changeMyPlan, getMySubscription } from "@/src/services/subscription.services";
 import type { SubscriptionPlan } from "@/src/types/subscription.types";
+import { getErrorMessage } from "@/src/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 export const subscriptionKeys = {
     me: ["subscription", "me"] as const,
@@ -34,9 +35,7 @@ export function useChangePlan() {
             toast.success(`Plan changed to ${data.plan.replace("_", " ")}`);
         },
         onError: (error: unknown) => {
-            const message =
-                error instanceof Error ? error.message : "Failed to change plan";
-            toast.error(message);
+        toast.error(getErrorMessage(error, "Failed to change plan"));
         },
     });
 }

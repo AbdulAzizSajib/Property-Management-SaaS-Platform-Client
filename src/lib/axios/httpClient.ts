@@ -11,6 +11,14 @@ if(!API_BASE_URL) {
     throw new Error('API_BASE_URL is not defined in environment variables');
 }
 
+function throwServerError(error: unknown): never {
+    if (axios.isAxiosError(error)) {
+        const msg = error.response?.data?.message;
+        throw new Error(typeof msg === "string" ? msg : error.message);
+    }
+    throw error;
+}
+
 async function tryRefreshToken(
     accessToken: string,
     refreshToken: string
@@ -75,9 +83,9 @@ const httpGet = async <TData>(endpoint: string, options?: ApiRequestOptions) : P
             headers: options?.headers,
         });
         return response.data;
-    } catch (error) {       
+    } catch (error) {
         console.error(`GET request to ${endpoint} failed:`, error);
-        throw error;
+        throwServerError(error);
     }
 }
 
@@ -91,7 +99,7 @@ const httpPost = async <TData>(endpoint: string, data: unknown, options?: ApiReq
         return response.data;
     } catch (error) {
         console.error(`POST request to ${endpoint} failed:`, error);
-        throw error;
+        throwServerError(error);
     }
 }
 
@@ -105,7 +113,7 @@ const httpPut = async <TData>(endpoint: string, data: unknown, options?: ApiRequ
         return response.data;
     } catch (error) {
         console.error(`PUT request to ${endpoint} failed:`, error);
-        throw error;
+        throwServerError(error);
     }
 }
 
@@ -120,7 +128,7 @@ const httpPatch = async <TData>(endpoint: string, data: unknown, options?: ApiRe
     }
     catch (error) {
         console.error(`PATCH request to ${endpoint} failed:`, error);
-        throw error;
+        throwServerError(error);
     }
 }
 
@@ -134,7 +142,7 @@ const httpDelete =  async <TData>(endpoint: string, options?: ApiRequestOptions)
         return response.data;
     } catch (error) {
         console.error(`DELETE request to ${endpoint} failed:`, error);
-        throw error;
+        throwServerError(error);
     }
 }
 

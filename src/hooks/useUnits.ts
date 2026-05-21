@@ -14,8 +14,9 @@ import type {
     UnitFilters,
     UpdateUnitPayload,
 } from "@/src/types/unit.types";
+import { getErrorMessage } from "@/src/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 export const unitKeys = {
     all: ["units"] as const,
@@ -75,7 +76,7 @@ export function useCreateUnit() {
         },
         onError: (error: unknown) => {
             toast.error(
-                error instanceof Error ? error.message : "Failed to create unit",
+                getErrorMessage(error, "Failed to create unit"),
             );
         },
     });
@@ -96,7 +97,7 @@ export function useUpdateUnit(unitId: string, buildingId: string, floorId: strin
         },
         onError: (error: unknown) => {
             toast.error(
-                error instanceof Error ? error.message : "Failed to update unit",
+                getErrorMessage(error, "Failed to update unit"),
             );
         },
     });
@@ -127,7 +128,7 @@ export function useDeleteUnit() {
         },
         onError: (error: unknown) => {
             toast.error(
-                error instanceof Error ? error.message : "Failed to delete unit",
+                getErrorMessage(error, "Failed to delete unit"),
             );
         },
     });

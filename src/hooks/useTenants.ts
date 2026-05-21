@@ -11,8 +11,9 @@ import type {
     CreateTenantPayload,
     UpdateTenantPayload,
 } from "@/src/types/tenant.types";
+import { getErrorMessage } from "@/src/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 export const tenantKeys = {
     all: ["tenants"] as const,
@@ -56,7 +57,7 @@ export function useCreateTenant() {
         },
         onError: (error: unknown) => {
             toast.error(
-                error instanceof Error ? error.message : "Failed to create tenant",
+                getErrorMessage(error, "Failed to create tenant"),
             );
         },
     });
@@ -77,7 +78,7 @@ export function useUpdateTenant(id: string) {
         },
         onError: (error: unknown) => {
             toast.error(
-                error instanceof Error ? error.message : "Failed to update tenant",
+                getErrorMessage(error, "Failed to update tenant"),
             );
         },
     });
@@ -99,7 +100,7 @@ export function useDeactivateTenant() {
         },
         onError: (error: unknown) => {
             toast.error(
-                error instanceof Error ? error.message : "Failed to deactivate tenant",
+                getErrorMessage(error, "Failed to deactivate tenant"),
             );
         },
     });

@@ -10,8 +10,34 @@ import {
     DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/src/components/ui/sheet";
-import { Bell, ChevronDown, LogOut, Menu, Search, Settings, User } from "lucide-react";
+import { Bell, ChevronDown, LogOut, Menu, MoonIcon, Search, Settings, SunIcon, User } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 import { OwnerSidebar } from "./OwnerSidebar";
+
+function ThemeToggle() {
+    const { resolvedTheme, setTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => setMounted(true), []);
+
+    if (!mounted) return <div className="size-8" />;
+
+    return (
+        <button
+            type="button"
+            aria-label="Toggle theme"
+            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+            className="relative inline-flex size-8 items-center justify-center rounded-md text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+        >
+            {resolvedTheme === "dark" ? (
+                <SunIcon size={18} className="text-yellow-400" />
+            ) : (
+                <MoonIcon size={18} />
+            )}
+        </button>
+    );
+}
 
 export function OwnerTopbar() {
     return (
@@ -43,6 +69,7 @@ export function OwnerTopbar() {
             </div>
 
             <div className="ml-auto flex items-center gap-2">
+                <ThemeToggle />
                 <button
                     type="button"
                     aria-label="Notifications"

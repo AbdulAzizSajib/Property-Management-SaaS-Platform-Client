@@ -13,8 +13,9 @@ import type {
     CreateBuildingPayload,
     UpdateBuildingPayload,
 } from "@/src/types/building.types";
+import { getErrorMessage } from "@/src/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 export const buildingKeys = {
     all: ["buildings"] as const,
@@ -58,7 +59,7 @@ export function useCreateBuilding() {
         },
         onError: (error: unknown) => {
             toast.error(
-                error instanceof Error ? error.message : "Failed to create building",
+                getErrorMessage(error, "Failed to create building"),
             );
         },
     });
@@ -79,7 +80,7 @@ export function useUpdateBuilding(id: string) {
         },
         onError: (error: unknown) => {
             toast.error(
-                error instanceof Error ? error.message : "Failed to update building",
+                getErrorMessage(error, "Failed to update building"),
             );
         },
     });
@@ -100,7 +101,7 @@ export function useDeleteBuilding() {
         },
         onError: (error: unknown) => {
             toast.error(
-                error instanceof Error ? error.message : "Failed to delete building",
+                getErrorMessage(error, "Failed to delete building"),
             );
         },
     });
@@ -121,7 +122,7 @@ export function useAssignCaretaker(buildingId: string) {
         },
         onError: (error: unknown) => {
             toast.error(
-                error instanceof Error ? error.message : "Failed to update caretaker",
+                getErrorMessage(error, "Failed to update caretaker"),
             );
         },
     });

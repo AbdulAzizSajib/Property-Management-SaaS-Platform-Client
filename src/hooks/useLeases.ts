@@ -13,8 +13,9 @@ import type {
     CreateLeasePayload,
     TerminateLeasePayload,
 } from "@/src/types/lease.types";
+import { getErrorMessage } from "@/src/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 export const leaseKeys = {
     all: ["leases"] as const,
@@ -80,7 +81,7 @@ export function useCreateLease() {
         },
         onError: (error: unknown) => {
             toast.error(
-                error instanceof Error ? error.message : "Failed to create lease",
+                getErrorMessage(error, "Failed to create lease"),
             );
         },
     });
@@ -104,7 +105,7 @@ export function useTerminateLease(leaseId: string) {
         },
         onError: (error: unknown) => {
             toast.error(
-                error instanceof Error ? error.message : "Failed to terminate lease",
+                getErrorMessage(error, "Failed to terminate lease"),
             );
         },
     });

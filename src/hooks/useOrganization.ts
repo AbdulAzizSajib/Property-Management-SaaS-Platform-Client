@@ -5,8 +5,9 @@ import {
     updateMyOrganization,
 } from "@/src/services/organization.services";
 import type { UpdateOrganizationPayload } from "@/src/types/organization.types";
+import { getErrorMessage } from "@/src/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 export const organizationKeys = {
     me: ["organization", "me"] as const,
@@ -36,9 +37,7 @@ export function useUpdateOrganization() {
             toast.success("Organization updated successfully");
         },
         onError: (error: unknown) => {
-            const message =
-                error instanceof Error ? error.message : "Failed to update organization";
-            toast.error(message);
+            toast.error(getErrorMessage(error, "Failed to update organization"));
         },
     });
 }

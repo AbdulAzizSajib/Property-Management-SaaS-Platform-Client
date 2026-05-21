@@ -1,8 +1,10 @@
 import QueryProviders from "@/src/providers/QueryProvider";
+import ThemeProvider from "@/src/providers/ThemeProvider";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import type { ReactNode } from "react";
-import { Toaster } from "sonner";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 
 const geist = Geist({
@@ -19,10 +21,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
     return (
-        <html lang="en" className={geist.variable}>
+        <html lang="en" className={geist.variable} suppressHydrationWarning>
             <body>
-                <QueryProviders>{children}</QueryProviders>
-                <Toaster position="top-right" richColors closeButton />
+                <ThemeProvider>
+                    <QueryProviders>{children}</QueryProviders>
+                    <ToastContainer position="top-right" autoClose={4000} closeOnClick pauseOnHover />
+                </ThemeProvider>
             </body>
         </html>
     );

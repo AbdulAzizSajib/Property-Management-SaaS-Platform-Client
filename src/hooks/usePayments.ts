@@ -11,8 +11,9 @@ import type {
     PaymentFilters,
     RecordPaymentPayload,
 } from "@/src/types/payment.types";
+import { getErrorMessage } from "@/src/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 export const paymentKeys = {
     all: ["payments"] as const,
@@ -70,9 +71,7 @@ export function useRecordPayment() {
         },
         onError: (error: unknown) => {
             toast.error(
-                error instanceof Error
-                    ? error.message
-                    : "Failed to record payment",
+                getErrorMessage(error, "Failed to record payment"),
             );
         },
     });

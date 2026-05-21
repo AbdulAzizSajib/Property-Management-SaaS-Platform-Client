@@ -12,8 +12,9 @@ import type {
     CreateFloorPayload,
     UpdateFloorPayload,
 } from "@/src/types/floor.types";
+import { getErrorMessage } from "@/src/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 export const floorKeys = {
     all: ["floors"] as const,
@@ -70,7 +71,7 @@ export function useCreateFloor() {
         },
         onError: (error: unknown) => {
             toast.error(
-                error instanceof Error ? error.message : "Failed to create floor",
+                getErrorMessage(error, "Failed to create floor"),
             );
         },
     });
@@ -96,7 +97,7 @@ export function useUpdateFloor(floorId: string, buildingId: string) {
         },
         onError: (error: unknown) => {
             toast.error(
-                error instanceof Error ? error.message : "Failed to update floor",
+                getErrorMessage(error, "Failed to update floor"),
             );
         },
     });
@@ -123,7 +124,7 @@ export function useDeleteFloor(buildingId: string) {
         },
         onError: (error: unknown) => {
             toast.error(
-                error instanceof Error ? error.message : "Failed to delete floor",
+                getErrorMessage(error, "Failed to delete floor"),
             );
         },
     });

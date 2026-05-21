@@ -12,8 +12,9 @@ import type {
     GenerateSingleInvoicePayload,
     InvoiceFilters,
 } from "@/src/types/invoice.types";
+import { getErrorMessage } from "@/src/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 export const invoiceKeys = {
     all: ["invoices"] as const,
@@ -61,7 +62,7 @@ export function useGenerateSingleInvoice() {
         },
         onError: (error: unknown) => {
             toast.error(
-                error instanceof Error ? error.message : "Failed to generate invoice",
+                getErrorMessage(error, "Failed to generate invoice"),
             );
         },
     });
@@ -90,9 +91,7 @@ export function useGenerateMonthlyBatch() {
         },
         onError: (error: unknown) => {
             toast.error(
-                error instanceof Error
-                    ? error.message
-                    : "Failed to generate monthly batch",
+                getErrorMessage(error, "Failed to generate monthly batch"),
             );
         },
     });
