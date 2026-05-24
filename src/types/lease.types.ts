@@ -23,7 +23,8 @@ export interface Lease {
     id: string;
     status: LeaseStatus;
     startDate: string;
-    endDate: string;
+    /** Null for open-ended / month-to-month leases. */
+    endDate: string | null;
     moveInDate: string;
     moveOutDate: string | null;
     monthlyRent: string;
@@ -110,7 +111,8 @@ export interface CreateLeasePayload {
     tenantId: string;
     unitId: string;
     startDate: string; // YYYY-MM-DD
-    endDate: string;
+    /** Optional — leave undefined for open-ended / month-to-month leases. */
+    endDate?: string;
     moveInDate: string;
     monthlyRent: number;
     serviceCharge: number;

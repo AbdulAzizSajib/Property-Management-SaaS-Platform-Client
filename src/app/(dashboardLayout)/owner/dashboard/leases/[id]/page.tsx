@@ -145,7 +145,9 @@ export default function LeaseDetailPage() {
                             <span className="inline-flex items-center gap-1">
                                 <Calendar size={11} />
                                 {new Date(lease.startDate).toLocaleDateString()} –{" "}
-                                {new Date(lease.endDate).toLocaleDateString()}
+                                {lease.endDate
+                                    ? new Date(lease.endDate).toLocaleDateString()
+                                    : "Open-ended"}
                             </span>
                         </div>
                     </div>
@@ -291,7 +293,11 @@ export default function LeaseDetailPage() {
                             <DateRow
                                 icon={Calendar}
                                 label="End"
-                                value={new Date(lease.endDate).toLocaleDateString()}
+                                value={
+                                    lease.endDate
+                                        ? new Date(lease.endDate).toLocaleDateString()
+                                        : "Open-ended"
+                                }
                             />
                             <DateRow
                                 icon={Calendar}

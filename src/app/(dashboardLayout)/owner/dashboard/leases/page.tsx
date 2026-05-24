@@ -264,7 +264,9 @@ function LeaseCard({ lease }: { lease: LeaseListItem }) {
                     <span className="inline-flex items-center gap-1">
                         <Calendar size={11} />
                         {new Date(lease.startDate).toLocaleDateString()} –{" "}
-                        {new Date(lease.endDate).toLocaleDateString()}
+                        {lease.endDate
+                            ? new Date(lease.endDate).toLocaleDateString()
+                            : "Open-ended"}
                     </span>
                 </div>
 

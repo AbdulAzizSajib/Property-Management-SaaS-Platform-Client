@@ -117,12 +117,13 @@ export function LeaseForm({
             tenantId: values.tenantId,
             unitId: values.unitId,
             startDate: values.startDate,
-            endDate: values.endDate,
             moveInDate: values.moveInDate,
             monthlyRent: Number(values.monthlyRent),
             serviceCharge: Number(values.serviceCharge),
             securityDeposit: Number(values.securityDeposit) || 0,
             rentDueDay: Number(values.rentDueDay) || 1,
+            // endDate is optional — only include when the user provided one.
+            ...(values.endDate && { endDate: values.endDate }),
         };
 
         onSubmit(payload);
@@ -233,7 +234,7 @@ export function LeaseForm({
                     </div>
                     <div className="space-y-1.5">
                         <Label htmlFor="l-end">
-                            End date <span className="text-rose-500">*</span>
+                            End date
                         </Label>
                         <Input
                             id="l-end"
@@ -241,7 +242,7 @@ export function LeaseForm({
                             value={values.endDate}
                             onChange={(e) => set("endDate", e.target.value)}
                             min={values.startDate || todayISO()}
-                            required
+                          
                         />
                     </div>
                     <div className="space-y-1.5">
