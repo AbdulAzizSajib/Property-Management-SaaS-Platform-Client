@@ -1,5 +1,7 @@
 "use client";
 
+// src/components/dashboard/buildings/BuildingForm.tsx
+
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
@@ -49,6 +51,13 @@ interface BuildingFormProps {
     onCancel?: () => void;
 }
 
+// Shared className for form fields — keeps jade focus consistent without
+// editing the shadcn primitives. If your shadcn Input/Textarea/Select already
+// expose a `variant` prop, swap these for that.
+const fieldClass =
+    "border-rule-soft bg-paper text-ink placeholder:text-ink-soft/55 " +
+    "focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20";
+
 export function BuildingForm({
     defaultValues,
     submitting,
@@ -61,7 +70,6 @@ export function BuildingForm({
         ...defaultValues,
     });
 
-    // Re-hydrate if defaultValues change (e.g. detail page query loaded after mount)
     useEffect(() => {
         if (defaultValues) {
             setValues((prev) => ({ ...prev, ...defaultValues }));
@@ -93,28 +101,23 @@ export function BuildingForm({
     return (
         <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                <div className="sm:col-span-2 space-y-1.5">
-                    <Label htmlFor="name">
-                        Building name <span className="text-rose-500">*</span>
-                    </Label>
+                <Field label="Building name" required className="sm:col-span-2">
                     <Input
                         id="name"
                         value={values.name}
                         onChange={(e) => set("name", e.target.value)}
                         placeholder="Lalmatia Block A"
                         required
+                        className={fieldClass}
                     />
-                </div>
+                </Field>
 
-                <div className="space-y-1.5">
-                    <Label htmlFor="type">
-                        Type <span className="text-rose-500">*</span>
-                    </Label>
+                <Field label="Type" required>
                     <Select
                         value={values.type}
                         onValueChange={(v) => set("type", v as BuildingType)}
                     >
-                        <SelectTrigger id="type" className="w-full">
+                        <SelectTrigger id="type" className={`w-full ${fieldClass}`}>
                             <SelectValue placeholder="Select type" />
                         </SelectTrigger>
                         <SelectContent>
@@ -125,12 +128,9 @@ export function BuildingForm({
                             ))}
                         </SelectContent>
                     </Select>
-                </div>
+                </Field>
 
-                <div className="space-y-1.5">
-                    <Label htmlFor="totalFloors">
-                        Total floors <span className="text-rose-500">*</span>
-                    </Label>
+                <Field label="Total floors" required>
                     <Input
                         id="totalFloors"
                         type="number"
@@ -138,90 +138,130 @@ export function BuildingForm({
                         value={values.totalFloors}
                         onChange={(e) => set("totalFloors", Number(e.target.value))}
                         required
+                        className={`${fieldClass} tabular-nums`}
                     />
-                </div>
+                </Field>
 
-                <div className="sm:col-span-2 space-y-1.5">
-                    <Label htmlFor="address">
-                        Address <span className="text-rose-500">*</span>
-                    </Label>
+                <Field label="Address" required className="sm:col-span-2">
                     <Input
                         id="address"
                         value={values.address}
                         onChange={(e) => set("address", e.target.value)}
                         placeholder="House 12, Road 5, Lalmatia, Dhaka"
                         required
+                        className={fieldClass}
                     />
-                </div>
+                </Field>
 
-                <div className="space-y-1.5">
-                    <Label htmlFor="city">
-                        City <span className="text-rose-500">*</span>
-                    </Label>
+                <Field label="City" required>
                     <Input
                         id="city"
                         value={values.city}
                         onChange={(e) => set("city", e.target.value)}
                         placeholder="Dhaka"
                         required
+                        className={fieldClass}
                     />
-                </div>
+                </Field>
 
-                <div className="space-y-1.5">
-                    <Label htmlFor="area">Area</Label>
+                <Field label="Area">
                     <Input
                         id="area"
                         value={values.area}
                         onChange={(e) => set("area", e.target.value)}
                         placeholder="Lalmatia"
+                        className={fieldClass}
                     />
-                </div>
+                </Field>
 
-                <div className="sm:col-span-2 space-y-1.5">
-                    <Label htmlFor="imageUrl">Image URL</Label>
+                <Field label="Image URL" className="sm:col-span-2">
                     <Input
                         id="imageUrl"
                         type="url"
                         value={values.imageUrl}
                         onChange={(e) => set("imageUrl", e.target.value)}
                         placeholder="https://example.com/building.png"
+                        className={fieldClass}
                     />
-                </div>
+                </Field>
 
-                <div className="sm:col-span-2 space-y-1.5">
-                    <Label htmlFor="description">Description</Label>
+                <Field
+                    label="Description"
+                    className="sm:col-span-2"
+                    hint="A short note shown on the building card."
+                >
                     <Textarea
                         id="description"
                         rows={3}
                         value={values.description}
                         onChange={(e) => set("description", e.target.value)}
-                        placeholder="5-storey residential building"
+                        placeholder="5-storey residential building, lift available"
+                        className={`${fieldClass} resize-none`}
                     />
-                </div>
+                </Field>
             </div>
 
-            <div className="flex items-center justify-end gap-2 border-t border-slate-100 pt-4">
+            <div className="flex items-center justify-end gap-2 border-t border-rule-soft pt-4">
                 {onCancel && (
-                    <Button
+                    <button
                         type="button"
-                        variant="outline"
                         onClick={onCancel}
                         disabled={submitting}
+                        className="inline-flex h-9 items-center rounded-[8px] border border-rule-soft bg-paper px-4 text-[13px] font-medium text-ink-soft transition-colors hover:border-jade-700/30 hover:text-jade-900 disabled:opacity-50"
                     >
                         Cancel
-                    </Button>
+                    </button>
                 )}
-                <Button type="submit" disabled={submitting}>
+                <button
+                    type="submit"
+                    disabled={submitting}
+                    className="inline-flex h-9 items-center gap-1.5 rounded-[8px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950 disabled:opacity-70"
+                >
                     {submitting ? (
                         <>
                             <Loader2 size={14} className="animate-spin" />
-                            Saving...
+                            Saving…
                         </>
                     ) : (
                         submitLabel
                     )}
-                </Button>
+                </button>
             </div>
         </form>
+    );
+}
+
+function Field({
+    label,
+    required,
+    hint,
+    className,
+    children,
+}: {
+    label: string;
+    required?: boolean;
+    hint?: string;
+    className?: string;
+    children: React.ReactNode;
+}) {
+    const id = label.toLowerCase().replace(/\s+/g, "-");
+    return (
+        <div className={`space-y-1.5 ${className ?? ""}`}>
+            <Label
+                htmlFor={id}
+                className="text-[12.5px] font-semibold text-ink"
+            >
+                {label}
+                {required && (
+                    <span className="ml-1 text-coral-600" aria-label="required">
+                        *
+                    </span>
+                )}
+            </Label>
+            {children}
+            {hint && (
+                <p className="text-[11.5px] text-ink-soft/80">{hint}</p>
+            )}
+        </div>
     );
 }

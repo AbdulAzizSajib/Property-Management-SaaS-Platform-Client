@@ -1,84 +1,143 @@
-import { navLinks } from "@/src/data/navLinks";
-import {
-    Building2,
-    Facebook,
-    Linkedin,
-    Mail,
-    MapPin,
-    Phone,
-} from "lucide-react";
+"use client";
+
+import LogoMark from "@/src/components/LogoMark";
 import Link from "next/link";
+import { useState } from "react";
+
+const productLinks = [
+    { name: "Features", href: "#features" },
+    { name: "Dashboard", href: "#product" },
+    { name: "Integrations", href: "#integrations" },
+    { name: "Pricing", href: "#pricing" },
+    { name: "Changelog", href: "#" },
+];
+const companyLinks = [
+    { name: "About us", href: "#" },
+    { name: "Press kit", href: "#" },
+    { name: "Careers", href: "#" },
+    { name: "Partners", href: "#" },
+    { name: "Contact", href: "#" },
+];
+const resourceLinks = [
+    { name: "Help center", href: "#" },
+    { name: "Landlord guides", href: "#" },
+    { name: "Tax templates", href: "#" },
+    { name: "Webinars (Bangla)", href: "#" },
+    { name: "API docs", href: "#" },
+];
+const socials = [
+    { label: "f", href: "#", name: "Facebook" },
+    { label: "ig", href: "#", name: "Instagram" },
+    { label: "in", href: "#", name: "LinkedIn" },
+    { label: "𝕏", href: "#", name: "X" },
+];
 
 export default function Footer() {
+    const [lang, setLang] = useState<"en" | "bn">("en");
+
     return (
-        <footer className="px-6 md:px-16 lg:px-24 xl:px-32 mt-40 w-full text-slate-500">
-            <div className="flex flex-col md:flex-row justify-between w-full gap-10 border-b border-gray-200 pb-6">
-                <div className="md:max-w-114">
-                    <Link href="/" className="flex items-center gap-2">
-                        <span className="flex items-center justify-center size-9 rounded-md bg-linear-to-br from-indigo-600 to-violet-600 text-white shadow-sm">
-                            <Building2 size={20} strokeWidth={2.2} />
-                        </span>
-                        <span className="text-xl font-semibold text-slate-800">
-                            Bari<span className="text-indigo-600">Bari</span>
+        <footer className="max-w-[1280px] mx-auto px-5 md:px-8 pt-20 pb-10">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.6fr_1fr_1fr_1fr_1fr] gap-12 pb-12 border-b border-rule">
+                <div className="col-span-2 md:col-span-3 lg:col-span-1">
+                    <Link href="/" className="flex items-center gap-2.5 text-jade-900 font-bold text-[19px] tracking-tight mb-4">
+                        <LogoMark />
+                        <span>
+                            Bari<b className="text-coral-600">Bari</b>
                         </span>
                     </Link>
-                    <p className="mt-6">
-                        BariBari is Bangladesh’s modern property management platform — built
-                        for landlords, real estate firms and housing societies to collect
-                        rent, manage tenants and grow their portfolio with confidence.
+                    <p className="text-sm text-ink-soft leading-[1.6] max-w-[320px] mb-5">
+                        Bangladesh&apos;s modern property management platform — built for
+                        landlords, real estate firms and housing societies to collect rent,
+                        manage tenants, and grow their portfolio with confidence.
                     </p>
-                    <div className="flex items-center gap-3 mt-6">
-                        <a
-                            href="#"
-                            aria-label="Facebook"
-                            className="size-9 flex items-center justify-center rounded-md border border-slate-200 hover:bg-indigo-50 hover:text-indigo-600 transition"
-                        >
-                            <Facebook size={16} />
-                        </a>
-                        <a
-                            href="#"
-                            aria-label="LinkedIn"
-                            className="size-9 flex items-center justify-center rounded-md border border-slate-200 hover:bg-indigo-50 hover:text-indigo-600 transition"
-                        >
-                            <Linkedin size={16} />
-                        </a>
+                    <div className="flex gap-2.5">
+                        {socials.map((s) => (
+                            <a
+                                key={s.name}
+                                href={s.href}
+                                aria-label={s.name}
+                                className="w-9 h-9 rounded-lg bg-cream-2 hover:bg-jade-900 hover:text-paper text-jade-900 font-bold text-sm flex items-center justify-center transition"
+                            >
+                                {s.label}
+                            </a>
+                        ))}
                     </div>
                 </div>
-                <div className="flex-1 flex items-start md:justify-end gap-20">
-                    <div>
-                        <h2 className="font-semibold mb-5 text-gray-800">Company</h2>
-                        <ul className="space-y-2">
-                            {navLinks.map((link, index) => (
-                                <li key={index}>
-                                    <Link href={link.href} className="hover:text-indigo-600">
-                                        {link.name}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                    <div>
-                        <h2 className="font-semibold mb-5 text-gray-800">Get in touch</h2>
-                        <div className="space-y-3">
-                            <p className="flex items-center gap-2">
-                                <Phone size={14} className="text-indigo-600" /> +880 1700-000000
-                            </p>
-                            <p className="flex items-center gap-2">
-                                <Mail size={14} className="text-indigo-600" />{" "}
+
+                <FootCol title="Product" links={productLinks} />
+                <FootCol title="Company" links={companyLinks} />
+                <FootCol title="Resources" links={resourceLinks} />
+
+                <div>
+                    <h5 className="text-[11px] font-bold uppercase tracking-[0.14em] text-jade-900 mb-4.5">
+                        Get in touch
+                    </h5>
+                    <ul className="space-y-2.5 text-sm text-ink-soft">
+                        <li>
+                            <a href="tel:+8801700000000" className="hover:text-jade-900">
+                                +৮৮০ ১৭০০-০০০০০০
+                            </a>
+                        </li>
+                        <li>
+                            <a href="mailto:hello@baribari.com.bd" className="hover:text-jade-900">
                                 hello@baribari.com.bd
-                            </p>
-                            <p className="flex items-start gap-2">
-                                <MapPin size={14} className="text-indigo-600 mt-0.5" />{" "}
-                                Gulshan-1, Dhaka 1212, Bangladesh
-                            </p>
-                        </div>
-                    </div>
+                            </a>
+                        </li>
+                        <li>Gulshan-1, Dhaka 1212</li>
+                        <li>Sat–Thu · ৯ AM – ১০ PM</li>
+                    </ul>
                 </div>
             </div>
-            <p className="pt-4 text-center pb-5">
-                Copyright {new Date().getFullYear()} © BariBari Technologies Ltd. All
-                Rights Reserved.
-            </p>
+
+            <div className="flex flex-wrap justify-between items-center gap-3 text-[12.5px] text-ink-soft">
+                <span>© {new Date().getFullYear()} BariBari Technologies Ltd. · All rights reserved.</span>
+                <div className="flex gap-1.5 bg-paper p-1 rounded-lg border border-rule-soft">
+                    <button
+                        type="button"
+                        onClick={() => setLang("en")}
+                        className={`px-2.5 py-1 rounded text-xs font-semibold ${
+                            lang === "en" ? "bg-jade-900 text-paper" : "text-ink-soft"
+                        }`}
+                    >
+                        English
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setLang("bn")}
+                        className={`px-2.5 py-1 rounded text-xs font-semibold font-bangla ${
+                            lang === "bn" ? "bg-jade-900 text-paper" : "text-ink-soft"
+                        }`}
+                    >
+                        বাংলা
+                    </button>
+                </div>
+                <span>Trade Lic. 12345 · BIN 67890</span>
+            </div>
         </footer>
+    );
+}
+
+function FootCol({
+    title,
+    links,
+}: {
+    title: string;
+    links: { name: string; href: string }[];
+}) {
+    return (
+        <div>
+            <h5 className="text-[11px] font-bold uppercase tracking-[0.14em] text-jade-900 mb-4.5">
+                {title}
+            </h5>
+            <ul className="space-y-2.5">
+                {links.map((l) => (
+                    <li key={l.name}>
+                        <a href={l.href} className="text-sm text-ink-soft hover:text-jade-900 transition">
+                            {l.name}
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </div>
     );
 }

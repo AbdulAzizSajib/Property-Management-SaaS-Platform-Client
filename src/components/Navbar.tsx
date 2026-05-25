@@ -1,45 +1,20 @@
 "use client";
-import { navLinks } from "@/src/data/navLinks";
-import { MenuIcon, MoonIcon, SunIcon, XIcon } from "lucide-react";
+
+import LogoMark from "@/src/components/LogoMark";
+import { MenuIcon, XIcon } from "lucide-react";
 import Link from "next/link";
-import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
-function ThemeToggle() {
-    const { resolvedTheme, setTheme } = useTheme();
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => setMounted(true), []);
-
-    if (!mounted) return <div className="size-9" />;
-
-    return (
-        <button
-            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-            className="flex items-center justify-center size-9 rounded-md border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-            aria-label="Toggle theme"
-        >
-            {resolvedTheme === "dark" ? (
-                <SunIcon size={18} className="text-yellow-400" />
-            ) : (
-                <MoonIcon size={18} className="text-slate-600" />
-            )}
-        </button>
-    );
-}
-
-function BrandLogo() {
-    return (
-        <Link href="/" className="flex items-center gap-2">
-            <span className="text-xl font-semibold text-slate-800 dark:text-slate-100">
-                <span className="text-indigo-600">My</span>Nibash
-            </span>
-        </Link>
-    );
-}
+const navLinks = [
+    { name: "Features", href: "#features" },
+    { name: "Dashboard", href: "#product" },
+    { name: "Integrations", href: "#integrations", pill: "6 New" },
+    { name: "Pricing", href: "#pricing" },
+    { name: "FAQ", href: "#faq" },
+];
 
 export default function Navbar() {
-    const [openMobileMenu, setOpenMobileMenu] = useState<boolean>(false);
+    const [openMobileMenu, setOpenMobileMenu] = useState(false);
 
     useEffect(() => {
         if (openMobileMenu) {
@@ -50,72 +25,85 @@ export default function Navbar() {
     }, [openMobileMenu]);
 
     return (
-        <nav
-            className={`flex items-center justify-between fixed z-50 top-0 w-full px-6 md:px-16 lg:px-24 xl:px-32 py-4 border-b border-slate-200 dark:border-slate-800 bg-white/40 dark:bg-slate-900/40 ${openMobileMenu ? "bg-white/80 dark:bg-slate-900/80" : "backdrop-blur"}`}
-        >
-            <BrandLogo />
-            <div className="hidden items-center md:gap-8 lg:gap-9 md:flex lg:pl-20">
-                {navLinks.map((link) => (
+        <div className="sticky top-0 z-50 bg-cream/85 backdrop-blur-md border-b border-rule-soft">
+            <nav className="max-w-[1280px] mx-auto grid grid-cols-[auto_1fr_auto] items-center gap-14 py-[18px] px-5 md:px-8">
+                <Link href="/" className="flex items-center gap-2.5 text-jade-900 font-bold text-[19px] tracking-tight">
+                    <LogoMark />
+                    <span>
+                        Bari<b className="text-coral-600">Bari</b>
+                    </span>
+                </Link>
+
+                <div className="hidden lg:flex justify-center gap-8 text-[14.5px] text-ink-soft font-medium">
+                    {navLinks.map((link) => (
+                        <a
+                            key={link.name}
+                            href={link.href}
+                            className="relative py-2 hover:text-jade-900 transition-colors"
+                        >
+                            {link.name}
+                            {link.pill && (
+                                <span className="ml-1.5 align-middle bg-coral-100 text-coral-600 font-bold uppercase tracking-wider text-[9.5px] px-1.5 py-0.5 rounded">
+                                    {link.pill}
+                                </span>
+                            )}
+                        </a>
+                    ))}
+                </div>
+
+                <div className="flex items-center gap-3">
                     <Link
-                        key={link.name}
-                        href={link.href}
-                        className="hover:text-indigo-600"
+                        href="/login"
+                        className="hidden sm:inline-flex items-center text-jade-900 hover:bg-cream-2 transition px-4 py-2.5 rounded-lg text-sm font-semibold"
                     >
-                        {link.name}
+                        Sign in
                     </Link>
-                ))}
-            </div>
-            {/* Mobile menu */}
-            <div
-                className={`fixed inset-0 flex flex-col items-center justify-center gap-6 text-lg font-medium bg-white/40 dark:bg-slate-900/40 backdrop-blur-md md:hidden transition duration-300 ${openMobileMenu ? "translate-x-0" : "-translate-x-full"}`}
-            >
-                {navLinks.map((link) => (
                     <Link
-                        key={link.name}
-                        href={link.href}
+                        href="/register"
+                        className="hidden sm:inline-flex items-center gap-2 bg-jade-800 hover:bg-jade-900 transition text-paper px-4 py-2.5 rounded-lg text-sm font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.2),inset_0_-2px_0_rgba(0,0,0,0.3),0_4px_12px_rgba(13,79,63,0.18)] hover:-translate-y-0.5"
+                    >
+                        Start free trial
+                        <span className="font-mono">→</span>
+                    </Link>
+                    <button
+                        type="button"
+                        aria-label="Open menu"
+                        onClick={() => setOpenMobileMenu((s) => !s)}
+                        className="lg:hidden text-jade-900"
+                    >
+                        {openMobileMenu ? <XIcon size={24} /> : <MenuIcon size={24} />}
+                    </button>
+                </div>
+            </nav>
+
+            {openMobileMenu && (
+                <div className="lg:hidden border-t border-rule-soft bg-cream px-5 py-5 flex flex-col gap-2 text-jade-900 font-medium">
+                    {navLinks.map((link) => (
+                        <a
+                            key={link.name}
+                            href={link.href}
+                            onClick={() => setOpenMobileMenu(false)}
+                            className="py-2"
+                        >
+                            {link.name}
+                        </a>
+                    ))}
+                    <Link
+                        href="/login"
                         onClick={() => setOpenMobileMenu(false)}
+                        className="py-2 sm:hidden"
                     >
-                        {link.name}
+                        Sign in
                     </Link>
-                ))}
-                <Link href="/login" onClick={() => setOpenMobileMenu(false)}>
-                    Sign in
-                </Link>
-                <Link
-                    href="/register"
-                    onClick={() => setOpenMobileMenu(false)}
-                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 transition text-white rounded-md"
-                >
-                    Get started
-                </Link>
-                <button
-                    className="aspect-square size-10 p-1 items-center justify-center bg-indigo-600 hover:bg-indigo-700 transition text-white rounded-md flex"
-                    onClick={() => setOpenMobileMenu(false)}
-                >
-                    <XIcon />
-                </button>
-            </div>
-            <div className="flex items-center gap-4">
-                <ThemeToggle />
-                <Link
-                    href="/login"
-                    className="hidden md:block hover:bg-slate-100 dark:hover:bg-slate-800 transition px-4 py-2 border border-indigo-600 rounded-md"
-                >
-                    Sign in
-                </Link>
-                <Link
-                    href="/register"
-                    className="hidden md:block px-4 py-2 bg-indigo-600 hover:bg-indigo-700 transition text-white rounded-md"
-                >
-                    Get started
-                </Link>
-                <button
-                    onClick={() => setOpenMobileMenu(!openMobileMenu)}
-                    className="md:hidden"
-                >
-                    <MenuIcon size={26} className="active:scale-90 transition" />
-                </button>
-            </div>
-        </nav>
+                    <Link
+                        href="/register"
+                        onClick={() => setOpenMobileMenu(false)}
+                        className="mt-2 inline-flex items-center justify-center bg-jade-800 text-paper px-4 py-2.5 rounded-lg sm:hidden"
+                    >
+                        Start free trial →
+                    </Link>
+                </div>
+            )}
+        </div>
     );
 }

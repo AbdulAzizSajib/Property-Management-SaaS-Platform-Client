@@ -4,9 +4,9 @@ import type { ReactNode } from "react";
 
 export default function OwnerDashboardLayout({ children }: { children: ReactNode }) {
     return (
-        <div className="flex min-h-screen bg-slate-50">
+        <div className="flex min-h-screen bg-[#faf6ec]">
             {/* Desktop sidebar */}
-            <div className="hidden lg:block">
+            <div className="hidden lg:block sticky top-0 h-screen self-start">
                 <OwnerSidebar />
             </div>
 

@@ -11,14 +11,14 @@ const actions = [
 
 export function QuickActions() {
     return (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 ">
             {actions.map((action) => {
                 const Icon = action.icon;
                 return (
                     <Link
                         key={action.href}
                         href={action.href}
-                        className="group relative flex items-center gap-3 overflow-hidden rounded-xl border border-slate-200 bg-white p-4 transition-all hover:-translate-y-0.5 hover:shadow-md"
+                        className="group relative flex items-center gap-3 overflow-hidden rounded-xl border border-slate-200 bg-[#FFFDF8] p-4 transition-all hover:-translate-y-0.5 hover:shadow-md"
                     >
                         <span
                             className={`flex size-10 shrink-0 items-center justify-center rounded-lg bg-linear-to-br ${action.color} text-white shadow-sm`}

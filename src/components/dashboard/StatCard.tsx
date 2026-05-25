@@ -25,7 +25,7 @@ export function StatCard({
     accent = "indigo",
 }: StatCardProps) {
     return (
-        <Card className="px-5 transition-shadow hover:shadow-md">
+        <Card className="px-5 transition-shadow hover:shadow-md  bg-[#FFFDF8]">
             <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1.5">
                     <p className="text-xs font-medium uppercase tracking-wider text-slate-500">

@@ -1,7 +1,8 @@
 "use client";
 
+// src/app/owner/dashboard/floors/page.tsx
+
 import { FloorsPanel } from "@/src/components/dashboard/floors/FloorsPanel";
-import { Card } from "@/src/components/ui/card";
 import {
     Select,
     SelectContent,
@@ -11,6 +12,7 @@ import {
 } from "@/src/components/ui/select";
 import { Skeleton } from "@/src/components/ui/skeleton";
 import { useBuildings } from "@/src/hooks/useBuildings";
+import { fmtNum } from "@/src/lib/numerals";
 import { Building2, Layers } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -18,7 +20,7 @@ import { Suspense, useEffect, useMemo } from "react";
 
 export default function FloorsPage() {
     return (
-        <Suspense fallback={<FloorsPageSkeleton />}>
+        <Suspense fallback={<FloorsPageShell />}>
             <FloorsPageInner />
         </Suspense>
     );
@@ -52,139 +54,180 @@ function FloorsPageInner() {
         router.replace(`/owner/dashboard/floors?${params.toString()}`);
     }
 
+    const hasBuildings = !!buildings && buildings.length > 0;
+
     return (
-        <div className="space-y-6 p-4 sm:p-6 lg:p-8">
-            {/* Heading */}
-            <div>
-                <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
-                    Floors
-                </h1>
-                <p className="mt-1 text-sm text-slate-500">
-                    Manage floors across your buildings. Pick a building to view its floors.
-                </p>
-            </div>
-
-            {/* Building picker */}
-            <Card className="px-5 py-4">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex items-center gap-3">
-                        <span className="flex size-9 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
-                            <Building2 size={18} />
-                        </span>
-                        <div>
-                            <p className="text-sm font-medium text-slate-800">Building</p>
-                            <p className="text-xs text-slate-500">
-                                Floors are scoped to a single building
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="w-full sm:w-72">
-                        <Select
-                            value={buildingIdParam}
-                            onValueChange={(v) => handleBuildingChange(v ?? "")}
-                            disabled={isLoading || !buildings || buildings.length === 0}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue
-                                    placeholder={
-                                        isLoading
-                                            ? "Loading..."
-                                            : !buildings || buildings.length === 0
-                                              ? "No buildings yet"
-                                              : "Select a building"
-                                    }
-                                >
-                                    {(value) =>
-                                        buildings?.find((b) => b.id === value)?.name ??
-                                        null
-                                    }
-                                </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                                {buildings?.map((b) => (
-                                    <SelectItem key={b.id} value={b.id}>
-                                        {b.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                </div>
-            </Card>
-
-            {/* Content */}
-            {isLoading ? (
-                <FloorsPageSkeleton />
-            ) : isError ? (
-                <Card className="px-6 py-12 text-center">
-                    <h2 className="text-base font-semibold text-slate-900">
-                        Couldn&apos;t load buildings
-                    </h2>
-                    <p className="mt-1 text-sm text-slate-500">
-                        {error instanceof Error ? error.message : "Please try again."}
-                    </p>
-                </Card>
-            ) : !buildings || buildings.length === 0 ? (
-                <Card className="px-6 py-16 text-center">
-                    <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-indigo-50">
-                        <Building2 size={28} className="text-indigo-600" />
-                    </div>
-                    <h2 className="mt-4 text-lg font-semibold text-slate-900">
-                        No buildings yet
-                    </h2>
-                    <p className="mx-auto mt-1 max-w-sm text-sm text-slate-500">
-                        You need at least one building before you can add floors.
-                    </p>
-                    <div className="mt-5">
-                        <Link
-                            href="/owner/dashboard/buildings"
-                            className="inline-flex items-center gap-1 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-                        >
-                            Go to buildings
-                        </Link>
-                    </div>
-                </Card>
-            ) : !selected ? (
-                <Card className="px-6 py-16 text-center">
-                    <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-indigo-50">
-                        <Layers size={28} className="text-indigo-600" />
-                    </div>
-                    <h2 className="mt-4 text-lg font-semibold text-slate-900">
-                        Select a building
-                    </h2>
-                    <p className="mx-auto mt-1 max-w-sm text-sm text-slate-500">
-                        Pick a building from the dropdown above to view and manage its floors.
-                    </p>
-                </Card>
-            ) : (
-                <>
-                    <div className="flex items-center justify-between">
-                        <p className="text-sm text-slate-600">
-                            Showing floors in{" "}
-                            <Link
-                                href={`/owner/dashboard/buildings/${selected.id}`}
-                                className="font-medium text-indigo-600 hover:text-indigo-700"
-                            >
-                                {selected.name}
-                            </Link>
+        <div className="min-h-screen bg-cream">
+            <div className="mx-auto max-w-[1240px] space-y-6 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+                {/* Header — picker lives inline, not in its own card */}
+                <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                    <div>
+                        <p className="font-serif text-[13px] italic text-coral-600/85">
+                            Building structure
+                        </p>
+                        <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
+                            Floors
+                        </h1>
+                        <p className="font-bangla mt-1 text-[13px] text-ink-soft">
+                            তলা ও কাঠামো পরিচালনা।
                         </p>
                     </div>
-                    <FloorsPanel
-                        buildingId={selected.id}
-                        totalFloors={selected.totalFloors}
-                    />
-                </>
-            )}
+
+                    {/* Compact picker — only renders when there's something to pick */}
+                    {hasBuildings && (
+                        <div className="flex items-center gap-2.5">
+                            <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
+                                Building
+                            </span>
+                            <div className="w-full min-w-[240px] sm:w-72">
+                                <Select
+                                    value={buildingIdParam}
+                                    onValueChange={(v) => handleBuildingChange(v ?? "")}
+                                    disabled={isLoading}
+                                >
+                                    <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
+                                        <SelectValue
+                                            placeholder={
+                                                isLoading
+                                                    ? "Loading…"
+                                                    : "Select a building"
+                                            }
+                                        >
+                                            {(value) =>
+                                                buildings?.find(
+                                                    (b) => b.id === value,
+                                                )?.name ?? null
+                                            }
+                                        </SelectValue>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {buildings?.map((b) => (
+                                            <SelectItem key={b.id} value={b.id}>
+                                                <span className="inline-flex items-center gap-2">
+                                                    <Building2
+                                                        size={12}
+                                                        className="text-ink-soft/70"
+                                                    />
+                                                    {b.name}
+                                                </span>
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+                    )}
+                </header>
+
+                {/* Content */}
+                {isLoading ? (
+                    <FloorsPageShell />
+                ) : isError ? (
+                    <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
+                        <h2 className="text-[15px] font-bold text-coral-700">
+                            Couldn&apos;t load buildings
+                        </h2>
+                        <p className="mt-1 text-[13px] text-coral-700/80">
+                            {error instanceof Error
+                                ? error.message
+                                : "Please try again."}
+                        </p>
+                    </div>
+                ) : !hasBuildings ? (
+                    <EmptyBuildings />
+                ) : !selected ? (
+                    <NoSelection />
+                ) : (
+                    <>
+                        {/* Selected building strip — shows context + quick link */}
+                        <div className="flex flex-wrap items-center justify-between gap-3 rounded-[12px] border border-rule-soft bg-paper px-4 py-3">
+                            <div className="flex items-center gap-3 min-w-0">
+                                <span className="flex size-9 shrink-0 items-center justify-center rounded-[8px] bg-jade-50 text-jade-800">
+                                    <Building2 size={16} />
+                                </span>
+                                <div className="min-w-0">
+                                    <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
+                                        Showing floors in
+                                    </p>
+                                    <Link
+                                        href={`/owner/dashboard/buildings/${selected.id}`}
+                                        className="truncate text-[14px] font-bold text-jade-950 hover:text-coral-600 transition-colors"
+                                    >
+                                        {selected.name}
+                                    </Link>
+                                </div>
+                            </div>
+                            <span className="text-[12px] text-ink-soft tabular-nums">
+                                <span className="font-semibold text-ink">
+                                    {fmtNum(selected.totalFloors)}
+                                </span>{" "}
+                                planned
+                            </span>
+                        </div>
+
+                        <FloorsPanel
+                            buildingId={selected.id}
+                            totalFloors={selected.totalFloors}
+                        />
+                    </>
+                )}
+            </div>
         </div>
     );
 }
 
-function FloorsPageSkeleton() {
+function EmptyBuildings() {
+    return (
+        <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-16 text-center">
+            <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-jade-50">
+                <Building2 size={26} className="text-jade-800" />
+            </div>
+            <h2 className="mt-4 text-[17px] font-bold text-jade-950">
+                No buildings yet
+            </h2>
+            <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
+                You need at least one building before you can add floors.
+            </p>
+            <p className="font-bangla mt-0.5 text-[12px] text-ink-soft/75">
+                প্রথমে একটি বিল্ডিং যোগ করুন
+            </p>
+            <div className="mt-5">
+                <Link
+                    href="/owner/dashboard/buildings"
+                    className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
+                >
+                    Go to buildings
+                </Link>
+            </div>
+        </div>
+    );
+}
+
+function NoSelection() {
+    return (
+        <div className="rounded-[14px] border border-dashed border-rule-soft bg-paper px-6 py-16 text-center">
+            <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-cream">
+                <Layers size={26} className="text-ink-soft" />
+            </div>
+            <h2 className="mt-4 text-[17px] font-bold text-jade-950">
+                Select a building
+            </h2>
+            <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
+                Pick a building from the dropdown above to view and manage its
+                floors.
+            </p>
+        </div>
+    );
+}
+
+function FloorsPageShell() {
     return (
         <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-14 w-full rounded-lg" />
+                <Skeleton
+                    key={i}
+                    className="h-14 w-full rounded-[10px] bg-paper"
+                />
             ))}
         </div>
     );

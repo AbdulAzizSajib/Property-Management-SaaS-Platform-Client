@@ -1,8 +1,14 @@
 "use client";
 
-import { Button } from "@/src/components/ui/button";
+// src/components/dashboard/leases/LeaseForm.tsx
+
+import {
+    Field,
+    FormActions,
+    fieldClass,
+} from "@/src/components/dashboard/forms/form-primitives";
+import { formatMoney } from "@/src/components/dashboard/units/unitStyles";
 import { Input } from "@/src/components/ui/input";
-import { Label } from "@/src/components/ui/label";
 import {
     Select,
     SelectContent,
@@ -13,7 +19,7 @@ import {
 import { useTenants } from "@/src/hooks/useTenants";
 import { useUnits } from "@/src/hooks/useUnits";
 import type { CreateLeasePayload } from "@/src/types/lease.types";
-import { Loader2 } from "lucide-react";
+import { Info, Sparkles } from "lucide-react";
 import { useMemo, useState } from "react";
 
 export interface LeaseFormValues {
@@ -45,9 +51,7 @@ const emptyForm: LeaseFormValues = {
 interface LeaseFormProps {
     submitting: boolean;
     submitLabel: string;
-    /** Pre-select a unit (e.g. when creating from a unit detail page). */
     fixedUnitId?: string;
-    /** Pre-select a tenant. */
     fixedTenantId?: string;
     onSubmit: (payload: CreateLeasePayload) => void;
     onCancel?: () => void;
@@ -67,7 +71,14 @@ export function LeaseForm({
         ...(fixedTenantId && { tenantId: fixedTenantId }),
     });
 
-    // Only show vacant units for new leases — but always include a fixed one even if not vacant.
+    // Track which money fields were auto-filled from unit defaults
+    // so we can show a subtle indicator and reset them if the user
+    // picks a different unit.
+    const [autoFilled, setAutoFilled] = useState<{
+        rent: boolean;
+        service: boolean;
+    }>({ rent: false, service: false });
+
     const { data: allUnits } = useUnits({ status: "VACANT" });
     const { data: tenants } = useTenants();
 
@@ -77,8 +88,8 @@ export function LeaseForm({
         [tenants],
     );
 
-    // When a unit is picked, prefill rent + service charge from the unit defaults.
     const selectedUnit = units.find((u) => u.id === values.unitId);
+    const selectedTenant = activeTenants.find((t) => t.id === values.tenantId);
 
     function set<K extends keyof LeaseFormValues>(
         key: K,
@@ -89,25 +100,50 @@ export function LeaseForm({
 
     function handleUnitChange(unitId: string) {
         const unit = units.find((u) => u.id === unitId);
-        setValues((v) => ({
-            ...v,
-            unitId,
-            // Auto-prefill if the user hasn't typed anything yet.
-            monthlyRent: v.monthlyRent === "" && unit ? String(unit.baseRent) : v.monthlyRent,
-            serviceCharge:
-                v.serviceCharge === "" && unit
-                    ? String(unit.serviceCharge)
-                    : v.serviceCharge,
-        }));
+
+        setValues((v) => {
+            // Replace rent/service if they were either blank OR previously auto-filled
+            const shouldReplaceRent =
+                v.monthlyRent === "" || autoFilled.rent;
+            const shouldReplaceService =
+                v.serviceCharge === "" || autoFilled.service;
+
+            return {
+                ...v,
+                unitId,
+                monthlyRent:
+                    shouldReplaceRent && unit
+                        ? String(unit.baseRent)
+                        : v.monthlyRent,
+                serviceCharge:
+                    shouldReplaceService && unit
+                        ? String(unit.serviceCharge)
+                        : v.serviceCharge,
+            };
+        });
+
+        setAutoFilled({
+            rent: !!unit,
+            service: !!unit,
+        });
     }
 
     function handleStartDateChange(value: string) {
         setValues((v) => ({
             ...v,
             startDate: value,
-            // Default move-in to start date if not yet set
             moveInDate: v.moveInDate === "" ? value : v.moveInDate,
         }));
+    }
+
+    // Once the user types in a money field, mark it as no-longer-auto.
+    function handleRentChange(value: string) {
+        set("monthlyRent", value);
+        setAutoFilled((a) => ({ ...a, rent: false }));
+    }
+    function handleServiceChange(value: string) {
+        set("serviceCharge", value);
+        setAutoFilled((a) => ({ ...a, service: false }));
     }
 
     function handleSubmit(ev: React.FormEvent) {
@@ -119,10 +155,9 @@ export function LeaseForm({
             startDate: values.startDate,
             moveInDate: values.moveInDate,
             monthlyRent: Number(values.monthlyRent),
-            serviceCharge: Number(values.serviceCharge),
+            serviceCharge: Number(values.serviceCharge || 0),
             securityDeposit: Number(values.securityDeposit) || 0,
             rentDueDay: Number(values.rentDueDay) || 1,
-            // endDate is optional — only include when the user provided one.
             ...(values.endDate && { endDate: values.endDate }),
         };
 
@@ -131,58 +166,77 @@ export function LeaseForm({
 
     return (
         <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Tenant + Unit */}
-            <div className="space-y-3">
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Parties
-                </h3>
+            {/* Parties */}
+            <FormSection title="Parties" bn="পক্ষসমূহ">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div className="space-y-1.5">
-                        <Label htmlFor="l-tenant">
-                            Tenant <span className="text-rose-500">*</span>
-                        </Label>
+                    <Field label="Tenant" htmlFor="l-tenant" required>
                         <Select
                             value={values.tenantId}
                             onValueChange={(v) => set("tenantId", v ?? "")}
                             disabled={!!fixedTenantId}
                         >
-                            <SelectTrigger id="l-tenant" className="w-full">
+                            <SelectTrigger
+                                id="l-tenant"
+                                className={`w-full ${fieldClass}`}
+                            >
                                 <SelectValue placeholder="Select tenant">
                                     {(value) => {
-                                        const t = activeTenants.find((x) => x.id === value);
-                                        return t ? `${t.name} — ${t.phone}` : null;
+                                        const t = activeTenants.find(
+                                            (x) => x.id === value,
+                                        );
+                                        return t
+                                            ? `${t.name} · ${t.phone}`
+                                            : null;
                                     }}
                                 </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
                                 {activeTenants.length === 0 ? (
-                                    <div className="px-2 py-2 text-xs text-slate-500">
+                                    <div className="px-2 py-2 text-[12px] text-ink-soft">
                                         No active tenants
                                     </div>
                                 ) : (
                                     activeTenants.map((t) => (
                                         <SelectItem key={t.id} value={t.id}>
-                                            {t.name} — {t.phone}
+                                            <span className="inline-flex items-center gap-2">
+                                                <span className="inline-flex size-5 items-center justify-center rounded-full bg-jade-50 text-[9.5px] font-bold text-jade-800">
+                                                    {t.name
+                                                        .split(" ")
+                                                        .filter(Boolean)
+                                                        .map((p) => p[0])
+                                                        .slice(0, 2)
+                                                        .join("")
+                                                        .toUpperCase()}
+                                                </span>
+                                                <span>
+                                                    {t.name}
+                                                    <span className="ml-1.5 text-ink-soft tabular-nums">
+                                                        · {t.phone}
+                                                    </span>
+                                                </span>
+                                            </span>
                                         </SelectItem>
                                     ))
                                 )}
                             </SelectContent>
                         </Select>
-                    </div>
+                    </Field>
 
-                    <div className="space-y-1.5">
-                        <Label htmlFor="l-unit">
-                            Unit <span className="text-rose-500">*</span>
-                        </Label>
+                    <Field label="Unit" htmlFor="l-unit" required>
                         <Select
                             value={values.unitId}
                             onValueChange={(v) => handleUnitChange(v ?? "")}
                             disabled={!!fixedUnitId}
                         >
-                            <SelectTrigger id="l-unit" className="w-full">
+                            <SelectTrigger
+                                id="l-unit"
+                                className={`w-full ${fieldClass}`}
+                            >
                                 <SelectValue placeholder="Select vacant unit">
                                     {(value) => {
-                                        const u = units.find((x) => x.id === value);
+                                        const u = units.find(
+                                            (x) => x.id === value,
+                                        );
                                         return u
                                             ? `${u.building.name} · ${u.name}`
                                             : null;
@@ -191,7 +245,7 @@ export function LeaseForm({
                             </SelectTrigger>
                             <SelectContent>
                                 {units.length === 0 ? (
-                                    <div className="px-2 py-2 text-xs text-slate-500">
+                                    <div className="px-2 py-2 text-[12px] text-ink-soft">
                                         No vacant units available
                                     </div>
                                 ) : (
@@ -203,52 +257,77 @@ export function LeaseForm({
                                 )}
                             </SelectContent>
                         </Select>
-                        {selectedUnit && (
-                            <p className="text-[11px] text-slate-500">
-                                Default rent: {selectedUnit.baseRent} · service:{" "}
-                                {selectedUnit.serviceCharge}
-                            </p>
-                        )}
-                    </div>
+                    </Field>
                 </div>
-            </div>
 
-            {/* Dates */}
-            <div className="space-y-3">
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Term
-                </h3>
+                {/* Selected unit summary — replaces the bare numeric hint */}
+                {selectedUnit && (
+                    <div className="flex items-center justify-between gap-3 rounded-[10px] border border-jade-100 bg-jade-50/60 px-3 py-2 text-[12px]">
+                        <div className="flex items-center gap-2">
+                            <Sparkles
+                                size={12}
+                                className="text-jade-700"
+                            />
+                            <span className="text-ink">
+                                Defaults from{" "}
+                                <span className="font-semibold text-jade-900">
+                                    {selectedUnit.building.name} ·{" "}
+                                    {selectedUnit.name}
+                                </span>
+                            </span>
+                        </div>
+                        <span className="text-ink-soft tabular-nums">
+                            Rent{" "}
+                            <span className="font-semibold text-ink">
+                                {formatMoney(selectedUnit.baseRent)}
+                            </span>
+                            {Number(selectedUnit.serviceCharge) > 0 && (
+                                <>
+                                    {" "}
+                                    · Service{" "}
+                                    <span className="font-semibold text-ink">
+                                        {formatMoney(selectedUnit.serviceCharge)}
+                                    </span>
+                                </>
+                            )}
+                        </span>
+                    </div>
+                )}
+            </FormSection>
+
+            {/* Term */}
+            <FormSection title="Term" bn="মেয়াদ">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                    <div className="space-y-1.5">
-                        <Label htmlFor="l-start">
-                            Start date <span className="text-rose-500">*</span>
-                        </Label>
+                    <Field label="Start date" htmlFor="l-start" required>
                         <Input
                             id="l-start"
                             type="date"
                             value={values.startDate}
-                            onChange={(e) => handleStartDateChange(e.target.value)}
+                            onChange={(e) =>
+                                handleStartDateChange(e.target.value)
+                            }
                             min={todayISO()}
                             required
+                            className={`${fieldClass} tabular-nums`}
                         />
-                    </div>
-                    <div className="space-y-1.5">
-                        <Label htmlFor="l-end">
-                            End date
-                        </Label>
+                    </Field>
+
+                    <Field
+                        label="End date"
+                        htmlFor="l-end"
+                        hint="Leave blank for month-to-month"
+                    >
                         <Input
                             id="l-end"
                             type="date"
                             value={values.endDate}
                             onChange={(e) => set("endDate", e.target.value)}
                             min={values.startDate || todayISO()}
-                          
+                            className={`${fieldClass} tabular-nums`}
                         />
-                    </div>
-                    <div className="space-y-1.5">
-                        <Label htmlFor="l-movein">
-                            Move-in date <span className="text-rose-500">*</span>
-                        </Label>
+                    </Field>
+
+                    <Field label="Move-in date" htmlFor="l-movein" required>
                         <Input
                             id="l-movein"
                             type="date"
@@ -256,63 +335,74 @@ export function LeaseForm({
                             onChange={(e) => set("moveInDate", e.target.value)}
                             min={values.startDate || todayISO()}
                             required
+                            className={`${fieldClass} tabular-nums`}
                         />
-                    </div>
+                    </Field>
                 </div>
-            </div>
+            </FormSection>
 
-            {/* Money */}
-            <div className="space-y-3">
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    Pricing
-                </h3>
+            {/* Pricing */}
+            <FormSection title="Pricing" bn="ভাড়া">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    <div className="space-y-1.5">
-                        <Label htmlFor="l-rent">
-                            Monthly rent <span className="text-rose-500">*</span>
-                        </Label>
-                        <Input
+                    <Field
+                        label="Monthly rent"
+                        htmlFor="l-rent"
+                        required
+                        hint={
+                            autoFilled.rent && selectedUnit
+                                ? "Filled from unit default"
+                                : "per month · BDT"
+                        }
+                    >
+                        <MoneyInput
                             id="l-rent"
-                            type="number"
-                            min={0}
-                            step="any"
                             value={values.monthlyRent}
-                            onChange={(e) => set("monthlyRent", e.target.value)}
-                            placeholder="18000"
+                            onChange={handleRentChange}
+                            placeholder="18,000"
                             required
+                            hinted={autoFilled.rent}
                         />
-                    </div>
-                    <div className="space-y-1.5">
-                        <Label htmlFor="l-svc">
-                            Service charge <span className="text-rose-500">*</span>
-                        </Label>
-                        <Input
+                    </Field>
+
+                    <Field
+                        label="Service charge"
+                        htmlFor="l-svc"
+                        required
+                        hint={
+                            autoFilled.service && selectedUnit
+                                ? "Filled from unit default"
+                                : "per month · BDT"
+                        }
+                    >
+                        <MoneyInput
                             id="l-svc"
-                            type="number"
-                            min={0}
-                            step="any"
                             value={values.serviceCharge}
-                            onChange={(e) => set("serviceCharge", e.target.value)}
-                            placeholder="1500"
+                            onChange={handleServiceChange}
+                            placeholder="1,500"
                             required
+                            hinted={autoFilled.service}
                         />
-                    </div>
-                    <div className="space-y-1.5">
-                        <Label htmlFor="l-deposit">Security deposit</Label>
-                        <Input
+                    </Field>
+
+                    <Field
+                        label="Security deposit"
+                        htmlFor="l-deposit"
+                        hint="usually 2–3× rent"
+                    >
+                        <MoneyInput
                             id="l-deposit"
-                            type="number"
-                            min={0}
-                            step="any"
                             value={values.securityDeposit}
-                            onChange={(e) => set("securityDeposit", e.target.value)}
-                            placeholder="36000"
+                            onChange={(v) => set("securityDeposit", v)}
+                            placeholder="36,000"
                         />
-                    </div>
-                    <div className="space-y-1.5">
-                        <Label htmlFor="l-dueday">
-                            Rent due day <span className="text-rose-500">*</span>
-                        </Label>
+                    </Field>
+
+                    <Field
+                        label="Rent due day"
+                        htmlFor="l-dueday"
+                        required
+                        hint="Day of month (1–28) · usually 1, 5, or 7"
+                    >
                         <Input
                             id="l-dueday"
                             type="number"
@@ -322,40 +412,130 @@ export function LeaseForm({
                             onChange={(e) => set("rentDueDay", e.target.value)}
                             placeholder="5"
                             required
+                            className={`${fieldClass} tabular-nums`}
                         />
-                        <p className="text-[11px] text-slate-500">Day of month (1–28)</p>
-                    </div>
+                    </Field>
+                </div>
+            </FormSection>
+
+            {/* Outcome preview */}
+            <div className="flex items-start gap-2.5 rounded-[10px] border-l-[2.5px] border-coral-500 bg-cream/70 px-3 py-2.5">
+                <Info size={14} className="mt-0.5 shrink-0 text-coral-600" />
+                <div className="text-[12.5px] leading-relaxed text-ink">
+                    <p>
+                        Creating this lease will mark{" "}
+                        {selectedUnit ? (
+                            <span className="font-semibold">
+                                {selectedUnit.building.name} ·{" "}
+                                {selectedUnit.name}
+                            </span>
+                        ) : (
+                            <span>the selected unit</span>
+                        )}{" "}
+                        as{" "}
+                        <span className="font-semibold text-jade-800">
+                            OCCUPIED
+                        </span>
+                        {selectedTenant && (
+                            <>
+                                {" "}
+                                under{" "}
+                                <span className="font-semibold">
+                                    {selectedTenant.name}
+                                </span>
+                            </>
+                        )}{" "}
+                        and generate the first month&apos;s invoice automatically.
+                    </p>
+                    <p className="font-bangla mt-1 text-[11.5px] text-ink-soft">
+                        ইউনিট &quot;ভাড়া&quot; হিসেবে চিহ্নিত হবে ও প্রথম মাসের
+                        ইনভয়েস তৈরি হবে।
+                    </p>
                 </div>
             </div>
 
-            <div className="rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600">
-                <strong>Note:</strong> Creating this lease will mark the unit as{" "}
-                <span className="font-medium text-emerald-700">OCCUPIED</span> and generate
-                the first month&apos;s invoice automatically.
-            </div>
-
-            <div className="flex items-center justify-end gap-2 border-t border-slate-100 pt-4">
-                {onCancel && (
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={onCancel}
-                        disabled={submitting}
-                    >
-                        Cancel
-                    </Button>
-                )}
-                <Button type="submit" disabled={submitting}>
-                    {submitting ? (
-                        <>
-                            <Loader2 size={14} className="animate-spin" />
-                            Saving...
-                        </>
-                    ) : (
-                        submitLabel
-                    )}
-                </Button>
-            </div>
+            <FormActions
+                submitting={submitting}
+                submitLabel={submitLabel}
+                onCancel={onCancel}
+            />
         </form>
+    );
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────────────────────────
+
+/**
+ * Section header pattern used inside complex forms — keeps the
+ * "Parties / Term / Pricing" rhythm visible.
+ */
+function FormSection({
+    title,
+    bn,
+    children,
+}: {
+    title: string;
+    bn: string;
+    children: React.ReactNode;
+}) {
+    return (
+        <section className="space-y-3">
+            <div className="flex items-baseline gap-2">
+                <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-soft">
+                    {title}
+                </h3>
+                <span className="font-bangla text-[10.5px] text-ink-soft/65">
+                    · {bn}
+                </span>
+            </div>
+            {children}
+        </section>
+    );
+}
+
+/**
+ * Money input with ৳ prefix. `hinted` prop dims the value slightly to
+ * suggest "this came from a default and you can change it" — disappears
+ * the moment the user types.
+ */
+function MoneyInput({
+    id,
+    value,
+    onChange,
+    placeholder,
+    required,
+    hinted,
+}: {
+    id: string;
+    value: string;
+    onChange: (v: string) => void;
+    placeholder?: string;
+    required?: boolean;
+    hinted?: boolean;
+}) {
+    return (
+        <div className="relative">
+            <span
+                aria-hidden
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[14px] font-semibold text-ink-soft"
+            >
+                ৳
+            </span>
+            <Input
+                id={id}
+                type="number"
+                min={0}
+                step="any"
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                placeholder={placeholder}
+                required={required}
+                className={`${fieldClass} pl-7 tabular-nums ${
+                    hinted ? "text-ink/75" : ""
+                }`}
+            />
+        </div>
     );
 }

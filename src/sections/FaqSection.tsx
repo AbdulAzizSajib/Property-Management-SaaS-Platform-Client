@@ -1,40 +1,98 @@
 "use client";
-import SectionTitle from "@/src/components/SectionTitle";
-import { faqsData } from "@/src/data/faqsData";
-import { ChevronDown } from "lucide-react";
+
+import SectionHead from "@/src/components/SectionHead";
 import { useState } from "react";
 
-export const FaqSection = () => {
-    const [openIndex, setOpenIndex] = useState<number | null>(null);
+const faqs = [
+    {
+        q: "Will my tenants need to download an app to pay rent?",
+        a: "No. Tenants pay through their existing bKash, Nagad, or Rocket app — the same one they already use for groceries. You send them a payment link over SMS or WhatsApp; they tap, confirm with their PIN, done. The whole flow takes about 12 seconds and works on any feature phone with mobile banking.",
+    },
+    {
+        q: "How is BariBari different from just using bKash and Excel?",
+        a: "Excel doesn’t send reminders. bKash doesn’t track which flat owes what. We connect both — plus tenants, leases, maintenance, utility splits, and tax reports — into one workspace built specifically for Bangladeshi rental properties.",
+    },
+    {
+        q: "Is my financial data safe? Where is it stored?",
+        a: "Yes. All data is encrypted in transit and at rest, stored on AWS Singapore servers, with daily backups. We’re ISO 27001 certified and undergo annual penetration testing. We never share data with third parties — including Bangladesh Bank, unless legally compelled by court order.",
+    },
+    {
+        q: "Does it support Bangla language and BDT currency natively?",
+        a: "Both. Tenants can receive SMS, invoices, and payment links in Bangla. Landlords can toggle the entire dashboard between Bangla and English with one click. All amounts are in BDT (taka) — no conversion math needed.",
+    },
+    {
+        q: "What happens if a tenant disputes a payment?",
+        a: "Every transaction is logged with a tamper-proof timestamp, the gateway transaction ID (from bKash/Nagad), and an auto-generated receipt with your stamp. Disputes are resolved in <48 hours via our support team, who liaise directly with the wallet provider on your behalf.",
+    },
+    {
+        q: "Do you provide customer support in Bangla?",
+        a: "Yes — over WhatsApp, phone, and email, every day from ৯টা to ১০টা (9 AM – 10 PM). Our entire support team is based in Gulshan and Chattogram. Professional & Enterprise plans get priority response within 30 minutes.",
+    },
+    {
+        q: "Can I cancel anytime?",
+        a: "Yes. No annual contracts on the Starter or Professional plans. Cancel from your dashboard with two clicks. We’ll export all your data to Excel before deactivation.",
+    },
+];
+
+export function FaqSection() {
+    const [openIndex, setOpenIndex] = useState<number | null>(0);
+
     return (
-        <div className="max-w-2xl mx-auto flex flex-col items-center justify-center px-4 md:px-0">
-            <SectionTitle
-                text1="FAQ's"
-                text2="Frequently asked questions"
-                text3="Ship Beautiful Frontends Without the Overhead — Customizable, Scalable, and Developer-Friendly UI Components."
-            />
-            <div className="mt-8">
-                {faqsData.map((faq, index) => (
-                    <div
-                        className="border-b border-slate-200 py-4 cursor-pointer w-full"
-                        key={index}
-                        onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                    >
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-base font-medium">{faq.question}</h3>
-                            <ChevronDown
-                                size={18}
-                                className={`${openIndex === index && "rotate-180"} transition-all duration-500 ease-in-out`}
-                            />
-                        </div>
-                        <p
-                            className={`text-sm text-slate-500 transition-all duration-500 ease-in-out max-w-xl ${openIndex === index ? "opacity-100 max-h-[500px] translate-y-0 pt-4" : "opacity-0 max-h-0 overflow-hidden -translate-y-2"}`}
-                        >
-                            {faq.answer}
-                        </p>
-                    </div>
-                ))}
+        <section id="faq" className="py-24 lg:py-32">
+            <div className="max-w-[1280px] mx-auto px-5 md:px-8">
+                <SectionHead
+                    eyebrow="Common questions"
+                    title={
+                        <>
+                            Things landlords{" "}
+                            <em className="font-serif italic font-normal text-coral-600">
+                                actually
+                            </em>{" "}
+                            ask us
+                        </>
+                    }
+                    description={
+                        <>
+                            If your question isn&apos;t here, WhatsApp us at +880 1700-000000. Real
+                            humans, Bangla &amp; English, ৯ AM – ১০ PM.
+                        </>
+                    }
+                />
+
+                <div className="max-w-[820px] mx-auto">
+                    {faqs.map((faq, i) => {
+                        const open = openIndex === i;
+                        return (
+                            <button
+                                key={faq.q}
+                                type="button"
+                                onClick={() => setOpenIndex(open ? null : i)}
+                                className="w-full text-left border-b border-rule py-6 cursor-pointer"
+                            >
+                                <div className="flex justify-between items-center gap-6">
+                                    <h3 className="text-[17px] font-semibold text-jade-950 tracking-[-0.01em]">
+                                        {faq.q}
+                                    </h3>
+                                    <span
+                                        className={`w-7 h-7 shrink-0 rounded-full flex items-center justify-center font-bold text-base transition ${
+                                            open
+                                                ? "bg-coral-600 text-paper rotate-45"
+                                                : "bg-cream-2 text-jade-900"
+                                        }`}
+                                    >
+                                        +
+                                    </span>
+                                </div>
+                                {open && (
+                                    <div className="mt-3.5 max-w-[680px] text-[15px] leading-[1.65] text-ink-soft">
+                                        {faq.a}
+                                    </div>
+                                )}
+                            </button>
+                        );
+                    })}
+                </div>
             </div>
-        </div>
+        </section>
     );
-};
+}

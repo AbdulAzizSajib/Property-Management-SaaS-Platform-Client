@@ -1,16 +1,19 @@
 "use client";
 
-import { UnitForm, buildCreatePayload } from "@/src/components/dashboard/units/UnitForm";
+// src/components/dashboard/units/UnitsPanel.tsx
+
+import {
+    UnitForm,
+    buildCreatePayload,
+} from "@/src/components/dashboard/units/UnitForm";
 import {
     formatMoney,
     statusLabel,
     typeLabel,
+    unitStatusAccent,
     unitStatusStyles,
     unitTypeStyles,
 } from "@/src/components/dashboard/units/unitStyles";
-import { Badge } from "@/src/components/ui/badge";
-import { Button } from "@/src/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card";
 import {
     Dialog,
     DialogContent,
@@ -20,6 +23,7 @@ import {
 } from "@/src/components/ui/dialog";
 import { Skeleton } from "@/src/components/ui/skeleton";
 import { useCreateUnit, useUnits } from "@/src/hooks/useUnits";
+import { fmtNum } from "@/src/lib/numerals";
 import { cn } from "@/src/lib/utils";
 import { Bath, Bed, DoorOpen, Plus, Ruler } from "lucide-react";
 import Link from "next/link";
@@ -34,42 +38,87 @@ export function UnitsPanel({ buildingId }: UnitsPanelProps) {
     const createMutation = useCreateUnit();
     const [createOpen, setCreateOpen] = useState(false);
 
-    return (
-        <Card className="px-6">
-            <CardHeader className="px-0">
-                <div className="flex items-start justify-between gap-2">
-                    <div>
-                        <CardTitle>Units</CardTitle>
-                        <CardDescription>
-                            {units?.length ?? 0} {units?.length === 1 ? "unit" : "units"} in this building
-                        </CardDescription>
-                    </div>
-                    <Button size="sm" onClick={() => setCreateOpen(true)}>
-                        <Plus size={13} />
-                        Add Unit
-                    </Button>
-                </div>
-            </CardHeader>
+    const vacantCount = units?.filter((u) => u.status === "VACANT").length ?? 0;
+    const occupiedCount = units?.filter((u) => u.status === "OCCUPIED").length ?? 0;
 
-            <CardContent className="px-0">
+    return (
+        <div className="rounded-[14px] border border-rule-soft bg-paper p-5">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                    <p className="font-serif text-[13px] italic text-coral-600/85">
+                        Units in this building
+                    </p>
+                    <h3 className="mt-0.5 text-[16px] font-bold tracking-[-0.015em] text-jade-950">
+                        Units
+                    </h3>
+
+                    {/* Quick summary line */}
+                    {units && units.length > 0 && (
+                        <p className="mt-1.5 text-[12px] text-ink-soft">
+                            <span className="font-semibold text-ink tabular-nums">
+                                {fmtNum(units.length)}
+                            </span>{" "}
+                            {units.length === 1 ? "unit" : "units"} ·{" "}
+                            <span
+                                className={cn(
+                                    "tabular-nums",
+                                    vacantCount > 0 && "font-semibold text-coral-700",
+                                )}
+                            >
+                                {fmtNum(vacantCount)} vacant
+                            </span>{" "}
+                            ·{" "}
+                            <span className="tabular-nums">
+                                {fmtNum(occupiedCount)} occupied
+                            </span>
+                        </p>
+                    )}
+                </div>
+
+                <button
+                    type="button"
+                    onClick={() => setCreateOpen(true)}
+                    className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-[8px] bg-jade-900 px-3 text-[12.5px] font-semibold text-paper transition-colors hover:bg-jade-950"
+                >
+                    <Plus size={13} />
+                    Add unit
+                </button>
+            </div>
+
+            {/* Body */}
+            <div className="mt-4">
                 {isLoading ? (
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                         {[1, 2, 3, 4].map((i) => (
-                            <Skeleton key={i} className="h-32 rounded-lg" />
+                            <Skeleton
+                                key={i}
+                                className="h-[136px] rounded-[12px] bg-cream"
+                            />
                         ))}
                     </div>
                 ) : isError ? (
-                    <p className="rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-700">
-                        {error instanceof Error ? error.message : "Couldn't load units."}
-                    </p>
+                    <div className="rounded-[10px] border border-coral-100 bg-coral-50/60 px-3 py-2.5 text-[13px] text-coral-700">
+                        {error instanceof Error
+                            ? error.message
+                            : "Couldn't load units."}
+                    </div>
                 ) : !units || units.length === 0 ? (
-                    <div className="rounded-lg border border-dashed border-slate-200 px-4 py-8 text-center">
-                        <DoorOpen className="mx-auto text-slate-300" size={24} />
-                        <p className="mt-2 text-sm text-slate-500">No units yet</p>
+                    <div className="rounded-[10px] border border-dashed border-rule-soft px-4 py-8 text-center">
+                        <DoorOpen
+                            className="mx-auto text-ink-soft/40"
+                            size={24}
+                        />
+                        <p className="mt-2 text-[13px] text-ink-soft">
+                            No units yet
+                        </p>
+                        <p className="font-bangla mt-0.5 text-[11.5px] text-ink-soft/70">
+                            কোনো ইউনিট নেই
+                        </p>
                         <button
                             type="button"
                             onClick={() => setCreateOpen(true)}
-                            className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-700"
+                            className="mt-3 inline-flex items-center gap-1 text-[12.5px] font-semibold text-jade-900 hover:text-coral-600 transition-colors"
                         >
                             <Plus size={12} /> Add your first unit
                         </button>
@@ -80,80 +129,109 @@ export function UnitsPanel({ buildingId }: UnitsPanelProps) {
                             <li key={u.id}>
                                 <Link
                                     href={`/owner/dashboard/units/${u.id}`}
-                                    className="group block rounded-lg border border-slate-200 bg-white p-3 transition-all hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-sm"
+                                    className="group relative block overflow-hidden rounded-[12px] border border-rule-soft bg-paper p-3.5 transition-all hover:-translate-y-0.5 hover:border-jade-700/20 hover:shadow-[0_8px_24px_-12px_rgba(10,46,34,0.15)]"
                                 >
+                                    {/* Status accent strip — coral for VACANT, etc. Pulls the eye to actionable units. */}
+                                    <span
+                                        aria-hidden
+                                        className={cn(
+                                            "absolute inset-y-0 left-0 w-[3px]",
+                                            unitStatusAccent[u.status],
+                                        )}
+                                    />
+
                                     <div className="flex items-start justify-between gap-2">
                                         <div className="min-w-0">
-                                            <p className="truncate text-sm font-semibold text-slate-900 group-hover:text-indigo-700">
+                                            <p className="truncate text-[15px] font-bold tracking-[-0.01em] text-jade-950 group-hover:text-jade-900">
                                                 {u.name}
                                             </p>
-                                            <p className="text-[11px] text-slate-500">
+                                            <p className="truncate text-[11.5px] text-ink-soft">
                                                 {u.floor.floorNumber === 0
                                                     ? "Ground floor"
-                                                    : `Floor ${u.floor.floorNumber}`}{" "}
+                                                    : `Floor ${fmtNum(u.floor.floorNumber)}`}{" "}
                                                 · {u.floor.name}
                                             </p>
                                         </div>
-                                        <Badge
-                                            variant="outline"
+                                        <span
                                             className={cn(
-                                                "text-[10px]",
+                                                "shrink-0 rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
                                                 unitStatusStyles[u.status],
                                             )}
                                         >
                                             {statusLabel(u.status)}
-                                        </Badge>
+                                        </span>
                                     </div>
 
-                                    <div className="mt-2 flex items-center gap-3 text-[11px] text-slate-500">
-                                        <Badge
-                                            variant="outline"
+                                    {/* Feature chips */}
+                                    <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11.5px] text-ink-soft">
+                                        <span
                                             className={cn(
-                                                "text-[10px]",
+                                                "rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
                                                 unitTypeStyles[u.type],
                                             )}
                                         >
                                             {typeLabel(u.type)}
-                                        </Badge>
+                                        </span>
                                         {u.bedrooms !== null && (
-                                            <span className="inline-flex items-center gap-1">
-                                                <Bed size={11} /> {u.bedrooms}
+                                            <span className="inline-flex items-center gap-1 tabular-nums">
+                                                <Bed
+                                                    size={11}
+                                                    className="text-ink-soft/60"
+                                                />
+                                                {fmtNum(u.bedrooms)}
                                             </span>
                                         )}
                                         {u.bathrooms !== null && (
-                                            <span className="inline-flex items-center gap-1">
-                                                <Bath size={11} /> {u.bathrooms}
+                                            <span className="inline-flex items-center gap-1 tabular-nums">
+                                                <Bath
+                                                    size={11}
+                                                    className="text-ink-soft/60"
+                                                />
+                                                {fmtNum(u.bathrooms)}
                                             </span>
                                         )}
                                         {u.sizeSqft !== null && (
-                                            <span className="inline-flex items-center gap-1">
-                                                <Ruler size={11} /> {u.sizeSqft} sqft
+                                            <span className="inline-flex items-center gap-1 tabular-nums">
+                                                <Ruler
+                                                    size={11}
+                                                    className="text-ink-soft/60"
+                                                />
+                                                {fmtNum(u.sizeSqft)} sqft
                                             </span>
                                         )}
                                     </div>
 
-                                    <div className="mt-2 flex items-baseline justify-between border-t border-slate-100 pt-2">
-                                        <p className="text-sm font-semibold text-slate-900 tabular-nums">
+                                    {/* Rent */}
+                                    <div className="mt-3 flex items-baseline justify-between border-t border-rule-soft pt-2.5">
+                                        <p className="text-[15px] font-bold text-jade-950 tabular-nums">
                                             {formatMoney(u.baseRent)}
+                                            <span className="ml-1 text-[10.5px] font-medium text-ink-soft">
+                                                /mo
+                                            </span>
                                         </p>
-                                        <p className="text-[10px] text-slate-500">
-                                            +{formatMoney(u.serviceCharge)} svc
-                                        </p>
+                                        {Number(u.serviceCharge) > 0 && (
+                                            <p className="text-[10.5px] text-ink-soft tabular-nums">
+                                                + {formatMoney(u.serviceCharge)} svc
+                                            </p>
+                                        )}
                                     </div>
                                 </Link>
                             </li>
                         ))}
                     </ul>
                 )}
-            </CardContent>
+            </div>
 
             {/* Create dialog */}
             <Dialog open={createOpen} onOpenChange={setCreateOpen}>
                 <DialogContent className="sm:max-w-2xl">
                     <DialogHeader>
-                        <DialogTitle>Add unit</DialogTitle>
-                        <DialogDescription>
-                            Add a flat, shop, office or other unit to a floor in this building.
+                        <DialogTitle className="text-jade-950">
+                            Add unit
+                        </DialogTitle>
+                        <DialogDescription className="text-ink-soft">
+                            Add a flat, shop, office or other unit to a floor in
+                            this building.
                         </DialogDescription>
                     </DialogHeader>
                     <UnitForm
@@ -171,6 +249,6 @@ export function UnitsPanel({ buildingId }: UnitsPanelProps) {
                     />
                 </DialogContent>
             </Dialog>
-        </Card>
+        </div>
     );
 }

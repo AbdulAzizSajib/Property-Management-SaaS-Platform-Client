@@ -1,9 +1,13 @@
 "use client";
 
-import { Button } from "@/src/components/ui/button";
+// src/components/dashboard/floors/FloorForm.tsx
+
+import {
+    Field,
+    FormActions,
+    fieldClass,
+} from "@/src/components/dashboard/forms/form-primitives";
 import { Input } from "@/src/components/ui/input";
-import { Label } from "@/src/components/ui/label";
-import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export interface FloorFormValues {
@@ -41,6 +45,8 @@ export function FloorForm({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [JSON.stringify(defaultValues)]);
 
+    const isGround = values.floorNumber === 0;
+
     function handleSubmit(ev: React.FormEvent) {
         ev.preventDefault();
         onSubmit({
@@ -52,25 +58,34 @@ export function FloorForm({
     return (
         <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div className="space-y-1.5 sm:col-span-2">
-                    <Label htmlFor="floor-name">
-                        Floor name <span className="text-rose-500">*</span>
-                    </Label>
+                <Field
+                    label="Floor name"
+                    htmlFor="floor-name"
+                    required
+                    className="sm:col-span-2"
+                >
                     <Input
                         id="floor-name"
                         value={values.name}
                         onChange={(e) =>
                             setValues((v) => ({ ...v, name: e.target.value }))
                         }
-                        placeholder="1st Floor"
+                        placeholder={isGround ? "Ground floor" : "1st floor"}
                         required
+                        className={fieldClass}
                     />
-                </div>
+                </Field>
 
-                <div className="space-y-1.5">
-                    <Label htmlFor="floor-number">
-                        Floor # <span className="text-rose-500">*</span>
-                    </Label>
+                <Field
+                    label="Floor #"
+                    htmlFor="floor-number"
+                    required
+                    hint={
+                        isGround
+                            ? "0 = ground floor (নিচতলা)"
+                            : "Use 0 for ground floor"
+                    }
+                >
                     <Input
                         id="floor-number"
                         type="number"
@@ -83,33 +98,16 @@ export function FloorForm({
                             }))
                         }
                         required
+                        className={`${fieldClass} tabular-nums`}
                     />
-                    <p className="text-[11px] text-slate-500">Use 0 for ground floor</p>
-                </div>
+                </Field>
             </div>
 
-            <div className="flex items-center justify-end gap-2 border-t border-slate-100 pt-4">
-                {onCancel && (
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={onCancel}
-                        disabled={submitting}
-                    >
-                        Cancel
-                    </Button>
-                )}
-                <Button type="submit" disabled={submitting}>
-                    {submitting ? (
-                        <>
-                            <Loader2 size={14} className="animate-spin" />
-                            Saving...
-                        </>
-                    ) : (
-                        submitLabel
-                    )}
-                </Button>
-            </div>
+            <FormActions
+                submitting={submitting}
+                submitLabel={submitLabel}
+                onCancel={onCancel}
+            />
         </form>
     );
 }

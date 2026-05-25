@@ -1,8 +1,13 @@
 "use client";
 
-import { Button } from "@/src/components/ui/button";
+// src/components/dashboard/units/UnitForm.tsx
+
+import {
+    Field,
+    FormActions,
+    fieldClass,
+} from "@/src/components/dashboard/forms/form-primitives";
 import { Input } from "@/src/components/ui/input";
-import { Label } from "@/src/components/ui/label";
 import {
     Select,
     SelectContent,
@@ -20,7 +25,6 @@ import {
     type UnitStatus,
     type UnitType,
 } from "@/src/types/unit.types";
-import { Loader2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 export interface UnitFormValues {
@@ -52,15 +56,13 @@ const emptyForm: UnitFormValues = {
 };
 
 export interface UnitFormSubmitPayload {
-    create: CreateUnitPayload; // full payload when creating
-    update: Partial<CreateUnitPayload> & { status?: UnitStatus }; // diff-friendly for PATCH
+    create: CreateUnitPayload;
+    update: Partial<CreateUnitPayload> & { status?: UnitStatus };
 }
 
 interface UnitFormProps {
     mode: "create" | "edit";
-    /** When provided, the buildingId is fixed and not editable. */
     fixedBuildingId?: string;
-    /** When provided in create mode, pre-select the floor. */
     fixedFloorId?: string;
     defaultValues?: Partial<UnitFormValues>;
     submitting: boolean;
@@ -86,7 +88,6 @@ export function UnitForm({
         ...defaultValues,
     });
 
-    // Re-hydrate when defaultValues change (e.g. async query load)
     useEffect(() => {
         if (defaultValues) {
             setValues((prev) => ({ ...prev, ...defaultValues }));
@@ -96,21 +97,21 @@ export function UnitForm({
 
     const showBuildingSelect = !fixedBuildingId && mode === "create";
 
-    // Buildings list (only when needed)
     const { data: buildings } = useBuildings();
 
-    // Floors are scoped to the selected building.
     const effectiveBuildingId = values.buildingId;
     const { data: floors } = useFloorsByBuilding(
         effectiveBuildingId || undefined,
     );
 
     const sortedFloors = useMemo(
-        () => (floors ? [...floors].sort((a, b) => a.floorNumber - b.floorNumber) : []),
+        () =>
+            floors
+                ? [...floors].sort((a, b) => a.floorNumber - b.floorNumber)
+                : [],
         [floors],
     );
 
-    // Reset floorId if it doesn't belong to the selected building.
     useEffect(() => {
         if (!floors) return;
         if (values.floorId && !floors.some((f) => f.id === values.floorId)) {
@@ -133,18 +134,19 @@ export function UnitForm({
             {(showBuildingSelect || mode === "create") && (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {showBuildingSelect && (
-                        <div className="space-y-1.5">
-                            <Label htmlFor="buildingId">
-                                Building <span className="text-rose-500">*</span>
-                            </Label>
+                        <Field label="Building" htmlFor="buildingId" required>
                             <Select
                                 value={values.buildingId}
                                 onValueChange={(v) => set("buildingId", v ?? "")}
                             >
-                                <SelectTrigger id="buildingId" className="w-full">
+                                <SelectTrigger
+                                    id="buildingId"
+                                    className={`w-full ${fieldClass}`}
+                                >
                                     <SelectValue placeholder="Select building">
                                         {(value) =>
-                                            buildings?.find((b) => b.id === value)?.name ?? null
+                                            buildings?.find((b) => b.id === value)
+                                                ?.name ?? null
                                         }
                                     </SelectValue>
                                 </SelectTrigger>
@@ -156,26 +158,33 @@ export function UnitForm({
                                     ))}
                                 </SelectContent>
                             </Select>
-                        </div>
+                        </Field>
                     )}
 
-                    <div className={`space-y-1.5 ${showBuildingSelect ? "" : "sm:col-span-2"}`}>
-                        <Label htmlFor="floorId">
-                            Floor <span className="text-rose-500">*</span>
-                        </Label>
+                    <Field
+                        label="Floor"
+                        htmlFor="floorId"
+                        required
+                        className={showBuildingSelect ? "" : "sm:col-span-2"}
+                    >
                         <Select
                             value={values.floorId}
                             onValueChange={(v) => set("floorId", v ?? "")}
-                            disabled={!effectiveBuildingId || sortedFloors.length === 0}
+                            disabled={
+                                !effectiveBuildingId || sortedFloors.length === 0
+                            }
                         >
-                            <SelectTrigger id="floorId" className="w-full">
+                            <SelectTrigger
+                                id="floorId"
+                                className={`w-full ${fieldClass}`}
+                            >
                                 <SelectValue
                                     placeholder={
                                         !effectiveBuildingId
                                             ? "Select a building first"
                                             : sortedFloors.length === 0
-                                              ? "No floors available"
-                                              : "Select floor"
+                                                ? "No floors available"
+                                                : "Select floor"
                                     }
                                 >
                                     {(value) => {
@@ -183,49 +192,52 @@ export function UnitForm({
                                             (fl) => fl.id === value,
                                         );
                                         if (!f) return null;
-                                        return `${f.floorNumber === 0 ? "G" : f.floorNumber} — ${f.name}`;
+                                        return (
+                                            <FloorOption
+                                                num={f.floorNumber}
+                                                name={f.name}
+                                            />
+                                        );
                                     }}
                                 </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
-                                {sortedFloors.map((f) => {
-                                    const floorLabel = `${f.floorNumber === 0 ? "G" : f.floorNumber} — ${f.name}`;
-                                    return (
-                                        <SelectItem key={f.id} value={f.id}>
-                                            {floorLabel}
-                                        </SelectItem>
-                                    );
-                                })}
+                                {sortedFloors.map((f) => (
+                                    <SelectItem key={f.id} value={f.id}>
+                                        <FloorOption
+                                            num={f.floorNumber}
+                                            name={f.name}
+                                        />
+                                    </SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
-                    </div>
+                    </Field>
                 </div>
             )}
 
             {/* Name + Type + Status */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div className="space-y-1.5 sm:col-span-1">
-                    <Label htmlFor="unit-name">
-                        Unit name <span className="text-rose-500">*</span>
-                    </Label>
+                <Field label="Unit name" htmlFor="unit-name" required>
                     <Input
                         id="unit-name"
                         value={values.name}
                         onChange={(e) => set("name", e.target.value)}
                         placeholder="3A"
                         required
+                        className={fieldClass}
                     />
-                </div>
+                </Field>
 
-                <div className="space-y-1.5">
-                    <Label htmlFor="unit-type">
-                        Type <span className="text-rose-500">*</span>
-                    </Label>
+                <Field label="Type" htmlFor="unit-type" required>
                     <Select
                         value={values.type}
                         onValueChange={(v) => set("type", v as UnitType)}
                     >
-                        <SelectTrigger id="unit-type" className="w-full">
+                        <SelectTrigger
+                            id="unit-type"
+                            className={`w-full ${fieldClass}`}
+                        >
                             <SelectValue placeholder="Select type" />
                         </SelectTrigger>
                         <SelectContent>
@@ -236,34 +248,38 @@ export function UnitForm({
                             ))}
                         </SelectContent>
                     </Select>
-                </div>
+                </Field>
 
                 {mode === "edit" && (
-                    <div className="space-y-1.5">
-                        <Label htmlFor="unit-status">Status</Label>
+                    <Field label="Status" htmlFor="unit-status">
                         <Select
                             value={values.status}
                             onValueChange={(v) => set("status", v as UnitStatus)}
                         >
-                            <SelectTrigger id="unit-status" className="w-full">
+                            <SelectTrigger
+                                id="unit-status"
+                                className={`w-full ${fieldClass}`}
+                            >
                                 <SelectValue placeholder="Select status" />
                             </SelectTrigger>
                             <SelectContent>
                                 {UNIT_STATUS_OPTIONS.map((opt) => (
-                                    <SelectItem key={opt.value} value={opt.value}>
+                                    <SelectItem
+                                        key={opt.value}
+                                        value={opt.value}
+                                    >
                                         {opt.label}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
-                    </div>
+                    </Field>
                 )}
             </div>
 
             {/* Bedrooms / Bathrooms / Size */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div className="space-y-1.5">
-                    <Label htmlFor="bedrooms">Bedrooms</Label>
+                <Field label="Bedrooms" htmlFor="bedrooms">
                     <Input
                         id="bedrooms"
                         type="number"
@@ -271,10 +287,10 @@ export function UnitForm({
                         value={values.bedrooms}
                         onChange={(e) => set("bedrooms", e.target.value)}
                         placeholder="3"
+                        className={`${fieldClass} tabular-nums`}
                     />
-                </div>
-                <div className="space-y-1.5">
-                    <Label htmlFor="bathrooms">Bathrooms</Label>
+                </Field>
+                <Field label="Bathrooms" htmlFor="bathrooms">
                     <Input
                         id="bathrooms"
                         type="number"
@@ -282,10 +298,10 @@ export function UnitForm({
                         value={values.bathrooms}
                         onChange={(e) => set("bathrooms", e.target.value)}
                         placeholder="2"
+                        className={`${fieldClass} tabular-nums`}
                     />
-                </div>
-                <div className="space-y-1.5">
-                    <Label htmlFor="sizeSqft">Size (sqft)</Label>
+                </Field>
+                <Field label="Size (sqft)" htmlFor="sizeSqft">
                     <Input
                         id="sizeSqft"
                         type="number"
@@ -293,86 +309,129 @@ export function UnitForm({
                         value={values.sizeSqft}
                         onChange={(e) => set("sizeSqft", e.target.value)}
                         placeholder="1200"
+                        className={`${fieldClass} tabular-nums`}
                     />
-                </div>
+                </Field>
             </div>
 
-            {/* Rent / Service charge */}
+            {/* Rent / Service charge — with ৳ prefix */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                    <Label htmlFor="baseRent">
-                        Base rent (BDT/month) <span className="text-rose-500">*</span>
-                    </Label>
-                    <Input
+                <Field
+                    label="Base rent"
+                    htmlFor="baseRent"
+                    required
+                    hint="per month · BDT"
+                >
+                    <MoneyInput
                         id="baseRent"
-                        type="number"
-                        min={0}
-                        step="any"
                         value={values.baseRent}
-                        onChange={(e) => set("baseRent", e.target.value)}
-                        placeholder="18000"
+                        onChange={(v) => set("baseRent", v)}
+                        placeholder="18,000"
                         required
                     />
-                </div>
-                <div className="space-y-1.5">
-                    <Label htmlFor="serviceCharge">
-                        Service charge (BDT/month) 
-                    </Label>
-                    <Input
+                </Field>
+                <Field
+                    label="Service charge"
+                    htmlFor="serviceCharge"
+                    hint="per month · optional"
+                >
+                    <MoneyInput
                         id="serviceCharge"
-                        type="number"
-                        min={0}
-                        step="any"
                         value={values.serviceCharge}
-                        onChange={(e) => set("serviceCharge", e.target.value)}
-                        placeholder="1500"
-                        
+                        onChange={(v) => set("serviceCharge", v)}
+                        placeholder="1,500"
                     />
-                </div>
+                </Field>
             </div>
 
             {/* Description */}
-            <div className="space-y-1.5">
-                <Label htmlFor="unit-description">Description</Label>
+            <Field
+                label="Description"
+                htmlFor="unit-description"
+                hint="A short note — shown on the unit card."
+            >
                 <Textarea
                     id="unit-description"
                     rows={3}
                     value={values.description}
                     onChange={(e) => set("description", e.target.value)}
-                    placeholder="3 bedroom flat with balcony, southern exposure..."
+                    placeholder="3 bedroom flat with balcony, southern exposure…"
+                    className={`${fieldClass} resize-none`}
                 />
-            </div>
+            </Field>
 
-            <div className="flex items-center justify-end gap-2 border-t border-slate-100 pt-4">
-                {onCancel && (
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={onCancel}
-                        disabled={submitting}
-                    >
-                        Cancel
-                    </Button>
-                )}
-                <Button type="submit" disabled={submitting}>
-                    {submitting ? (
-                        <>
-                            <Loader2 size={14} className="animate-spin" />
-                            Saving...
-                        </>
-                    ) : (
-                        submitLabel
-                    )}
-                </Button>
-            </div>
+            <FormActions
+                submitting={submitting}
+                submitLabel={submitLabel}
+                onCancel={onCancel}
+            />
         </form>
     );
 }
 
+// ─────────────────────────────────────────────────────────────────
+// Helper components
+// ─────────────────────────────────────────────────────────────────
+
 /**
- * Build a CreateUnitPayload from form values.
- * Trims strings, parses numbers, omits empty optional fields.
+ * Inline floor option — shows the floor number badge so the dropdown
+ * looks like the FloorsPanel rows, not a flat string.
  */
+function FloorOption({ num, name }: { num: number; name: string }) {
+    return (
+        <span className="inline-flex items-center gap-2">
+            <span className="inline-flex size-5 items-center justify-center rounded-[5px] bg-jade-50 text-[10.5px] font-bold text-jade-800 tabular-nums">
+                {num === 0 ? "G" : num}
+            </span>
+            <span className="text-[13px] text-ink">{name}</span>
+        </span>
+    );
+}
+
+/**
+ * Money input with a ৳ prefix indicator inside the field.
+ * Wraps a regular Input so it still inherits fieldClass focus styles.
+ */
+function MoneyInput({
+    id,
+    value,
+    onChange,
+    placeholder,
+    required,
+}: {
+    id: string;
+    value: string;
+    onChange: (v: string) => void;
+    placeholder?: string;
+    required?: boolean;
+}) {
+    return (
+        <div className="relative">
+            <span
+                aria-hidden
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[14px] font-semibold text-ink-soft"
+            >
+                ৳
+            </span>
+            <Input
+                id={id}
+                type="number"
+                min={0}
+                step="any"
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                placeholder={placeholder}
+                required={required}
+                className={`${fieldClass} pl-7 tabular-nums`}
+            />
+        </div>
+    );
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Payload builder
+// ─────────────────────────────────────────────────────────────────
+
 export function buildCreatePayload(values: UnitFormValues): CreateUnitPayload {
     return {
         buildingId: values.buildingId,
@@ -380,7 +439,7 @@ export function buildCreatePayload(values: UnitFormValues): CreateUnitPayload {
         name: values.name.trim(),
         type: values.type,
         baseRent: Number(values.baseRent),
-        serviceCharge: Number(values.serviceCharge),
+        serviceCharge: Number(values.serviceCharge || 0),
         ...(values.bedrooms !== "" && { bedrooms: Number(values.bedrooms) }),
         ...(values.bathrooms !== "" && { bathrooms: Number(values.bathrooms) }),
         ...(values.sizeSqft !== "" && { sizeSqft: Number(values.sizeSqft) }),

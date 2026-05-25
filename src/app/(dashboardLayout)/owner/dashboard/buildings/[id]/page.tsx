@@ -1,6 +1,13 @@
 "use client";
 
+// src/app/owner/dashboard/buildings/[id]/page.tsx
+
 import { BuildingForm } from "@/src/components/dashboard/buildings/BuildingForm";
+import {
+    typeBadgeStyles,
+    typeLabel,
+    statusBadgeStyles,
+} from "@/src/components/dashboard/buildings/building-helpers";
 import { FloorsPanel } from "@/src/components/dashboard/floors/FloorsPanel";
 import { UnitsPanel } from "@/src/components/dashboard/units/UnitsPanel";
 import {
@@ -13,9 +20,6 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/src/components/ui/alert-dialog";
-import { Badge } from "@/src/components/ui/badge";
-import { Button } from "@/src/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card";
 import {
     Dialog,
     DialogContent,
@@ -24,9 +28,13 @@ import {
     DialogTitle,
 } from "@/src/components/ui/dialog";
 import { Skeleton } from "@/src/components/ui/skeleton";
-import { useBuilding, useDeleteBuilding, useUpdateBuilding } from "@/src/hooks/useBuildings";
+import {
+    useBuilding,
+    useDeleteBuilding,
+    useUpdateBuilding,
+} from "@/src/hooks/useBuildings";
 import { cn } from "@/src/lib/utils";
-import type { BuildingType } from "@/src/types/building.types";
+import { fmtNum } from "@/src/lib/numerals";
 import {
     ArrowLeft,
     Building2,
@@ -43,12 +51,6 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
-const typeBadgeStyles: Record<BuildingType, string> = {
-    RESIDENTIAL: "bg-indigo-50 text-indigo-700 border-indigo-200",
-    COMMERCIAL: "bg-emerald-50 text-emerald-700 border-emerald-200",
-    MIXED_USE: "bg-violet-50 text-violet-700 border-violet-200",
-};
-
 export default function BuildingDetailPage() {
     const params = useParams<{ id: string }>();
     const router = useRouter();
@@ -63,191 +65,232 @@ export default function BuildingDetailPage() {
 
     if (isLoading) {
         return (
-            <div className="space-y-6 p-4 sm:p-6 lg:p-8">
-                <Skeleton className="h-9 w-32" />
-                <Skeleton className="h-44 w-full" />
-                <Skeleton className="h-72 w-full" />
+            <div className="min-h-screen bg-cream">
+                <div className="mx-auto container space-y-5 p-4 sm:p-6 lg:p-8">
+                    <Skeleton className="h-9 w-32 bg-paper" />
+                    <Skeleton className="h-56 w-full bg-paper" />
+                    <Skeleton className="h-72 w-full bg-paper" />
+                </div>
             </div>
         );
     }
 
     if (isError || !building) {
         return (
-            <div className="p-4 sm:p-6 lg:p-8 ">
-                <Link
-                    href="/owner/dashboard/buildings"
-                    className="mb-4 inline-flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-700"
-                >
-                    <ArrowLeft size={12} />
-                    Back to buildings
-                </Link>
-                <Card className="px-5 py-12 text-center">
-                    <h2 className="text-base font-semibold text-slate-900">
-                        Couldn&apos;t load building
-                    </h2>
-                    <p className="mx-auto mt-1 max-w-sm text-sm text-slate-500">
-                        {error instanceof Error ? error.message : "Building not found."}
-                    </p>
-                </Card>
+            <div className="min-h-screen bg-cream">
+                <div className="mx-auto container p-4 sm:p-6 lg:p-8">
+                    <Link
+                        href="/owner/dashboard/buildings"
+                        className="mb-4 inline-flex items-center gap-1 text-[12.5px] font-medium text-ink-soft hover:text-jade-900"
+                    >
+                        <ArrowLeft size={12} />
+                        Back to buildings
+                    </Link>
+                    <div className="rounded-[14px] border border-coral-100 bg-coral-50/50 px-5 py-12 text-center">
+                        <h2 className="text-[15px] font-bold text-coral-700">
+                            Couldn&apos;t load building
+                        </h2>
+                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-700/80">
+                            {error instanceof Error
+                                ? error.message
+                                : "Building not found."}
+                        </p>
+                    </div>
+                </div>
             </div>
         );
     }
 
-    const typeLabel =
-        building.type === "MIXED_USE"
-            ? "Mixed Use"
-            : building.type.charAt(0) + building.type.slice(1).toLowerCase();
-
     return (
-        <div className="space-y-2 p-4 sm:p-6 lg:p-4">
-            {/* Back link */}
-            <Link
-                href="/owner/dashboard/buildings"
-                className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-slate-700"
-            >
-                <ArrowLeft size={12} />
-                All buildings
-            </Link>
+        <div className="min-h-screen bg-cream">
+            <div className="mx-auto container space-y-5 p-4 sm:p-6 lg:p-8">
+                {/* Back link */}
+                <Link
+                    href="/owner/dashboard/buildings"
+                    className="inline-flex items-center gap-1 text-[12.5px] font-medium text-ink-soft transition-colors hover:text-jade-900"
+                >
+                    <ArrowLeft size={12} />
+                    All buildings
+                </Link>
 
-            {/* Hero */}
-            <Card className="gap-0 overflow-hidden py-0">
-                <div className="relative h-40 bg-linear-to-br from-indigo-100 via-violet-100 to-fuchsia-100 sm:h-48">
-                    {building.imageUrl ? (
-                        /* eslint-disable-next-line @next/next/no-img-element */
-                        <img
-                            src={building.imageUrl}
-                            alt={building.name}
-                            className="size-full object-cover"
-                        />
-                    ) : (
-                        <div className="flex h-full items-center justify-center">
-                            <Building2 size={56} className="text-indigo-300" />
-                        </div>
-                    )}
-                </div>
-
-                <div className="px-5 py-2">
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                        <div className="min-w-0">
-                            <div className="flex flex-wrap items-center gap-2">
-                                <h1 className="truncate text-2xl font-semibold tracking-tight text-slate-900">
-                                    {building.name}
-                                </h1>
-                                <Badge
-                                    variant="outline"
-                                    className={cn(typeBadgeStyles[building.type])}
-                                >
-                                    {typeLabel}
-                                </Badge>
-                                <Badge
-                                    variant="outline"
-                                    className={
-                                        building.isActive
-                                            ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                                            : "border-slate-200 bg-slate-50 text-slate-600"
-                                    }
-                                >
-                                    {building.isActive ? "Active" : "Inactive"}
-                                </Badge>
-                            </div>
-
-                            <p className="mt-1.5 text-sm text-slate-500">
-                                <MapPin size={12} className="mr-1 inline" />
-                                {building.address}
-                            </p>
-
-                            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-500">
-                                <span>
-                                    <span className="font-medium text-slate-700">City:</span>{" "}
-                                    {building.city}
-                                </span>
-                                {building.area && (
-                                    <span>
-                                        <span className="font-medium text-slate-700">Area:</span>{" "}
-                                        {building.area}
-                                    </span>
-                                )}
-                                <span className="inline-flex items-center gap-1">
-                                    <Calendar size={11} />
-                                    Created {new Date(building.createdAt).toLocaleDateString()}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setEditOpen(true)}
+                {/* HERO — brand-aligned, replaces the indigo→violet→fuchsia gradient */}
+                <div
+                    className="overflow-hidden rounded-[18px] border border-rule-soft bg-paper"
+                    style={{
+                        boxShadow:
+                            "0 1px 0 rgba(255,255,255,0.6) inset, 0 14px 36px -22px rgba(10,46,34,0.22)",
+                    }}
+                >
+                    {/* Image / fallback band */}
+                    <div className="relative h-44 sm:h-52">
+                        {building.imageUrl ? (
+                            /* eslint-disable-next-line @next/next/no-img-element */
+                            <img
+                                src={building.imageUrl}
+                                alt={building.name}
+                                className="size-full object-cover"
+                            />
+                        ) : (
+                            <div
+                                className="relative flex h-full items-center justify-center bg-jade-950"
+                                aria-hidden
                             >
-                                <Pencil size={13} />
-                                Edit
-                            </Button>
-                            <Button
-                                variant="destructive"
-                                size="sm"
-                                onClick={() => setDeleteOpen(true)}
-                            >
-                                <Trash2 size={13} />
-                                Delete
-                            </Button>
-                        </div>
+                                {/* dotted pattern + coral wash, mirrors the landing hero */}
+                                <div
+                                    className="absolute inset-0 opacity-30"
+                                    style={{
+                                        backgroundImage:
+                                            "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)",
+                                        backgroundSize: "26px 26px",
+                                    }}
+                                />
+                                <div
+                                    className="absolute -right-20 -top-20 h-72 w-72 rounded-full opacity-50"
+                                    style={{
+                                        background:
+                                            "radial-gradient(circle, rgba(255,123,87,0.35), transparent 65%)",
+                                    }}
+                                />
+                                <Building2
+                                    size={56}
+                                    className="relative text-paper/40"
+                                />
+                            </div>
+                        )}
                     </div>
 
-                    {building.description && (
-                        <p className="mt-3 rounded-md bg-slate-50 px-3 py-2 text-sm text-slate-600">
-                            {building.description}
-                        </p>
-                    )}
+                    <div className="px-5 py-4 sm:px-6 sm:py-5">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                            <div className="min-w-0 flex-1">
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <h1 className="truncate text-[26px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[28px]">
+                                        {building.name}
+                                    </h1>
+                                    <span
+                                        className={cn(
+                                            "rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
+                                            typeBadgeStyles[building.type],
+                                        )}
+                                    >
+                                        {typeLabel(building.type)}
+                                    </span>
+                                    <span
+                                        className={cn(
+                                            "rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
+                                            statusBadgeStyles(building.isActive),
+                                        )}
+                                    >
+                                        {building.isActive ? "Active" : "Inactive"}
+                                    </span>
+                                </div>
+
+                                <p className="mt-2 text-[13.5px] text-ink-soft">
+                                    <MapPin
+                                        size={12}
+                                        className="mr-1 inline -translate-y-px"
+                                    />
+                                    {building.address}
+                                </p>
+
+                                <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[12px] text-ink-soft">
+                                    <span>
+                                        <span className="font-semibold text-ink">
+                                            City:
+                                        </span>{" "}
+                                        {building.city}
+                                    </span>
+                                    {building.area && (
+                                        <span>
+                                            <span className="font-semibold text-ink">
+                                                Area:
+                                            </span>{" "}
+                                            {building.area}
+                                        </span>
+                                    )}
+                                    <span className="inline-flex items-center gap-1">
+                                        <Calendar size={11} />
+                                        Created{" "}
+                                        {new Date(
+                                            building.createdAt,
+                                        ).toLocaleDateString()}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="flex shrink-0 items-center gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setEditOpen(true)}
+                                    className="inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-rule-soft bg-paper px-3 text-[12.5px] font-medium text-ink transition-colors hover:border-jade-700/30 hover:text-jade-900"
+                                >
+                                    <Pencil size={12} />
+                                    Edit
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setDeleteOpen(true)}
+                                    className="inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-coral-100 bg-coral-50 px-3 text-[12.5px] font-semibold text-coral-700 transition-colors hover:bg-coral-100"
+                                >
+                                    <Trash2 size={12} />
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+
+                        {building.description && (
+                            <p className="mt-3 rounded-[10px] border-l-[2.5px] border-coral-500 bg-cream/70 px-3 py-2 text-[13.5px] text-ink">
+                                {building.description}
+                            </p>
+                        )}
+                    </div>
                 </div>
-            </Card>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-                <StatTile
-                    icon={Layers}
-                    label="Total Floors"
-                    value={building.totalFloors}
-                    accent="indigo"
-                />
-                <StatTile
-                    icon={Layers}
-                    label="Floors Added"
-                    value={building.floors.length}
-                    accent="violet"
-                />
-                <StatTile
-                    icon={DoorOpen}
-                    label="Units"
-                    value={building.units.length}
-                    accent="emerald"
-                />
-                <StatTile
-                    icon={User}
-                    label="Managers"
-                    value={building.managers.length}
-                    accent="amber"
-                />
-            </div>
+                {/* Stats — no rainbow, single brand row */}
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    <StatTile
+                        icon={Layers}
+                        label="Total floors"
+                        bn="মোট তলা"
+                        value={building.totalFloors}
+                    />
+                    <StatTile
+                        icon={Layers}
+                        label="Floors added"
+                        bn="যোগ করা"
+                        value={building.floors.length}
+                    />
+                    <StatTile
+                        icon={DoorOpen}
+                        label="Units"
+                        bn="ইউনিট"
+                        value={building.units.length}
+                    />
+                    <StatTile
+                        icon={User}
+                        label="Managers"
+                        bn="ম্যানেজার"
+                        value={building.managers.length}
+                    />
+                </div>
 
-            {/* Floors + Caretaker */}
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-                {/* Floors */}
-                <FloorsPanel
-                    buildingId={building.id}
-                    totalFloors={building.totalFloors}
-                />
+                {/* Floors + Caretaker */}
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+                    <FloorsPanel
+                        buildingId={building.id}
+                        totalFloors={building.totalFloors}
+                    />
 
-                {/* Caretaker */}
-                <Card className="px-5">
-                    <CardHeader className="px-0">
-                        <CardTitle>Caretaker</CardTitle>
-                        <CardDescription>On-site contact for tenants</CardDescription>
-                    </CardHeader>
-                    <CardContent className="px-0">
+                    <div className="rounded-[14px] border border-rule-soft bg-paper p-5">
+                        <p className="font-serif text-[13px] italic text-coral-600/85">
+                            On-site contact
+                        </p>
+                        <h3 className="mt-0.5 text-[16px] font-bold tracking-[-0.015em] text-jade-950">
+                            Caretaker
+                        </h3>
+
                         {building.caretaker ? (
-                            <div className="flex items-start gap-3">
-                                <span className="flex size-10 items-center justify-center rounded-full bg-emerald-100 text-sm font-semibold text-emerald-700">
+                            <div className="mt-4 flex items-start gap-3">
+                                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-jade-50 text-[12.5px] font-bold text-jade-800">
                                     {building.caretaker.name
                                         .split(" ")
                                         .filter(Boolean)
@@ -257,107 +300,125 @@ export default function BuildingDetailPage() {
                                         .toUpperCase()}
                                 </span>
                                 <div className="min-w-0">
-                                    <p className="truncate font-medium text-slate-800">
+                                    <p className="truncate text-[14px] font-semibold text-ink">
                                         {building.caretaker.name}
                                     </p>
                                     {building.caretaker.email && (
-                                        <p className="truncate text-xs text-slate-500">
+                                        <p className="truncate text-[12px] text-ink-soft">
                                             {building.caretaker.email}
                                         </p>
                                     )}
                                     {building.caretaker.contactNumber && (
-                                        <p className="text-xs text-slate-500">
+                                        <p className="text-[12px] text-ink-soft tabular-nums">
                                             {building.caretaker.contactNumber}
                                         </p>
                                     )}
                                 </div>
                             </div>
                         ) : (
-                            <div className="rounded-lg border border-dashed border-slate-200 px-4 py-6 text-center">
-                                <User className="mx-auto text-slate-300" size={22} />
-                                <p className="mt-2 text-sm text-slate-500">
+                            <div className="mt-4 rounded-[10px] border border-dashed border-rule-soft px-4 py-6 text-center">
+                                <User
+                                    className="mx-auto text-ink-soft/40"
+                                    size={22}
+                                />
+                                <p className="mt-2 text-[13px] text-ink-soft">
                                     No caretaker assigned
+                                </p>
+                                <p className="font-bangla mt-0.5 text-[11.5px] text-ink-soft/70">
+                                    কেয়ারটেকার যোগ করুন
                                 </p>
                             </div>
                         )}
-                    </CardContent>
-                </Card>
-            </div>
+                    </div>
+                </div>
 
-            {/* Units */}
-            <UnitsPanel buildingId={building.id} />
+                {/* Units */}
+                <UnitsPanel buildingId={building.id} />
 
-            {/* Edit dialog */}
-            <Dialog open={editOpen} onOpenChange={setEditOpen}>
-                <DialogContent className="sm:max-w-2xl">
-                    <DialogHeader>
-                        <DialogTitle>Edit building</DialogTitle>
-                        <DialogDescription>
-                            Update details for {building.name}.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <BuildingForm
-                        submitting={updateMutation.isPending}
-                        submitLabel="Save changes"
-                        defaultValues={{
-                            name: building.name,
-                            type: building.type,
-                            address: building.address,
-                            city: building.city,
-                            area: building.area ?? "",
-                            totalFloors: building.totalFloors,
-                            description: building.description ?? "",
-                            imageUrl: building.imageUrl ?? "",
-                        }}
-                        onCancel={() => setEditOpen(false)}
-                        onSubmit={(payload) => {
-                            updateMutation.mutate(payload, {
-                                onSuccess: () => setEditOpen(false),
-                            });
-                        }}
-                    />
-                </DialogContent>
-            </Dialog>
-
-            {/* Delete confirmation */}
-            <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Delete this building?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            This will permanently delete <strong>{building.name}</strong>.
-                            Floors, units and lease history attached to it may also be affected.
-                            This action cannot be undone.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel disabled={deleteMutation.isPending}>
-                            Cancel
-                        </AlertDialogCancel>
-                        <AlertDialogAction
-                            variant="destructive"
-                            disabled={deleteMutation.isPending}
-                            onClick={() => {
-                                deleteMutation.mutate(building.id, {
-                                    onSuccess: () => {
-                                        setDeleteOpen(false);
-                                        router.push("/owner/dashboard/buildings");
-                                    },
+                {/* Edit dialog */}
+                <Dialog open={editOpen} onOpenChange={setEditOpen}>
+                    <DialogContent className="sm:max-w-2xl">
+                        <DialogHeader>
+                            <DialogTitle className="text-jade-950">
+                                Edit building
+                            </DialogTitle>
+                            <DialogDescription className="text-ink-soft">
+                                Update details for {building.name}.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <BuildingForm
+                            submitting={updateMutation.isPending}
+                            submitLabel="Save changes"
+                            defaultValues={{
+                                name: building.name,
+                                type: building.type,
+                                address: building.address,
+                                city: building.city,
+                                area: building.area ?? "",
+                                totalFloors: building.totalFloors,
+                                description: building.description ?? "",
+                                imageUrl: building.imageUrl ?? "",
+                            }}
+                            onCancel={() => setEditOpen(false)}
+                            onSubmit={(payload) => {
+                                updateMutation.mutate(payload, {
+                                    onSuccess: () => setEditOpen(false),
                                 });
                             }}
-                        >
-                            {deleteMutation.isPending ? (
-                                <>
-                                    <Loader2 size={14} className="animate-spin" />
-                                    Deleting...
-                                </>
-                            ) : (
-                                "Delete building"
-                            )}
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+                        />
+                    </DialogContent>
+                </Dialog>
+
+                {/* Delete confirmation */}
+                <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle className="text-jade-950">
+                                Delete this building?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription className="text-ink-soft">
+                                This will permanently delete{" "}
+                                <strong className="text-ink">
+                                    {building.name}
+                                </strong>
+                                . Floors, units and lease history attached to it may
+                                also be affected. This action cannot be undone.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel disabled={deleteMutation.isPending}>
+                                Cancel
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                                disabled={deleteMutation.isPending}
+                                onClick={() => {
+                                    deleteMutation.mutate(building.id, {
+                                        onSuccess: () => {
+                                            setDeleteOpen(false);
+                                            router.push(
+                                                "/owner/dashboard/buildings",
+                                            );
+                                        },
+                                    });
+                                }}
+                                className="bg-coral-600 hover:bg-coral-700 text-paper"
+                            >
+                                {deleteMutation.isPending ? (
+                                    <>
+                                        <Loader2
+                                            size={14}
+                                            className="animate-spin"
+                                        />
+                                        Deleting…
+                                    </>
+                                ) : (
+                                    "Delete building"
+                                )}
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            </div>
         </div>
     );
 }
@@ -365,41 +426,30 @@ export default function BuildingDetailPage() {
 function StatTile({
     icon: Icon,
     label,
+    bn,
     value,
-    accent,
 }: {
     icon: React.ComponentType<{ size?: number; className?: string }>;
     label: string;
+    bn: string;
     value: number;
-    accent: "indigo" | "violet" | "emerald" | "amber";
 }) {
-    const accents: Record<typeof accent, string> = {
-        indigo: "bg-indigo-50 text-indigo-600",
-        violet: "bg-violet-50 text-violet-600",
-        emerald: "bg-emerald-50 text-emerald-600",
-        amber: "bg-amber-50 text-amber-600",
-    };
-
     return (
-        <Card className="px-5 py-2">
-            <div className="flex items-center justify-between gap-3">
-                <div>
-                    <p className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
+        <div className="rounded-[12px] border border-rule-soft bg-paper px-4 py-3">
+            <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                    <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
                         {label}
                     </p>
-                    <p className="mt-1 text-2xl font-semibold text-slate-900 tabular-nums">
-                        {value}
+                    <p className="font-bangla text-[10.5px] text-ink-soft/70">
+                        {bn}
                     </p>
                 </div>
-                <span
-                    className={cn(
-                        "flex size-10 shrink-0 items-center justify-center rounded-lg",
-                        accents[accent],
-                    )}
-                >
-                    <Icon size={18} />
-                </span>
+                <Icon size={14} className="text-ink-soft/60 shrink-0" />
             </div>
-        </Card>
+            <p className="mt-1.5 text-[24px] font-bold tracking-[-0.025em] text-jade-950 tabular-nums leading-none">
+                {fmtNum(value)}
+            </p>
+        </div>
     );
 }
