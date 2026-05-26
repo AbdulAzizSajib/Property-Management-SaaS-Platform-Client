@@ -1,6 +1,7 @@
 import QueryProviders from "@/src/providers/QueryProvider";
 import type { Metadata } from "next";
 import { Geist, Hind_Siliguri, Instrument_Serif, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import type { ReactNode } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -37,6 +38,13 @@ const instrument = Instrument_Serif({
     style: ["normal", "italic"],
 });
 
+// Local brand font — used only for the "Bariyan" wordmark in the navbar.
+const rubita = localFont({
+    src: "../font/RubitaSmile.ttf",
+    variable: "--font-rubita",
+    display: "swap",
+});
+
 export const metadata: Metadata = {
     title: "BariBari — Smart Property Management for Bangladesh",
     description:
@@ -47,7 +55,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     return (
         <html
             lang="en"
-            className={`${jakarta.variable} ${geist.variable} ${hind.variable} ${jetbrains.variable} ${instrument.variable}`}
+            className={`${jakarta.variable} ${geist.variable} ${hind.variable} ${jetbrains.variable} ${instrument.variable} ${rubita.variable}`}
         >
             <body>
                 <QueryProviders>{children}</QueryProviders>

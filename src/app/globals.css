@@ -11,6 +11,7 @@
     --font-mono: var(--font-jetbrains), ui-monospace, monospace;
     --font-serif: var(--font-instrument), "Geist", serif;
     --font-geist: var(--font-geist-sans), system-ui, sans-serif;
+    --font-rubita: var(--font-rubita), system-ui, sans-serif;
 
     --color-jade-50: #e6f4ef;
     --color-jade-500: #1f9876;

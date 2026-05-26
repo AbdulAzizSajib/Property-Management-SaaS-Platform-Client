@@ -115,6 +115,31 @@ export const ownerNavItems: NavSection[] = [
                 href: "/owner/dashboard/payments",
                 icon: "CreditCard",
             },
+            {
+                title: "Expenses",
+                href: "/owner/dashboard/expenses",
+                icon: "Banknote",
+            },
+            {
+                title: "Reports",
+                href: "/owner/dashboard/reports",
+                icon: "BarChart3",
+            },
+        ],
+    },
+    {
+        title: "Operations",
+        items: [
+            {
+                title: "Complaints",
+                href: "/owner/dashboard/complaints",
+                icon: "MessageSquareWarning",
+            },
+            {
+                title: "Documents",
+                href: "/owner/dashboard/documents",
+                icon: "FolderArchive",
+            },
         ],
     },
     {

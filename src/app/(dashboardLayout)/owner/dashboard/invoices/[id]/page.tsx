@@ -1,5 +1,7 @@
 "use client";
 
+// src/app/owner/dashboard/invoices/[id]/page.tsx
+
 import {
     formatBillingMonth,
     invoiceStatusLabel,
@@ -8,13 +10,12 @@ import {
     invoiceTypeStyles,
 } from "@/src/components/dashboard/invoices/invoiceStyles";
 import { formatMoney } from "@/src/components/dashboard/units/unitStyles";
-import { Badge } from "@/src/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card";
 import { Skeleton } from "@/src/components/ui/skeleton";
 import { useInvoice } from "@/src/hooks/useInvoices";
 import { cn } from "@/src/lib/utils";
 import {
     ArrowLeft,
+    ArrowUpRight,
     Building,
     Calendar,
     CreditCard,
@@ -38,408 +39,557 @@ export default function InvoiceDetailPage() {
 
     if (isLoading) {
         return (
-            <div className="space-y-6 p-4 sm:p-6 lg:p-8">
-                <Skeleton className="h-6 w-32" />
-                <Skeleton className="h-44 w-full" />
-                <Skeleton className="h-72 w-full" />
+            <div className="min-h-screen bg-cream">
+                <div className="mx-auto max-w-[1080px] space-y-5 p-4 sm:p-6 lg:p-8">
+                    <Skeleton className="h-5 w-32 bg-paper" />
+                    <Skeleton className="h-44 w-full bg-paper rounded-[18px]" />
+                    <Skeleton className="h-72 w-full bg-paper rounded-[14px]" />
+                </div>
             </div>
         );
     }
 
     if (isError || !inv) {
         return (
-            <div className="p-4 sm:p-6 lg:p-8">
-                <Link
-                    href="/owner/dashboard/invoices"
-                    className="mb-4 inline-flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-700"
-                >
-                    <ArrowLeft size={12} />
-                    Back to invoices
-                </Link>
-                <Card className="px-6 py-12 text-center">
-                    <h2 className="text-base font-semibold text-slate-900">
-                        Couldn&apos;t load invoice
-                    </h2>
-                    <p className="mx-auto mt-1 max-w-sm text-sm text-slate-500">
-                        {error instanceof Error ? error.message : "Invoice not found."}
-                    </p>
-                </Card>
+            <div className="min-h-screen bg-cream">
+                <div className="mx-auto max-w-[1080px] p-4 sm:p-6 lg:p-8">
+                    <Link
+                        href="/owner/dashboard/invoices"
+                        className="mb-4 inline-flex items-center gap-1 text-[12.5px] font-medium text-ink-soft hover:text-jade-900"
+                    >
+                        <ArrowLeft size={12} />
+                        Back to invoices
+                    </Link>
+                    <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
+                        <h2 className="text-[15px] font-bold text-coral-700">
+                            Couldn&apos;t load invoice
+                        </h2>
+                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-700/80">
+                            {error instanceof Error
+                                ? error.message
+                                : "Invoice not found."}
+                        </p>
+                    </div>
+                </div>
             </div>
         );
     }
 
-    return (
-        <div className="space-y-6 p-4 sm:p-6 lg:p-8 print:p-0">
-            {/* Breadcrumb */}
-            <div className="flex items-center justify-between print:hidden">
-                <Link
-                    href="/owner/dashboard/invoices"
-                    className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-slate-700"
-                >
-                    <ArrowLeft size={12} />
-                    All invoices
-                </Link>
-                <button
-                    type="button"
-                    onClick={() => window.print()}
-                    className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
-                >
-                    <Printer size={13} />
-                    Print
-                </button>
-            </div>
+    const hasDue = Number(inv.dueAmount) > 0;
 
-            {/* Hero */}
-            <Card className="px-6 py-6">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                    <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                            <span className="flex size-10 items-center justify-center rounded-lg bg-indigo-100 text-indigo-700">
-                                <Receipt size={18} />
-                            </span>
-                            <div>
-                                <p className="font-mono text-sm font-semibold text-slate-900">
-                                    {inv.invoiceNumber}
-                                </p>
-                                <p className="text-xs text-slate-500">
-                                    For {formatBillingMonth(inv.billingMonth)}
-                                </p>
+    return (
+        <div className="min-h-screen bg-cream print:bg-white">
+            {/* Print-only CSS — clean document look when printing */}
+            <style>{`
+                @media print {
+                    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                    .print\\:document { box-shadow: none !important; border-color: transparent !important; }
+                }
+            `}</style>
+
+            <div className="mx-auto max-w-[1080px] space-y-5 p-4 sm:p-6 lg:p-8 print:max-w-full print:p-0 print:space-y-4">
+                {/* Toolbar — hidden in print */}
+                <div className="flex items-center justify-between print:hidden">
+                    <Link
+                        href="/owner/dashboard/invoices"
+                        className="inline-flex items-center gap-1 text-[12.5px] font-medium text-ink-soft transition-colors hover:text-jade-900"
+                    >
+                        <ArrowLeft size={12} />
+                        All invoices
+                    </Link>
+                    <button
+                        type="button"
+                        onClick={() => window.print()}
+                        className="inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-rule-soft bg-paper px-3 text-[12.5px] font-medium text-ink transition-colors hover:border-jade-700/30 hover:text-jade-900"
+                    >
+                        <Printer size={12} />
+                        Print
+                    </button>
+                </div>
+
+                {/* Document */}
+                <div className="print:document overflow-hidden rounded-[18px] border border-rule-soft bg-paper print:rounded-none">
+                    {/* Document header — letterhead style */}
+                    <div className="border-b border-rule-soft px-6 py-5 sm:px-8 sm:py-6">
+                        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                            {/* Brand mark */}
+                            <div className="flex items-center gap-3">
+                                <span className="relative inline-flex size-11 items-center justify-center rounded-[9px] bg-jade-900 text-paper">
+                                    <span className="text-[16px] font-bold leading-none">
+                                        B
+                                    </span>
+                                    <span
+                                        aria-hidden
+                                        className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-coral-600 ring-2 ring-paper"
+                                    />
+                                </span>
+                                <div>
+                                    <p className="font-serif text-[13px] italic text-coral-600/85">
+                                        Invoice
+                                    </p>
+                                    <p className="font-mono text-[14px] font-bold tracking-tight text-jade-950">
+                                        {inv.invoiceNumber}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Status pills */}
+                            <div className="flex flex-wrap items-center gap-2">
+                                <span
+                                    className={cn(
+                                        "rounded-md border px-2 py-1 text-[10.5px] font-semibold uppercase tracking-wider",
+                                        invoiceTypeStyles[inv.type],
+                                    )}
+                                >
+                                    {invoiceTypeLabel(inv.type)}
+                                </span>
+                                <span
+                                    className={cn(
+                                        "rounded-md border px-2 py-1 text-[10.5px] font-semibold uppercase tracking-wider",
+                                        invoiceStatusStyles[inv.status],
+                                    )}
+                                >
+                                    {invoiceStatusLabel(inv.status)}
+                                </span>
                             </div>
                         </div>
+                    </div>
 
-                        <div className="mt-3 flex flex-wrap items-center gap-2">
-                            <Badge
-                                variant="outline"
-                                className={cn(invoiceTypeStyles[inv.type])}
+                    {/* Amount due — the headline number */}
+                    <div className="grid grid-cols-1 border-b border-rule-soft sm:grid-cols-[1.5fr_1fr]">
+                        <div className="px-6 py-5 sm:px-8 sm:py-6">
+                            <p className="font-serif text-[13px] italic text-coral-600/85">
+                                Amount due
+                            </p>
+                            <p className="font-bangla text-[11.5px] text-ink-soft/70 mt-0.5">
+                                পরিশোধযোগ্য পরিমাণ
+                            </p>
+                            <p
+                                className={cn(
+                                    "mt-3 text-[40px] font-bold leading-none tracking-[-0.025em] tabular-nums sm:text-[44px]",
+                                    hasDue
+                                        ? "text-coral-700"
+                                        : "text-jade-800",
+                                )}
                             >
-                                {invoiceTypeLabel(inv.type)}
-                            </Badge>
-                            <Badge
-                                variant="outline"
-                                className={cn(invoiceStatusStyles[inv.status])}
-                            >
-                                {invoiceStatusLabel(inv.status)}
-                            </Badge>
+                                {formatMoney(inv.dueAmount)}
+                            </p>
+                            <p className="mt-3 text-[12.5px] text-ink-soft">
+                                of{" "}
+                                <span className="font-semibold text-ink tabular-nums">
+                                    {formatMoney(inv.totalAmount)}
+                                </span>{" "}
+                                total
+                                {Number(inv.paidAmount) > 0 && (
+                                    <>
+                                        {" · "}
+                                        <span className="text-jade-800 tabular-nums">
+                                            {formatMoney(inv.paidAmount)} paid
+                                        </span>
+                                    </>
+                                )}
+                            </p>
+                        </div>
+
+                        {/* Key dates */}
+                        <div className="grid grid-cols-3 divide-x divide-rule-soft border-t border-rule-soft sm:grid-cols-1 sm:divide-x-0 sm:divide-y sm:border-l sm:border-t-0">
+                            <DateBlock
+                                label="Issued"
+                                bn="ইস্যু"
+                                value={new Date(
+                                    inv.issueDate,
+                                ).toLocaleDateString()}
+                            />
+                            <DateBlock
+                                label="Due"
+                                bn="শেষ দিন"
+                                value={new Date(
+                                    inv.dueDate,
+                                ).toLocaleDateString()}
+                                emphasis={hasDue}
+                            />
+                            <DateBlock
+                                label="Billing"
+                                bn="মাস"
+                                value={formatBillingMonth(inv.billingMonth)}
+                            />
                         </div>
                     </div>
 
-                    <div className="text-right">
-                        <p className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
-                            Amount due
-                        </p>
-                        <p
-                            className={cn(
-                                "text-3xl font-bold tabular-nums",
-                                Number(inv.dueAmount) > 0
-                                    ? "text-rose-700"
-                                    : "text-emerald-700",
-                            )}
-                        >
-                            {formatMoney(inv.dueAmount)}
-                        </p>
-                        <p className="text-xs text-slate-500">
-                            of {formatMoney(inv.totalAmount)} total
-                        </p>
-                    </div>
-                </div>
-
-                {/* Key dates */}
-                <div className="mt-5 grid grid-cols-1 gap-3 border-t border-slate-100 pt-4 sm:grid-cols-3">
-                    <DateRow
-                        label="Issue date"
-                        value={new Date(inv.issueDate).toLocaleDateString()}
-                    />
-                    <DateRow
-                        label="Due date"
-                        value={new Date(inv.dueDate).toLocaleDateString()}
-                    />
-                    <DateRow
-                        label="Billing month"
-                        value={formatBillingMonth(inv.billingMonth)}
-                    />
-                </div>
-
-                {inv.notes && (
-                    <p className="mt-4 rounded-md bg-slate-50 px-3 py-2 text-sm text-slate-600">
-                        {inv.notes}
-                    </p>
-                )}
-            </Card>
-
-            {/* Bill from / Bill to */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {/* Bill to (tenant) */}
-                <Card className="px-6">
-                    <CardHeader className="px-0">
-                        <CardTitle>Bill to</CardTitle>
-                        <CardDescription>Tenant details</CardDescription>
-                    </CardHeader>
-                    <CardContent className="px-0">
-                        <Link
+                    {/* Bill to + Property */}
+                    <div className="grid grid-cols-1 border-b border-rule-soft sm:grid-cols-2 sm:divide-x sm:divide-rule-soft">
+                        <PartyBlock
+                            eyebrow="Bill to · বিল প্রাপক"
                             href={`/owner/dashboard/tenants/${inv.tenant.id}`}
-                            className="-mx-2 -my-2 block rounded-md px-2 py-2 hover:bg-slate-50 print:cursor-default print:hover:bg-transparent"
+                            heading={inv.tenant.name}
                         >
-                            <p className="text-sm font-semibold text-slate-900">
-                                {inv.tenant.name}
-                            </p>
-                            <ul className="mt-2 space-y-1 text-xs text-slate-600">
-                                <li className="inline-flex items-center gap-1.5">
-                                    <Phone size={11} className="text-slate-400" />
+                            <ul className="space-y-1 text-[12px] text-ink-soft">
+                                <li className="inline-flex items-center gap-1.5 tabular-nums">
+                                    <Phone
+                                        size={11}
+                                        className="text-ink-soft/60"
+                                    />
                                     {inv.tenant.phone}
                                 </li>
                                 {inv.tenant.email && (
-                                    <li className="inline-flex items-center gap-1.5">
-                                        <Mail size={11} className="text-slate-400" />
-                                        {inv.tenant.email}
+                                    <li className="flex items-center gap-1.5 truncate">
+                                        <Mail
+                                            size={11}
+                                            className="shrink-0 text-ink-soft/60"
+                                        />
+                                        <span className="truncate">
+                                            {inv.tenant.email}
+                                        </span>
                                     </li>
                                 )}
                                 {inv.tenant.permanentAddress && (
-                                    <li className="inline-flex items-start gap-1.5">
+                                    <li className="flex items-start gap-1.5">
                                         <MapPin
                                             size={11}
-                                            className="mt-0.5 text-slate-400"
+                                            className="mt-0.5 shrink-0 text-ink-soft/60"
                                         />
-                                        <span>{inv.tenant.permanentAddress}</span>
+                                        <span>
+                                            {inv.tenant.permanentAddress}
+                                        </span>
                                     </li>
                                 )}
                             </ul>
-                        </Link>
-                    </CardContent>
-                </Card>
+                        </PartyBlock>
 
-                {/* Property */}
-                <Card className="px-6">
-                    <CardHeader className="px-0">
-                        <CardTitle>Property</CardTitle>
-                        <CardDescription>Unit details</CardDescription>
-                    </CardHeader>
-                    <CardContent className="px-0">
-                        <Link
+                        <PartyBlock
+                            eyebrow="Property · সম্পত্তি"
                             href={`/owner/dashboard/units/${inv.unit.id}`}
-                            className="-mx-2 -my-2 block rounded-md px-2 py-2 hover:bg-slate-50 print:cursor-default print:hover:bg-transparent"
+                            heading={`${inv.unit.building.name} · Unit ${inv.unit.name}`}
                         >
-                            <p className="text-sm font-semibold text-slate-900">
-                                {inv.unit.building.name} · Unit {inv.unit.name}
-                            </p>
-                            <ul className="mt-2 space-y-1 text-xs text-slate-600">
-                                <li className="inline-flex items-center gap-1.5">
-                                    <Building size={11} className="text-slate-400" />
-                                    {inv.unit.building.address}
+                            <ul className="space-y-1 text-[12px] text-ink-soft">
+                                <li className="flex items-start gap-1.5">
+                                    <Building
+                                        size={11}
+                                        className="mt-0.5 shrink-0 text-ink-soft/60"
+                                    />
+                                    <span>{inv.unit.building.address}</span>
                                 </li>
                                 <li className="inline-flex items-center gap-1.5">
-                                    <DoorOpen size={11} className="text-slate-400" />
+                                    <DoorOpen
+                                        size={11}
+                                        className="text-ink-soft/60"
+                                    />
                                     {inv.unit.type.charAt(0) +
                                         inv.unit.type.slice(1).toLowerCase()}
                                 </li>
                                 <li className="inline-flex items-center gap-1.5">
-                                    <FileText size={11} className="text-slate-400" />
+                                    <FileText
+                                        size={11}
+                                        className="text-ink-soft/60"
+                                    />
                                     <Link
                                         href={`/owner/dashboard/leases/${inv.lease.id}`}
-                                        className="font-medium text-indigo-600 hover:text-indigo-700"
+                                        className="font-medium text-jade-900 transition-colors hover:text-coral-600 print:text-ink print:no-underline"
                                     >
-                                        Lease #{inv.lease.id.slice(-6).toUpperCase()}
+                                        Lease #
+                                        {inv.lease.id.slice(-6).toUpperCase()}
                                     </Link>
                                 </li>
                             </ul>
-                        </Link>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Charges breakdown */}
-            <Card className="px-6">
-                <CardHeader className="px-0">
-                    <CardTitle>Charges</CardTitle>
-                    <CardDescription>
-                        Breakdown for {formatBillingMonth(inv.billingMonth)}
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="px-0">
-                    <div className="overflow-hidden rounded-lg border border-slate-200">
-                        <table className="w-full text-sm">
-                            <thead className="bg-slate-50 text-xs font-medium uppercase tracking-wider text-slate-500">
-                                <tr>
-                                    <th className="px-4 py-2.5 text-left">Description</th>
-                                    <th className="px-4 py-2.5 text-right">Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100 bg-white">
-                                <ChargeRow
-                                    label="Base rent"
-                                    value={inv.rentAmount}
-                                />
-                                <ChargeRow
-                                    label="Service charge"
-                                    value={inv.serviceCharge}
-                                />
-                                {Number(inv.utilityAmount) > 0 && (
-                                    <ChargeRow
-                                        label="Utility"
-                                        value={inv.utilityAmount}
-                                    />
-                                )}
-                                {Number(inv.penaltyAmount) > 0 && (
-                                    <ChargeRow
-                                        label="Penalty"
-                                        value={inv.penaltyAmount}
-                                        accent="rose"
-                                    />
-                                )}
-                            </tbody>
-                            <tfoot className="bg-slate-50 text-sm">
-                                <tr>
-                                    <td className="px-4 py-3 font-medium text-slate-700">
-                                        Total
-                                    </td>
-                                    <td className="px-4 py-3 text-right font-semibold tabular-nums text-slate-900">
-                                        {formatMoney(inv.totalAmount)}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td className="px-4 py-2 text-xs text-slate-500">
-                                        Paid
-                                    </td>
-                                    <td className="px-4 py-2 text-right text-xs tabular-nums text-emerald-700">
-                                        {formatMoney(inv.paidAmount)}
-                                    </td>
-                                </tr>
-                                <tr className="border-t border-slate-200">
-                                    <td className="px-4 py-3 text-sm font-semibold text-slate-700">
-                                        Due
-                                    </td>
-                                    <td
-                                        className={cn(
-                                            "px-4 py-3 text-right text-base font-bold tabular-nums",
-                                            Number(inv.dueAmount) > 0
-                                                ? "text-rose-700"
-                                                : "text-emerald-700",
-                                        )}
-                                    >
-                                        {formatMoney(inv.dueAmount)}
-                                    </td>
-                                </tr>
-                            </tfoot>
-                        </table>
+                        </PartyBlock>
                     </div>
-                </CardContent>
-            </Card>
 
-            {/* Payments */}
-            <Card className="px-6">
-                <CardHeader className="px-0">
-                    <CardTitle>Payment history</CardTitle>
-                    <CardDescription>
-                        {inv.payments.length === 0
-                            ? "No payments recorded yet"
-                            : `${inv.payments.length} payment${inv.payments.length === 1 ? "" : "s"} totalling ${formatMoney(inv.paidAmount)}`}
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="px-0">
-                    {inv.payments.length === 0 ? (
-                        <div className="rounded-lg border border-dashed border-slate-200 px-4 py-8 text-center">
-                            <CreditCard className="mx-auto text-slate-300" size={24} />
-                            <p className="mt-2 text-sm text-slate-500">
-                                No payments recorded for this invoice
-                            </p>
-                            {Number(inv.dueAmount) > 0 && (
-                                <Link
-                                    href={`/owner/dashboard/payments?invoiceId=${inv.id}&record=1`}
-                                    className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-700"
-                                >
-                                    Record a payment →
-                                </Link>
-                            )}
-                        </div>
-                    ) : (
-                        <ul className="divide-y divide-slate-100">
-                            {inv.payments.map((p) => (
-                                <li
-                                    key={p.id}
-                                    className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
-                                >
-                                    <div className="min-w-0">
-                                        <p className="truncate text-sm font-medium text-slate-800">
-                                            {p.method}
-                                            {p.transactionId && (
-                                                <span className="ml-1 font-mono text-[10px] text-slate-400">
-                                                    ({p.transactionId})
-                                                </span>
+                    {/* Charges */}
+                    <div className="px-6 py-5 sm:px-8 sm:py-6">
+                        <p className="font-serif text-[13px] italic text-coral-600/85">
+                            Breakdown for {formatBillingMonth(inv.billingMonth)}
+                        </p>
+                        <h3 className="mt-0.5 text-[16px] font-bold tracking-[-0.015em] text-jade-950">
+                            Charges
+                        </h3>
+
+                        <div className="mt-4 overflow-hidden rounded-[10px] border border-rule-soft">
+                            <table className="w-full text-[13px]">
+                                <thead className="bg-cream/60 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
+                                    <tr>
+                                        <th className="px-4 py-2.5 text-left">
+                                            Description
+                                        </th>
+                                        <th className="px-4 py-2.5 text-right">
+                                            Amount
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-rule-soft bg-paper">
+                                    <ChargeRow
+                                        label="Base rent"
+                                        bn="মূল ভাড়া"
+                                        value={inv.rentAmount}
+                                    />
+                                    <ChargeRow
+                                        label="Service charge"
+                                        bn="সার্ভিস চার্জ"
+                                        value={inv.serviceCharge}
+                                    />
+                                    {Number(inv.utilityAmount) > 0 && (
+                                        <ChargeRow
+                                            label="Utility"
+                                            bn="ইউটিলিটি"
+                                            value={inv.utilityAmount}
+                                        />
+                                    )}
+                                    {Number(inv.penaltyAmount) > 0 && (
+                                        <ChargeRow
+                                            label="Penalty"
+                                            bn="জরিমানা"
+                                            value={inv.penaltyAmount}
+                                            warn
+                                        />
+                                    )}
+                                </tbody>
+                                <tfoot className="bg-cream/40 text-[13px]">
+                                    <tr>
+                                        <td className="px-4 py-2.5 text-ink-soft">
+                                            Subtotal
+                                        </td>
+                                        <td className="px-4 py-2.5 text-right font-semibold tabular-nums text-jade-950">
+                                            {formatMoney(inv.totalAmount)}
+                                        </td>
+                                    </tr>
+                                    {Number(inv.paidAmount) > 0 && (
+                                        <tr>
+                                            <td className="px-4 py-2 text-[12px] text-ink-soft">
+                                                Paid to date
+                                            </td>
+                                            <td className="px-4 py-2 text-right text-[12px] font-semibold tabular-nums text-jade-800">
+                                                − {formatMoney(inv.paidAmount)}
+                                            </td>
+                                        </tr>
+                                    )}
+                                    <tr className="border-t border-rule-soft">
+                                        <td className="px-4 py-3 text-[14px] font-bold text-jade-950">
+                                            Due
+                                        </td>
+                                        <td
+                                            className={cn(
+                                                "px-4 py-3 text-right text-[16px] font-bold tabular-nums",
+                                                hasDue
+                                                    ? "text-coral-700"
+                                                    : "text-jade-800",
                                             )}
-                                        </p>
-                                        <p className="text-[11px] text-slate-500">
-                                            <Calendar size={10} className="mr-1 inline" />
-                                            {new Date(p.createdAt).toLocaleString()}
-                                        </p>
-                                        {p.notes && (
-                                            <p className="mt-0.5 truncate text-[11px] text-slate-500">
-                                                {p.notes}
-                                            </p>
-                                        )}
-                                    </div>
-                                    <p className="text-sm font-semibold text-emerald-700 tabular-nums">
-                                        +{formatMoney(p.amount)}
-                                    </p>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </CardContent>
-            </Card>
+                                        >
+                                            {formatMoney(inv.dueAmount)}
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
 
-            {/* Lease summary footer */}
-            <Card className="px-6 py-4">
-                <div className="flex items-center justify-between gap-3">
-                    <div className="inline-flex items-center gap-2 text-xs text-slate-600">
-                        <User size={13} className="text-slate-400" />
+                        {inv.notes && (
+                            <p className="mt-4 rounded-[10px] border-l-[2.5px] border-coral-500 bg-cream/70 px-3 py-2 text-[13px] text-ink">
+                                {inv.notes}
+                            </p>
+                        )}
+                    </div>
+                </div>
+
+                {/* Payments — outside the document, hidden in print */}
+                <div className="rounded-[14px] border border-rule-soft bg-paper p-5 print:hidden">
+                    <div className="flex items-start justify-between gap-3">
+                        <div>
+                            <p className="font-serif text-[13px] italic text-coral-600/85">
+                                Money received
+                            </p>
+                            <h3 className="mt-0.5 text-[16px] font-bold tracking-[-0.015em] text-jade-950">
+                                Payment history
+                            </h3>
+                            <p className="mt-1 text-[12px] text-ink-soft">
+                                {inv.payments.length === 0
+                                    ? "No payments recorded yet"
+                                    : `${inv.payments.length} payment${inv.payments.length === 1 ? "" : "s"} totalling ${formatMoney(inv.paidAmount)}`}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="mt-4">
+                        {inv.payments.length === 0 ? (
+                            <div className="rounded-[10px] border border-dashed border-rule-soft px-4 py-8 text-center">
+                                <CreditCard
+                                    className="mx-auto text-ink-soft/40"
+                                    size={24}
+                                />
+                                <p className="mt-2 text-[13px] text-ink-soft">
+                                    No payments recorded for this invoice
+                                </p>
+                                {hasDue && (
+                                    <Link
+                                        href={`/owner/dashboard/payments?invoiceId=${inv.id}&record=1`}
+                                        className="mt-3 inline-flex items-center gap-1 text-[12.5px] font-semibold text-jade-900 transition-colors hover:text-coral-600"
+                                    >
+                                        Record a payment →
+                                    </Link>
+                                )}
+                            </div>
+                        ) : (
+                            <ul className="divide-y divide-rule-soft">
+                                {inv.payments.map((p) => (
+                                    <li
+                                        key={p.id}
+                                        className="flex items-center justify-between gap-3 py-3 first:pt-1 last:pb-1"
+                                    >
+                                        <div className="min-w-0">
+                                            <p className="truncate text-[13px] font-semibold text-ink">
+                                                {p.method}
+                                                {p.transactionId && (
+                                                    <span className="ml-1.5 font-mono text-[10.5px] font-normal text-ink-soft/70">
+                                                        ({p.transactionId})
+                                                    </span>
+                                                )}
+                                            </p>
+                                            <p className="text-[11px] text-ink-soft tabular-nums">
+                                                <Calendar
+                                                    size={10}
+                                                    className="mr-1 inline -translate-y-px text-ink-soft/60"
+                                                />
+                                                {new Date(
+                                                    p.createdAt,
+                                                ).toLocaleString()}
+                                            </p>
+                                            {p.notes && (
+                                                <p className="mt-0.5 truncate text-[11px] text-ink-soft/85">
+                                                    {p.notes}
+                                                </p>
+                                            )}
+                                        </div>
+                                        <p className="text-[14px] font-semibold text-jade-800 tabular-nums">
+                                            + {formatMoney(p.amount)}
+                                        </p>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                </div>
+
+                {/* Lease summary footer — hidden in print */}
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-[12px] border border-rule-soft bg-paper px-4 py-3 print:hidden">
+                    <div className="inline-flex items-center gap-2 text-[12px] text-ink-soft">
+                        <User size={13} className="text-ink-soft/60" />
                         Linked lease:{" "}
                         <Link
                             href={`/owner/dashboard/leases/${inv.lease.id}`}
-                            className="font-medium text-indigo-600 hover:text-indigo-700"
+                            className="font-semibold text-jade-900 transition-colors hover:text-coral-600"
                         >
                             #{inv.lease.id.slice(-8).toUpperCase()}
                         </Link>
                     </div>
-                    <span className="text-xs text-slate-500">
-                        Rent due day {inv.lease.rentDueDay} ·{" "}
-                        {formatMoney(inv.lease.monthlyRent)}/month
+                    <span className="text-[12px] text-ink-soft tabular-nums">
+                        Rent due day{" "}
+                        <span className="font-semibold text-ink">
+                            {inv.lease.rentDueDay}
+                        </span>{" "}
+                        ·{" "}
+                        <span className="font-semibold text-ink">
+                            {formatMoney(inv.lease.monthlyRent)}
+                        </span>
+                        /month
                     </span>
                 </div>
-            </Card>
+            </div>
+        </div>
+    );
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────────────────────────
+
+function DateBlock({
+    label,
+    bn,
+    value,
+    emphasis,
+}: {
+    label: string;
+    bn: string;
+    value: string;
+    emphasis?: boolean;
+}) {
+    return (
+        <div className="px-4 py-3 sm:px-6 sm:py-4">
+            <div className="flex items-baseline justify-between gap-2 sm:justify-start sm:gap-1.5">
+                <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
+                    {label}
+                </p>
+                <p className="font-bangla text-[10.5px] text-ink-soft/65">
+                    {bn}
+                </p>
+            </div>
+            <p
+                className={cn(
+                    "mt-1 text-[13.5px] font-semibold tabular-nums",
+                    emphasis ? "text-coral-700" : "text-jade-950",
+                )}
+            >
+                {value}
+            </p>
+        </div>
+    );
+}
+
+function PartyBlock({
+    eyebrow,
+    href,
+    heading,
+    children,
+}: {
+    eyebrow: string;
+    href: string;
+    heading: string;
+    children: React.ReactNode;
+}) {
+    return (
+        <div className="px-6 py-5 sm:px-8 sm:py-6">
+            <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
+                {eyebrow}
+            </p>
+            <Link
+                href={href}
+                className="group mt-1.5 inline-flex items-center gap-1.5 text-[15px] font-bold text-jade-950 transition-colors hover:text-jade-900 print:no-underline print:hover:text-jade-950"
+            >
+                {heading}
+                <ArrowUpRight
+                    size={13}
+                    className="text-ink-soft/50 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-jade-900 print:hidden"
+                />
+            </Link>
+            <div className="mt-3">{children}</div>
         </div>
     );
 }
 
 function ChargeRow({
     label,
+    bn,
     value,
-    accent,
+    warn,
 }: {
     label: string;
+    bn: string;
     value: string;
-    accent?: "rose";
+    warn?: boolean;
 }) {
     return (
         <tr>
-            <td className="px-4 py-2.5 text-slate-700">{label}</td>
+            <td className="px-4 py-2.5">
+                <span className="text-ink">{label}</span>
+                <span className="font-bangla ml-1.5 text-[11px] text-ink-soft/70">
+                    · {bn}
+                </span>
+            </td>
             <td
                 className={cn(
-                    "px-4 py-2.5 text-right tabular-nums",
-                    accent === "rose" ? "text-rose-700" : "text-slate-900",
+                    "px-4 py-2.5 text-right tabular-nums font-semibold",
+                    warn ? "text-coral-700" : "text-jade-950",
                 )}
             >
                 {formatMoney(value)}
             </td>
         </tr>
-    );
-}
-
-function DateRow({ label, value }: { label: string; value: string }) {
-    return (
-        <div>
-            <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
-                {label}
-            </p>
-            <p className="mt-0.5 text-sm font-medium text-slate-800">{value}</p>
-        </div>
     );
 }

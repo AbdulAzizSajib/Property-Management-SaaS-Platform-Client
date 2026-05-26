@@ -132,6 +132,28 @@ const httpPatch = async <TData>(endpoint: string, data: unknown, options?: ApiRe
     }
 }
 
+/**
+ * Multipart file upload. Passes FormData through to axios so the multipart
+ * boundary is set automatically — does NOT use the default JSON Content-Type.
+ */
+const httpUpload = async <TData>(endpoint: string, formData: FormData, options?: ApiRequestOptions) : Promise<ApiResponse<TData>> => {
+    try {
+        const instance = await axiosInstance();
+        const response = await instance.post<ApiResponse<TData>>(endpoint, formData, {
+            params: options?.params,
+            // Drop the JSON Content-Type so axios sets multipart/form-data; boundary=…
+            headers: {
+                ...options?.headers,
+                "Content-Type": "multipart/form-data",
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error(`UPLOAD request to ${endpoint} failed:`, error);
+        throwServerError(error);
+    }
+}
+
 const httpDelete =  async <TData>(endpoint: string, options?: ApiRequestOptions) : Promise<ApiResponse<TData>> => {
     try {
         const instance = await axiosInstance();
@@ -152,4 +174,5 @@ export const httpClient = {
     put: httpPut,
     patch: httpPatch,
     delete: httpDelete,
+    upload: httpUpload,
 }

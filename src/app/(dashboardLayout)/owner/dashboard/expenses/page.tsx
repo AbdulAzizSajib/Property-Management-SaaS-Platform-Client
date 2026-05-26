@@ -1,14 +1,17 @@
 "use client";
 
-// src/app/owner/dashboard/payments/page.tsx
+// src/app/owner/dashboard/expenses/page.tsx
 
-import { RecordPaymentDialog } from "@/src/components/dashboard/payments/RecordPaymentDialog";
+import { RecordExpenseDialog } from "@/src/components/dashboard/expenses/RecordExpenseDialog";
+import {
+    expenseCategoryAccent,
+    expenseCategoryLabel,
+    expenseCategoryStyles,
+    formatExpenseDate,
+} from "@/src/components/dashboard/expenses/expenseStyles";
 import {
     paymentMethodLabel,
     paymentMethodStyles,
-    paymentStatusAccent,
-    paymentStatusLabel,
-    paymentStatusStyles,
 } from "@/src/components/dashboard/payments/paymentStyles";
 import { formatMoney } from "@/src/components/dashboard/units/unitStyles";
 import {
@@ -19,24 +22,23 @@ import {
     SelectValue,
 } from "@/src/components/ui/select";
 import { Skeleton } from "@/src/components/ui/skeleton";
-import { usePayments } from "@/src/hooks/usePayments";
+import { useBuildings } from "@/src/hooks/useBuildings";
+import { useExpenses } from "@/src/hooks/useExpenses";
 import { fmtNum } from "@/src/lib/numerals";
 import { cn } from "@/src/lib/utils";
 import {
-    PAYMENT_METHOD_OPTIONS,
-    PAYMENT_STATUS_OPTIONS,
-    type PaymentListItem,
-    type PaymentMethod,
-    type PaymentStatus,
-} from "@/src/types/payment.types";
+    EXPENSE_CATEGORY_OPTIONS,
+    type ExpenseCategory,
+    type ExpenseListItem,
+} from "@/src/types/expense.types";
 import {
     ArrowUpRight,
+    Banknote,
+    Building,
     Calendar,
     Plus,
-    Receipt,
     Search,
-    User,
-    Wallet,
+    Store,
     X,
 } from "lucide-react";
 import Link from "next/link";
@@ -44,49 +46,71 @@ import { Suspense, useMemo, useState } from "react";
 
 const ALL = "__ALL__";
 
-export default function PaymentsListPage() {
+export default function ExpensesListPage() {
     return (
         <Suspense fallback={<ListShell />}>
-            <PaymentsListInner />
+            <ExpensesListInner />
         </Suspense>
     );
 }
 
-function PaymentsListInner() {
-    const [statusFilter, setStatusFilter] = useState<string>(ALL);
-    const [methodFilter, setMethodFilter] = useState<string>(ALL);
+function ExpensesListInner() {
+    const [categoryFilter, setCategoryFilter] = useState<string>(ALL);
+    const [buildingFilter, setBuildingFilter] = useState<string>(ALL);
     const [query, setQuery] = useState("");
     const [recordOpen, setRecordOpen] = useState(false);
 
-    const { data: payments, isLoading, isError, error } = usePayments();
+    const filters = {
+        ...(categoryFilter !== ALL && {
+            category: categoryFilter as ExpenseCategory,
+        }),
+        ...(buildingFilter !== ALL && { buildingId: buildingFilter }),
+    };
+
+    const {
+        data: expenses,
+        isLoading,
+        isError,
+        error,
+    } = useExpenses(filters);
+    const { data: buildings } = useBuildings();
 
     const filtered = useMemo(
         () =>
-            (payments ?? []).filter((p) => {
-                if (statusFilter !== ALL && p.status !== statusFilter) return false;
-                if (methodFilter !== ALL && p.method !== methodFilter) return false;
+            (expenses ?? []).filter((e) => {
                 const q = query.trim().toLowerCase();
                 if (!q) return true;
                 return (
-                    p.receiptNumber.toLowerCase().includes(q) ||
-                    p.invoice.invoiceNumber.toLowerCase().includes(q) ||
-                    p.tenant.name.toLowerCase().includes(q) ||
-                    p.tenant.phone.toLowerCase().includes(q) ||
-                    (p.transactionId?.toLowerCase().includes(q) ?? false)
+                    e.title.toLowerCase().includes(q) ||
+                    (e.paidTo?.toLowerCase().includes(q) ?? false) ||
+                    (e.building?.name.toLowerCase().includes(q) ?? false) ||
+                    (e.notes?.toLowerCase().includes(q) ?? false)
                 );
             }),
-        [payments, query, statusFilter, methodFilter],
+        [expenses, query],
     );
 
-    const totalCollected = (payments ?? [])
-        .filter((p) => p.status === "PAID")
-        .reduce((sum, p) => sum + Number(p.amount), 0);
+    const totalSpent = (expenses ?? []).reduce(
+        (sum, e) => sum + Number(e.amount),
+        0,
+    );
 
-    const advanceCount = (payments ?? []).filter((p) => p.isAdvance).length;
-    const failedCount = (payments ?? []).filter((p) => p.status === "FAILED").length;
+    // This-month sub-stat (uses current calendar month against expenseDate)
+    const now = new Date();
+    const thisMonthSpent = (expenses ?? [])
+        .filter((e) => {
+            const d = new Date(e.expenseDate);
+            return (
+                d.getFullYear() === now.getFullYear() &&
+                d.getMonth() === now.getMonth()
+            );
+        })
+        .reduce((sum, e) => sum + Number(e.amount), 0);
 
     const hasActiveFilters =
-        statusFilter !== ALL || methodFilter !== ALL || query.trim() !== "";
+        categoryFilter !== ALL ||
+        buildingFilter !== ALL ||
+        query.trim() !== "";
 
     return (
         <div className="min-h-screen bg-cream">
@@ -95,13 +119,13 @@ function PaymentsListInner() {
                 <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                     <div>
                         <p className="font-serif text-[13px] italic text-coral-600/85">
-                            Money in
+                            Money out
                         </p>
                         <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
-                            Payments
+                            Expenses
                         </h1>
                         <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-                            সব রিসিভড পেমেন্ট।
+                            সব খরচ ও পরিচালনা ব্যয়।
                         </p>
                     </div>
 
@@ -111,11 +135,11 @@ function PaymentsListInner() {
                         className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
                     >
                         <Plus size={14} />
-                        Record payment
+                        Record expense
                     </button>
                 </header>
 
-                {/* Money hero — collected is THE number */}
+                {/* Money hero — total spent is THE number */}
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.4fr_1fr]">
                     <div
                         className="relative overflow-hidden rounded-[18px] bg-jade-950 px-5 py-5 text-paper sm:px-6 sm:py-6"
@@ -126,46 +150,54 @@ function PaymentsListInner() {
                     >
                         <div
                             aria-hidden
-                            className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 rounded-full opacity-40"
+                            className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 rounded-full opacity-45"
                             style={{
                                 background:
-                                    "radial-gradient(circle, rgba(46,196,140,0.45), transparent 65%)",
+                                    "radial-gradient(circle, rgba(255,123,87,0.45), transparent 65%)",
                             }}
                         />
 
                         <p className="relative font-serif text-[13px] italic text-paper/60">
-                            Total collected
+                            Total spent
                         </p>
                         <p className="font-bangla relative mt-0.5 text-[11.5px] text-paper/45">
-                            মোট আদায়
+                            মোট খরচ
                         </p>
-                        <p className="relative mt-3 text-[40px] font-bold leading-none tracking-[-0.025em] tabular-nums text-jade-300 sm:text-[46px]">
-                            {formatMoney(totalCollected)}
+                        <p className="relative mt-3 text-[40px] font-bold leading-none tracking-[-0.025em] tabular-nums text-coral-400 sm:text-[46px]">
+                            {formatMoney(totalSpent)}
                         </p>
                         <p className="relative mt-3 text-[12.5px] text-paper/70">
                             across{" "}
                             <span className="font-semibold tabular-nums text-paper">
-                                {fmtNum(payments?.length ?? 0)}
+                                {fmtNum(expenses?.length ?? 0)}
                             </span>{" "}
-                            payment{(payments?.length ?? 0) === 1 ? "" : "s"}
+                            expense{(expenses?.length ?? 0) === 1 ? "" : "s"}
+                            {thisMonthSpent > 0 && (
+                                <>
+                                    {" · "}
+                                    <span className="text-jade-300">
+                                        {formatMoney(thisMonthSpent)} this month
+                                    </span>
+                                </>
+                            )}
                         </p>
                     </div>
 
                     {/* Supporting */}
                     <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
                         <MiniStat
-                            label="Advances"
-                            bn="অগ্রিম"
-                            value={fmtNum(advanceCount)}
-                            sub="held against future"
-                            tone="good"
+                            label="This month"
+                            bn="এই মাসে"
+                            value={formatMoney(thisMonthSpent)}
+                            sub="spent so far"
+                            tone={thisMonthSpent > 0 ? "warn" : "neutral"}
                         />
                         <MiniStat
-                            label="Failed"
-                            bn="ব্যর্থ"
-                            value={fmtNum(failedCount)}
-                            sub="need review"
-                            tone={failedCount > 0 ? "warn" : "neutral"}
+                            label="Total entries"
+                            bn="মোট এন্ট্রি"
+                            value={fmtNum(expenses?.length ?? 0)}
+                            sub="logged expenses"
+                            tone="neutral"
                         />
                     </div>
                 </div>
@@ -182,23 +214,30 @@ function PaymentsListInner() {
                                 type="search"
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
-                                placeholder="Search by receipt #, invoice, tenant, txn ID…"
+                                placeholder="Search by title, vendor, building, notes…"
                                 className="h-9 w-full rounded-md border border-rule-soft bg-paper pl-9 pr-3 text-[13.5px] text-ink placeholder:text-ink-soft/60 focus:border-jade-700 focus:outline-none focus:ring-2 focus:ring-jade-700/20"
                             />
                         </div>
 
-                        <div className="w-full sm:w-44">
+                        <div className="w-full sm:w-48">
                             <Select
-                                value={statusFilter}
-                                onValueChange={(v) => setStatusFilter(v ?? ALL)}
+                                value={categoryFilter}
+                                onValueChange={(v) =>
+                                    setCategoryFilter(v ?? ALL)
+                                }
                             >
                                 <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
-                                    <SelectValue placeholder="Status" />
+                                    <SelectValue placeholder="Category" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value={ALL}>All statuses</SelectItem>
-                                    {PAYMENT_STATUS_OPTIONS.map((opt) => (
-                                        <SelectItem key={opt.value} value={opt.value}>
+                                    <SelectItem value={ALL}>
+                                        All categories
+                                    </SelectItem>
+                                    {EXPENSE_CATEGORY_OPTIONS.map((opt) => (
+                                        <SelectItem
+                                            key={opt.value}
+                                            value={opt.value}
+                                        >
                                             {opt.label}
                                         </SelectItem>
                                     ))}
@@ -208,17 +247,21 @@ function PaymentsListInner() {
 
                         <div className="w-full sm:w-44">
                             <Select
-                                value={methodFilter}
-                                onValueChange={(v) => setMethodFilter(v ?? ALL)}
+                                value={buildingFilter}
+                                onValueChange={(v) =>
+                                    setBuildingFilter(v ?? ALL)
+                                }
                             >
                                 <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
-                                    <SelectValue placeholder="Method" />
+                                    <SelectValue placeholder="Building" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value={ALL}>All methods</SelectItem>
-                                    {PAYMENT_METHOD_OPTIONS.map((opt) => (
-                                        <SelectItem key={opt.value} value={opt.value}>
-                                            {opt.label}
+                                    <SelectItem value={ALL}>
+                                        All buildings
+                                    </SelectItem>
+                                    {(buildings ?? []).map((b) => (
+                                        <SelectItem key={b.id} value={b.id}>
+                                            {b.name}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
@@ -233,19 +276,11 @@ function PaymentsListInner() {
                                     {fmtNum(filtered.length)}
                                 </span>{" "}
                                 {filtered.length === 1 ? "result" : "results"}
-                                {statusFilter !== ALL && (
+                                {categoryFilter !== ALL && (
                                     <span className="ml-1.5 text-ink-soft/70">
                                         ·{" "}
-                                        {paymentStatusLabel(
-                                            statusFilter as PaymentStatus,
-                                        )}
-                                    </span>
-                                )}
-                                {methodFilter !== ALL && (
-                                    <span className="ml-1.5 text-ink-soft/70">
-                                        ·{" "}
-                                        {paymentMethodLabel(
-                                            methodFilter as PaymentMethod,
+                                        {expenseCategoryLabel(
+                                            categoryFilter as ExpenseCategory,
                                         )}
                                     </span>
                                 )}
@@ -255,8 +290,8 @@ function PaymentsListInner() {
                                     type="button"
                                     onClick={() => {
                                         setQuery("");
-                                        setStatusFilter(ALL);
-                                        setMethodFilter(ALL);
+                                        setCategoryFilter(ALL);
+                                        setBuildingFilter(ALL);
                                     }}
                                     className="inline-flex items-center gap-1 font-medium text-ink-soft transition-colors hover:text-coral-600"
                                 >
@@ -273,7 +308,7 @@ function PaymentsListInner() {
                 ) : isError ? (
                     <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
                         <h2 className="text-[15px] font-bold text-coral-700">
-                            Couldn&apos;t load payments
+                            Couldn&apos;t load expenses
                         </h2>
                         <p className="mt-1 text-[13px] text-coral-700/80">
                             {error instanceof Error
@@ -281,26 +316,26 @@ function PaymentsListInner() {
                                 : "Please try again."}
                         </p>
                     </div>
-                ) : !payments || payments.length === 0 ? (
+                ) : !expenses || expenses.length === 0 ? (
                     <EmptyState onRecord={() => setRecordOpen(true)} />
                 ) : filtered.length === 0 ? (
                     <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-12 text-center">
                         <p className="text-[13.5px] text-ink-soft">
-                            No payments match your filters.
+                            No expenses match your filters.
                         </p>
                     </div>
                 ) : (
                     <div className="overflow-hidden rounded-[14px] border border-rule-soft bg-paper">
                         <ul className="divide-y divide-rule-soft">
-                            {filtered.map((p) => (
-                                <PaymentRow key={p.id} payment={p} />
+                            {filtered.map((e) => (
+                                <ExpenseRow key={e.id} expense={e} />
                             ))}
                         </ul>
                     </div>
                 )}
 
                 {/* Dialog */}
-                <RecordPaymentDialog
+                <RecordExpenseDialog
                     open={recordOpen}
                     onOpenChange={setRecordOpen}
                 />
@@ -309,70 +344,69 @@ function PaymentsListInner() {
     );
 }
 
-function PaymentRow({ payment }: { payment: PaymentListItem }) {
+function ExpenseRow({ expense }: { expense: ExpenseListItem }) {
     return (
         <li>
             <Link
-                href={`/owner/dashboard/payments/${payment.id}`}
+                href={`/owner/dashboard/expenses/${expense.id}`}
                 className="group relative flex flex-col gap-3 px-5 py-4 transition-colors hover:bg-cream/60 sm:flex-row sm:items-center"
             >
                 <span
                     aria-hidden
                     className={cn(
                         "absolute inset-y-0 left-0 w-[3px]",
-                        paymentStatusAccent[payment.status],
+                        expenseCategoryAccent[expense.category],
                     )}
                 />
 
                 <div className="min-w-0 flex-1 pl-2">
                     <div className="flex flex-wrap items-center gap-1.5">
-                        <p className="truncate font-mono text-[12.5px] font-semibold text-jade-950 group-hover:text-jade-900">
-                            {payment.receiptNumber}
+                        <p className="truncate text-[13.5px] font-semibold text-jade-950 group-hover:text-jade-900">
+                            {expense.title}
                         </p>
                         <span
                             className={cn(
                                 "rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
-                                paymentStatusStyles[payment.status],
+                                expenseCategoryStyles[expense.category],
                             )}
                         >
-                            {paymentStatusLabel(payment.status)}
+                            {expenseCategoryLabel(expense.category)}
                         </span>
                         <span
                             className={cn(
                                 "rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
-                                paymentMethodStyles[payment.method],
+                                paymentMethodStyles[expense.paymentMethod],
                             )}
                         >
-                            {paymentMethodLabel(payment.method)}
+                            {paymentMethodLabel(expense.paymentMethod)}
                         </span>
-                        {payment.isAdvance && (
-                            <span className="rounded-md border border-jade-100 bg-jade-50/60 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-jade-700">
-                                Advance
-                            </span>
-                        )}
                     </div>
 
                     <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11.5px] text-ink-soft">
-                        <span className="inline-flex items-center gap-1">
-                            <User size={11} className="text-ink-soft/60" />
-                            <span className="text-ink">{payment.tenant.name}</span>
-                        </span>
-                        <span className="inline-flex items-center gap-1">
-                            <Receipt size={11} className="text-ink-soft/60" />
-                            <span className="font-mono">
-                                {payment.invoice.invoiceNumber}
-                            </span>
-                        </span>
-                        <span className="inline-flex items-center gap-1 tabular-nums">
-                            <Calendar size={11} className="text-ink-soft/60" />
-                            {new Date(payment.paidAt).toLocaleDateString()}
-                        </span>
-                        {payment.transactionId && (
-                            <span className="inline-flex items-center gap-1 font-mono">
-                                <Wallet size={11} className="text-ink-soft/60" />
-                                {payment.transactionId}
+                        {expense.paidTo && (
+                            <span className="inline-flex items-center gap-1">
+                                <Store size={11} className="text-ink-soft/60" />
+                                <span className="text-ink">
+                                    {expense.paidTo}
+                                </span>
                             </span>
                         )}
+                        {expense.building && (
+                            <span className="inline-flex items-center gap-1">
+                                <Building
+                                    size={11}
+                                    className="text-ink-soft/60"
+                                />
+                                {expense.building.name}
+                            </span>
+                        )}
+                        <span className="inline-flex items-center gap-1 tabular-nums">
+                            <Calendar
+                                size={11}
+                                className="text-ink-soft/60"
+                            />
+                            {formatExpenseDate(expense.expenseDate)}
+                        </span>
                     </div>
                 </div>
 
@@ -381,17 +415,8 @@ function PaymentRow({ payment }: { payment: PaymentListItem }) {
                         <p className="text-[10px] font-semibold uppercase tracking-wider text-ink-soft">
                             Amount
                         </p>
-                        <p
-                            className={cn(
-                                "text-[16px] font-bold tabular-nums",
-                                payment.status === "PAID"
-                                    ? "text-jade-800"
-                                    : payment.status === "FAILED"
-                                        ? "text-coral-700"
-                                        : "text-ink-soft",
-                            )}
-                        >
-                            {formatMoney(payment.amount)}
+                        <p className="text-[16px] font-bold tabular-nums text-coral-700">
+                            {formatMoney(expense.amount)}
                         </p>
                     </div>
                     <ArrowUpRight
@@ -430,7 +455,9 @@ function MiniStat({
                 <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
                     {label}
                 </p>
-                <p className="font-bangla text-[10.5px] text-ink-soft/65">{bn}</p>
+                <p className="font-bangla text-[10.5px] text-ink-soft/65">
+                    {bn}
+                </p>
             </div>
             <p
                 className={cn(
@@ -462,17 +489,17 @@ function EmptyState({ onRecord }: { onRecord: () => void }) {
     return (
         <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-16 text-center">
             <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-jade-50">
-                <Wallet size={26} className="text-jade-800" />
+                <Banknote size={26} className="text-jade-800" />
             </div>
             <h2 className="mt-4 text-[17px] font-bold text-jade-950">
-                No payments yet
+                No expenses yet
             </h2>
             <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
-                Record a payment against an outstanding invoice — bKash, Nagad,
-                cash, or bank transfer.
+                Track operational costs — utilities, repairs, salaries, fuel,
+                cleaning — to know where the money actually goes.
             </p>
             <p className="font-bangla mt-0.5 text-[12px] text-ink-soft/75">
-                প্রথম পেমেন্ট রেকর্ড করুন
+                প্রথম খরচ যুক্ত করুন
             </p>
             <div className="mt-5 flex items-center justify-center">
                 <button
@@ -481,7 +508,7 @@ function EmptyState({ onRecord }: { onRecord: () => void }) {
                     className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
                 >
                     <Plus size={14} />
-                    Record payment
+                    Record expense
                 </button>
             </div>
         </div>

@@ -1,43 +1,95 @@
+// src/components/dashboard/invoices/invoiceStyles.ts
+//
+// Single source of truth for invoice visual treatment.
+// Used by the invoices list, detail page, and embedded invoice lists
+// (lease detail, tenant detail).
+
 import type { InvoiceStatus, InvoiceType } from "@/src/types/invoice.types";
 
+// ─────────────────────────────────────────────────────────────────
+// STATUS — semantic, brand-aligned:
+//   PAID     → jade  (resolved, money received)
+//   DUE      → coral (open, needs collection)
+//   PARTIAL  → coral-soft (in-progress)
+//   OVERDUE  → coral (open + late)
+//   CANCELED → ink-soft (archival, voided)
+// ─────────────────────────────────────────────────────────────────
+
 export const invoiceStatusStyles: Record<InvoiceStatus, string> = {
-    DUE: "bg-amber-50 text-amber-700 border-amber-200",
-    PARTIAL: "bg-sky-50 text-sky-700 border-sky-200",
-    PAID: "bg-emerald-50 text-emerald-700 border-emerald-200",
-    OVERDUE: "bg-rose-50 text-rose-700 border-rose-200",
-    CANCELED: "bg-slate-100 text-slate-600 border-slate-200",
+    PAID: "bg-jade-50 text-jade-800 border-jade-100",
+    DUE: "bg-coral-50 text-coral-700 border-coral-100",
+    PARTIAL: "bg-coral-50/60 text-coral-700 border-coral-100",
+    OVERDUE: "bg-coral-50 text-coral-700 border-coral-100",
+    CANCELED: "bg-cream text-ink-soft border-rule-soft",
 };
 
-export const invoiceTypeStyles: Record<InvoiceType, string> = {
-    RENT: "bg-indigo-50 text-indigo-700 border-indigo-200",
-    DEPOSIT: "bg-violet-50 text-violet-700 border-violet-200",
-    PENALTY: "bg-rose-50 text-rose-700 border-rose-200",
-    UTILITY: "bg-sky-50 text-sky-700 border-sky-200",
-    OTHER: "bg-slate-100 text-slate-700 border-slate-200",
+/** Used by rows to highlight which invoices need attention. */
+export const invoiceStatusAccent: Record<InvoiceStatus, string> = {
+    PAID: "bg-jade-500",
+    DUE: "bg-coral-500",
+    PARTIAL: "bg-coral-400",
+    OVERDUE: "bg-coral-600",
+    CANCELED: "bg-ink-soft/30",
 };
 
 export function invoiceStatusLabel(status: InvoiceStatus): string {
     return status.charAt(0) + status.slice(1).toLowerCase();
 }
 
+export function getInvoiceStatusTone(status: string): string {
+    return (
+        invoiceStatusStyles[status as InvoiceStatus] ?? invoiceStatusStyles.DUE
+    );
+}
+
+// ─────────────────────────────────────────────────────────────────
+// TYPE — quiet tints, all within the brand family.
+//   RENT     → jade (the default, recurring case)
+//   DEPOSIT  → coral-soft (rare, one-time)
+//   UTILITY  → cream (neutral)
+//   PENALTY  → coral (warning)
+//   OTHER    → neutral
+// ─────────────────────────────────────────────────────────────────
+
+export const invoiceTypeStyles: Record<InvoiceType, string> = {
+    RENT: "bg-jade-50 text-jade-800 border-jade-100",
+    DEPOSIT: "bg-coral-50/60 text-coral-700 border-coral-100",
+    UTILITY: "bg-cream text-ink border-rule-soft",
+    PENALTY: "bg-coral-50 text-coral-700 border-coral-100",
+    OTHER: "bg-cream/60 text-ink-soft border-rule-soft",
+};
+
 export function invoiceTypeLabel(type: InvoiceType): string {
     return type.charAt(0) + type.slice(1).toLowerCase();
 }
 
+// ─────────────────────────────────────────────────────────────────
+// BILLING MONTH helpers
+// ─────────────────────────────────────────────────────────────────
+
 /**
- * Returns "YYYY-MM" string for the first of a month.
- * Used for billing-month inputs (the backend accepts YYYY-MM-DD; we always send the 1st).
+ * Convert a `<input type="month">` value ("2026-07") to a backend-ready
+ * date string ("2026-07-01"). Pass-through if not in YYYY-MM format.
  */
 export function toBillingMonthDate(yearMonth: string): string {
-    // yearMonth is "2026-07" from <input type="month">; emit "2026-07-01"
     if (/^\d{4}-\d{2}$/.test(yearMonth)) {
         return `${yearMonth}-01`;
     }
     return yearMonth;
 }
 
-export function formatBillingMonth(iso: string): string {
-    return new Date(iso).toLocaleString("en-US", {
+/** Format a billing month for display: "May 2026" */
+export function formatBillingMonth(month: string | Date): string {
+    let d: Date;
+    if (month instanceof Date) {
+        d = month;
+    } else if (/^\d{4}-\d{2}$/.test(month)) {
+        d = new Date(`${month}-01T00:00:00`);
+    } else {
+        d = new Date(month);
+    }
+    if (isNaN(d.getTime())) return String(month);
+    return d.toLocaleDateString("en-GB", {
         month: "long",
         year: "numeric",
     });

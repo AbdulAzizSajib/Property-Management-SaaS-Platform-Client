@@ -1,62 +1,17 @@
 "use client";
 
-import { motion } from "framer-motion";
 import DashboardMockup from "./hero/DashboardMockup";
-
-const ease = [0.22, 1, 0.36, 1] as const;
-
-const rise = {
-    hidden: { opacity: 0, y: 14 },
-    show: (i: number) => ({
-        opacity: 1,
-        y: 0,
-        transition: { duration: 0.7, ease, delay: 0.05 + i * 0.08 },
-    }),
-};
 
 export default function HeroSection() {
     return (
-        <section className="relative overflow-hidden pt-20 pb-24">
-            {/* Atmospheric layers */}
-            <div
-                aria-hidden
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                    backgroundImage:
-                        "radial-gradient(circle at 1px 1px, rgba(13,79,63,0.07) 1px, transparent 0)",
-                    backgroundSize: "32px 32px",
-                    maskImage:
-                        "radial-gradient(ellipse 80% 60% at 50% 30%, black, transparent 75%)",
-                }}
-            />
-            <div
-                aria-hidden
-                className="absolute -top-32 right-[-10%] w-[600px] h-[600px] pointer-events-none opacity-60"
-                style={{
-                    background:
-                        "radial-gradient(circle, rgba(13,79,63,0.10), transparent 60%)",
-                }}
-            />
-            <div
-                aria-hidden
-                className="absolute inset-0 pointer-events-none opacity-[0.035] mix-blend-multiply"
-                style={{
-                    backgroundImage:
-                        "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
-                }}
-            />
-
-            <div className="relative z-10 max-w-[1280px] mx-auto px-5 md:px-8">
+        <section className="relative overflow-hidden pt-6 pb-24">
+             <div className="relative z-10 max-w-7xl mx-auto px-5 md:px-8 ">
                 <div className="grid lg:grid-cols-[1.05fr_1fr] gap-12 lg:gap-16 items-center">
                     {/* LEFT — copy column */}
                     <div>
                         {/* Eyebrow — single quiet link */}
-                        <motion.a
+                        <a
                             href="#report"
-                            initial="hidden"
-                            animate="show"
-                            variants={rise}
-                            custom={0}
                             className="group inline-flex items-center gap-2.5 text-[12.5px] text-ink-soft hover:text-jade-900 transition-colors mb-8"
                         >
                             <span className="relative flex w-1.5 h-1.5">
@@ -71,69 +26,65 @@ export default function HeroSection() {
                             <span className="transition-transform group-hover:translate-x-0.5">
                                 →
                             </span>
-                        </motion.a>
+                        </a>
 
                         {/* Editorial overline — the poetic line, demoted but kept */}
-                        <motion.p
-                            initial="hidden"
-                            animate="show"
-                            variants={rise}
-                            custom={1}
-                            className="font-serif italic text-coral-600/90 text-[15px] tracking-[-0.01em] mb-3"
-                        >
-                            Every flat. Every tenant. Every taka of rent.
-                        </motion.p>
+                        <p className="font-serif italic text-coral-600/90 text-[15px] mb-3">
+                           Track every tenant, rent, and expense daily.
+                        </p>
 
                         {/* Headline — leads with the job */}
-                        <motion.h1
-                            initial="hidden"
-                            animate="show"
-                            variants={rise}
-                            custom={2}
-                            className="font-bold text-jade-950 leading-[1.02] tracking-[-0.035em] text-[44px] sm:text-[56px] lg:text-[64px] xl:text-[72px] mb-5 text-balance"
-                        >
-                            Run your buildings
-                            <br />
-                            <span className="text-jade-900">from one</span>{" "}
-                            <span className="font-serif italic font-normal tracking-[-0.02em]">
-                                phone
-                            </span>
-                            <span className="text-coral-600">.</span>
-                        </motion.h1>
+<h1 className="font-bold text-jade-900 leading-[1.02] tracking-[-0.035em] text-[44px] sm:text-[56px] lg:text-[64px] xl:text-[72px] mb-5 text-balance">
+    Manage your
+    <br />
+
+    <span className="text-jade-500">property</span> <br />
+    <span className=" text-coral-600">finances</span>{" "}
+    <span className="font-serif italic font-normal tracking-[-0.02em]">
+        easily
+    </span>
+    <span className="text-coral-600">.</span>
+</h1>
 
                         {/* Bangla sub-headline */}
-                        <motion.p
-                            initial="hidden"
-                            animate="show"
-                            variants={rise}
-                            custom={3}
-                            className="font-bangla text-[22px] sm:text-[24px] text-jade-800 font-semibold tracking-[-0.01em] mb-7"
-                        >
-                            এক ফোনে — সব ভাড়াটিয়া, সব হিসাব।
-                        </motion.p>
+                        <p className="font-bangla text-[22px] sm:text-[24px] text-jade-800 font-semibold tracking-[-0.01em] mb-7">
+                         এক প্লাটফর্মে — সব ভাড়াটিয়া, সব হিসাব
+                        </p>
 
-                        {/* Subhead — single tight sentence */}
-                        <motion.p
-                            initial="hidden"
-                            animate="show"
-                            variants={rise}
-                            custom={4}
-                            className="text-[17px] leading-[1.6] text-ink-soft max-w-[500px] mb-9 text-pretty"
-                        >
-                            BariBari is Bangladesh's end-to-end property platform for
-                            landlords with 4 to 400 flats — collect on bKash, Nagad &
-                            Rocket, send Bangla SMS reminders, and split every utility
-                            bill automatically.
-                        </motion.p>
+                        {/* Subhead — intro + bullet benefits */}
+                        <div className="max-w-125 mb-9 font-bangla">
+                            <p className="text-[17px] leading-[1.6] text-ink-soft mb-4">
+                                আর Excel না, ডায়েরি না, বার বার ফোন না। সবকিছু এখন এক platform এ —
+                            </p>
+                            <ul className="space-y-1 text-[15px] text-ink">
+                                <li className="flex items-start gap-2.5">
+                                    <Tick />
+                                    <span>ভাড়া আদায় ও বকেয়ার tracking</span>
+                                </li>
+                                <li className="flex items-start gap-2.5">
+                                    <Tick />
+                                    <span>বিল পাঠানো ও invoice generate</span>
+                                </li>
+                                <li className="flex items-start gap-2.5">
+                                    <Tick />
+                                    <span>মাসিক আয়, ব্যয় ও খরচের হিসাব</span>
+                                </li>
+                                <li className="flex items-start gap-2.5">
+                                    <Tick />
+                                    <span>ভাড়াটিয়ার complaint management</span>
+                                </li>
+                                <li className="flex items-start gap-2.5">
+                                    <Tick />
+                                    <span>মাসিক report — এক ক্লিকে</span>
+                                </li>
+                            </ul>
+                            <p className="text-[14px] text-ink-soft mt-4">
+                                প্রতিদিনের property management — সব হবে এক ফোন থেকেই।
+                            </p>
+                        </div>
 
                         {/* CTAs — flatter, more premium */}
-                        <motion.div
-                            initial="hidden"
-                            animate="show"
-                            variants={rise}
-                            custom={5}
-                            className="flex flex-wrap items-center gap-2"
-                        >
+                        <div className="flex flex-wrap items-center gap-2">
                             <button
                                 type="button"
                                 className="group relative bg-jade-900 hover:bg-jade-950 text-paper font-semibold text-[15px] px-6 py-3.5 rounded-[10px] transition-all duration-200 hover:shadow-[0_10px_30px_-10px_rgba(13,79,63,0.5)]"
@@ -184,30 +135,19 @@ export default function HeroSection() {
                                 </svg>
                                 Watch the 90-second demo
                             </button>
-                        </motion.div>
+                        </div>
 
                         {/* Micro-disclaimer — close to CTA */}
-                        <motion.p
-                            initial="hidden"
-                            animate="show"
-                            variants={rise}
-                            custom={6}
-                            className="text-[12.5px] text-ink-soft mt-4 ml-1"
-                        >
-                            No card required · Setup in{" "}
-                            <span className="text-jade-900 font-semibold">17 minutes</span>
-                            {" · "}
-                            <span className="font-bangla">বাংলা সাপোর্ট</span>
-                        </motion.p>
+                        <p className="text-[12.5px] text-ink-soft mt-4 font-medium">
+                            Quick Setup
+                            <span className="text-rule mx-1">·</span>
+                             No card required
+                            <span className="text-rule mx-1">·</span>
+                            <span className="font-bangla">Bangla Support</span>
+                        </p>
 
                         {/* Trust strip — concrete, established */}
-                        <motion.div
-                            initial="hidden"
-                            animate="show"
-                            variants={rise}
-                            custom={7}
-                            className="mt-12 pt-7 border-t border-rule-soft"
-                        >
+                        <div className="mt-7 pt-7 border-t border-rule-soft">
                             <div className="text-[11px] uppercase tracking-[0.14em] text-ink-soft/70 font-semibold mb-4">
                                 Trusted across Bangladesh
                             </div>
@@ -219,17 +159,13 @@ export default function HeroSection() {
                                 />
                                 <Stat value="4" label="divisions live" />
                             </div>
-                        </motion.div>
+                        </div>
                     </div>
 
                     {/* RIGHT — mockup column */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 24, scale: 0.985 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        transition={{ duration: 0.9, ease, delay: 0.25 }}
-                    >
+                    <div>
                         <DashboardMockup />
-                    </motion.div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -244,5 +180,30 @@ function Stat({ value, label }: { value: string; label: string }) {
             </span>
             <span className="text-[13px] text-ink-soft">{label}</span>
         </div>
+    );
+}
+
+function Tick() {
+    return (
+        <span
+            aria-hidden
+            className="mt-1 inline-flex size-4.5 shrink-0 items-center justify-center rounded-full bg-jade-50"
+        >
+            <svg
+                width="10"
+                height="10"
+                viewBox="0 0 10 10"
+                fill="none"
+                className="text-jade-700"
+            >
+                <path
+                    d="M2 5l2 2 4-4"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+            </svg>
+        </span>
     );
 }

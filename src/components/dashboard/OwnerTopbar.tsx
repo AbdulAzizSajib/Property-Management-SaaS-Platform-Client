@@ -1,6 +1,7 @@
 "use client";
 
-import { Avatar, AvatarFallback } from "@/src/components/ui/avatar";
+// src/components/layout/OwnerTopbar.tsx
+
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -10,17 +11,61 @@ import {
     DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/src/components/ui/sheet";
-import { Bell, ChevronDown, LogOut, Menu, Search, Settings, User } from "lucide-react";
+import { cn } from "@/src/lib/utils";
+import {
+    Bell,
+    ChevronDown,
+    LogOut,
+    Menu,
+    Search,
+    Settings,
+    User,
+} from "lucide-react";
 import { OwnerSidebar } from "./OwnerSidebar";
 
-export function OwnerTopbar() {
+interface OwnerTopbarProps {
+    /** Currently signed-in user. */
+    user?: {
+        name: string;
+        role?: string;
+        photoUrl?: string;
+    };
+    /** Show the coral notification indicator on the bell. */
+    hasNotifications?: boolean;
+    /** Click handler for the notifications button. */
+    onNotificationsClick?: () => void;
+    /** Click handler for the search bar / command palette. */
+    onSearchClick?: () => void;
+}
+
+const defaultUser = {
+    name: "Aziz Sajib",
+    role: "Owner",
+};
+
+export function OwnerTopbar({
+    user = defaultUser,
+    hasNotifications = false,
+    onNotificationsClick,
+    onSearchClick,
+}: OwnerTopbarProps) {
+    const initials = user.name
+        .split(" ")
+        .filter(Boolean)
+        .map((p) => p[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase();
+
     return (
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-slate-200 bg-white/80 px-4 backdrop-blur-md sm:px-6">
+        <header
+            className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-rule-soft bg-paper/85 px-4 backdrop-blur-md sm:px-6"
+        >
             {/* Mobile sidebar trigger */}
             <Sheet>
                 <SheetTrigger
                     aria-label="Open menu"
-                    className="inline-flex size-8 items-center justify-center rounded-md text-slate-600 hover:bg-slate-100 lg:hidden"
+                    className="inline-flex size-9 items-center justify-center rounded-md text-ink-soft transition-colors hover:bg-cream hover:text-jade-900 lg:hidden"
                 >
                     <Menu size={18} />
                 </SheetTrigger>
@@ -29,58 +74,111 @@ export function OwnerTopbar() {
                 </SheetContent>
             </Sheet>
 
-            {/* Search */}
-            <div className="relative hidden flex-1 max-w-md md:block">
+            {/* Search — stub for now, but reads as a real command launcher */}
+            <button
+                type="button"
+                onClick={onSearchClick}
+                className="group relative hidden h-9 max-w-md flex-1 items-center gap-2.5 rounded-md border border-rule-soft bg-cream/60 pl-3 pr-2 text-left text-[13px] text-ink-soft transition-colors hover:border-jade-700/30 hover:bg-paper focus:border-jade-700 focus:bg-paper focus:outline-none focus:ring-2 focus:ring-jade-700/20 md:flex"
+            >
                 <Search
-                    size={15}
-                    className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                    size={14}
+                    className="shrink-0 text-ink-soft/70 group-hover:text-jade-700"
                 />
-                <input
-                    type="search"
-                    placeholder="Search buildings, tenants, invoices..."
-                    className="h-9 w-full rounded-md border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-                />
-            </div>
+                <span className="flex-1 truncate text-ink-soft/75 group-hover:text-ink">
+                    Search buildings, tenants, invoices…
+                </span>
+                <kbd className="hidden shrink-0 items-center gap-0.5 rounded border border-rule-soft bg-paper px-1.5 py-0.5 font-mono text-[10.5px] font-medium text-ink-soft sm:inline-flex">
+                    ⌘K
+                </kbd>
+            </button>
 
-            <div className="ml-auto flex items-center gap-2">
+            <div className="ml-auto flex items-center gap-1.5">
+                {/* Notifications */}
                 <button
                     type="button"
-                    aria-label="Notifications"
-                    className="relative inline-flex size-8 items-center justify-center rounded-md text-slate-600 hover:bg-slate-100"
+                    onClick={onNotificationsClick}
+                    aria-label={
+                        hasNotifications
+                            ? "Notifications (unread)"
+                            : "Notifications"
+                    }
+                    className="relative inline-flex size-9 items-center justify-center rounded-md text-ink-soft transition-colors hover:bg-cream hover:text-jade-900"
                 >
-                    <Bell size={18} />
-                    <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-rose-500 ring-2 ring-white" />
+                    <Bell size={17} />
+                    {hasNotifications && (
+                        <span className="absolute right-1.5 top-1.5 flex h-2 w-2">
+                            <span className="absolute inset-0 animate-ping rounded-full bg-coral-500 opacity-70" />
+                            <span className="relative h-2 w-2 rounded-full bg-coral-600 ring-2 ring-paper" />
+                        </span>
+                    )}
                 </button>
 
+                {/* User menu */}
                 <DropdownMenu>
-                    <DropdownMenuTrigger className="flex items-center gap-2 rounded-md px-1.5 py-1 hover:bg-slate-100">
-                        <Avatar className="size-8">
-                            <AvatarFallback className="bg-indigo-600 text-xs font-semibold text-white">
-                                AS
-                            </AvatarFallback>
-                        </Avatar>
-                        <div className="hidden flex-col items-start leading-tight sm:flex">
-                            <span className="text-sm font-medium text-slate-800">
-                                Aziz Sajib
+                    <DropdownMenuTrigger className="flex items-center gap-2 rounded-md p-1 transition-colors hover:bg-cream data-[state=open]:bg-cream">
+                        {/* Avatar — jade tint, matches the rest of the system */}
+                        <span className="relative inline-flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-jade-50 ring-1 ring-jade-100 text-[11.5px] font-bold text-jade-800">
+                            {user.photoUrl ? (
+                                /* eslint-disable-next-line @next/next/no-img-element */
+                                <img
+                                    src={user.photoUrl}
+                                    alt={user.name}
+                                    className="size-full object-cover"
+                                />
+                            ) : (
+                                initials
+                            )}
+                        </span>
+                        <div className="hidden flex-col items-start leading-tight pr-1 sm:flex">
+                            <span className="text-[13px] font-semibold text-ink">
+                                {user.name}
                             </span>
-                            <span className="text-[11px] text-slate-500">Owner</span>
+                            <span className="text-[10.5px] text-ink-soft">
+                                {user.role ?? "Owner"}
+                            </span>
                         </div>
-                        <ChevronDown size={14} className="hidden text-slate-400 sm:block" />
+                        <ChevronDown
+                            size={13}
+                            className="hidden text-ink-soft/70 sm:block"
+                        />
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                            <User size={14} className="mr-2" />
+                    <DropdownMenuContent
+                        align="end"
+                        className="w-56 border-rule-soft bg-paper"
+                    >
+                        {/* Header — gives the menu context */}
+                        <DropdownMenuLabel className="px-2 py-1.5">
+                            <p className="truncate text-[13px] font-semibold text-jade-950">
+                                {user.name}
+                            </p>
+                            <p className="text-[11px] font-normal text-ink-soft">
+                                {user.role ?? "Owner"}
+                            </p>
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator className="bg-rule-soft" />
+                        <DropdownMenuItem className="text-[13px] text-ink focus:bg-cream focus:text-jade-900">
+                            <User
+                                size={13}
+                                className="mr-2 text-ink-soft/70"
+                            />
                             Profile
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <Settings size={14} className="mr-2" />
+                        <DropdownMenuItem className="text-[13px] text-ink focus:bg-cream focus:text-jade-900">
+                            <Settings
+                                size={13}
+                                className="mr-2 text-ink-soft/70"
+                            />
                             Settings
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem variant="destructive">
-                            <LogOut size={14} className="mr-2" />
+                        <DropdownMenuSeparator className="bg-rule-soft" />
+                        <DropdownMenuItem
+                            variant="destructive"
+                            className={cn(
+                                "text-[13px] text-coral-700",
+                                "focus:bg-coral-50 focus:text-coral-700",
+                            )}
+                        >
+                            <LogOut size={13} className="mr-2" />
                             Log out
                         </DropdownMenuItem>
                     </DropdownMenuContent>

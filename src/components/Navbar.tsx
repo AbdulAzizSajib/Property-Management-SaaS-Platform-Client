@@ -1,6 +1,4 @@
 "use client";
-
-import LogoMark from "@/src/components/LogoMark";
 import { MenuIcon, XIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -26,11 +24,11 @@ export default function Navbar() {
 
     return (
         <div className="sticky top-0 z-50 bg-cream/85 backdrop-blur-md border-b border-rule-soft">
-            <nav className="max-w-[1280px] mx-auto grid grid-cols-[auto_1fr_auto] items-center gap-14 py-[18px] px-5 md:px-8">
-                <Link href="/" className="flex items-center gap-2.5 text-jade-900 font-bold text-[19px] tracking-tight">
-                    <LogoMark />
+            <nav className="max-w-7xl mx-auto grid grid-cols-[auto_1fr_auto] items-center gap-14 py-4 px-5 md:px-8">
+                <Link href="/" className="flex items-center gap-2.5 text-jade-900 text-4xl  font-rubita ">
+             
                     <span>
-                        Bari<b className="text-coral-600">Bari</b>
+                        Bari<span className="text-coral-600">yan</span>
                     </span>
                 </Link>
 

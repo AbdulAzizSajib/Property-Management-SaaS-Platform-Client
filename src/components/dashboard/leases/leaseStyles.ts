@@ -8,6 +8,7 @@ import type { LeaseStatus } from "@/src/types/lease.types";
 // ─────────────────────────────────────────────────────────────────
 // STATUS BADGES — same semantic discipline as unitStatus:
 //   ACTIVE      → jade  (good, money flowing)
+//   RENEWED     → jade  (good, continued relationship)
 //   PENDING     → coral (needs your attention — sign or reject)
 //   TERMINATED  → ink-soft (archival)
 //   EXPIRED     → ink-soft (archival, ended naturally)
@@ -15,6 +16,7 @@ import type { LeaseStatus } from "@/src/types/lease.types";
 
 export const leaseStatusStyles: Record<LeaseStatus, string> = {
     ACTIVE: "bg-jade-50 text-jade-800 border-jade-100",
+    RENEWED: "bg-jade-50 text-jade-800 border-jade-100",
     PENDING: "bg-coral-50 text-coral-700 border-coral-100",
     TERMINATED: "bg-cream text-ink-soft border-rule-soft",
     EXPIRED: "bg-cream text-ink-soft border-rule-soft",
@@ -23,6 +25,7 @@ export const leaseStatusStyles: Record<LeaseStatus, string> = {
 /** Used by lease cards to highlight which leases need attention. */
 export const leaseStatusAccent: Record<LeaseStatus, string> = {
     ACTIVE: "bg-jade-500",
+    RENEWED: "bg-jade-500",
     PENDING: "bg-coral-500",
     TERMINATED: "bg-ink-soft/30",
     EXPIRED: "bg-ink-soft/30",

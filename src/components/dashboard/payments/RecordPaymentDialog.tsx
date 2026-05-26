@@ -1,10 +1,14 @@
 "use client";
 
+// src/components/dashboard/payments/RecordPaymentDialog.tsx
+
 import {
-    paymentMethodLabel,
-} from "@/src/components/dashboard/payments/paymentStyles";
+    Field,
+    FormActions,
+    fieldClass,
+} from "@/src/components/dashboard/forms/form-primitives";
+import { paymentMethodLabel } from "@/src/components/dashboard/payments/paymentStyles";
 import { formatMoney } from "@/src/components/dashboard/units/unitStyles";
-import { Button } from "@/src/components/ui/button";
 import {
     Dialog,
     DialogContent,
@@ -13,7 +17,6 @@ import {
     DialogTitle,
 } from "@/src/components/ui/dialog";
 import { Input } from "@/src/components/ui/input";
-import { Label } from "@/src/components/ui/label";
 import {
     Select,
     SelectContent,
@@ -28,13 +31,12 @@ import {
     PAYMENT_METHOD_OPTIONS,
     type PaymentMethod,
 } from "@/src/types/payment.types";
-import { Loader2 } from "lucide-react";
+import { AlertTriangle, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 interface RecordPaymentDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    /** Pre-select an invoice (e.g. from invoice detail "Record payment" link). */
     fixedInvoiceId?: string;
 }
 
@@ -43,23 +45,22 @@ export function RecordPaymentDialog({
     onOpenChange,
     fixedInvoiceId,
 }: RecordPaymentDialogProps) {
-    // Show outstanding invoices for the picker. If invoiceId is fixed, we still
-    // load the list so we can preselect + show its outstanding amount.
     const { data: dueInvoices } = useInvoices({ status: "DUE" });
     const { data: partialInvoices } = useInvoices({ status: "PARTIAL" });
     const mutation = useRecordPayment();
 
     const [invoiceId, setInvoiceId] = useState(fixedInvoiceId ?? "");
     const [amount, setAmount] = useState("");
+    const [autoFilledAmount, setAutoFilledAmount] = useState(false);
     const [method, setMethod] = useState<PaymentMethod>("BKASH");
     const [transactionId, setTransactionId] = useState("");
     const [notes, setNotes] = useState("");
 
-    // Reset state on open and apply fixedInvoiceId.
     useEffect(() => {
         if (open) {
             setInvoiceId(fixedInvoiceId ?? "");
             setAmount("");
+            setAutoFilledAmount(false);
             setMethod("BKASH");
             setTransactionId("");
             setNotes("");
@@ -68,7 +69,6 @@ export function RecordPaymentDialog({
 
     const outstandingInvoices = useMemo(() => {
         const combined = [...(dueInvoices ?? []), ...(partialInvoices ?? [])];
-        // De-dupe just in case the API returns overlap.
         const seen = new Set<string>();
         return combined.filter((i) =>
             seen.has(i.id) ? false : (seen.add(i.id), true),
@@ -80,14 +80,20 @@ export function RecordPaymentDialog({
         [outstandingInvoices, invoiceId],
     );
 
-    // Auto-prefill amount with the outstanding due when an invoice is picked
+    // Auto-prefill amount with the outstanding due when invoice is picked
     // and the user hasn't typed anything yet.
     useEffect(() => {
-        if (selectedInvoice && amount === "") {
+        if (selectedInvoice && (amount === "" || autoFilledAmount)) {
             setAmount(String(selectedInvoice.dueAmount));
+            setAutoFilledAmount(true);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedInvoice?.id]);
+
+    function handleAmountChange(value: string) {
+        setAmount(value);
+        setAutoFilledAmount(false);
+    }
 
     function handleSubmit(ev: React.FormEvent) {
         ev.preventDefault();
@@ -96,7 +102,9 @@ export function RecordPaymentDialog({
                 invoiceId,
                 amount: Number(amount),
                 method,
-                ...(transactionId.trim() && { transactionId: transactionId.trim() }),
+                ...(transactionId.trim() && {
+                    transactionId: transactionId.trim(),
+                }),
                 ...(notes.trim() && { notes: notes.trim() }),
             },
             { onSuccess: () => onOpenChange(false) },
@@ -104,29 +112,35 @@ export function RecordPaymentDialog({
     }
 
     const showTxnField = method !== "CASH";
+    const overage =
+        selectedInvoice && Number(amount) > Number(selectedInvoice.dueAmount)
+            ? Number(amount) - Number(selectedInvoice.dueAmount)
+            : 0;
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>Record payment</DialogTitle>
-                    <DialogDescription>
-                        Apply a payment to an outstanding invoice. The invoice status will
-                        update automatically (PARTIAL → PAID).
+                    <DialogTitle className="text-jade-950">
+                        Record payment
+                    </DialogTitle>
+                    <DialogDescription className="text-ink-soft">
+                        Apply a payment to an outstanding invoice. The invoice
+                        status will update automatically (PARTIAL → PAID).
                     </DialogDescription>
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="space-y-1.5">
-                        <Label htmlFor="p-invoice">
-                            Invoice <span className="text-rose-500">*</span>
-                        </Label>
+                    <Field label="Invoice" htmlFor="p-invoice" required>
                         <Select
                             value={invoiceId}
                             onValueChange={(v) => setInvoiceId(v ?? "")}
                             disabled={!!fixedInvoiceId}
                         >
-                            <SelectTrigger id="p-invoice" className="w-full">
+                            <SelectTrigger
+                                id="p-invoice"
+                                className={`w-full ${fieldClass}`}
+                            >
                                 <SelectValue placeholder="Select an outstanding invoice">
                                     {(value) => {
                                         const i = outstandingInvoices.find(
@@ -140,139 +154,204 @@ export function RecordPaymentDialog({
                             </SelectTrigger>
                             <SelectContent>
                                 {outstandingInvoices.length === 0 ? (
-                                    <div className="px-2 py-2 text-xs text-slate-500">
+                                    <div className="px-2 py-2 text-[12px] text-ink-soft">
                                         No outstanding invoices
                                     </div>
                                 ) : (
                                     outstandingInvoices.map((i) => (
                                         <SelectItem key={i.id} value={i.id}>
-                                            {i.invoiceNumber} · {i.tenant.name} ·{" "}
-                                            {formatMoney(i.dueAmount)} due
+                                            <span className="inline-flex items-center gap-2">
+                                                <span className="font-mono text-[11.5px] text-ink">
+                                                    {i.invoiceNumber}
+                                                </span>
+                                                <span className="text-ink-soft">
+                                                    · {i.tenant.name}
+                                                </span>
+                                                <span className="ml-auto font-semibold text-coral-700 tabular-nums">
+                                                    {formatMoney(i.dueAmount)}
+                                                </span>
+                                            </span>
                                         </SelectItem>
                                     ))
                                 )}
                             </SelectContent>
                         </Select>
-                        {selectedInvoice && (
-                            <p className="text-[11px] text-slate-500">
-                                Outstanding: {formatMoney(selectedInvoice.dueAmount)} of{" "}
-                                {formatMoney(selectedInvoice.totalAmount)} total
-                            </p>
-                        )}
-                    </div>
+                    </Field>
+
+                    {/* Selected-invoice summary — confirms what user picked */}
+                    {selectedInvoice && (
+                        <div className="flex items-center justify-between gap-3 rounded-[10px] border border-jade-100 bg-jade-50/60 px-3 py-2 text-[12px]">
+                            <div className="flex items-center gap-2 min-w-0">
+                                <Sparkles
+                                    size={12}
+                                    className="shrink-0 text-jade-700"
+                                />
+                                <span className="truncate text-ink">
+                                    Outstanding on{" "}
+                                    <span className="font-mono font-semibold text-jade-900">
+                                        {selectedInvoice.invoiceNumber}
+                                    </span>
+                                </span>
+                            </div>
+                            <span className="shrink-0 text-ink-soft tabular-nums">
+                                <span className="font-bold text-coral-700">
+                                    {formatMoney(selectedInvoice.dueAmount)}
+                                </span>
+                                {" "}of{" "}
+                                <span className="font-semibold text-ink">
+                                    {formatMoney(selectedInvoice.totalAmount)}
+                                </span>
+                            </span>
+                        </div>
+                    )}
 
                     <div className="grid grid-cols-2 gap-3">
-                        <div className="space-y-1.5">
-                            <Label htmlFor="p-amount">
-                                Amount <span className="text-rose-500">*</span>
-                            </Label>
-                            <Input
+                        <Field
+                            label="Amount"
+                            htmlFor="p-amount"
+                            required
+                            hint={
+                                autoFilledAmount && selectedInvoice
+                                    ? "Filled from outstanding"
+                                    : "BDT"
+                            }
+                        >
+                            <MoneyInput
                                 id="p-amount"
-                                type="number"
-                                min={0}
-                                step="any"
                                 value={amount}
-                                onChange={(e) => setAmount(e.target.value)}
-                                placeholder="19500"
+                                onChange={handleAmountChange}
+                                placeholder="19,500"
                                 required
+                                hinted={autoFilledAmount}
                             />
-                        </div>
-                        <div className="space-y-1.5">
-                            <Label htmlFor="p-method">
-                                Method <span className="text-rose-500">*</span>
-                            </Label>
+                        </Field>
+                        <Field label="Method" htmlFor="p-method" required>
                             <Select
                                 value={method}
                                 onValueChange={(v) =>
                                     setMethod((v ?? "BKASH") as PaymentMethod)
                                 }
                             >
-                                <SelectTrigger id="p-method" className="w-full">
+                                <SelectTrigger
+                                    id="p-method"
+                                    className={`w-full ${fieldClass}`}
+                                >
                                     <SelectValue placeholder="Select method" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     {PAYMENT_METHOD_OPTIONS.map((opt) => (
-                                        <SelectItem key={opt.value} value={opt.value}>
+                                        <SelectItem
+                                            key={opt.value}
+                                            value={opt.value}
+                                        >
                                             {opt.label}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
-                        </div>
+                        </Field>
                     </div>
 
                     {showTxnField && (
-                        <div className="space-y-1.5">
-                            <Label htmlFor="p-txn">Transaction ID</Label>
+                        <Field
+                            label="Transaction ID"
+                            htmlFor="p-txn"
+                            hint={`${paymentMethodLabel(method)} reference · optional`}
+                        >
                             <Input
                                 id="p-txn"
                                 value={transactionId}
-                                onChange={(e) => setTransactionId(e.target.value)}
+                                onChange={(e) =>
+                                    setTransactionId(e.target.value)
+                                }
                                 placeholder={
-                                    method === "BKASH" || method === "NAGAD" || method === "ROCKET"
+                                    method === "BKASH" ||
+                                    method === "NAGAD" ||
+                                    method === "ROCKET"
                                         ? "9ABC123XYZ"
                                         : "Reference number"
                                 }
+                                className={`${fieldClass} font-mono tabular-nums`}
                             />
-                            <p className="text-[11px] text-slate-500">
-                                {paymentMethodLabel(method)} reference (optional).
-                            </p>
-                        </div>
+                        </Field>
                     )}
 
-                    <div className="space-y-1.5">
-                        <Label htmlFor="p-notes">Notes</Label>
+                    <Field label="Notes" htmlFor="p-notes">
                         <Textarea
                             id="p-notes"
                             rows={2}
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}
-                            placeholder="June rent..."
+                            placeholder="June rent…"
+                            className={`${fieldClass} resize-none`}
                         />
-                    </div>
+                    </Field>
 
-                    {selectedInvoice &&
-                        Number(amount) > 0 &&
-                        Number(amount) > Number(selectedInvoice.dueAmount) && (
-                            <div className="rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-800">
-                                <strong>Heads up:</strong> Amount exceeds outstanding by{" "}
-                                {formatMoney(
-                                    Number(amount) - Number(selectedInvoice.dueAmount),
-                                )}
-                                . The overage will be applied as an advance balance.
-                            </div>
-                        )}
+                    {/* Overage warning */}
+                    {overage > 0 && (
+                        <div className="flex items-start gap-2 rounded-[10px] border border-coral-100 bg-coral-50/70 px-3 py-2 text-[12.5px] text-coral-700">
+                            <AlertTriangle
+                                size={13}
+                                className="mt-0.5 shrink-0"
+                            />
+                            <span>
+                                Amount exceeds outstanding by{" "}
+                                <strong className="tabular-nums">
+                                    {formatMoney(overage)}
+                                </strong>
+                                . The overage will be applied as an advance
+                                balance.
+                            </span>
+                        </div>
+                    )}
 
-                    <div className="flex items-center justify-end gap-2 border-t border-slate-100 pt-4">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => onOpenChange(false)}
-                            disabled={mutation.isPending}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            type="submit"
-                            disabled={
-                                mutation.isPending ||
-                                !invoiceId ||
-                                !amount ||
-                                Number(amount) <= 0
-                            }
-                        >
-                            {mutation.isPending ? (
-                                <>
-                                    <Loader2 size={14} className="animate-spin" />
-                                    Recording...
-                                </>
-                            ) : (
-                                "Record payment"
-                            )}
-                        </Button>
-                    </div>
+                    <FormActions
+                        submitting={mutation.isPending}
+                        submitLabel="Record payment"
+                        onCancel={() => onOpenChange(false)}
+                    />
                 </form>
             </DialogContent>
         </Dialog>
+    );
+}
+
+function MoneyInput({
+    id,
+    value,
+    onChange,
+    placeholder,
+    required,
+    hinted,
+}: {
+    id: string;
+    value: string;
+    onChange: (v: string) => void;
+    placeholder?: string;
+    required?: boolean;
+    hinted?: boolean;
+}) {
+    return (
+        <div className="relative">
+            <span
+                aria-hidden
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[14px] font-semibold text-ink-soft"
+            >
+                ৳
+            </span>
+            <Input
+                id={id}
+                type="number"
+                min={0}
+                step="any"
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                placeholder={placeholder}
+                required={required}
+                className={`${fieldClass} pl-7 tabular-nums ${
+                    hinted ? "text-ink/75" : ""
+                }`}
+            />
+        </div>
     );
 }

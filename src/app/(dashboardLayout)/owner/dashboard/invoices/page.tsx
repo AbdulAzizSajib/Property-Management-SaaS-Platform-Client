@@ -1,18 +1,18 @@
 "use client";
 
+// src/app/owner/dashboard/invoices/page.tsx
+
 import { GenerateInvoiceDialog } from "@/src/components/dashboard/invoices/GenerateInvoiceDialog";
 import { GenerateMonthlyBatchDialog } from "@/src/components/dashboard/invoices/GenerateMonthlyBatchDialog";
 import {
     formatBillingMonth,
+    invoiceStatusAccent,
     invoiceStatusLabel,
     invoiceStatusStyles,
     invoiceTypeLabel,
     invoiceTypeStyles,
 } from "@/src/components/dashboard/invoices/invoiceStyles";
 import { formatMoney } from "@/src/components/dashboard/units/unitStyles";
-import { Badge } from "@/src/components/ui/badge";
-import { Button } from "@/src/components/ui/button";
-import { Card } from "@/src/components/ui/card";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -28,6 +28,7 @@ import {
 } from "@/src/components/ui/select";
 import { Skeleton } from "@/src/components/ui/skeleton";
 import { useInvoices } from "@/src/hooks/useInvoices";
+import { fmtNum } from "@/src/lib/numerals";
 import { cn } from "@/src/lib/utils";
 import {
     INVOICE_STATUS_OPTIONS,
@@ -35,6 +36,7 @@ import {
     type InvoiceStatus,
 } from "@/src/types/invoice.types";
 import {
+    AlertTriangle,
     Building,
     Calendar,
     ChevronDown,
@@ -53,7 +55,7 @@ const ALL = "__ALL__";
 
 export default function InvoicesListPage() {
     return (
-        <Suspense fallback={<div className="p-6">Loading…</div>}>
+        <Suspense fallback={<ListShell />}>
             <InvoicesListInner />
         </Suspense>
     );
@@ -102,254 +104,408 @@ function InvoicesListInner() {
     const hasActiveFilters = statusFilter !== ALL || query.trim() !== "";
 
     return (
-        <div className="space-y-6 p-4 sm:p-6 lg:p-8">
-            {/* Heading */}
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                    <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
-                        Invoices
-                    </h1>
-                    <p className="mt-1 text-sm text-slate-500">
-                        Rent invoices, billing history and outstanding amounts.
-                    </p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                    <Button variant="outline" onClick={() => setBatchOpen(true)}>
-                        <Zap size={14} />
-                        Monthly batch
-                    </Button>
-
-                    <DropdownMenu>
-                        <DropdownMenuTrigger
-                            render={
-                                <Button>
-                                    <Plus size={14} />
-                                    Generate
-                                    <ChevronDown size={14} />
-                                </Button>
-                            }
-                        />
-                        <DropdownMenuContent align="end" className="w-56">
-                            <DropdownMenuItem onClick={() => setGenerateOpen(true)}>
-                                <Receipt size={13} className="mr-2" />
-                                Single invoice
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setBatchOpen(true)}>
-                                <Zap size={13} className="mr-2" />
-                                Monthly batch
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            </div>
-
-            {/* Stat tiles */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
-                <StatTile
-                    label="Total invoices"
-                    value={String(invoices?.length ?? 0)}
-                    sublabel="all statuses"
-                    accent="indigo"
-                />
-                <StatTile
-                    label="Outstanding"
-                    value={formatMoney(totalDue)}
-                    sublabel="due across all invoices"
-                    accent={totalDue > 0 ? "rose" : "emerald"}
-                />
-                <StatTile
-                    label="Collected"
-                    value={formatMoney(totalPaid)}
-                    sublabel="paid to date"
-                    accent="emerald"
-                />
-                <StatTile
-                    label="Overdue"
-                    value={String(overdueCount)}
-                    sublabel="needs attention"
-                    accent={overdueCount > 0 ? "rose" : "emerald"}
-                />
-            </div>
-
-            {/* Filters */}
-            <Card className="px-4 py-3">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                    <div className="relative flex-1">
-                        <Search
-                            size={15}
-                            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                        />
-                        <input
-                            type="search"
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            placeholder="Search by invoice #, tenant, unit, building..."
-                            className="h-9 w-full rounded-md border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-                        />
+        <div className="min-h-screen bg-cream">
+            <div className="mx-auto max-w-[1240px] space-y-6 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+                {/* Heading */}
+                <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <p className="font-serif text-[13px] italic text-coral-600/85">
+                            Billing &amp; collections
+                        </p>
+                        <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
+                            Invoices
+                        </h1>
+                        <p className="font-bangla mt-1 text-[13px] text-ink-soft">
+                            সব বিল ও বকেয়া।
+                        </p>
                     </div>
 
-                    <div className="w-full sm:w-48">
-                        <Select
-                            value={statusFilter}
-                            onValueChange={(v) => setStatusFilter(v ?? ALL)}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Status" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value={ALL}>All statuses</SelectItem>
-                                {INVOICE_STATUS_OPTIONS.map((opt) => (
-                                    <SelectItem key={opt.value} value={opt.value}>
-                                        {opt.label}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                </div>
-
-                <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
-                    <span className="tabular-nums">
-                        {filtered.length} {filtered.length === 1 ? "result" : "results"}
-                    </span>
-                    {hasActiveFilters && (
+                    <div className="flex items-center gap-2">
                         <button
                             type="button"
-                            onClick={() => {
-                                setQuery("");
-                                setStatusFilter(ALL);
-                            }}
-                            className="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-700"
+                            onClick={() => setBatchOpen(true)}
+                            className="inline-flex h-9 items-center gap-1.5 rounded-[9px] border border-rule-soft bg-paper px-3.5 text-[13px] font-medium text-ink transition-colors hover:border-jade-700/30 hover:text-jade-900"
                         >
-                            <X size={11} /> Clear filters
+                            <Zap size={14} />
+                            Monthly batch
                         </button>
+
+                        <DropdownMenu>
+                            <DropdownMenuTrigger
+                                render={
+                                    <button
+                                        type="button"
+                                        className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
+                                    >
+                                        <Plus size={14} />
+                                        Generate
+                                        <ChevronDown size={13} />
+                                    </button>
+                                }
+                            />
+                            <DropdownMenuContent align="end" className="w-56">
+                                <DropdownMenuItem
+                                    onClick={() => setGenerateOpen(true)}
+                                >
+                                    <Receipt size={13} className="mr-2" />
+                                    Single invoice
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setBatchOpen(true)}>
+                                    <Zap size={13} className="mr-2" />
+                                    Monthly batch
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                </header>
+
+                {/* Money hero — Outstanding is THE number on this page */}
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.4fr_1fr]">
+                    {/* Outstanding hero */}
+                    <div
+                        className={cn(
+                            "relative overflow-hidden rounded-[18px] px-5 py-5 sm:px-6 sm:py-6",
+                            totalDue > 0
+                                ? "bg-jade-950 text-paper"
+                                : "border border-rule-soft bg-paper",
+                        )}
+                        style={
+                            totalDue > 0
+                                ? {
+                                      boxShadow:
+                                          "0 1px 0 rgba(255,255,255,0.06) inset, 0 18px 40px -22px rgba(10,46,34,0.5)",
+                                  }
+                                : undefined
+                        }
+                    >
+                        {totalDue > 0 && (
+                            <div
+                                aria-hidden
+                                className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 rounded-full opacity-50"
+                                style={{
+                                    background:
+                                        "radial-gradient(circle, rgba(255,123,87,0.4), transparent 65%)",
+                                }}
+                            />
+                        )}
+
+                        <p
+                            className={cn(
+                                "relative font-serif text-[13px] italic",
+                                totalDue > 0
+                                    ? "text-paper/60"
+                                    : "text-coral-600/85",
+                            )}
+                        >
+                            Outstanding balance
+                        </p>
+                        <p
+                            className={cn(
+                                "font-bangla relative mt-0.5 text-[11.5px]",
+                                totalDue > 0
+                                    ? "text-paper/45"
+                                    : "text-ink-soft/65",
+                            )}
+                        >
+                            অপরিশোধিত বকেয়া
+                        </p>
+                        <p
+                            className={cn(
+                                "relative mt-3 text-[40px] font-bold leading-none tracking-[-0.025em] tabular-nums sm:text-[46px]",
+                                totalDue > 0 ? "text-coral-400" : "text-jade-950",
+                            )}
+                        >
+                            {totalDue > 0 ? formatMoney(totalDue) : "All clear"}
+                        </p>
+                        <p
+                            className={cn(
+                                "relative mt-3 text-[12.5px]",
+                                totalDue > 0
+                                    ? "text-paper/70"
+                                    : "text-ink-soft",
+                            )}
+                        >
+                            across{" "}
+                            <span
+                                className={cn(
+                                    "font-semibold tabular-nums",
+                                    totalDue > 0
+                                        ? "text-paper"
+                                        : "text-ink",
+                                )}
+                            >
+                                {fmtNum(invoices?.length ?? 0)}
+                            </span>{" "}
+                            invoice{(invoices?.length ?? 0) === 1 ? "" : "s"}
+                            {totalPaid > 0 && (
+                                <>
+                                    {" · "}
+                                    <span
+                                        className={
+                                            totalDue > 0
+                                                ? "text-jade-300"
+                                                : "text-jade-700"
+                                        }
+                                    >
+                                        {formatMoney(totalPaid)} collected
+                                    </span>
+                                </>
+                            )}
+                        </p>
+
+                        {overdueCount > 0 && (
+                            <div
+                                className={cn(
+                                    "relative mt-4 inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[11.5px] font-medium",
+                                    totalDue > 0
+                                        ? "bg-coral-500/15 text-coral-300"
+                                        : "bg-coral-50 text-coral-700",
+                                )}
+                            >
+                                <AlertTriangle size={11} />
+                                <span className="tabular-nums">
+                                    {fmtNum(overdueCount)}
+                                </span>
+                                <span>
+                                    invoice{overdueCount === 1 ? "" : "s"} overdue
+                                </span>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Supporting context */}
+                    <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
+                        <MiniStat
+                            label="Collected"
+                            bn="পরিশোধিত"
+                            value={formatMoney(totalPaid)}
+                            sub="paid to date"
+                            tone="good"
+                        />
+                        <MiniStat
+                            label="Total invoices"
+                            bn="মোট বিল"
+                            value={fmtNum(invoices?.length ?? 0)}
+                            sub="all statuses"
+                            tone="neutral"
+                        />
+                    </div>
+                </div>
+
+                {/* Filters */}
+                <div className="rounded-[14px] border border-rule-soft bg-paper p-4">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                        <div className="relative flex-1">
+                            <Search
+                                size={15}
+                                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-soft/70"
+                            />
+                            <input
+                                type="search"
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                placeholder="Search by invoice #, tenant, unit, building…"
+                                className="h-9 w-full rounded-md border border-rule-soft bg-paper pl-9 pr-3 text-[13.5px] text-ink placeholder:text-ink-soft/60 focus:border-jade-700 focus:outline-none focus:ring-2 focus:ring-jade-700/20"
+                            />
+                        </div>
+
+                        <div className="w-full sm:w-48">
+                            <Select
+                                value={statusFilter}
+                                onValueChange={(v) => setStatusFilter(v ?? ALL)}
+                            >
+                                <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
+                                    <SelectValue placeholder="Status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value={ALL}>
+                                        All statuses
+                                    </SelectItem>
+                                    {INVOICE_STATUS_OPTIONS.map((opt) => (
+                                        <SelectItem
+                                            key={opt.value}
+                                            value={opt.value}
+                                        >
+                                            {opt.label}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+
+                    {(filtered.length > 0 || hasActiveFilters) && (
+                        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-rule-soft pt-3 text-[12px] text-ink-soft">
+                            <span className="tabular-nums">
+                                <span className="font-semibold text-ink">
+                                    {fmtNum(filtered.length)}
+                                </span>{" "}
+                                {filtered.length === 1 ? "result" : "results"}
+                                {statusFilter !== ALL && (
+                                    <span className="ml-1.5 text-ink-soft/70">
+                                        ·{" "}
+                                        {invoiceStatusLabel(
+                                            statusFilter as InvoiceStatus,
+                                        )}{" "}
+                                        only
+                                    </span>
+                                )}
+                            </span>
+                            {hasActiveFilters && (
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setQuery("");
+                                        setStatusFilter(ALL);
+                                    }}
+                                    className="inline-flex items-center gap-1 font-medium text-ink-soft transition-colors hover:text-coral-600"
+                                >
+                                    <X size={11} /> Clear filters
+                                </button>
+                            )}
+                        </div>
                     )}
                 </div>
-            </Card>
 
-            {/* Content */}
-            {isLoading ? (
-                <div className="space-y-2">
-                    {[1, 2, 3, 4, 5, 6].map((i) => (
-                        <Skeleton key={i} className="h-20 w-full rounded-lg" />
-                    ))}
-                </div>
-            ) : isError ? (
-                <Card className="px-6 py-12 text-center">
-                    <h2 className="text-base font-semibold text-slate-900">
-                        Couldn&apos;t load invoices
-                    </h2>
-                    <p className="mt-1 text-sm text-slate-500">
-                        {error instanceof Error ? error.message : "Please try again."}
-                    </p>
-                </Card>
-            ) : !invoices || invoices.length === 0 ? (
-                <EmptyState
-                    onGenerate={() => setGenerateOpen(true)}
-                    onBatch={() => setBatchOpen(true)}
+                {/* Content */}
+                {isLoading ? (
+                    <ListShell />
+                ) : isError ? (
+                    <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
+                        <h2 className="text-[15px] font-bold text-coral-700">
+                            Couldn&apos;t load invoices
+                        </h2>
+                        <p className="mt-1 text-[13px] text-coral-700/80">
+                            {error instanceof Error
+                                ? error.message
+                                : "Please try again."}
+                        </p>
+                    </div>
+                ) : !invoices || invoices.length === 0 ? (
+                    <EmptyState
+                        onGenerate={() => setGenerateOpen(true)}
+                        onBatch={() => setBatchOpen(true)}
+                    />
+                ) : filtered.length === 0 ? (
+                    <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-12 text-center">
+                        <p className="text-[13.5px] text-ink-soft">
+                            No invoices match your filters.
+                        </p>
+                    </div>
+                ) : (
+                    <div className="overflow-hidden rounded-[14px] border border-rule-soft bg-paper">
+                        <ul className="divide-y divide-rule-soft">
+                            {filtered.map((inv) => (
+                                <InvoiceRow key={inv.id} invoice={inv} />
+                            ))}
+                        </ul>
+                    </div>
+                )}
+
+                {/* Dialogs */}
+                <GenerateInvoiceDialog
+                    open={generateOpen}
+                    onOpenChange={setGenerateOpen}
                 />
-            ) : filtered.length === 0 ? (
-                <Card className="px-6 py-12 text-center">
-                    <p className="text-sm text-slate-500">
-                        No invoices match your filters.
-                    </p>
-                </Card>
-            ) : (
-                <Card className="overflow-hidden p-0">
-                    <ul className="divide-y divide-slate-100">
-                        {filtered.map((inv) => (
-                            <InvoiceRow key={inv.id} invoice={inv} />
-                        ))}
-                    </ul>
-                </Card>
-            )}
-
-            {/* Dialogs */}
-            <GenerateInvoiceDialog
-                open={generateOpen}
-                onOpenChange={setGenerateOpen}
-            />
-            <GenerateMonthlyBatchDialog
-                open={batchOpen}
-                onOpenChange={setBatchOpen}
-            />
+                <GenerateMonthlyBatchDialog
+                    open={batchOpen}
+                    onOpenChange={setBatchOpen}
+                />
+            </div>
         </div>
     );
 }
 
+// ─────────────────────────────────────────────────────────────────
+// InvoiceRow — status accent strip + clean data row
+// ─────────────────────────────────────────────────────────────────
+
 function InvoiceRow({ invoice }: { invoice: InvoiceListItem }) {
+    const hasDue = Number(invoice.dueAmount) > 0;
+
     return (
         <li>
             <Link
                 href={`/owner/dashboard/invoices/${invoice.id}`}
-                className="group flex flex-col gap-3 px-5 py-4 transition-colors hover:bg-slate-50 sm:flex-row sm:items-center"
+                className="group relative flex flex-col gap-3 px-5 py-4 transition-colors hover:bg-cream/60 sm:flex-row sm:items-center"
             >
-                {/* Left: invoice meta */}
-                <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                        <p className="truncate font-mono text-xs font-medium text-slate-900 group-hover:text-indigo-700">
+                {/* Status accent */}
+                <span
+                    aria-hidden
+                    className={cn(
+                        "absolute inset-y-0 left-0 w-[3px]",
+                        invoiceStatusAccent[invoice.status],
+                    )}
+                />
+
+                {/* Left: meta */}
+                <div className="min-w-0 flex-1 pl-2">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                        <p className="truncate font-mono text-[12.5px] font-semibold text-jade-950 group-hover:text-jade-900">
                             {invoice.invoiceNumber}
                         </p>
-                        <Badge
-                            variant="outline"
+                        <span
                             className={cn(
-                                "text-[10px]",
+                                "rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
                                 invoiceTypeStyles[invoice.type],
                             )}
                         >
                             {invoiceTypeLabel(invoice.type)}
-                        </Badge>
-                        <Badge
-                            variant="outline"
+                        </span>
+                        <span
                             className={cn(
-                                "text-[10px]",
+                                "rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
                                 invoiceStatusStyles[invoice.status],
                             )}
                         >
                             {invoiceStatusLabel(invoice.status)}
-                        </Badge>
+                        </span>
                     </div>
 
-                    <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
+                    <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11.5px] text-ink-soft">
                         <span className="inline-flex items-center gap-1">
-                            <User size={11} /> {invoice.tenant.name}
+                            <User size={11} className="text-ink-soft/60" />
+                            <span className="text-ink">
+                                {invoice.tenant.name}
+                            </span>
                         </span>
                         <span className="inline-flex items-center gap-1">
-                            <Building size={11} /> {invoice.unit.building.name}
+                            <Building size={11} className="text-ink-soft/60" />
+                            {invoice.unit.building.name}
                         </span>
                         <span className="inline-flex items-center gap-1">
-                            <DoorOpen size={11} /> {invoice.unit.name}
+                            <DoorOpen size={11} className="text-ink-soft/60" />
+                            Unit {invoice.unit.name}
                         </span>
                         <span className="inline-flex items-center gap-1">
-                            <Calendar size={11} />
+                            <Calendar size={11} className="text-ink-soft/60" />
                             {formatBillingMonth(invoice.billingMonth)}
                         </span>
                     </div>
                 </div>
 
                 {/* Right: amounts */}
-                <div className="flex items-baseline gap-6 sm:gap-8">
+                <div className="flex items-baseline gap-6 sm:gap-8 pl-2 sm:pl-0">
                     <div className="text-right">
-                        <p className="text-[10px] font-medium uppercase tracking-wider text-slate-400">
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-ink-soft">
                             Due
                         </p>
                         <p
                             className={cn(
-                                "text-sm font-semibold tabular-nums",
-                                Number(invoice.dueAmount) > 0
-                                    ? "text-rose-700"
-                                    : "text-slate-400",
+                                "text-[14px] font-semibold tabular-nums",
+                                hasDue
+                                    ? "text-coral-700"
+                                    : "text-ink-soft/50",
                             )}
                         >
                             {formatMoney(invoice.dueAmount)}
                         </p>
                     </div>
                     <div className="text-right">
-                        <p className="text-[10px] font-medium uppercase tracking-wider text-slate-400">
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-ink-soft">
                             Total
                         </p>
-                        <p className="text-base font-semibold text-slate-900 tabular-nums">
+                        <p className="text-[16px] font-bold text-jade-950 tabular-nums">
                             {formatMoney(invoice.totalAmount)}
                         </p>
                     </div>
@@ -359,39 +515,63 @@ function InvoiceRow({ invoice }: { invoice: InvoiceListItem }) {
     );
 }
 
-function StatTile({
+// ─────────────────────────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────────────────────────
+
+function MiniStat({
     label,
+    bn,
     value,
-    sublabel,
-    accent,
+    sub,
+    tone,
 }: {
     label: string;
+    bn: string;
     value: string;
-    sublabel: string;
-    accent: "indigo" | "emerald" | "rose";
+    sub: string;
+    tone: "good" | "warn" | "neutral";
 }) {
-    const accents: Record<typeof accent, string> = {
-        indigo: "bg-indigo-50 text-indigo-700",
-        emerald: "bg-emerald-50 text-emerald-700",
-        rose: "bg-rose-50 text-rose-700",
-    };
+    const valueTone =
+        tone === "warn"
+            ? "text-coral-700"
+            : tone === "good"
+                ? "text-jade-950"
+                : "text-ink-soft/85";
+
     return (
-        <Card className="px-5">
-            <p className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
-                {label}
-            </p>
-            <p className="mt-1 text-xl font-semibold text-slate-900 tabular-nums">
-                {value}
-            </p>
-            <span
+        <div className="rounded-[14px] border border-rule-soft bg-paper px-4 py-3.5">
+            <div className="flex items-baseline justify-between gap-2">
+                <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
+                    {label}
+                </p>
+                <p className="font-bangla text-[10.5px] text-ink-soft/65">
+                    {bn}
+                </p>
+            </div>
+            <p
                 className={cn(
-                    "mt-1.5 inline-block rounded-full px-2 py-0.5 text-[10px] font-medium",
-                    accents[accent],
+                    "mt-1.5 text-[20px] font-bold leading-none tracking-[-0.025em] tabular-nums",
+                    valueTone,
                 )}
             >
-                {sublabel}
-            </span>
-        </Card>
+                {value}
+            </p>
+            <p className="mt-1.5 text-[11.5px] text-ink-soft">{sub}</p>
+        </div>
+    );
+}
+
+function ListShell() {
+    return (
+        <div className="space-y-2">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+                <Skeleton
+                    key={i}
+                    className="h-[72px] w-full rounded-[10px] bg-paper"
+                />
+            ))}
+        </div>
     );
 }
 
@@ -403,25 +583,38 @@ function EmptyState({
     onBatch: () => void;
 }) {
     return (
-        <Card className="px-6 py-16 text-center">
-            <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-indigo-50">
-                <Receipt size={28} className="text-indigo-600" />
+        <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-16 text-center">
+            <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-jade-50">
+                <Receipt size={26} className="text-jade-800" />
             </div>
-            <h2 className="mt-4 text-lg font-semibold text-slate-900">
+            <h2 className="mt-4 text-[17px] font-bold text-jade-950">
                 No invoices yet
             </h2>
-            <p className="mx-auto mt-1 max-w-sm text-sm text-slate-500">
-                Generate your first invoice for an active lease, or run a monthly batch
-                to invoice everyone at once.
+            <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
+                Generate your first invoice for an active lease, or run a monthly
+                batch to invoice everyone at once.
+            </p>
+            <p className="font-bangla mt-0.5 text-[12px] text-ink-soft/75">
+                আপনার প্রথম বিল তৈরি করুন
             </p>
             <div className="mt-5 flex items-center justify-center gap-2">
-                <Button variant="outline" onClick={onBatch}>
-                    <Zap size={14} /> Monthly batch
-                </Button>
-                <Button onClick={onGenerate}>
-                    <Plus size={14} /> Generate invoice
-                </Button>
+                <button
+                    type="button"
+                    onClick={onBatch}
+                    className="inline-flex h-9 items-center gap-1.5 rounded-[9px] border border-rule-soft bg-paper px-3.5 text-[13px] font-medium text-ink transition-colors hover:border-jade-700/30 hover:text-jade-900"
+                >
+                    <Zap size={14} />
+                    Monthly batch
+                </button>
+                <button
+                    type="button"
+                    onClick={onGenerate}
+                    className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
+                >
+                    <Plus size={14} />
+                    Generate invoice
+                </button>
             </div>
-        </Card>
+        </div>
     );
 }
