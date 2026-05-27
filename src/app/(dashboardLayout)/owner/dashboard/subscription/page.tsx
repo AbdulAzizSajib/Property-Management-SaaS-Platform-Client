@@ -1,9 +1,5 @@
 "use client";
 
-import { Alert, AlertDescription, AlertTitle } from "@/src/components/ui/alert";
-import { Badge } from "@/src/components/ui/badge";
-import { Button } from "@/src/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card";
 import { Skeleton } from "@/src/components/ui/skeleton";
 import { useChangePlan, useSubscription } from "@/src/hooks/useSubscription";
 import { cn } from "@/src/lib/utils";
@@ -28,12 +24,39 @@ import {
     X,
 } from "lucide-react";
 
-const statusStyles: Record<SubscriptionStatus, { label: string; className: string }> = {
-    TRIALING: { label: "Trialing", className: "bg-indigo-50 text-indigo-700 border-indigo-200" },
-    ACTIVE: { label: "Active", className: "bg-emerald-50 text-emerald-700 border-emerald-200" },
-    PAST_DUE: { label: "Past Due", className: "bg-amber-50 text-amber-700 border-amber-200" },
-    CANCELED: { label: "Canceled", className: "bg-slate-100 text-slate-600 border-slate-200" },
-    EXPIRED: { label: "Expired", className: "bg-rose-50 text-rose-700 border-rose-200" },
+// ─────────────────────────────────────────────────────────────────
+// Status styling — semantic, brand-aligned:
+//   TRIALING → jade-soft (positive but tentative)
+//   ACTIVE   → jade (healthy, money flowing)
+//   PAST_DUE → coral (needs attention)
+//   CANCELED → ink-soft (archival)
+//   EXPIRED  → coral (urgent)
+// ─────────────────────────────────────────────────────────────────
+
+const statusStyles: Record<
+    SubscriptionStatus,
+    { label: string; className: string }
+> = {
+    TRIALING: {
+        label: "Trialing",
+        className: "bg-jade-50/60 text-jade-700 border-jade-100/70",
+    },
+    ACTIVE: {
+        label: "Active",
+        className: "bg-jade-50 text-jade-800 border-jade-100",
+    },
+    PAST_DUE: {
+        label: "Past due",
+        className: "bg-coral-50 text-coral-700 border-coral-100",
+    },
+    CANCELED: {
+        label: "Canceled",
+        className: "bg-cream text-ink-soft border-rule-soft",
+    },
+    EXPIRED: {
+        label: "Expired",
+        className: "bg-coral-50 text-coral-700 border-coral-100",
+    },
 };
 
 const fmt = (n: number) =>
@@ -49,19 +72,32 @@ function daysUntil(iso: string | null): number | null {
     return Math.ceil(diff / (1000 * 60 * 60 * 24));
 }
 
+function formatDate(iso: string): string {
+    return new Date(iso).toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+    });
+}
+
 export default function SubscriptionPage() {
     const { data: sub, isLoading, isError, error } = useSubscription();
     const changePlan = useChangePlan();
 
     if (isLoading) {
         return (
-            <div className="space-y-6 p-4 sm:p-6 lg:p-8">
-                <Skeleton className="h-9 w-64" />
-                <Skeleton className="h-44 w-full" />
-                <div className="grid gap-4 lg:grid-cols-4">
-                    {[1, 2, 3, 4].map((i) => (
-                        <Skeleton key={i} className="h-80" />
-                    ))}
+            <div className="min-h-screen bg-cream">
+                <div className="mx-auto max-w-[1240px] space-y-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+                    <Skeleton className="h-9 w-64 bg-paper" />
+                    <Skeleton className="h-44 w-full rounded-[14px] bg-paper" />
+                    <div className="grid gap-4 lg:grid-cols-4">
+                        {[1, 2, 3, 4].map((i) => (
+                            <Skeleton
+                                key={i}
+                                className="h-80 rounded-[14px] bg-paper"
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
         );
@@ -69,17 +105,19 @@ export default function SubscriptionPage() {
 
     if (isError || !sub) {
         return (
-            <div className="p-4 sm:p-6 lg:p-8">
-                <Card className="px-5">
-                    <CardHeader className="px-0">
-                        <CardTitle>Couldn&apos;t load subscription</CardTitle>
-                        <CardDescription>
+            <div className="min-h-screen bg-cream">
+                <div className="mx-auto max-w-[1240px] p-4 sm:p-6 lg:p-8">
+                    <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
+                        <h2 className="text-[15px] font-bold text-coral-700">
+                            Couldn&apos;t load subscription
+                        </h2>
+                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-700/80">
                             {error instanceof Error
                                 ? error.message
                                 : "Something went wrong. Please try again."}
-                        </CardDescription>
-                    </CardHeader>
-                </Card>
+                        </p>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -89,147 +127,212 @@ export default function SubscriptionPage() {
     const price = parseFloat(sub.priceMonthly) || 0;
 
     return (
-        <div className="space-y-6 p-4 sm:p-6 lg:p-8">
-            {/* Heading */}
-            <div>
-                <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
-                    Subscription
-                </h1>
-                <p className="mt-1 text-sm text-slate-500">
-                    Your current plan, usage limits and available upgrades.
-                </p>
-            </div>
+        <div className="min-h-screen bg-cream">
+            <div className="mx-auto max-w-[1240px] space-y-6 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+                {/* Heading */}
+                <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <p className="font-serif text-[13px] italic text-coral-600/85">
+                            Plan &amp; billing
+                        </p>
+                        <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
+                            Subscription
+                        </h1>
+                        <p className="font-bangla mt-1 text-[13px] text-ink-soft">
+                            আপনার বর্তমান প্ল্যান, ব্যবহারের সীমা ও উপলব্ধ আপগ্রেড।
+                        </p>
+                    </div>
+                </header>
 
-            {/* Trial warning */}
-            {sub.status === "TRIALING" && trialDaysLeft !== null && trialDaysLeft <= 7 && (
-                <Alert>
-                    <Clock />
-                    <AlertTitle>
-                        {trialDaysLeft <= 0
-                            ? "Your free trial has ended"
-                            : `${trialDaysLeft} day${trialDaysLeft === 1 ? "" : "s"} left on your free trial`}
-                    </AlertTitle>
-                    <AlertDescription>
-                        Upgrade now to keep access to all your buildings, units and tenants without
-                        interruption.
-                    </AlertDescription>
-                </Alert>
-            )}
-
-            {/* Current plan summary */}
-            <Card className="px-6 py-6">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                    <div className="flex items-start gap-4">
-                        <span className="flex size-12 items-center justify-center rounded-xl bg-linear-to-br from-indigo-500 to-violet-600 text-white shadow-sm shadow-indigo-600/30">
-                            <CreditCard size={22} />
-                        </span>
-                        <div>
-                            <div className="flex flex-wrap items-center gap-2">
-                                <h2 className="text-xl font-semibold text-slate-900">
-                                    {PLAN_PRESETS[sub.plan].label} Plan
-                                </h2>
-                                <Badge variant="outline" className={status.className}>
-                                    {status.label}
-                                </Badge>
+                {/* Trial warning */}
+                {sub.status === "TRIALING" &&
+                    trialDaysLeft !== null &&
+                    trialDaysLeft <= 7 && (
+                        <div className="flex items-start gap-3 rounded-[14px] border border-coral-100 bg-coral-50/70 px-4 py-3.5">
+                            <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-coral-100 text-coral-700">
+                                <Clock size={16} />
+                            </span>
+                            <div className="flex-1">
+                                <p className="text-[14px] font-bold text-coral-700">
+                                    {trialDaysLeft <= 0
+                                        ? "Your free trial has ended"
+                                        : `${trialDaysLeft} day${trialDaysLeft === 1 ? "" : "s"} left on your free trial`}
+                                </p>
+                                <p className="text-[12.5px] text-coral-700/80 mt-0.5">
+                                    Upgrade now to keep access to all your
+                                    buildings, units and tenants without
+                                    interruption.
+                                </p>
                             </div>
-                            <p className="mt-0.5 text-sm text-slate-500">
-                                {PLAN_PRESETS[sub.plan].tagline}
-                            </p>
+                        </div>
+                    )}
 
-                            <div className="mt-3 flex items-baseline gap-1">
-                                <span className="text-3xl font-semibold tracking-tight text-slate-900 tabular-nums">
-                                    {price === 0 ? "Free" : fmt(price)}
-                                </span>
-                                {price > 0 && (
-                                    <span className="text-sm text-slate-500">/month</span>
-                                )}
+                {/* Current plan summary */}
+                <div className="rounded-[14px] border border-rule-soft bg-paper p-5 sm:p-6">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="flex items-start gap-4">
+                            <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-[12px] bg-jade-900 text-paper">
+                                <CreditCard size={22} />
+                            </span>
+                            <div>
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <h2 className="text-[20px] font-bold tracking-[-0.01em] text-jade-950">
+                                        {PLAN_PRESETS[sub.plan].label} plan
+                                    </h2>
+                                    <span
+                                        className={cn(
+                                            "rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
+                                            status.className,
+                                        )}
+                                    >
+                                        {status.label}
+                                    </span>
+                                </div>
+                                <p className="mt-1 text-[13px] text-ink-soft">
+                                    {PLAN_PRESETS[sub.plan].tagline}
+                                </p>
+
+                                <div className="mt-3 flex items-baseline gap-1">
+                                    <span className="text-[32px] font-bold leading-none tracking-[-0.025em] text-jade-950 tabular-nums">
+                                        {price === 0 ? "Free" : fmt(price)}
+                                    </span>
+                                    {price > 0 && (
+                                        <span className="text-[13px] text-ink-soft">
+                                            /month
+                                        </span>
+                                    )}
+                                </div>
                             </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3 sm:gap-3">
+                            <UsageStat
+                                icon={Building}
+                                label="Buildings"
+                                bn="বিল্ডিং"
+                                limit={sub.buildingLimit}
+                            />
+                            <UsageStat
+                                icon={DoorOpen}
+                                label="Units"
+                                bn="ইউনিট"
+                                limit={sub.unitLimit}
+                            />
+                            <UsageStat
+                                icon={Users}
+                                label="Tenants"
+                                bn="ভাড়াটিয়া"
+                                limit={sub.tenantLimit}
+                            />
+                            <UsageStat
+                                icon={Sparkles}
+                                label="Renews"
+                                bn="নবায়ন"
+                                limit={sub.autoRenew ? "Auto" : "Manual"}
+                            />
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4">
-                        <UsageStat icon={Building} label="Buildings" limit={sub.buildingLimit} />
-                        <UsageStat icon={DoorOpen} label="Units" limit={sub.unitLimit} />
-                        <UsageStat icon={Users} label="Tenants" limit={sub.tenantLimit} />
-                        <UsageStat
-                            icon={Sparkles}
-                            label="Renews"
-                            limit={sub.autoRenew ? "Auto" : "Manual"}
+                    {/* Feature pills */}
+                    <div className="mt-5 flex flex-wrap gap-2 border-t border-rule-soft pt-5">
+                        <FeatureBadge
+                            icon={MessageSquare}
+                            label="SMS notifications"
+                            enabled={sub.smsEnabled}
                         />
+                        <FeatureBadge
+                            icon={Palette}
+                            label="Custom branding"
+                            enabled={sub.customBranding}
+                        />
+                        <FeatureBadge
+                            icon={UsersRound}
+                            label="Multiple admins"
+                            enabled={sub.multiAdmin}
+                        />
+                    </div>
+
+                    {/* Dates */}
+                    <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                        <KeyValue label="Started" value={formatDate(sub.startDate)} />
+                        {sub.trialEndsAt && (
+                            <KeyValue
+                                label="Trial ends"
+                                value={formatDate(sub.trialEndsAt)}
+                            />
+                        )}
+                        {sub.endDate && (
+                            <KeyValue
+                                label="Renews on"
+                                value={formatDate(sub.endDate)}
+                            />
+                        )}
                     </div>
                 </div>
 
-                {/* Feature badges */}
-                <div className="mt-5 flex flex-wrap gap-2 border-t border-slate-100 pt-5">
-                    <FeatureBadge icon={MessageSquare} label="SMS Notifications" enabled={sub.smsEnabled} />
-                    <FeatureBadge icon={Palette} label="Custom Branding" enabled={sub.customBranding} />
-                    <FeatureBadge icon={UsersRound} label="Multiple Admins" enabled={sub.multiAdmin} />
-                </div>
-
-                {/* Dates */}
-                <div className="mt-4 grid grid-cols-1 gap-3 text-xs text-slate-500 sm:grid-cols-3">
-                    <KeyValue label="Started" value={new Date(sub.startDate).toLocaleDateString()} />
-                    {sub.trialEndsAt && (
-                        <KeyValue
-                            label="Trial ends"
-                            value={new Date(sub.trialEndsAt).toLocaleDateString()}
-                        />
-                    )}
-                    {sub.endDate && (
-                        <KeyValue
-                            label="Renews on"
-                            value={new Date(sub.endDate).toLocaleDateString()}
-                        />
-                    )}
-                </div>
-            </Card>
-
-            {/* Plan picker */}
-            <section>
-                <div className="mb-3 flex items-end justify-between">
-                    <div>
-                        <h2 className="text-base font-semibold text-slate-900">
-                            Change your plan
-                        </h2>
-                        <p className="text-xs text-slate-500">
-                            Switching takes effect immediately. Limits and pricing update at once.
-                        </p>
+                {/* Plan picker */}
+                <section>
+                    <div className="mb-4 flex items-end justify-between">
+                        <div>
+                            <p className="font-serif text-[12.5px] italic text-coral-600/85">
+                                Change your plan
+                            </p>
+                            <p className="font-bangla text-[11.5px] text-ink-soft/75 mt-0.5">
+                                আপনার প্ল্যান পরিবর্তন করুন
+                            </p>
+                            <p className="mt-1 text-[12.5px] text-ink-soft">
+                                Switching takes effect immediately. Limits and
+                                pricing update at once.
+                            </p>
+                        </div>
                     </div>
-                </div>
 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    {PLAN_ORDER.map((plan) => (
-                        <PlanCard
-                            key={plan}
-                            plan={plan}
-                            current={sub.plan}
-                            onSelect={() => changePlan.mutate(plan)}
-                            pending={changePlan.isPending && changePlan.variables === plan}
-                            disabled={changePlan.isPending}
-                        />
-                    ))}
-                </div>
-            </section>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                        {PLAN_ORDER.map((plan) => (
+                            <PlanCard
+                                key={plan}
+                                plan={plan}
+                                current={sub.plan}
+                                onSelect={() => changePlan.mutate(plan)}
+                                pending={
+                                    changePlan.isPending &&
+                                    changePlan.variables === plan
+                                }
+                                disabled={changePlan.isPending}
+                            />
+                        ))}
+                    </div>
+                </section>
+            </div>
         </div>
     );
 }
 
+// ─────────────────────────────────────────────────────────────────
+// Atoms
+// ─────────────────────────────────────────────────────────────────
+
 function UsageStat({
     icon: Icon,
     label,
+    bn,
     limit,
 }: {
     icon: React.ComponentType<{ size?: number; className?: string }>;
     label: string;
+    bn: string;
     limit: number | string;
 }) {
     return (
-        <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5">
-            <div className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wider text-slate-500">
-                <Icon size={11} />
-                {label}
+        <div className="rounded-[10px] border border-rule-soft bg-cream/60 px-3 py-2.5">
+            <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1.5 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
+                    <Icon size={11} className="text-ink-soft/70" />
+                    {label}
+                </div>
+                <p className="font-bangla text-[10px] text-ink-soft/65">{bn}</p>
             </div>
-            <p className="mt-0.5 text-base font-semibold text-slate-900 tabular-nums">
+            <p className="mt-1 text-[16px] font-bold text-jade-950 tabular-nums">
                 {typeof limit === "number" ? limit.toLocaleString() : limit}
             </p>
         </div>
@@ -248,18 +351,18 @@ function FeatureBadge({
     return (
         <span
             className={cn(
-                "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium",
+                "inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11.5px] font-medium",
                 enabled
-                    ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                    : "border-slate-200 bg-slate-50 text-slate-500",
+                    ? "border-jade-100 bg-jade-50 text-jade-800"
+                    : "border-rule-soft bg-cream/60 text-ink-soft",
             )}
         >
-            <Icon size={12} />
+            <Icon size={11} className={enabled ? "text-jade-700" : "text-ink-soft/60"} />
             {label}
             {enabled ? (
-                <Check size={12} className="text-emerald-600" />
+                <Check size={11} className="text-jade-700" />
             ) : (
-                <X size={12} className="text-slate-400" />
+                <X size={11} className="text-ink-soft/50" />
             )}
         </span>
     );
@@ -267,11 +370,13 @@ function FeatureBadge({
 
 function KeyValue({ label, value }: { label: string; value: string }) {
     return (
-        <div className="flex items-center justify-between rounded-md border border-slate-100 bg-white px-3 py-2 sm:flex-col sm:items-start sm:justify-start">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
+        <div className="rounded-[10px] border border-rule-soft bg-cream/40 px-3 py-2">
+            <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
                 {label}
-            </span>
-            <span className="text-sm font-medium text-slate-700">{value}</span>
+            </p>
+            <p className="mt-0.5 text-[13px] font-medium text-ink tabular-nums">
+                {value}
+            </p>
         </div>
     );
 }
@@ -296,73 +401,120 @@ function PlanCard({
     return (
         <div
             className={cn(
-                "relative flex flex-col rounded-xl border bg-white p-5 transition-all",
-                highlight && !isCurrent
-                    ? "border-indigo-300 shadow-lg shadow-indigo-100"
-                    : "border-slate-200",
-                isCurrent && "ring-2 ring-indigo-500",
+                "relative flex flex-col rounded-[14px] border bg-paper p-5 transition-all",
+                isCurrent
+                    ? "border-jade-700 ring-2 ring-jade-700/20"
+                    : highlight
+                        ? "border-coral-100 shadow-[0_20px_50px_-30px_rgba(232,93,68,0.35)]"
+                        : "border-rule-soft",
             )}
         >
             {highlight && !isCurrent && (
-                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-indigo-600 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white shadow-sm">
+                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 rounded-full bg-coral-600 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-paper shadow-[0_4px_12px_-4px_rgba(232,93,68,0.6)]">
+                    <Sparkles size={9} />
                     Most popular
                 </span>
             )}
 
+            {isCurrent && (
+                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-jade-900 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-paper">
+                    Current plan
+                </span>
+            )}
+
             <div className="mb-4">
-                <h3 className="text-base font-semibold text-slate-900">{preset.label}</h3>
-                <p className="mt-0.5 text-xs text-slate-500">{preset.tagline}</p>
+                <h3 className="text-[16px] font-bold text-jade-950">
+                    {preset.label}
+                </h3>
+                <p className="mt-0.5 text-[12px] text-ink-soft">
+                    {preset.tagline}
+                </p>
             </div>
 
             <div className="mb-4">
                 <div className="flex items-baseline gap-1">
-                    <span className="text-2xl font-semibold tracking-tight text-slate-900 tabular-nums">
+                    <span className="text-[26px] font-bold leading-none tracking-[-0.025em] text-jade-950 tabular-nums">
                         {preset.priceMonthly === 0 ? "Free" : fmt(preset.priceMonthly)}
                     </span>
                     {preset.priceMonthly > 0 && (
-                        <span className="text-xs text-slate-500">/mo</span>
+                        <span className="text-[12px] text-ink-soft">/mo</span>
                     )}
                 </div>
             </div>
 
-            <ul className="mb-5 flex-1 space-y-2 text-sm">
-                <FeatureRow enabled>{preset.buildingLimit.toLocaleString()} buildings</FeatureRow>
-                <FeatureRow enabled>{preset.unitLimit.toLocaleString()} units</FeatureRow>
-                <FeatureRow enabled>{preset.tenantLimit.toLocaleString()} tenants</FeatureRow>
-                <FeatureRow enabled={preset.smsEnabled}>SMS notifications</FeatureRow>
-                <FeatureRow enabled={preset.customBranding}>Custom branding</FeatureRow>
-                <FeatureRow enabled={preset.multiAdmin}>Multiple admins</FeatureRow>
+            <ul className="mb-5 flex-1 space-y-2 text-[13px]">
+                <FeatureRow enabled>
+                    {preset.buildingLimit.toLocaleString()} buildings
+                </FeatureRow>
+                <FeatureRow enabled>
+                    {preset.unitLimit.toLocaleString()} units
+                </FeatureRow>
+                <FeatureRow enabled>
+                    {preset.tenantLimit.toLocaleString()} tenants
+                </FeatureRow>
+                <FeatureRow enabled={preset.smsEnabled}>
+                    SMS notifications
+                </FeatureRow>
+                <FeatureRow enabled={preset.customBranding}>
+                    Custom branding
+                </FeatureRow>
+                <FeatureRow enabled={preset.multiAdmin}>
+                    Multiple admins
+                </FeatureRow>
             </ul>
 
-            <Button
-                variant={isCurrent ? "outline" : highlight ? "default" : "secondary"}
+            <button
+                type="button"
                 disabled={isCurrent || disabled}
                 onClick={onSelect}
+                className={cn(
+                    "inline-flex h-10 items-center justify-center gap-1.5 rounded-[10px] px-4 text-[13px] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60",
+                    isCurrent
+                        ? "border border-rule-soft bg-cream text-ink-soft"
+                        : highlight
+                            ? "bg-coral-600 text-paper hover:bg-coral-700 shadow-[0_10px_24px_-12px_rgba(232,93,68,0.55)]"
+                            : "bg-jade-900 text-paper hover:bg-jade-950",
+                )}
             >
                 {pending ? (
                     <>
                         <Loader2 size={14} className="animate-spin" />
-                        Switching...
+                        Switching…
                     </>
                 ) : isCurrent ? (
                     "Current plan"
                 ) : (
-                    "Switch to this plan"
+                    <>
+                        Switch
+                        <span aria-hidden>→</span>
+                    </>
                 )}
-            </Button>
+            </button>
         </div>
     );
 }
 
-function FeatureRow({ enabled, children }: { enabled: boolean; children: React.ReactNode }) {
+function FeatureRow({
+    enabled,
+    children,
+}: {
+    enabled: boolean;
+    children: React.ReactNode;
+}) {
     return (
-        <li className="flex items-center gap-2">
+        <li className="flex items-start gap-2">
             {enabled ? (
-                <Check size={14} className="text-emerald-600" />
+                <Check size={14} className="mt-0.5 shrink-0 text-jade-700" />
             ) : (
-                <X size={14} className="text-slate-300" />
+                <X size={14} className="mt-0.5 shrink-0 text-ink-soft/40" />
             )}
-            <span className={enabled ? "text-slate-700" : "text-slate-400 line-through"}>
+            <span
+                className={
+                    enabled
+                        ? "text-ink"
+                        : "text-ink-soft/55 line-through"
+                }
+            >
                 {children}
             </span>
         </li>

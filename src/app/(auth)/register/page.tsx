@@ -7,11 +7,11 @@ import {
     AlertCircle,
     ArrowLeft,
     ArrowRight,
-    Building2,
     Eye,
     EyeOff,
     Loader2,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -133,30 +133,57 @@ export default function RegisterPage() {
     }
 
     return (
-        <div className="w-full max-w-xl">
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
-                <div className="flex items-center gap-3 mb-1">
-                    <span className="flex items-center justify-center size-10 rounded-lg bg-indigo-50 text-indigo-600">
-                        <Building2 size={20} />
-                    </span>
-                    <div>
-                        <h1 className="text-xl font-semibold text-slate-800">
-                            Create your BariBari account
-                        </h1>
-                        <p className="text-xs text-slate-500">
-                            Step {step} of 2 — {step === 1 ? "Owner details" : "Organization details"}
-                        </p>
-                    </div>
+        <div className="min-h-screen grid lg:grid-cols-[5fr_6fr]">
+            {/* LEFT — Form column */}
+            <div className="flex flex-col bg-paper px-6 py-8 sm:px-10 md:px-14 lg:px-12 xl:px-20">
+                {/* Top: Logo */}
+                <Link
+                    href="/"
+                    className="inline-flex items-center text-jade-900 text-3xl font-rubita w-fit"
+                >
+                    Bari<span className="text-coral-600">yan</span>
+                </Link>
+
+                {/* Form area — centered vertically */}
+                <div className="flex-1 flex flex-col justify-center py-10 lg:py-12">
+                    <div className="w-full max-w-md mx-auto lg:mx-0">
+                {/* Heading */}
+                <div className="mb-5">
+                    <p className="font-serif italic text-coral-600/85 text-[13px]">
+                        Get started
+                    </p>
+                    <h1 className="mt-0.5 text-[26px] sm:text-[28px] font-bold tracking-[-0.02em] text-jade-950">
+                        Create your account
+                    </h1>
+                    <p className="font-bangla mt-1 text-[13px] text-ink-soft">
+                        Bariyan এ আপনার নতুন একাউন্ট তৈরি করুন।
+                    </p>
                 </div>
 
-                <div className="flex items-center gap-2 mt-5 mb-6">
-                    <div className={`h-1.5 flex-1 rounded ${step >= 1 ? "bg-indigo-600" : "bg-slate-200"}`} />
-                    <div className={`h-1.5 flex-1 rounded ${step >= 2 ? "bg-indigo-600" : "bg-slate-200"}`} />
+                {/* Progress */}
+                <div className="mb-6">
+                    <div className="flex items-center gap-2">
+                        <div
+                            className={`h-1.5 flex-1 rounded-full transition-colors ${
+                                step >= 1 ? "bg-jade-900" : "bg-rule-soft"
+                            }`}
+                        />
+                        <div
+                            className={`h-1.5 flex-1 rounded-full transition-colors ${
+                                step >= 2 ? "bg-jade-900" : "bg-rule-soft"
+                            }`}
+                        />
+                    </div>
+                    <p className="mt-2 text-[11.5px] text-ink-soft tabular-nums">
+                        Step <span className="font-semibold text-ink">{step}</span> of{" "}
+                        <span className="tabular-nums">2</span> —{" "}
+                        {step === 1 ? "Owner details" : "Organization details"}
+                    </p>
                 </div>
 
                 {serverError && (
-                    <div className="flex items-start gap-2 mb-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-700 text-sm">
-                        <AlertCircle size={16} className="mt-0.5 shrink-0" />
+                    <div className="flex items-start gap-2 mb-4 px-3 py-2.5 rounded-[10px] bg-coral-50/70 border border-coral-100 text-coral-700 text-[13px]">
+                        <AlertCircle size={15} className="mt-0.5 shrink-0" />
                         <span>{serverError}</span>
                     </div>
                 )}
@@ -186,7 +213,11 @@ export default function RegisterPage() {
                                 />
                             </Field>
 
-                            <Field label="Password" error={errors.password} hint="Minimum 8 characters">
+                            <Field
+                                label="Password"
+                                error={errors.password}
+                                hint="Minimum 8 characters"
+                            >
                                 <div className="relative">
                                     <input
                                         type={showPassword ? "text" : "password"}
@@ -199,34 +230,40 @@ export default function RegisterPage() {
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword((s) => !s)}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-slate-600"
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-ink-soft hover:text-jade-900"
                                         aria-label={showPassword ? "Hide password" : "Show password"}
                                     >
-                                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                        {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                                     </button>
                                 </div>
                             </Field>
 
-                            <Field label="Contact number" error={errors.contactNumber} hint="11-digit Bangladeshi mobile">
+                            <Field
+                                label="Contact number"
+                                error={errors.contactNumber}
+                                hint="11-digit Bangladeshi mobile"
+                            >
                                 <input
                                     type="tel"
                                     inputMode="numeric"
                                     autoComplete="tel"
                                     value={form.contactNumber}
-                                    onChange={(e) => update("contactNumber", e.target.value.replace(/\s+/g, ""))}
+                                    onChange={(e) =>
+                                        update("contactNumber", e.target.value.replace(/\s+/g, ""))
+                                    }
                                     placeholder="01711000111"
                                     maxLength={11}
-                                    className={inputClass(!!errors.contactNumber)}
+                                    className={inputClass(!!errors.contactNumber, "tabular-nums")}
                                 />
                             </Field>
 
                             <button
                                 type="button"
                                 onClick={handleNext}
-                                className="w-full mt-2 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 transition px-4 py-3 rounded-md text-white font-medium"
+                                className="w-full mt-2 inline-flex items-center justify-center gap-2 bg-jade-900 hover:bg-jade-950 transition-colors px-4 py-3 rounded-[10px] text-paper text-[14px] font-semibold shadow-[0_10px_30px_-12px_rgba(13,79,63,0.45)]"
                             >
                                 Continue
-                                <ArrowRight size={16} />
+                                <ArrowRight size={15} />
                             </button>
                         </>
                     ) : (
@@ -255,7 +292,7 @@ export default function RegisterPage() {
                                         update("orgSlug", e.target.value.toLowerCase());
                                     }}
                                     placeholder="sajib-properties"
-                                    className={inputClass(!!errors.orgSlug)}
+                                    className={inputClass(!!errors.orgSlug, "font-mono")}
                                 />
                             </Field>
 
@@ -265,10 +302,12 @@ export default function RegisterPage() {
                                         type="tel"
                                         inputMode="numeric"
                                         value={form.orgPhone}
-                                        onChange={(e) => update("orgPhone", e.target.value.replace(/\s+/g, ""))}
+                                        onChange={(e) =>
+                                            update("orgPhone", e.target.value.replace(/\s+/g, ""))
+                                        }
                                         placeholder="01711000111"
                                         maxLength={11}
-                                        className={inputClass(!!errors.orgPhone)}
+                                        className={inputClass(!!errors.orgPhone, "tabular-nums")}
                                     />
                                 </Field>
 
@@ -299,25 +338,25 @@ export default function RegisterPage() {
                                     type="button"
                                     onClick={() => setStep(1)}
                                     disabled={submitting}
-                                    className="flex items-center justify-center gap-2 px-4 py-3 rounded-md border border-slate-300 hover:bg-slate-50 transition text-slate-700 disabled:opacity-50"
+                                    className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-[10px] border border-rule-soft bg-paper text-ink-soft hover:border-jade-700/30 hover:text-jade-900 transition-colors text-[14px] font-medium disabled:opacity-50"
                                 >
-                                    <ArrowLeft size={16} />
+                                    <ArrowLeft size={15} />
                                     Back
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={submitting}
-                                    className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 transition px-4 py-3 rounded-md text-white font-medium disabled:opacity-60 disabled:cursor-not-allowed"
+                                    className="flex-1 inline-flex items-center justify-center gap-2 bg-jade-900 hover:bg-jade-950 transition-colors px-4 py-3 rounded-[10px] text-paper text-[14px] font-semibold disabled:opacity-60 disabled:cursor-not-allowed shadow-[0_10px_30px_-12px_rgba(13,79,63,0.45)]"
                                 >
                                     {submitting ? (
                                         <>
-                                            <Loader2 size={16} className="animate-spin" />
-                                            Creating account...
+                                            <Loader2 size={15} className="animate-spin" />
+                                            Creating account…
                                         </>
                                     ) : (
                                         <>
                                             Create account
-                                            <ArrowRight size={16} />
+                                            <ArrowRight size={15} />
                                         </>
                                     )}
                                 </button>
@@ -325,14 +364,105 @@ export default function RegisterPage() {
                         </>
                     )}
                 </form>
+
+
+                        <p className="text-[13.5px] text-ink-soft mt-7">
+                            Already have an account?{" "}
+                            <Link
+                                href="/login"
+                                className="text-jade-900 font-semibold underline underline-offset-4 hover:text-coral-600 transition-colors"
+                            >
+                                Sign in →
+                            </Link>
+                        </p>
+                    </div>
+                </div>
+
+                {/* Bottom footer microcopy */}
+                <p className="text-[11.5px] text-ink-soft/65">
+                    © {new Date().getFullYear()} Bariyan ·{" "}
+                    <span className="font-bangla">সব ভাড়াটিয়া, সব হিসাব</span>
+                </p>
             </div>
 
-            <p className="text-center text-sm text-slate-500 mt-5">
-                Already have an account?{" "}
-                <Link href="/login" className="text-indigo-600 hover:text-indigo-700 font-medium">
-                    Sign in
-                </Link>
-            </p>
+            {/* RIGHT — Visual column */}
+            <RegisterShowcase />
+        </div>
+    );
+}
+
+// ─────────────────────────────────────────────────────────────────
+// Showcase visual — same family as the login showcase, slightly
+// different copy to fit the "get started" moment.
+// ─────────────────────────────────────────────────────────────────
+
+function RegisterShowcase() {
+    return (
+        <div className="hidden lg:block relative overflow-hidden bg-jade-950 text-paper">
+            <div
+                aria-hidden
+                className="pointer-events-none absolute -top-32 -right-24 h-96 w-96 rounded-full opacity-55"
+                style={{
+                    background:
+                        "radial-gradient(circle, rgba(46,196,140,0.5), transparent 65%)",
+                }}
+            />
+            <div
+                aria-hidden
+                className="pointer-events-none absolute -bottom-40 -left-32 h-[28rem] w-[28rem] rounded-full opacity-50"
+                style={{
+                    background:
+                        "radial-gradient(circle, rgba(255,123,87,0.4), transparent 60%)",
+                }}
+            />
+            <div
+                aria-hidden
+                className="absolute inset-0 pointer-events-none opacity-40"
+                style={{
+                    backgroundImage:
+                        "radial-gradient(circle at 1px 1px, rgba(255,253,248,0.10) 1px, transparent 0)",
+                    backgroundSize: "28px 28px",
+                }}
+            />
+
+            <div className="absolute inset-x-0 top-24 flex justify-center">
+                <Image
+                    src="/assets/hero-section-card-image.svg"
+                    alt=""
+                    width={483}
+                    height={307}
+                    priority
+                    className="w-[460px] max-w-[78%] opacity-95"
+                />
+            </div>
+
+            <div className="absolute top-8 right-8 z-10">
+                <span className="bg-paper/10 backdrop-blur-md border border-paper/15 text-paper/90 px-3 py-1.5 rounded-full text-[10.5px] font-bold uppercase tracking-[0.14em]">
+                    Free during beta
+                </span>
+            </div>
+
+            <div className="absolute bottom-0 left-0 right-0 p-10 xl:p-14 z-10">
+                <p className="font-serif italic text-[28px] xl:text-[32px] text-paper leading-[1.2] tracking-[-0.01em]">
+                    Start tracking
+                </p>
+                <p className="font-serif italic text-[28px] xl:text-[32px] text-coral-400 leading-[1.2] tracking-[-0.01em]">
+                    every taka of rent.
+                </p>
+                <p className="font-bangla text-[15px] text-paper/80 mt-5 leading-relaxed">
+                    Excel আর ডায়েরির ঝামেলা ছেড়ে — সব হিসাব এক জায়গায়।
+                </p>
+
+                <div className="mt-7 pt-5 border-t border-paper/10 flex items-baseline gap-3">
+                    <span className="text-[26px] font-rubita text-paper leading-none">
+                        Bari<span className="text-coral-400">yan</span>
+                    </span>
+                    <span className="text-paper/25">·</span>
+                    <span className="text-[12.5px] text-paper/65">
+                        Closed beta · Q1 2026 launch
+                    </span>
+                </div>
+            </div>
         </div>
     );
 }
@@ -350,12 +480,16 @@ function Field({
 }) {
     return (
         <label className="block">
-            <span className="text-sm font-medium text-slate-700">{label}</span>
+            <span className="text-[12.5px] font-semibold text-ink">{label}</span>
             <div className="mt-1.5">{children}</div>
             {error ? (
-                <span className="text-xs text-red-600 mt-1 block">{error}</span>
+                <span className="text-[11.5px] text-coral-700 mt-1 block">
+                    {error}
+                </span>
             ) : hint ? (
-                <span className="text-xs text-slate-400 mt-1 block">{hint}</span>
+                <span className="text-[11.5px] text-ink-soft/85 mt-1 block">
+                    {hint}
+                </span>
             ) : null}
         </label>
     );
@@ -363,11 +497,11 @@ function Field({
 
 function inputClass(hasError: boolean, extra = ""): string {
     return [
-        "w-full px-3 py-2.5 rounded-md border bg-white text-slate-800 placeholder:text-slate-400",
-        "focus:outline-none focus:ring-2 focus:ring-indigo-500/30",
+        "w-full px-3 py-2.5 rounded-[10px] border bg-paper text-[14px] text-ink placeholder:text-ink-soft/55",
+        "focus:outline-none focus:ring-2 focus:ring-jade-700/20",
         hasError
-            ? "border-red-400 focus:border-red-500"
-            : "border-slate-300 focus:border-indigo-500",
+            ? "border-coral-300 focus:border-coral-600"
+            : "border-rule-soft focus:border-jade-700",
         extra,
     ].join(" ");
 }
