@@ -1,6 +1,6 @@
 "use client";
 
-// src/components/layout/OwnerTopbar.tsx
+// src/components/dashboard/AdminTopbar.tsx
 
 import {
   DropdownMenu,
@@ -27,9 +27,9 @@ import {
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { OwnerSidebar } from "./OwnerSidebar";
+import { AdminSidebar } from "./AdminSidebar";
 
-interface OwnerTopbarProps {
+interface AdminTopbarProps {
   /** Currently signed-in user. */
   user?: {
     name: string;
@@ -46,15 +46,15 @@ interface OwnerTopbarProps {
 
 const defaultUser = {
   name: "Aziz Sajib",
-  role: "Owner",
+  role: "Super Admin",
 };
 
-export function OwnerTopbar({
+export function AdminTopbar({
   user = defaultUser,
   hasNotifications = false,
   onNotificationsClick,
   onSearchClick,
-}: OwnerTopbarProps) {
+}: AdminTopbarProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [loggingOut, setLoggingOut] = useState(false);
@@ -95,7 +95,7 @@ export function OwnerTopbar({
           <Menu size={18} />
         </SheetTrigger>
         <SheetContent side="left" className="w-64 p-0">
-          <OwnerSidebar />
+          <AdminSidebar />
         </SheetContent>
       </Sheet>
 
@@ -110,7 +110,7 @@ export function OwnerTopbar({
           className="shrink-0 text-ink-soft/70 group-hover:text-jade-700"
         />
         <span className="flex-1 truncate text-ink-soft/75 group-hover:text-ink">
-          Search buildings, tenants, invoices…
+          Search organizations, users, plans…
         </span>
         <kbd className="hidden shrink-0 items-center gap-0.5 rounded border border-rule-soft bg-paper px-1.5 py-0.5 font-mono text-[10.5px] font-medium text-ink-soft sm:inline-flex">
           ⌘K
@@ -139,7 +139,6 @@ export function OwnerTopbar({
         {/* User menu */}
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-2 rounded-md p-1 transition-colors hover:bg-cream data-[state=open]:bg-cream">
-            {/* Avatar — jade tint, matches the rest of the system */}
             <span className="relative inline-flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-jade-50 ring-1 ring-jade-100 text-[11.5px] font-bold text-jade-800">
               {user.photoUrl ? (
                 /* eslint-disable-next-line @next/next/no-img-element */
@@ -157,7 +156,7 @@ export function OwnerTopbar({
                 {user.name}
               </span>
               <span className="text-[10.5px] text-ink-soft">
-                {user.role ?? "Owner"}
+                {user.role ?? "Super Admin"}
               </span>
             </div>
             <ChevronDown
@@ -175,7 +174,7 @@ export function OwnerTopbar({
                   {user.name}
                 </p>
                 <p className="text-[11px] font-normal text-ink-soft">
-                  {user.role ?? "Owner"}
+                  {user.role ?? "Super Admin"}
                 </p>
               </DropdownMenuLabel>
               <DropdownMenuSeparator className="bg-rule-soft" />

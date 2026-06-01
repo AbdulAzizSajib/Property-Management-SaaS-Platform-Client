@@ -1,24 +1,23 @@
 "use client";
 
-// src/components/layout/OwnerSidebar.tsx
+// src/components/dashboard/AdminSidebar.tsx
 //
-// Rebranded sidebar matching the dashboard's jade/coral/cream system.
-// - Light cream surface with a thin jade-900 rail on the far left for personality
-// - Active state uses the brand's signature: coral left-bar + jade-50 bg + jade-900 text
-// - Logo glyph mirrors the landing-page mockup
-// - Footer now shows plan/usage instead of a generic "Need help?" placeholder
+// Sidebar for SUPER_ADMIN / ADMIN — the SaaS platform operators.
+// Mirrors OwnerSidebar's structure and visual language (jade rail,
+// coral active accent, cream surfaces), but swaps the landlord
+// workspace context for a platform/console framing.
 
 import { getIconComponent } from "@/src/lib/iconMapper";
-import { ownerNavItems, getCommonNavItems } from "@/src/lib/navItems";
+import { adminNavItems, getCommonNavItems } from "@/src/lib/navItems";
 import { cn } from "@/src/lib/utils";
-import { LifeBuoy } from "lucide-react";
+import { LifeBuoy, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const commonItems = getCommonNavItems("OWNER");
-const sections = [...commonItems, ...ownerNavItems];
+const commonItems = getCommonNavItems("SUPER_ADMIN");
+const sections = [...commonItems, ...adminNavItems];
 
-export function OwnerSidebar({ onNavigate }: { onNavigate?: () => void }) {
+export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
 
   const activeHref = sections
@@ -39,37 +38,31 @@ export function OwnerSidebar({ onNavigate }: { onNavigate?: () => void }) {
 
       {/* Brand header */}
       <div className="flex h-16 items-center gap-2.5 border-b border-rule-soft pl-6 pr-4">
-        {/* <span className="relative flex h-9 w-9 items-center justify-center rounded-[8px] bg-jade-900 text-paper">
-          <span className="text-[15px] font-bold leading-none">B</span>
-          <span
-            aria-hidden
-            className="absolute -bottom-0.5 -right-0.5 h-2 w-2 rounded-full bg-coral-600 ring-2 ring-paper"
-          />
-        </span> */}
         <div className="flex flex-col leading-tight">
-          {/* <span className="text-2xl  font-rubita  text-jade-950">Bariyan</span> */}
-          <img className="w-28" src="/logoB.png" alt="" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="w-28" src="/logoB.png" alt="Bariyan" />
           <span className="font-bangla text-[10.5px] text-ink-soft">
-            মালিক ওয়ার্কস্পেস
+            অ্যাডমিন কনসোল
           </span>
         </div>
       </div>
 
-      {/* Workspace context strip */}
+      {/* Platform context strip */}
       <Link
-        href="/owner/dashboard/buildings"
+        href="/admin/dashboard"
         className="group flex items-center justify-between border-b border-rule-soft px-4 py-2.5 hover:bg-cream/60 transition-colors"
       >
         <div className="min-w-0">
           <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft/75">
-            Workspace
+            Platform
           </p>
           <p className="truncate text-[13px] font-semibold text-ink">
-            Aziz Rahman
+            Bariyan SaaS
           </p>
         </div>
-        <span className="rounded-md bg-jade-50 px-1.5 py-0.5 text-[10.5px] font-semibold text-jade-800 tabular-nums">
-          8 bldgs
+        <span className="inline-flex items-center gap-1 rounded-md bg-jade-50 px-1.5 py-0.5 text-[10.5px] font-semibold text-jade-800">
+          <ShieldCheck size={11} className="text-jade-700" />
+          Super
         </span>
       </Link>
 
@@ -99,7 +92,6 @@ export function OwnerSidebar({ onNavigate }: { onNavigate?: () => void }) {
                           : "text-ink-soft hover:bg-cream hover:text-jade-900",
                       )}
                     >
-                      {/* Active accent bar — the brand signature */}
                       {isActive && (
                         <span
                           aria-hidden
@@ -127,23 +119,25 @@ export function OwnerSidebar({ onNavigate }: { onNavigate?: () => void }) {
         ))}
       </nav>
 
-      {/* Footer: plan + usage, not generic support */}
+      {/* Footer: platform health, not a generic placeholder */}
       <div className="border-t border-rule-soft p-3">
         <div className="rounded-[10px] border border-rule-soft bg-cream/60 px-3 py-2.5">
           <div className="flex items-center justify-between">
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
-                <p className="text-[12px] font-bold text-jade-950">Pro plan</p>
-                <span className="rounded-sm bg-coral-50 px-1 text-[9.5px] font-bold uppercase tracking-wider text-coral-700">
-                  Active
+                <p className="text-[12px] font-bold text-jade-950">
+                  System health
+                </p>
+                <span className="rounded-sm bg-jade-50 px-1 text-[9.5px] font-bold uppercase tracking-wider text-jade-800">
+                  Live
                 </span>
               </div>
               <p className="font-bangla text-[10.5px] text-ink-soft/85">
-                প্রো প্ল্যান
+                সিস্টেম স্বাস্থ্য
               </p>
             </div>
             <Link
-              href="/owner/dashboard/support"
+              href="/admin/dashboard/support"
               aria-label="Contact support"
               className="inline-flex h-7 w-7 items-center justify-center rounded-md text-ink-soft transition-colors hover:bg-paper hover:text-jade-900"
             >
@@ -151,27 +145,25 @@ export function OwnerSidebar({ onNavigate }: { onNavigate?: () => void }) {
             </Link>
           </div>
 
-          {/* Usage bar */}
-          <div className="mt-2.5">
+          {/* Operational status row */}
+          <div className="mt-2.5 space-y-1.5">
             <div className="flex items-baseline justify-between text-[10.5px] tabular-nums">
-              <span className="text-ink-soft">Units used</span>
+              <span className="text-ink-soft">API uptime</span>
               <span className="font-semibold text-ink">
-                166 <span className="text-ink-soft/70">/ 250</span>
+                99.98<span className="text-ink-soft/70">%</span>
               </span>
             </div>
-            <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-paper">
-              <div
-                className="h-full rounded-full bg-jade-700"
-                style={{ width: `${(166 / 250) * 100}%` }}
-              />
+            <div className="flex items-baseline justify-between text-[10.5px] tabular-nums">
+              <span className="text-ink-soft">Active orgs</span>
+              <span className="font-semibold text-ink">128</span>
             </div>
           </div>
 
           <Link
-            href="/owner/dashboard/billing"
+            href="/admin/dashboard/subscriptions"
             className="mt-2.5 block text-center text-[11.5px] font-semibold text-jade-900 hover:text-coral-600 transition-colors"
           >
-            Manage plan →
+            Review plans →
           </Link>
         </div>
       </div>

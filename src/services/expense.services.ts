@@ -1,6 +1,4 @@
-"use server";
-
-import { httpClient } from "@/src/lib/axios/httpClient";
+import { httpClient } from "@/src/lib/axios/browserHttpClient";
 import type {
     CreateExpensePayload,
     Expense,

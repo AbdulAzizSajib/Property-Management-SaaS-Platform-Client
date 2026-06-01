@@ -2,7 +2,7 @@
 
 // src/app/owner/dashboard/tenants/[id]/page.tsx
 
-import { getLeaseStatusTone } from "@/src/components/dashboard/leases/lease-styles";
+import { getLeaseStatusTone } from "@/src/components/dashboard/leases/leaseStyles";
 import { TenantForm } from "@/src/components/dashboard/tenants/TenantForm";
 import { formatMoney } from "@/src/components/dashboard/units/unitStyles";
 import {
@@ -612,38 +612,33 @@ export default function TenantDetailPage() {
                             <AlertDialogTitle className="text-jade-950">
                                 Deactivate this tenant?
                             </AlertDialogTitle>
-                            <AlertDialogDescription className="text-ink-soft" asChild>
-                                <div>
-                                    <p>
-                                        <strong className="text-ink">
-                                            {tenant.name}
-                                        </strong>{" "}
-                                        will be marked as inactive. Their lease
-                                        history and invoices remain intact, but they
-                                        won&apos;t appear in new lease pickers.
-                                    </p>
-                                    {activeLeases.length > 0 && (
-                                        <div className="mt-3 flex items-start gap-2 rounded-[10px] border border-coral-100 bg-coral-50/70 px-3 py-2 text-[12.5px] text-coral-700">
-                                            <AlertTriangle
-                                                size={13}
-                                                className="mt-0.5 shrink-0"
-                                            />
-                                            <span>
-                                                This tenant has{" "}
-                                                <strong>
-                                                    {fmtNum(activeLeases.length)}{" "}
-                                                    active lease
-                                                    {activeLeases.length === 1
-                                                        ? ""
-                                                        : "s"}
-                                                </strong>
-                                                . You may want to terminate those
-                                                first.
-                                            </span>
-                                        </div>
-                                    )}
-                                </div>
+                            <AlertDialogDescription className="text-ink-soft">
+                                <strong className="text-ink">
+                                    {tenant.name}
+                                </strong>{" "}
+                                will be marked as inactive. Their lease
+                                history and invoices remain intact, but they
+                                won&apos;t appear in new lease pickers.
                             </AlertDialogDescription>
+                            {activeLeases.length > 0 && (
+                                <div className="mt-3 flex items-start gap-2 rounded-[10px] border border-coral-100 bg-coral-50/70 px-3 py-2 text-[12.5px] text-coral-700">
+                                    <AlertTriangle
+                                        size={13}
+                                        className="mt-0.5 shrink-0"
+                                    />
+                                    <span>
+                                        This tenant has{" "}
+                                        <strong>
+                                            {fmtNum(activeLeases.length)}{" "}
+                                            active lease
+                                            {activeLeases.length === 1
+                                                ? ""
+                                                : "s"}
+                                        </strong>
+                                        . You may want to terminate those first.
+                                    </span>
+                                </div>
+                            )}
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                             <AlertDialogCancel

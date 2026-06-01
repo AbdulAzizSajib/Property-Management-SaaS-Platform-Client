@@ -30,7 +30,7 @@ export default function HeroSection() {
             </p>
 
             {/* Headline — leads with the job */}
-            <h1 className="font-bold text-jade-900 leading-[1.02] tracking-[-0.035em] text-[44px] sm:text-[56px] lg:text-[64px] xl:text-[72px] mb-8 text-balance">
+            <h1 className="font-bold text-jade-900 leading-[0.9] tracking-[-0.035em] text-[44px] sm:text-[56px] lg:text-[64px] xl:text-[80px] mb-8 text-balance">
               Manage your
               <br />
               <span className="text-jade-500">property</span> <br />
@@ -43,16 +43,16 @@ export default function HeroSection() {
 
             {/* Bangla sub-headline */}
             <p className="font-bangla text-[22px] sm:text-[24px] text-jade-800 font-semibold tracking-[-0.01em] mb-0">
-              এক প্লাটফর্মে — সব ভাড়াটিয়া, সব হিসাব
+              এখন এক প্লাটফর্মে সব ভাড়াটিয়া এবং সব হিসাব
             </p>
 
             {/* Subhead — intro + bullet benefits */}
             <div className="max-w-125 mb-9 font-bangla">
               <p className="text-[17px] leading-[1.6] text-ink-soft mb-4">
-                Excel, ডায়েরি আর বার বার ফোনের ঝামেলা আর না। এখন সব হিসাব থাকবে
-                এক জায়গায় —
+                Excel, ডায়েরি আর বার বার ফোনের ঝামেলা আর না। <br /> এখন সব
+                হিসাব থাকবে এক জায়গায়
               </p>
-              <ul className="space-y-0.5 text-[15px] text-ink">
+              <ul className="text-[15px] text-ink grid grid-cols-1 sm:grid-cols-2  gap-y-2.5 ">
                 <li className="flex items-start gap-2.5">
                   <Tick />
                   <span>ভাড়া আদায় ও বকেয়ার tracking</span>
@@ -71,7 +71,11 @@ export default function HeroSection() {
                 </li>
                 <li className="flex items-start gap-2.5">
                   <Tick />
-                  <span>মাসিক report — এক ক্লিকে</span>
+                  <span>মাসিক report এক ক্লিকে</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <Tick />
+                  <span>মাসিক report এক ক্লিকে</span>
                 </li>
               </ul>
             </div>
@@ -128,7 +132,7 @@ export default function HeroSection() {
             </div>
 
             {/* Trust strip — concrete, established */}
-            {/* <div className="mt-7 pt-4 border-t border-rule-soft">
+            <div className="mt-7 pt-4 border-t border-rule-soft">
               <div className="text-[11px] uppercase tracking-[0.14em] text-ink-soft/70 font-semibold ">
                 Trusted across Bangladesh
               </div>
@@ -137,7 +141,7 @@ export default function HeroSection() {
                 <Stat value="৳12 cr" label="collected in 2025" />
                 <Stat value="4" label="divisions live" />
               </div>
-            </div> */}
+            </div>
           </div>
 
           {/* RIGHT — mockup column */}
