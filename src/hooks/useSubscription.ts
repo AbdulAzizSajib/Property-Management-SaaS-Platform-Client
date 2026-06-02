@@ -1,6 +1,10 @@
 "use client";
 
-import { changeMyPlan, getMySubscription } from "@/src/services/subscription.services";
+import {
+    changeMyPlan,
+    getMySubscription,
+    getPlans,
+} from "@/src/services/subscription.services";
 import type { SubscriptionPlan } from "@/src/types/subscription.types";
 import { getErrorMessage } from "@/src/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -8,6 +12,7 @@ import { toast } from "react-toastify";
 
 export const subscriptionKeys = {
     me: ["subscription", "me"] as const,
+    plans: ["subscription", "plans"] as const,
 };
 
 export function useSubscription() {
@@ -17,6 +22,18 @@ export function useSubscription() {
             const res = await getMySubscription();
             return res.data;
         },
+    });
+}
+
+export function usePlans() {
+    return useQuery({
+        queryKey: subscriptionKeys.plans,
+        queryFn: async () => {
+            const res = await getPlans();
+            return res.data;
+        },
+        // Plans rarely change — cache aggressively.
+        staleTime: 5 * 60 * 1000,
     });
 }
 

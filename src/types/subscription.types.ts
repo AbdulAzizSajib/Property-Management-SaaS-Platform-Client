@@ -9,11 +9,17 @@ export type SubscriptionStatus =
     | "CANCELED"
     | "EXPIRED";
 
+/**
+ * The user's currently-active subscription record.
+ * Limits here are a snapshot of what the user is paying for — they may differ
+ * from the catalog defaults in `Plan` because they were captured at purchase time.
+ */
 export interface Subscription {
     id: string;
     plan: SubscriptionPlan;
     status: SubscriptionStatus;
     buildingLimit: number;
+    floorLimit: number;
     unitLimit: number;
     tenantLimit: number;
     smsEnabled: boolean;
@@ -39,68 +45,26 @@ export interface ChangePlanPayload {
     plan: SubscriptionPlan;
 }
 
-// Plan presentation metadata for the upgrade UI.
-export const PLAN_PRESETS: Record<
-    SubscriptionPlan,
-    {
-        label: string;
-        tagline: string;
-        priceMonthly: number;
-        buildingLimit: number;
-        unitLimit: number;
-        tenantLimit: number;
-        smsEnabled: boolean;
-        customBranding: boolean;
-        multiAdmin: boolean;
-        highlight?: boolean;
-    }
-> = {
-    FREE_TRIAL: {
-        label: "Free Trial",
-        tagline: "14 days to explore everything",
-        priceMonthly: 0,
-        buildingLimit: 1,
-        unitLimit: 10,
-        tenantLimit: 10,
-        smsEnabled: false,
-        customBranding: false,
-        multiAdmin: false,
-    },
-    BASIC: {
-        label: "Basic",
-        tagline: "For small landlords",
-        priceMonthly: 999,
-        buildingLimit: 3,
-        unitLimit: 50,
-        tenantLimit: 50,
-        smsEnabled: false,
-        customBranding: false,
-        multiAdmin: false,
-    },
-    STANDARD: {
-        label: "Standard",
-        tagline: "Most popular for growing portfolios",
-        priceMonthly: 2999,
-        buildingLimit: 10,
-        unitLimit: 200,
-        tenantLimit: 200,
-        smsEnabled: true,
-        customBranding: false,
-        multiAdmin: true,
-        highlight: true,
-    },
-    ENTERPRISE: {
-        label: "Enterprise",
-        tagline: "For real estate companies",
-        priceMonthly: 9999,
-        buildingLimit: 999,
-        unitLimit: 9999,
-        tenantLimit: 9999,
-        smsEnabled: true,
-        customBranding: true,
-        multiAdmin: true,
-    },
-};
+/**
+ * A plan from the catalog (GET /subscriptions/plans).
+ * Source of truth for the upgrade UI — no more hardcoded presets.
+ */
+export interface Plan {
+    plan: SubscriptionPlan;
+    displayName: string;
+    description: string;
+    /** Backend returns Prisma Decimal as a string. */
+    priceMonthly: string;
+    buildingLimit: number;
+    floorLimit: number;
+    unitLimit: number;
+    tenantLimit: number;
+    smsEnabled: boolean;
+    customBranding: boolean;
+    multiAdmin: boolean;
+    isPopular: boolean;
+    features: string[];
+}
 
 export const PLAN_ORDER: SubscriptionPlan[] = [
     "FREE_TRIAL",

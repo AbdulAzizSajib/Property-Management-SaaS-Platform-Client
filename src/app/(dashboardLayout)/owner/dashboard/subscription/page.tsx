@@ -1,11 +1,14 @@
 "use client";
 
 import { Skeleton } from "@/src/components/ui/skeleton";
-import { useChangePlan, useSubscription } from "@/src/hooks/useSubscription";
+import {
+    useChangePlan,
+    usePlans,
+    useSubscription,
+} from "@/src/hooks/useSubscription";
 import { cn } from "@/src/lib/utils";
 import {
-    PLAN_ORDER,
-    PLAN_PRESETS,
+    type Plan,
     type SubscriptionPlan,
     type SubscriptionStatus,
 } from "@/src/types/subscription.types";
@@ -15,6 +18,7 @@ import {
     Clock,
     CreditCard,
     DoorOpen,
+    Layers,
     Loader2,
     MessageSquare,
     Palette,
@@ -82,6 +86,7 @@ function formatDate(iso: string): string {
 
 export default function SubscriptionPage() {
     const { data: sub, isLoading, isError, error } = useSubscription();
+    const { data: plans, isLoading: plansLoading } = usePlans();
     const changePlan = useChangePlan();
 
     if (isLoading) {
@@ -125,6 +130,9 @@ export default function SubscriptionPage() {
     const status = statusStyles[sub.status];
     const trialDaysLeft = daysUntil(sub.trialEndsAt);
     const price = parseFloat(sub.priceMonthly) || 0;
+
+    // Find catalog entry for the user's current plan (for displayName + description)
+    const currentPlanMeta = plans?.find((p) => p.plan === sub.plan);
 
     return (
         <div className="min-h-screen bg-cream">
@@ -177,7 +185,7 @@ export default function SubscriptionPage() {
                             <div>
                                 <div className="flex flex-wrap items-center gap-2">
                                     <h2 className="text-[20px] font-bold tracking-[-0.01em] text-jade-950">
-                                        {PLAN_PRESETS[sub.plan].label} plan
+                                        {currentPlanMeta?.displayName ?? sub.plan} plan
                                     </h2>
                                     <span
                                         className={cn(
@@ -188,9 +196,11 @@ export default function SubscriptionPage() {
                                         {status.label}
                                     </span>
                                 </div>
-                                <p className="mt-1 text-[13px] text-ink-soft">
-                                    {PLAN_PRESETS[sub.plan].tagline}
-                                </p>
+                                {currentPlanMeta?.description && (
+                                    <p className="mt-1 text-[13px] text-ink-soft">
+                                        {currentPlanMeta.description}
+                                    </p>
+                                )}
 
                                 <div className="mt-3 flex items-baseline gap-1">
                                     <span className="text-[32px] font-bold leading-none tracking-[-0.025em] text-jade-950 tabular-nums">
@@ -213,6 +223,12 @@ export default function SubscriptionPage() {
                                 limit={sub.buildingLimit}
                             />
                             <UsageStat
+                                icon={Layers}
+                                label="Floors"
+                                bn="ফ্লোর"
+                                limit={sub.floorLimit}
+                            />
+                            <UsageStat
                                 icon={DoorOpen}
                                 label="Units"
                                 bn="ইউনিট"
@@ -223,12 +239,6 @@ export default function SubscriptionPage() {
                                 label="Tenants"
                                 bn="ভাড়াটিয়া"
                                 limit={sub.tenantLimit}
-                            />
-                            <UsageStat
-                                icon={Sparkles}
-                                label="Renews"
-                                bn="নবায়ন"
-                                limit={sub.autoRenew ? "Auto" : "Manual"}
                             />
                         </div>
                     </div>
@@ -249,6 +259,11 @@ export default function SubscriptionPage() {
                             icon={UsersRound}
                             label="Multiple admins"
                             enabled={sub.multiAdmin}
+                        />
+                        <FeatureBadge
+                            icon={Sparkles}
+                            label={sub.autoRenew ? "Auto-renews" : "Manual renewal"}
+                            enabled={sub.autoRenew}
                         />
                     </div>
 
@@ -287,21 +302,32 @@ export default function SubscriptionPage() {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                        {PLAN_ORDER.map((plan) => (
-                            <PlanCard
-                                key={plan}
-                                plan={plan}
-                                current={sub.plan}
-                                onSelect={() => changePlan.mutate(plan)}
-                                pending={
-                                    changePlan.isPending &&
-                                    changePlan.variables === plan
-                                }
-                                disabled={changePlan.isPending}
-                            />
-                        ))}
-                    </div>
+                    {plansLoading || !plans ? (
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                            {[1, 2, 3, 4].map((i) => (
+                                <Skeleton
+                                    key={i}
+                                    className="h-96 rounded-[14px] bg-paper"
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                            {plans.map((plan) => (
+                                <PlanCard
+                                    key={plan.plan}
+                                    plan={plan}
+                                    current={sub.plan}
+                                    onSelect={() => changePlan.mutate(plan.plan)}
+                                    pending={
+                                        changePlan.isPending &&
+                                        changePlan.variables === plan.plan
+                                    }
+                                    disabled={changePlan.isPending}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </section>
             </div>
         </div>
@@ -388,15 +414,15 @@ function PlanCard({
     pending,
     disabled,
 }: {
-    plan: SubscriptionPlan;
+    plan: Plan;
     current: SubscriptionPlan;
     onSelect: () => void;
     pending: boolean;
     disabled: boolean;
 }) {
-    const preset = PLAN_PRESETS[plan];
-    const isCurrent = plan === current;
-    const highlight = preset.highlight;
+    const isCurrent = plan.plan === current;
+    const highlight = plan.isPopular;
+    const price = parseFloat(plan.priceMonthly) || 0;
 
     return (
         <div
@@ -424,43 +450,39 @@ function PlanCard({
 
             <div className="mb-4">
                 <h3 className="text-[16px] font-bold text-jade-950">
-                    {preset.label}
+                    {plan.displayName}
                 </h3>
                 <p className="mt-0.5 text-[12px] text-ink-soft">
-                    {preset.tagline}
+                    {plan.description}
                 </p>
             </div>
 
             <div className="mb-4">
                 <div className="flex items-baseline gap-1">
                     <span className="text-[26px] font-bold leading-none tracking-[-0.025em] text-jade-950 tabular-nums">
-                        {preset.priceMonthly === 0 ? "Free" : fmt(preset.priceMonthly)}
+                        {price === 0 ? "Free" : fmt(price)}
                     </span>
-                    {preset.priceMonthly > 0 && (
+                    {price > 0 && (
                         <span className="text-[12px] text-ink-soft">/mo</span>
                     )}
                 </div>
             </div>
 
+            {/* Limits row — compact summary */}
+            <div className="mb-3 grid grid-cols-2 gap-1.5 text-[11px] text-ink-soft">
+                <Limit label="Buildings" value={plan.buildingLimit} />
+                <Limit label="Floors" value={plan.floorLimit} />
+                <Limit label="Units" value={plan.unitLimit} />
+                <Limit label="Tenants" value={plan.tenantLimit} />
+            </div>
+
+            {/* Feature list from the API */}
             <ul className="mb-5 flex-1 space-y-2 text-[13px]">
-                <FeatureRow enabled>
-                    {preset.buildingLimit.toLocaleString()} buildings
-                </FeatureRow>
-                <FeatureRow enabled>
-                    {preset.unitLimit.toLocaleString()} units
-                </FeatureRow>
-                <FeatureRow enabled>
-                    {preset.tenantLimit.toLocaleString()} tenants
-                </FeatureRow>
-                <FeatureRow enabled={preset.smsEnabled}>
-                    SMS notifications
-                </FeatureRow>
-                <FeatureRow enabled={preset.customBranding}>
-                    Custom branding
-                </FeatureRow>
-                <FeatureRow enabled={preset.multiAdmin}>
-                    Multiple admins
-                </FeatureRow>
+                {plan.features.map((feature, idx) => (
+                    <FeatureRow key={idx} enabled>
+                        {feature}
+                    </FeatureRow>
+                ))}
             </ul>
 
             <button
@@ -490,6 +512,21 @@ function PlanCard({
                     </>
                 )}
             </button>
+        </div>
+    );
+}
+
+function Limit({ label, value }: { label: string; value: number }) {
+    // Treat very large numbers as "Unlimited" for the compact summary.
+    const display = value >= 9999 ? "Unlimited" : value.toLocaleString();
+    return (
+        <div className="flex items-baseline justify-between rounded-md bg-cream/50 px-2 py-1">
+            <span className="text-[10px] uppercase tracking-wider text-ink-soft/70">
+                {label}
+            </span>
+            <span className="font-semibold text-jade-950 tabular-nums">
+                {display}
+            </span>
         </div>
     );
 }

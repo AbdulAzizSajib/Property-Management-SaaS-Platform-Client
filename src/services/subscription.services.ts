@@ -1,8 +1,16 @@
 import { httpClient } from "@/src/lib/axios/browserHttpClient";
 import type {
     ChangePlanPayload,
+    Plan,
     SubscriptionWithOrganization,
 } from "@/src/types/subscription.types";
+
+/**
+ * GET /subscriptions/plans
+ * Public — returns the plan catalog (displayName, pricing, limits, features).
+ */
+export const getPlans = async () =>
+    httpClient.get<Plan[]>("/subscriptions/plans");
 
 /**
  * GET /subscriptions/me
