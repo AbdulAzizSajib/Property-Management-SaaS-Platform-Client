@@ -35,6 +35,10 @@ export interface UnitFormValues {
     status: UnitStatus;
     bedrooms: string;
     bathrooms: string;
+    drawingRooms: string;
+    diningRooms: string;
+    kitchens: string;
+    balconies: string;
     sizeSqft: string;
     baseRent: string;
     serviceCharge: string;
@@ -49,6 +53,10 @@ const emptyForm: UnitFormValues = {
     status: "VACANT",
     bedrooms: "",
     bathrooms: "",
+    drawingRooms: "",
+    diningRooms: "",
+    kitchens: "",
+    balconies: "",
     sizeSqft: "",
     baseRent: "",
     serviceCharge: "",
@@ -314,6 +322,54 @@ export function UnitForm({
                 </Field>
             </div>
 
+            {/* Drawing / Dining / Kitchens / Balconies */}
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                <Field label="Drawing rooms" htmlFor="drawingRooms">
+                    <Input
+                        id="drawingRooms"
+                        type="number"
+                        min={0}
+                        value={values.drawingRooms}
+                        onChange={(e) => set("drawingRooms", e.target.value)}
+                        placeholder="1"
+                        className={`${fieldClass} tabular-nums`}
+                    />
+                </Field>
+                <Field label="Dining rooms" htmlFor="diningRooms">
+                    <Input
+                        id="diningRooms"
+                        type="number"
+                        min={0}
+                        value={values.diningRooms}
+                        onChange={(e) => set("diningRooms", e.target.value)}
+                        placeholder="1"
+                        className={`${fieldClass} tabular-nums`}
+                    />
+                </Field>
+                <Field label="Kitchens" htmlFor="kitchens">
+                    <Input
+                        id="kitchens"
+                        type="number"
+                        min={0}
+                        value={values.kitchens}
+                        onChange={(e) => set("kitchens", e.target.value)}
+                        placeholder="1"
+                        className={`${fieldClass} tabular-nums`}
+                    />
+                </Field>
+                <Field label="Balconies" htmlFor="balconies">
+                    <Input
+                        id="balconies"
+                        type="number"
+                        min={0}
+                        value={values.balconies}
+                        onChange={(e) => set("balconies", e.target.value)}
+                        placeholder="2"
+                        className={`${fieldClass} tabular-nums`}
+                    />
+                </Field>
+            </div>
+
             {/* Rent / Service charge — with ৳ prefix */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <Field
@@ -442,6 +498,14 @@ export function buildCreatePayload(values: UnitFormValues): CreateUnitPayload {
         serviceCharge: Number(values.serviceCharge || 0),
         ...(values.bedrooms !== "" && { bedrooms: Number(values.bedrooms) }),
         ...(values.bathrooms !== "" && { bathrooms: Number(values.bathrooms) }),
+        ...(values.drawingRooms !== "" && {
+            drawingRooms: Number(values.drawingRooms),
+        }),
+        ...(values.diningRooms !== "" && {
+            diningRooms: Number(values.diningRooms),
+        }),
+        ...(values.kitchens !== "" && { kitchens: Number(values.kitchens) }),
+        ...(values.balconies !== "" && { balconies: Number(values.balconies) }),
         ...(values.sizeSqft !== "" && { sizeSqft: Number(values.sizeSqft) }),
         ...(values.description.trim() && {
             description: values.description.trim(),

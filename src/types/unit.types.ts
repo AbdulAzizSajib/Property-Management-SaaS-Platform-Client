@@ -48,6 +48,10 @@ export interface Unit {
     status: UnitStatus;
     bedrooms: number | null;
     bathrooms: number | null;
+    drawingRooms: number | null;
+    diningRooms: number | null;
+    kitchens: number | null;
+    balconies: number | null;
     sizeSqft: number | null;
     baseRent: string;
     serviceCharge: string;
@@ -90,6 +94,10 @@ export interface CreateUnitPayload {
     type: UnitType;
     bedrooms?: number;
     bathrooms?: number;
+    drawingRooms?: number;
+    diningRooms?: number;
+    kitchens?: number;
+    balconies?: number;
     sizeSqft?: number;
     baseRent: number;
     serviceCharge: number;
@@ -102,6 +110,10 @@ export interface UpdateUnitPayload {
     status?: UnitStatus;
     bedrooms?: number | null;
     bathrooms?: number | null;
+    drawingRooms?: number | null;
+    diningRooms?: number | null;
+    kitchens?: number | null;
+    balconies?: number | null;
     sizeSqft?: number | null;
     baseRent?: number;
     serviceCharge?: number;
