@@ -18,6 +18,31 @@ export const LEASE_STATUS_OPTIONS: { value: LeaseStatus; label: string }[] = [
     { value: "RENEWED", label: "Renewed" },
 ];
 
+/**
+ * INCLUSIVE   → one bundled rent (no separate utility line items).
+ * FIXED_SEPARATE → rent + service charge + fixed gas/water/electric/internet each month.
+ */
+export type BillingMode = "INCLUSIVE" | "FIXED_SEPARATE";
+
+export const BILLING_MODE_OPTIONS: {
+    value: BillingMode;
+    label: string;
+    description: string;
+}[] = [
+    {
+        value: "INCLUSIVE",
+        label: "Inclusive",
+        description:
+            "Everything bundled into rent — no separate utility bills.",
+    },
+    {
+        value: "FIXED_SEPARATE",
+        label: "Fixed separate",
+        description:
+            "Rent + service charge + fixed monthly utilities (gas, water, electricity, internet).",
+    },
+];
+
 // Backend returns Prisma Decimal as a string.
 export interface Lease {
     id: string;
@@ -33,6 +58,13 @@ export interface Lease {
     advanceBalance: string;
     rentDueDay: number;
     notes: string | null;
+    /** Defaults to INCLUSIVE on the backend; included on every response. */
+    billingMode: BillingMode;
+    /** Only present (non-zero) when billingMode === "FIXED_SEPARATE". Decimal strings. */
+    gasCharge: string;
+    waterCharge: string;
+    electricityCharge: string;
+    internetCharge: string;
     createdAt: string;
     updatedAt: string;
     organizationId: string;
@@ -118,6 +150,13 @@ export interface CreateLeasePayload {
     serviceCharge: number;
     securityDeposit: number;
     rentDueDay: number;
+    /** Defaults to INCLUSIVE on the backend if omitted. */
+    billingMode?: BillingMode;
+    /** Only sent when billingMode === "FIXED_SEPARATE". */
+    gasCharge?: number;
+    waterCharge?: number;
+    electricityCharge?: number;
+    internetCharge?: number;
 }
 
 export interface TerminateLeasePayload {

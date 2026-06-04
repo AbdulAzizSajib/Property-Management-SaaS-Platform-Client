@@ -34,12 +34,17 @@ import {
     CalendarOff,
     CreditCard,
     DoorOpen,
+    Droplets,
+    Flame,
+    Layers,
     Loader2,
     LogOut,
     Mail,
     Phone,
     Receipt,
     User,
+    Wifi,
+    Zap,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -94,8 +99,17 @@ export default function LeaseDetailPage() {
         );
     }
 
+    const isSeparate = lease.billingMode === "FIXED_SEPARATE";
+    const utilitiesTotal = isSeparate
+        ? Number(lease.gasCharge) +
+          Number(lease.waterCharge) +
+          Number(lease.electricityCharge) +
+          Number(lease.internetCharge)
+        : 0;
     const totalMonthly =
-        Number(lease.monthlyRent) + Number(lease.serviceCharge);
+        Number(lease.monthlyRent) +
+        Number(lease.serviceCharge) +
+        utilitiesTotal;
 
     const paidTotal = lease.payments.reduce(
         (sum, p) => sum + Number(p.amount),
@@ -226,7 +240,11 @@ export default function LeaseDetailPage() {
                         label="Total monthly"
                         bn="মোট মাসিক"
                         value={formatMoney(totalMonthly)}
-                        sub="rent + service"
+                        sub={
+                            isSeparate
+                                ? "rent + service + utilities"
+                                : "rent + service"
+                        }
                     />
                     <MoneyTile
                         label="Security deposit"
@@ -372,6 +390,90 @@ export default function LeaseDetailPage() {
                             />
                         </ul>
                     </div>
+                </div>
+
+                {/* Billing breakdown */}
+                <div className="rounded-[14px] border border-rule-soft bg-paper p-5">
+                    <div className="flex items-start justify-between gap-3">
+                        <div>
+                            <p className="font-serif text-[13px] italic text-coral-600/85">
+                                How rent is billed
+                            </p>
+                            <h3 className="mt-0.5 text-[16px] font-bold tracking-[-0.015em] text-jade-950">
+                                Billing breakdown
+                            </h3>
+                            <p className="font-bangla mt-0.5 text-[11.5px] text-ink-soft/70">
+                                · বিলিং বিভাজন
+                            </p>
+                        </div>
+                        <span
+                            className={cn(
+                                "inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[10.5px] font-semibold uppercase tracking-wider",
+                                isSeparate
+                                    ? "border-coral-100 bg-coral-50 text-coral-700"
+                                    : "border-jade-100 bg-jade-50/60 text-jade-700",
+                            )}
+                        >
+                            <Layers size={11} />
+                            {isSeparate ? "Fixed separate" : "Inclusive"}
+                        </span>
+                    </div>
+
+                    <div className="mt-4 overflow-hidden rounded-[10px] border border-rule-soft">
+                        <table className="w-full text-[13px]">
+                            <tbody className="divide-y divide-rule-soft bg-cream/30">
+                                <BreakdownRow
+                                    label="Base rent"
+                                    value={formatMoney(lease.monthlyRent)}
+                                />
+                                <BreakdownRow
+                                    label="Service charge"
+                                    value={formatMoney(lease.serviceCharge)}
+                                />
+                                {isSeparate && (
+                                    <>
+                                        <UtilityRow
+                                            icon={Flame}
+                                            label="Gas"
+                                            value={lease.gasCharge}
+                                        />
+                                        <UtilityRow
+                                            icon={Droplets}
+                                            label="Water"
+                                            value={lease.waterCharge}
+                                        />
+                                        <UtilityRow
+                                            icon={Zap}
+                                            label="Electricity"
+                                            value={lease.electricityCharge}
+                                        />
+                                        <UtilityRow
+                                            icon={Wifi}
+                                            label="Internet"
+                                            value={lease.internetCharge}
+                                        />
+                                    </>
+                                )}
+                            </tbody>
+                            <tfoot className="bg-paper">
+                                <tr className="border-t border-rule-soft">
+                                    <td className="px-3.5 py-2.5 text-[12.5px] font-bold text-ink">
+                                        Monthly invoice total
+                                    </td>
+                                    <td className="px-3.5 py-2.5 text-right text-[15px] font-bold text-jade-950 tabular-nums">
+                                        {formatMoney(totalMonthly)}
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    {!isSeparate && (
+                        <p className="mt-3 text-[11.5px] text-ink-soft">
+                            All utilities are included in the rent amount —
+                            tenants pay one fixed price per month.
+                        </p>
+                    )}
                 </div>
 
                 {/* Invoices + Payments */}
@@ -777,5 +879,52 @@ function EmptyBlock({
             <Icon className="mx-auto text-ink-soft/40" size={24} />
             <p className="mt-2 text-[13px] text-ink-soft">{label}</p>
         </div>
+    );
+}
+
+/** Plain breakdown row — used for rent + service charge. */
+function BreakdownRow({ label, value }: { label: string; value: string }) {
+    return (
+        <tr>
+            <td className="px-3.5 py-2 text-ink-soft">{label}</td>
+            <td className="px-3.5 py-2 text-right font-semibold tabular-nums text-jade-950">
+                {value}
+            </td>
+        </tr>
+    );
+}
+
+/**
+ * Utility row — icon + label, value dimmed when zero so the "billed" lines
+ * stand out from the "not charged" lines.
+ */
+function UtilityRow({
+    icon: Icon,
+    label,
+    value,
+}: {
+    icon: React.ComponentType<{ size?: number; className?: string }>;
+    label: string;
+    value: string;
+}) {
+    const n = Number(value);
+    const isZero = !n;
+    return (
+        <tr>
+            <td className="px-3.5 py-2">
+                <span className="inline-flex items-center gap-1.5 text-ink-soft">
+                    <Icon size={12} className="text-ink-soft/60" />
+                    {label}
+                </span>
+            </td>
+            <td
+                className={cn(
+                    "px-3.5 py-2 text-right tabular-nums",
+                    isZero ? "text-ink-soft/45" : "font-semibold text-jade-950",
+                )}
+            >
+                {formatMoney(value)}
+            </td>
+        </tr>
     );
 }

@@ -2,15 +2,20 @@
 
 import { leaseKeys } from "@/src/hooks/useLeases";
 import {
+    cancelInvoice,
+    deleteInvoice,
     generateMonthlyBatch,
     generateSingleInvoice,
     getInvoiceById,
     getInvoices,
+    updateInvoice,
 } from "@/src/services/invoice.services";
 import type {
+    CancelInvoicePayload,
     GenerateMonthlyBatchPayload,
     GenerateSingleInvoicePayload,
     InvoiceFilters,
+    UpdateInvoicePayload,
 } from "@/src/types/invoice.types";
 import { getErrorMessage } from "@/src/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -93,6 +98,84 @@ export function useGenerateMonthlyBatch() {
             toast.error(
                 getErrorMessage(error, "Failed to generate monthly batch"),
             );
+        },
+    });
+}
+
+export function useUpdateInvoice(invoiceId: string) {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (payload: UpdateInvoicePayload) => {
+            const res = await updateInvoice(invoiceId, payload);
+            return res.data;
+        },
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({
+                queryKey: invoiceKeys.detail(invoiceId),
+            });
+            queryClient.invalidateQueries({ queryKey: invoiceKeys.all });
+            // Lease detail embeds invoices[] — recalculated totals + status need refresh.
+            queryClient.invalidateQueries({
+                queryKey: leaseKeys.detail(data.leaseId),
+            });
+            toast.success("Invoice updated");
+        },
+        onError: (error: unknown) => {
+            toast.error(getErrorMessage(error, "Failed to update invoice"));
+        },
+    });
+}
+
+export function useCancelInvoice(invoiceId: string) {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (payload: CancelInvoicePayload) => {
+            const res = await cancelInvoice(invoiceId, payload);
+            return res.data;
+        },
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({
+                queryKey: invoiceKeys.detail(invoiceId),
+            });
+            queryClient.invalidateQueries({ queryKey: invoiceKeys.all });
+            queryClient.invalidateQueries({
+                queryKey: leaseKeys.detail(data.leaseId),
+            });
+            toast.success("Invoice canceled");
+        },
+        onError: (error: unknown) => {
+            toast.error(getErrorMessage(error, "Failed to cancel invoice"));
+        },
+    });
+}
+
+export function useDeleteInvoice() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({
+            invoiceId,
+        }: {
+            invoiceId: string;
+            leaseId: string;
+        }) => {
+            await deleteInvoice(invoiceId);
+            return invoiceId;
+        },
+        onSuccess: (invoiceId, variables) => {
+            queryClient.removeQueries({
+                queryKey: invoiceKeys.detail(invoiceId),
+            });
+            queryClient.invalidateQueries({ queryKey: invoiceKeys.all });
+            queryClient.invalidateQueries({
+                queryKey: leaseKeys.detail(variables.leaseId),
+            });
+            toast.success("Invoice deleted");
+        },
+        onError: (error: unknown) => {
+            toast.error(getErrorMessage(error, "Failed to delete invoice"));
         },
     });
 }

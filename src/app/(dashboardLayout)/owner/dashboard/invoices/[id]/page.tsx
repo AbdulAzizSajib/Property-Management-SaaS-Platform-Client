@@ -2,6 +2,8 @@
 
 // src/app/owner/dashboard/invoices/[id]/page.tsx
 
+import { CancelInvoiceDialog } from "@/src/components/dashboard/invoices/CancelInvoiceDialog";
+import { EditInvoiceDialog } from "@/src/components/dashboard/invoices/EditInvoiceDialog";
 import {
     formatBillingMonth,
     invoiceStatusLabel,
@@ -23,19 +25,25 @@ import {
     FileText,
     Mail,
     MapPin,
+    Pencil,
     Phone,
     Printer,
     Receipt,
     User,
+    XCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useState } from "react";
 
 export default function InvoiceDetailPage() {
     const params = useParams<{ id: string }>();
     const invoiceId = params.id;
 
     const { data: inv, isLoading, isError, error } = useInvoice(invoiceId);
+
+    const [editOpen, setEditOpen] = useState(false);
+    const [cancelOpen, setCancelOpen] = useState(false);
 
     if (isLoading) {
         return (
@@ -89,7 +97,7 @@ export default function InvoiceDetailPage() {
 
             <div className="mx-auto max-w-[1080px] space-y-5 p-4 sm:p-6 lg:p-8 print:max-w-full print:p-0 print:space-y-4">
                 {/* Toolbar — hidden in print */}
-                <div className="flex items-center justify-between print:hidden">
+                <div className="flex items-center justify-between gap-2 print:hidden">
                     <Link
                         href="/owner/dashboard/invoices"
                         className="inline-flex items-center gap-1 text-[12.5px] font-medium text-ink-soft transition-colors hover:text-jade-900"
@@ -97,14 +105,36 @@ export default function InvoiceDetailPage() {
                         <ArrowLeft size={12} />
                         All invoices
                     </Link>
-                    <button
-                        type="button"
-                        onClick={() => window.print()}
-                        className="inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-rule-soft bg-paper px-3 text-[12.5px] font-medium text-ink transition-colors hover:border-jade-700/30 hover:text-jade-900"
-                    >
-                        <Printer size={12} />
-                        Print
-                    </button>
+                    <div className="flex items-center gap-2">
+                        {inv.status !== "CANCELED" && inv.status !== "PAID" && (
+                            <button
+                                type="button"
+                                onClick={() => setEditOpen(true)}
+                                className="inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-rule-soft bg-paper px-3 text-[12.5px] font-medium text-ink transition-colors hover:border-jade-700/30 hover:text-jade-900"
+                            >
+                                <Pencil size={12} />
+                                Edit
+                            </button>
+                        )}
+                        {inv.status !== "CANCELED" && inv.status !== "PAID" && (
+                            <button
+                                type="button"
+                                onClick={() => setCancelOpen(true)}
+                                className="inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-coral-100 bg-coral-50/60 px-3 text-[12.5px] font-medium text-coral-700 transition-colors hover:bg-coral-50"
+                            >
+                                <XCircle size={12} />
+                                Cancel
+                            </button>
+                        )}
+                        <button
+                            type="button"
+                            onClick={() => window.print()}
+                            className="inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-rule-soft bg-paper px-3 text-[12.5px] font-medium text-ink transition-colors hover:border-jade-700/30 hover:text-jade-900"
+                        >
+                            <Printer size={12} />
+                            Print
+                        </button>
+                    </div>
                 </div>
 
                 {/* Document */}
@@ -491,6 +521,18 @@ export default function InvoiceDetailPage() {
                     </span>
                 </div>
             </div>
+
+            {/* Mutation dialogs */}
+            <EditInvoiceDialog
+                open={editOpen}
+                onOpenChange={setEditOpen}
+                invoice={inv}
+            />
+            <CancelInvoiceDialog
+                open={cancelOpen}
+                onOpenChange={setCancelOpen}
+                invoice={inv}
+            />
         </div>
     );
 }
