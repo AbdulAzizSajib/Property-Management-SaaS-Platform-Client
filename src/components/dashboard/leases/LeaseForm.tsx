@@ -18,8 +18,13 @@ import {
 } from "@/src/components/ui/select";
 import { useTenants } from "@/src/hooks/useTenants";
 import { useUnits } from "@/src/hooks/useUnits";
-import type { CreateLeasePayload } from "@/src/types/lease.types";
-import { Info, Sparkles } from "lucide-react";
+import { cn } from "@/src/lib/utils";
+import {
+    BILLING_MODE_OPTIONS,
+    type BillingMode,
+    type CreateLeasePayload,
+} from "@/src/types/lease.types";
+import { Droplets, Flame, Info, Layers, Sparkles, Wifi, Zap } from "lucide-react";
 import { useMemo, useState } from "react";
 
 export interface LeaseFormValues {
@@ -32,6 +37,11 @@ export interface LeaseFormValues {
     serviceCharge: string;
     securityDeposit: string;
     rentDueDay: string;
+    billingMode: BillingMode;
+    gasCharge: string;
+    waterCharge: string;
+    electricityCharge: string;
+    internetCharge: string;
 }
 
 const todayISO = () => new Date().toISOString().split("T")[0];
@@ -46,6 +56,11 @@ const emptyForm: LeaseFormValues = {
     serviceCharge: "",
     securityDeposit: "",
     rentDueDay: "5",
+    billingMode: "INCLUSIVE",
+    gasCharge: "",
+    waterCharge: "",
+    electricityCharge: "",
+    internetCharge: "",
 };
 
 interface LeaseFormProps {
@@ -149,6 +164,8 @@ export function LeaseForm({
     function handleSubmit(ev: React.FormEvent) {
         ev.preventDefault();
 
+        const isSeparate = values.billingMode === "FIXED_SEPARATE";
+
         const payload: CreateLeasePayload = {
             tenantId: values.tenantId,
             unitId: values.unitId,
@@ -158,11 +175,42 @@ export function LeaseForm({
             serviceCharge: Number(values.serviceCharge || 0),
             securityDeposit: Number(values.securityDeposit) || 0,
             rentDueDay: Number(values.rentDueDay) || 1,
+            billingMode: values.billingMode,
             ...(values.endDate && { endDate: values.endDate }),
+            // Only send utility fields when the mode actually uses them.
+            ...(isSeparate && {
+                gasCharge: Number(values.gasCharge) || 0,
+                waterCharge: Number(values.waterCharge) || 0,
+                electricityCharge: Number(values.electricityCharge) || 0,
+                internetCharge: Number(values.internetCharge) || 0,
+            }),
         };
 
         onSubmit(payload);
     }
+
+    // Live total for the "first month" preview line.
+    const liveMonthlyTotal = useMemo(() => {
+        const rent = Number(values.monthlyRent) || 0;
+        const svc = Number(values.serviceCharge) || 0;
+        if (values.billingMode === "INCLUSIVE") return rent + svc;
+        return (
+            rent +
+            svc +
+            (Number(values.gasCharge) || 0) +
+            (Number(values.waterCharge) || 0) +
+            (Number(values.electricityCharge) || 0) +
+            (Number(values.internetCharge) || 0)
+        );
+    }, [
+        values.monthlyRent,
+        values.serviceCharge,
+        values.billingMode,
+        values.gasCharge,
+        values.waterCharge,
+        values.electricityCharge,
+        values.internetCharge,
+    ]);
 
     return (
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -418,6 +466,136 @@ export function LeaseForm({
                 </div>
             </FormSection>
 
+            {/* Billing mode */}
+            <FormSection title="Billing mode" bn="বিলিং মোড">
+                <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                    {BILLING_MODE_OPTIONS.map((opt) => {
+                        const isActive = values.billingMode === opt.value;
+                        return (
+                            <button
+                                key={opt.value}
+                                type="button"
+                                onClick={() => set("billingMode", opt.value)}
+                                aria-pressed={isActive}
+                                className={cn(
+                                    "group relative flex flex-col items-start gap-1 rounded-[10px] border px-3.5 py-3 text-left transition-all",
+                                    isActive
+                                        ? "border-jade-700 bg-jade-50/60 ring-2 ring-jade-700/15"
+                                        : "border-rule-soft bg-paper hover:border-jade-700/40",
+                                )}
+                            >
+                                <div className="flex w-full items-center justify-between">
+                                    <span
+                                        className={cn(
+                                            "text-[13px] font-bold",
+                                            isActive ? "text-jade-950" : "text-ink",
+                                        )}
+                                    >
+                                        {opt.label}
+                                    </span>
+                                    <span
+                                        aria-hidden
+                                        className={cn(
+                                            "inline-flex size-4 items-center justify-center rounded-full border-2",
+                                            isActive
+                                                ? "border-jade-700 bg-jade-700"
+                                                : "border-rule-soft bg-paper",
+                                        )}
+                                    >
+                                        {isActive && (
+                                            <span className="size-1.5 rounded-full bg-paper" />
+                                        )}
+                                    </span>
+                                </div>
+                                <span className="text-[11.5px] leading-relaxed text-ink-soft">
+                                    {opt.description}
+                                </span>
+                            </button>
+                        );
+                    })}
+                </div>
+
+                {/* Utility fields — only when FIXED_SEPARATE */}
+                {values.billingMode === "FIXED_SEPARATE" && (
+                    <div className="space-y-3 rounded-[10px] border border-rule-soft bg-cream/40 px-3.5 py-3">
+                        <div className="flex items-center gap-2">
+                            <Layers size={12} className="text-ink-soft" />
+                            <h4 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-soft">
+                                Monthly utilities
+                            </h4>
+                            <span className="font-bangla text-[10.5px] text-ink-soft/65">
+                                · মাসিক ইউটিলিটি
+                            </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                            <Field label="Gas" htmlFor="l-gas">
+                                <UtilityInput
+                                    id="l-gas"
+                                    icon={Flame}
+                                    value={values.gasCharge}
+                                    onChange={(v) => set("gasCharge", v)}
+                                    placeholder="2,000"
+                                />
+                            </Field>
+                            <Field label="Water" htmlFor="l-water">
+                                <UtilityInput
+                                    id="l-water"
+                                    icon={Droplets}
+                                    value={values.waterCharge}
+                                    onChange={(v) => set("waterCharge", v)}
+                                    placeholder="1,500"
+                                />
+                            </Field>
+                            <Field label="Electricity" htmlFor="l-elec">
+                                <UtilityInput
+                                    id="l-elec"
+                                    icon={Zap}
+                                    value={values.electricityCharge}
+                                    onChange={(v) =>
+                                        set("electricityCharge", v)
+                                    }
+                                    placeholder="2,500"
+                                />
+                            </Field>
+                            <Field label="Internet" htmlFor="l-net">
+                                <UtilityInput
+                                    id="l-net"
+                                    icon={Wifi}
+                                    value={values.internetCharge}
+                                    onChange={(v) => set("internetCharge", v)}
+                                    placeholder="1,000"
+                                />
+                            </Field>
+                        </div>
+
+                        <p className="text-[11.5px] text-ink-soft">
+                            Leave any field at <span className="tabular-nums">0</span> if
+                            that utility isn&apos;t billed by you. These are added to the
+                            monthly invoice on top of rent + service charge.
+                        </p>
+                    </div>
+                )}
+            </FormSection>
+
+            {/* Live total — visible whenever we have rent input */}
+            {liveMonthlyTotal > 0 && (
+                <div className="flex items-center justify-between gap-3 rounded-[10px] border border-jade-100 bg-jade-50/40 px-3.5 py-2.5">
+                    <div className="flex items-center gap-2">
+                        <Sparkles size={13} className="text-jade-700" />
+                        <span className="text-[12.5px] text-ink">
+                            First invoice total
+                        </span>
+                        <span className="font-bangla text-[10.5px] text-ink-soft/65">
+                            · প্রথম ইনভয়েস
+                        </span>
+                    </div>
+                    <span className="text-[15px] font-bold text-jade-950 tabular-nums">
+                        ৳ {liveMonthlyTotal.toLocaleString()}
+                    </span>
+                </div>
+            )}
+
             {/* Outcome preview */}
             <div className="flex items-start gap-2.5 rounded-[10px] border-l-[2.5px] border-coral-500 bg-cream/70 px-3 py-2.5">
                 <Info size={14} className="mt-0.5 shrink-0 text-coral-600" />
@@ -535,6 +713,43 @@ function MoneyInput({
                 className={`${fieldClass} pl-7 tabular-nums ${
                     hinted ? "text-ink/75" : ""
                 }`}
+            />
+        </div>
+    );
+}
+
+/**
+ * Compact utility input — icon on the left, no ৳ prefix (saves horizontal
+ * space in the 4-column grid). Zero is acceptable.
+ */
+function UtilityInput({
+    id,
+    icon: Icon,
+    value,
+    onChange,
+    placeholder,
+}: {
+    id: string;
+    icon: React.ComponentType<{ size?: number; className?: string }>;
+    value: string;
+    onChange: (v: string) => void;
+    placeholder?: string;
+}) {
+    return (
+        <div className="relative">
+            <Icon
+                size={12}
+                className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-soft/70"
+            />
+            <Input
+                id={id}
+                type="number"
+                min={0}
+                step="any"
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                placeholder={placeholder}
+                className={`${fieldClass} pl-7 tabular-nums`}
             />
         </div>
     );

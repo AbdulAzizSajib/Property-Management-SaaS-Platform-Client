@@ -23,6 +23,14 @@ export const INVOICE_TYPE_OPTIONS: { value: InvoiceType; label: string }[] = [
     { value: "OTHER", label: "Other" },
 ];
 
+/**
+ * Per-utility breakdown stored on the invoice when the lease is billed
+ * with billingMode = "FIXED_SEPARATE". All amounts as numbers from the
+ * backend's JSON column. Keys are open-ended (gas/water/electricity/internet
+ * but other custom keys may appear), so we keep them loose.
+ */
+export type InvoiceUtilities = Record<string, number>;
+
 // Backend returns Prisma Decimal as a string.
 export interface Invoice {
     id: string;
@@ -40,6 +48,8 @@ export interface Invoice {
     paidAmount: string;
     dueAmount: string;
     notes: string | null;
+    /** Per-utility breakdown — only present for FIXED_SEPARATE leases. */
+    utilities?: InvoiceUtilities | null;
     createdAt: string;
     updatedAt: string;
     organizationId: string;
@@ -109,4 +119,22 @@ export interface InvoiceFilters {
     leaseId?: string;
     tenantId?: string;
     unitId?: string;
+}
+
+/**
+ * PATCH /invoices/:id — update due date, penalty, notes, and/or utilities.
+ * All fields optional. The backend recomputes totals when amounts change.
+ */
+export interface UpdateInvoicePayload {
+    /** YYYY-MM-DD */
+    dueDate?: string;
+    penaltyAmount?: number;
+    notes?: string | null;
+    /** Replace the utilities breakdown — merges with existing on the backend. */
+    utilities?: InvoiceUtilities;
+}
+
+/** PATCH /invoices/:id/cancel — soft cancels the invoice. */
+export interface CancelInvoicePayload {
+    reason: string;
 }

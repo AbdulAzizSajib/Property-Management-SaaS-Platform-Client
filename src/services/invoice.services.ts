@@ -1,5 +1,6 @@
 import { httpClient } from "@/src/lib/axios/browserHttpClient";
 import type {
+    CancelInvoicePayload,
     GenerateMonthlyBatchPayload,
     GenerateMonthlyBatchResult,
     GenerateSingleInvoicePayload,
@@ -7,6 +8,7 @@ import type {
     InvoiceDetail,
     InvoiceFilters,
     InvoiceListItem,
+    UpdateInvoicePayload,
 } from "@/src/types/invoice.types";
 
 function buildInvoiceQuery(filters?: InvoiceFilters): string {
@@ -44,3 +46,24 @@ export const getInvoices = async (filters?: InvoiceFilters) =>
 /** GET /invoices/:id — full detail with embedded tenant, unit, lease, payments. */
 export const getInvoiceById = async (id: string) =>
     httpClient.get<InvoiceDetail>(`/invoices/${id}`);
+
+/**
+ * PATCH /invoices/:id — update due date, penalty, notes, and/or utilities breakdown.
+ * Backend recomputes totalAmount + dueAmount when amounts change.
+ */
+export const updateInvoice = async (id: string, payload: UpdateInvoicePayload) =>
+    httpClient.patch<Invoice>(`/invoices/${id}`, payload);
+
+/**
+ * PATCH /invoices/:id/cancel — soft-cancels an invoice with an audit-trail reason.
+ * Allowed: OWNER, MANAGER. Cannot cancel invoices with recorded payments.
+ */
+export const cancelInvoice = async (id: string, payload: CancelInvoicePayload) =>
+    httpClient.patch<Invoice>(`/invoices/${id}/cancel`, payload);
+
+/**
+ * DELETE /invoices/:id — hard delete. SUPER_ADMIN only.
+ * For organization-side cleanup, use cancelInvoice() instead.
+ */
+export const deleteInvoice = async (id: string) =>
+    httpClient.delete<{ id: string }>(`/invoices/${id}`);
