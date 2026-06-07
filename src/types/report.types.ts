@@ -29,3 +29,78 @@ export interface FinancialReportFilters {
     from: string;
     to: string;
 }
+
+// ─── Rent collection ────────────────────────────────────────────
+
+export interface RentCollectionRow {
+    tenantId: string;
+    tenantName: string;
+    /** All money values are Prisma Decimal strings. */
+    totalBilled: string;
+    totalPaid: string;
+    totalDue: string;
+    invoiceCount: number;
+}
+
+export interface RentCollectionSummary {
+    totalBilled: string;
+    totalPaid: string;
+    totalDue: string;
+    collectionRate: number; // 0..100
+}
+
+export interface RentCollectionReport {
+    period: FinancialReportPeriod;
+    summary: RentCollectionSummary;
+    rows: RentCollectionRow[];
+}
+
+export interface RentCollectionFilters {
+    from: string;
+    to: string;
+    buildingId?: string;
+}
+
+// ─── Occupancy ──────────────────────────────────────────────────
+
+export interface OccupancyBuilding {
+    buildingId: string;
+    buildingName: string;
+    totalUnits: number;
+    occupiedUnits: number;
+    vacantUnits: number;
+    maintenanceUnits: number;
+    reservedUnits: number;
+    occupancyRate: number; // 0..100
+}
+
+export interface OccupancyReport {
+    summary: {
+        totalUnits: number;
+        occupiedUnits: number;
+        vacantUnits: number;
+        occupancyRate: number;
+    };
+    buildings: OccupancyBuilding[];
+}
+
+// ─── Expense by category ────────────────────────────────────────
+
+export interface ExpenseCategoryRow {
+    category: string;
+    totalAmount: string;
+    percentage: number;
+    count: number;
+}
+
+export interface ExpenseReport {
+    period: FinancialReportPeriod;
+    totalExpense: string;
+    categories: ExpenseCategoryRow[];
+}
+
+export interface ExpenseReportFilters {
+    from: string;
+    to: string;
+    buildingId?: string;
+}

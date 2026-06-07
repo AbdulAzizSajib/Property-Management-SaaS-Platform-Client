@@ -64,16 +64,18 @@ export interface PaymentInvoiceSummary {
     invoiceNumber: string;
 }
 
-// GET /payments — list item
+// GET /payments — list item. `invoice` can be null for advance payments or
+// when the referenced invoice has been removed.
 export interface PaymentListItem extends Payment {
     tenant: PaymentTenantSummary;
-    invoice: PaymentInvoiceSummary;
+    invoice: PaymentInvoiceSummary | null;
 }
 
-// GET /payments/:id — full detail with embedded tenant + invoice + lease
+// GET /payments/:id — full detail with embedded tenant + invoice + lease.
+// `invoice` can be null in the same edge cases as the list shape.
 export interface PaymentDetail extends Payment {
     tenant: Tenant;
-    invoice: Invoice;
+    invoice: Invoice | null;
     lease: Lease;
 }
 

@@ -7,6 +7,8 @@ import {
     leaseStatusLabel,
     leaseStatusStyles,
 } from "@/src/components/dashboard/leases/leaseStyles";
+import { RentAgreementPanel } from "@/src/components/dashboard/leases/RentAgreementPanel";
+import { RentIncreasesPanel } from "@/src/components/dashboard/leases/RentIncreasesPanel";
 import { formatMoney } from "@/src/components/dashboard/units/unitStyles";
 import {
     AlertDialog,
@@ -474,6 +476,15 @@ export default function LeaseDetailPage() {
                             tenants pay one fixed price per month.
                         </p>
                     )}
+                </div>
+
+                {/* Agreement + Rent increases */}
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                    <RentAgreementPanel leaseId={lease.id} />
+                    <RentIncreasesPanel
+                        leaseId={lease.id}
+                        currentRent={lease.monthlyRent}
+                    />
                 </div>
 
                 {/* Invoices + Payments */}

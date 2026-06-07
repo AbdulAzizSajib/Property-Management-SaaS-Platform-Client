@@ -45,6 +45,14 @@ export interface ChangePlanPayload {
     plan: SubscriptionPlan;
 }
 
+// Admin override — set plan/status on any organization's subscription.
+export interface AdminUpdateSubscriptionPayload {
+    plan?: SubscriptionPlan;
+    status?: SubscriptionStatus;
+    autoRenew?: boolean;
+    endDate?: string | null;
+}
+
 /**
  * A plan from the catalog (GET /subscriptions/plans).
  * Source of truth for the upgrade UI — no more hardcoded presets.

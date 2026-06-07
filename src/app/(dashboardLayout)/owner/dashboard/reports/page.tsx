@@ -21,6 +21,7 @@ import {
     TrendingDown,
     TrendingUp,
 } from "lucide-react";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 
 // ─────────────────────────────────────────────────────────────────
@@ -143,6 +144,22 @@ export default function ReportsPage() {
                         Print
                     </button>
                 </header>
+
+                {/* Report quick-links */}
+                <nav className="flex flex-wrap gap-2 print:hidden">
+                    <ReportLink href="/owner/dashboard/reports" active>
+                        Financial
+                    </ReportLink>
+                    <ReportLink href="/owner/dashboard/reports/rent-collection">
+                        Rent collection
+                    </ReportLink>
+                    <ReportLink href="/owner/dashboard/reports/occupancy">
+                        Occupancy
+                    </ReportLink>
+                    <ReportLink href="/owner/dashboard/reports/expenses">
+                        Expenses
+                    </ReportLink>
+                </nav>
 
                 {/* Date range picker */}
                 <div className="rounded-[14px] border border-rule-soft bg-paper p-4 print:hidden">
@@ -722,5 +739,33 @@ function EmptyState() {
                 over time.
             </p>
         </div>
+    );
+}
+
+// ─────────────────────────────────────────────────────────────────
+// ReportLink — pill nav between the four report screens
+// ─────────────────────────────────────────────────────────────────
+
+function ReportLink({
+    href,
+    active,
+    children,
+}: {
+    href: string;
+    active?: boolean;
+    children: React.ReactNode;
+}) {
+    return (
+        <Link
+            href={href}
+            className={cn(
+                "inline-flex h-8 items-center rounded-full px-3 text-[12.5px] font-semibold transition-colors",
+                active
+                    ? "bg-jade-900 text-paper"
+                    : "border border-rule-soft bg-paper text-ink-soft hover:border-jade-700/30 hover:text-jade-900",
+            )}
+        >
+            {children}
+        </Link>
     );
 }

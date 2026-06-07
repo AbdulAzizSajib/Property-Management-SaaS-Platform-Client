@@ -119,6 +119,8 @@ export interface InvoiceFilters {
     leaseId?: string;
     tenantId?: string;
     unitId?: string;
+    /** "YYYY-MM" — filters invoices belonging to a specific billing month. */
+    billingMonth?: string;
 }
 
 /**

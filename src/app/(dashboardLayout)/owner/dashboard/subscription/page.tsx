@@ -2,8 +2,10 @@
 
 import { Skeleton } from "@/src/components/ui/skeleton";
 import {
+    useCancelSubscription,
     useChangePlan,
     usePlans,
+    useReactivateSubscription,
     useSubscription,
 } from "@/src/hooks/useSubscription";
 import { cn } from "@/src/lib/utils";
@@ -88,6 +90,8 @@ export default function SubscriptionPage() {
     const { data: sub, isLoading, isError, error } = useSubscription();
     const { data: plans, isLoading: plansLoading } = usePlans();
     const changePlan = useChangePlan();
+    const cancelSub = useCancelSubscription();
+    const reactivateSub = useReactivateSubscription();
 
     if (isLoading) {
         return (
@@ -127,7 +131,13 @@ export default function SubscriptionPage() {
         );
     }
 
-    const status = statusStyles[sub.status];
+    // Defensive: if the backend ever returns a status we don't have a style
+    // for (e.g. INACTIVE post-cancellation), fall back to a neutral chip
+    // instead of crashing on `status.className`.
+    const status = statusStyles[sub.status] ?? {
+        label: String(sub.status).replace(/_/g, " "),
+        className: "bg-cream text-ink-soft border-rule-soft",
+    };
     const trialDaysLeft = daysUntil(sub.trialEndsAt);
     const price = parseFloat(sub.priceMonthly) || 0;
 
@@ -150,6 +160,40 @@ export default function SubscriptionPage() {
                             আপনার বর্তমান প্ল্যান, ব্যবহারের সীমা ও উপলব্ধ আপগ্রেড।
                         </p>
                     </div>
+                    {/* Cancel / reactivate */}
+                    {sub.status === "CANCELED" || sub.status === "EXPIRED" ? (
+                        <button
+                            type="button"
+                            disabled={reactivateSub.isPending}
+                            onClick={() => reactivateSub.mutate()}
+                            className="inline-flex h-9 items-center gap-1.5 rounded-[10px] bg-jade-900 px-3 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950 disabled:opacity-60"
+                        >
+                            {reactivateSub.isPending ? (
+                                <Loader2 size={14} className="animate-spin" />
+                            ) : null}
+                            Reactivate subscription
+                        </button>
+                    ) : (
+                        <button
+                            type="button"
+                            disabled={cancelSub.isPending}
+                            onClick={() => {
+                                if (
+                                    window.confirm(
+                                        "Cancel this subscription? You can reactivate later.",
+                                    )
+                                ) {
+                                    cancelSub.mutate();
+                                }
+                            }}
+                            className="inline-flex h-9 items-center gap-1.5 rounded-[10px] border border-coral-200 bg-coral-50/60 px-3 text-[13px] font-semibold text-coral-700 transition-colors hover:bg-coral-50 disabled:opacity-60"
+                        >
+                            {cancelSub.isPending ? (
+                                <Loader2 size={14} className="animate-spin" />
+                            ) : null}
+                            Cancel subscription
+                        </button>
+                    )}
                 </header>
 
                 {/* Trial warning */}
@@ -317,7 +361,16 @@ export default function SubscriptionPage() {
                                 <PlanCard
                                     key={plan.plan}
                                     plan={plan}
-                                    current={sub.plan}
+                                    // Only treat the user's plan as "current" while the
+                                    // subscription is actually live. Once it's cancelled
+                                    // or expired, every card should be selectable again.
+                                    current={
+                                        sub.status === "ACTIVE" ||
+                                        sub.status === "TRIALING" ||
+                                        sub.status === "PAST_DUE"
+                                            ? sub.plan
+                                            : null
+                                    }
                                     onSelect={() => changePlan.mutate(plan.plan)}
                                     pending={
                                         changePlan.isPending &&
@@ -415,12 +468,13 @@ function PlanCard({
     disabled,
 }: {
     plan: Plan;
-    current: SubscriptionPlan;
+    /** Null when the subscription is not in an active-ish state. */
+    current: SubscriptionPlan | null;
     onSelect: () => void;
     pending: boolean;
     disabled: boolean;
 }) {
-    const isCurrent = plan.plan === current;
+    const isCurrent = current !== null && plan.plan === current;
     const highlight = plan.isPopular;
     const price = parseFloat(plan.priceMonthly) || 0;
 

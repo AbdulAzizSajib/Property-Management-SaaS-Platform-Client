@@ -66,6 +66,11 @@ export const adminNavItems: NavSection[] = [
         href: "/admin/dashboard/users",
         icon: "Users",
       },
+      {
+        title: "Activity logs",
+        href: "/admin/dashboard/activity-logs",
+        icon: "Activity",
+      },
     ],
   },
 ];
@@ -164,6 +169,11 @@ export const ownerNavItems: NavSection[] = [
         title: "Subscription",
         href: "/owner/dashboard/subscription",
         icon: "BadgeDollarSign",
+      },
+      {
+        title: "Activity logs",
+        href: "/owner/dashboard/activity-logs",
+        icon: "Activity",
       },
     ],
   },

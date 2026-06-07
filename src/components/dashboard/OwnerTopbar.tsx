@@ -16,7 +16,6 @@ import { httpClient } from "@/src/lib/axios/browserHttpClient";
 import { cn } from "@/src/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import {
-  Bell,
   ChevronDown,
   Key,
   LogOut,
@@ -24,9 +23,11 @@ import {
   Search,
   User,
 } from "lucide-react";
+import { NotificationsBell } from "./NotificationsBell";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { ChangePasswordDialog } from "./auth/ChangePasswordDialog";
 import { OwnerSidebar } from "./OwnerSidebar";
 
 interface OwnerTopbarProps {
@@ -36,10 +37,6 @@ interface OwnerTopbarProps {
     role?: string;
     photoUrl?: string;
   };
-  /** Show the coral notification indicator on the bell. */
-  hasNotifications?: boolean;
-  /** Click handler for the notifications button. */
-  onNotificationsClick?: () => void;
   /** Click handler for the search bar / command palette. */
   onSearchClick?: () => void;
 }
@@ -51,13 +48,12 @@ const defaultUser = {
 
 export function OwnerTopbar({
   user = defaultUser,
-  hasNotifications = false,
-  onNotificationsClick,
   onSearchClick,
 }: OwnerTopbarProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [loggingOut, setLoggingOut] = useState(false);
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 
   const initials = user.name
     .split(" ")
@@ -118,23 +114,7 @@ export function OwnerTopbar({
       </button>
 
       <div className="ml-auto flex items-center gap-1.5">
-        {/* Notifications */}
-        <button
-          type="button"
-          onClick={onNotificationsClick}
-          aria-label={
-            hasNotifications ? "Notifications (unread)" : "Notifications"
-          }
-          className="relative inline-flex size-9 items-center justify-center rounded-md text-ink-soft transition-colors hover:bg-cream hover:text-jade-900"
-        >
-          <Bell size={17} />
-          {hasNotifications && (
-            <span className="absolute right-1.5 top-1.5 flex h-2 w-2">
-              <span className="absolute inset-0 animate-ping rounded-full bg-coral-500 opacity-70" />
-              <span className="relative h-2 w-2 rounded-full bg-coral-600 ring-2 ring-paper" />
-            </span>
-          )}
-        </button>
+        <NotificationsBell />
 
         {/* User menu */}
         <DropdownMenu>
@@ -183,7 +163,10 @@ export function OwnerTopbar({
                 <User size={13} className="mr-2 text-ink-soft/70" />
                 My Profile
               </DropdownMenuItem>
-              <DropdownMenuItem className="text-[13px] text-ink focus:bg-cream focus:text-jade-900">
+              <DropdownMenuItem
+                onClick={() => setChangePasswordOpen(true)}
+                className="text-[13px] text-ink focus:bg-cream focus:text-jade-900"
+              >
                 <Key size={13} className="mr-2 text-ink-soft/70" />
                 Change Password
               </DropdownMenuItem>
@@ -204,6 +187,11 @@ export function OwnerTopbar({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      <ChangePasswordDialog
+        open={changePasswordOpen}
+        onOpenChange={setChangePasswordOpen}
+      />
     </header>
   );
 }

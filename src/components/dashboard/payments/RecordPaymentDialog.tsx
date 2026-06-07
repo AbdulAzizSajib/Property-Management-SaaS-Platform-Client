@@ -45,8 +45,27 @@ export function RecordPaymentDialog({
     onOpenChange,
     fixedInvoiceId,
 }: RecordPaymentDialogProps) {
-    const { data: dueInvoices } = useInvoices({ status: "DUE" });
-    const { data: partialInvoices } = useInvoices({ status: "PARTIAL" });
+    // Empty string means "all months" — used as the default so the user
+    // can scan every outstanding invoice without picking a period first.
+    const [billingMonth, setBillingMonth] = useState("");
+
+    const dueFilter = useMemo(
+        () => ({
+            status: "DUE" as const,
+            ...(billingMonth && { billingMonth }),
+        }),
+        [billingMonth],
+    );
+    const partialFilter = useMemo(
+        () => ({
+            status: "PARTIAL" as const,
+            ...(billingMonth && { billingMonth }),
+        }),
+        [billingMonth],
+    );
+
+    const { data: dueInvoices } = useInvoices(dueFilter);
+    const { data: partialInvoices } = useInvoices(partialFilter);
     const mutation = useRecordPayment();
 
     const [invoiceId, setInvoiceId] = useState(fixedInvoiceId ?? "");
@@ -64,6 +83,7 @@ export function RecordPaymentDialog({
             setMethod("BKASH");
             setTransactionId("");
             setNotes("");
+            setBillingMonth("");
         }
     }, [open, fixedInvoiceId]);
 
@@ -131,6 +151,45 @@ export function RecordPaymentDialog({
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    {!fixedInvoiceId && (
+                        <Field
+                            label="Billing month"
+                            htmlFor="p-billing-month"
+                            hint="Leave blank to see every outstanding invoice."
+                        >
+                            <div className="flex gap-2">
+                                <Input
+                                    id="p-billing-month"
+                                    type="month"
+                                    value={billingMonth}
+                                    onChange={(e) => {
+                                        setBillingMonth(e.target.value);
+                                        // Clear the picked invoice — it may
+                                        // not belong to the new month.
+                                        setInvoiceId("");
+                                        setAmount("");
+                                        setAutoFilledAmount(false);
+                                    }}
+                                    className={`${fieldClass} tabular-nums`}
+                                />
+                                {billingMonth && (
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setBillingMonth("");
+                                            setInvoiceId("");
+                                            setAmount("");
+                                            setAutoFilledAmount(false);
+                                        }}
+                                        className="inline-flex h-8 shrink-0 items-center rounded-md border border-rule-soft bg-paper px-2 text-[12px] text-ink-soft hover:border-jade-700/30 hover:text-jade-900"
+                                    >
+                                        Clear
+                                    </button>
+                                )}
+                            </div>
+                        </Field>
+                    )}
+
                     <Field label="Invoice" htmlFor="p-invoice" required>
                         <Select
                             value={invoiceId}
@@ -155,7 +214,9 @@ export function RecordPaymentDialog({
                             <SelectContent>
                                 {outstandingInvoices.length === 0 ? (
                                     <div className="px-2 py-2 text-[12px] text-ink-soft">
-                                        No outstanding invoices
+                                        {billingMonth
+                                            ? `No outstanding invoices for ${billingMonth}`
+                                            : "No outstanding invoices"}
                                     </div>
                                 ) : (
                                     outstandingInvoices.map((i) => (

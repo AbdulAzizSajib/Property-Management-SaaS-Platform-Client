@@ -69,7 +69,8 @@ function PaymentsListInner() {
                 if (!q) return true;
                 return (
                     p.receiptNumber.toLowerCase().includes(q) ||
-                    p.invoice.invoiceNumber.toLowerCase().includes(q) ||
+                    (p.invoice?.invoiceNumber.toLowerCase().includes(q) ??
+                        false) ||
                     p.tenant.name.toLowerCase().includes(q) ||
                     p.tenant.phone.toLowerCase().includes(q) ||
                     (p.transactionId?.toLowerCase().includes(q) ?? false)
@@ -360,7 +361,7 @@ function PaymentRow({ payment }: { payment: PaymentListItem }) {
                         <span className="inline-flex items-center gap-1">
                             <Receipt size={11} className="text-ink-soft/60" />
                             <span className="font-mono">
-                                {payment.invoice.invoiceNumber}
+                                {payment.invoice?.invoiceNumber ?? "—"}
                             </span>
                         </span>
                         <span className="inline-flex items-center gap-1 tabular-nums">

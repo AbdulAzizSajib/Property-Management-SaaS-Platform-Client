@@ -271,46 +271,60 @@ export default function PaymentDetailPage() {
                             </ul>
                         </PartyBlock>
 
-                        <PartyBlock
-                            eyebrow="Applied to · জমা যেখানে"
-                            href={`/owner/dashboard/invoices/${p.invoice.id}`}
-                            heading={p.invoice.invoiceNumber}
-                            headingMono
-                        >
-                            <ul className="space-y-1 text-[12px]">
-                                <li className="flex justify-between">
-                                    <span className="text-ink-soft">
-                                        Invoice total
-                                    </span>
-                                    <span className="font-semibold text-ink tabular-nums">
-                                        {formatMoney(p.invoice.totalAmount)}
-                                    </span>
-                                </li>
-                                <li className="flex justify-between">
-                                    <span className="text-ink-soft">
-                                        Paid to date
-                                    </span>
-                                    <span className="font-semibold text-jade-800 tabular-nums">
-                                        {formatMoney(p.invoice.paidAmount)}
-                                    </span>
-                                </li>
-                                <li className="flex justify-between border-t border-rule-soft pt-1.5">
-                                    <span className="font-semibold text-ink">
-                                        Outstanding
-                                    </span>
-                                    <span
-                                        className={cn(
-                                            "font-bold tabular-nums",
-                                            Number(p.invoice.dueAmount) > 0
-                                                ? "text-coral-700"
-                                                : "text-jade-800",
-                                        )}
-                                    >
-                                        {formatMoney(p.invoice.dueAmount)}
-                                    </span>
-                                </li>
-                            </ul>
-                        </PartyBlock>
+                        {p.invoice ? (
+                            <PartyBlock
+                                eyebrow="Applied to · জমা যেখানে"
+                                href={`/owner/dashboard/invoices/${p.invoice.id}`}
+                                heading={p.invoice.invoiceNumber}
+                                headingMono
+                            >
+                                <ul className="space-y-1 text-[12px]">
+                                    <li className="flex justify-between">
+                                        <span className="text-ink-soft">
+                                            Invoice total
+                                        </span>
+                                        <span className="font-semibold text-ink tabular-nums">
+                                            {formatMoney(p.invoice.totalAmount)}
+                                        </span>
+                                    </li>
+                                    <li className="flex justify-between">
+                                        <span className="text-ink-soft">
+                                            Paid to date
+                                        </span>
+                                        <span className="font-semibold text-jade-800 tabular-nums">
+                                            {formatMoney(p.invoice.paidAmount)}
+                                        </span>
+                                    </li>
+                                    <li className="flex justify-between border-t border-rule-soft pt-1.5">
+                                        <span className="font-semibold text-ink">
+                                            Outstanding
+                                        </span>
+                                        <span
+                                            className={cn(
+                                                "font-bold tabular-nums",
+                                                Number(p.invoice.dueAmount) > 0
+                                                    ? "text-coral-700"
+                                                    : "text-jade-800",
+                                            )}
+                                        >
+                                            {formatMoney(p.invoice.dueAmount)}
+                                        </span>
+                                    </li>
+                                </ul>
+                            </PartyBlock>
+                        ) : (
+                            <PartyBlock
+                                eyebrow="Applied to · জমা যেখানে"
+                                heading="Unallocated"
+                                headingMono={false}
+                            >
+                                <p className="text-[12px] text-ink-soft">
+                                    {p.isAdvance
+                                        ? "Advance payment — not yet tied to an invoice."
+                                        : "Linked invoice is unavailable."}
+                                </p>
+                            </PartyBlock>
+                        )}
                     </div>
 
                     {/* Itemized */}
@@ -337,20 +351,28 @@ export default function PaymentDetailPage() {
                                 <tbody className="divide-y divide-rule-soft bg-paper">
                                     <tr>
                                         <td className="px-4 py-3 text-ink">
-                                            Payment for{" "}
-                                            <span className="font-mono font-semibold">
-                                                {p.invoice.invoiceNumber}
-                                            </span>
-                                            {p.invoice.type && (
-                                                <span className="ml-1.5 text-[11px] text-ink-soft">
-                                                    (
-                                                    {p.invoice.type
-                                                        .charAt(0) +
-                                                        p.invoice.type
-                                                            .slice(1)
-                                                            .toLowerCase()}
-                                                    )
-                                                </span>
+                                            {p.invoice ? (
+                                                <>
+                                                    Payment for{" "}
+                                                    <span className="font-mono font-semibold">
+                                                        {p.invoice.invoiceNumber}
+                                                    </span>
+                                                    {p.invoice.type && (
+                                                        <span className="ml-1.5 text-[11px] text-ink-soft">
+                                                            (
+                                                            {p.invoice.type
+                                                                .charAt(0) +
+                                                                p.invoice.type
+                                                                    .slice(1)
+                                                                    .toLowerCase()}
+                                                            )
+                                                        </span>
+                                                    )}
+                                                </>
+                                            ) : p.isAdvance ? (
+                                                "Advance payment"
+                                            ) : (
+                                                "Unallocated payment"
                                             )}
                                         </td>
                                         <td className="px-4 py-3 text-right font-semibold tabular-nums text-jade-950">
@@ -483,28 +505,40 @@ function PartyBlock({
     children,
 }: {
     eyebrow: string;
-    href: string;
+    /** Omit when the heading isn't linked anywhere (eg unallocated payments). */
+    href?: string;
     heading: string;
     headingMono?: boolean;
     children: React.ReactNode;
 }) {
+    const headingContent = (
+        <>
+            <span className={headingMono ? "font-mono" : ""}>{heading}</span>
+            {href && (
+                <ArrowUpRight
+                    size={13}
+                    className="text-ink-soft/50 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-jade-900 print:hidden"
+                />
+            )}
+        </>
+    );
     return (
         <div className="px-6 py-5 sm:px-8 sm:py-6">
             <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
                 {eyebrow}
             </p>
-            <Link
-                href={href}
-                className="group mt-1.5 inline-flex items-center gap-1.5 text-[15px] font-bold text-jade-950 transition-colors hover:text-jade-900 print:no-underline print:hover:text-jade-950"
-            >
-                <span className={headingMono ? "font-mono" : ""}>
-                    {heading}
-                </span>
-                <ArrowUpRight
-                    size={13}
-                    className="text-ink-soft/50 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-jade-900 print:hidden"
-                />
-            </Link>
+            {href ? (
+                <Link
+                    href={href}
+                    className="group mt-1.5 inline-flex items-center gap-1.5 text-[15px] font-bold text-jade-950 transition-colors hover:text-jade-900 print:no-underline print:hover:text-jade-950"
+                >
+                    {headingContent}
+                </Link>
+            ) : (
+                <p className="mt-1.5 inline-flex items-center gap-1.5 text-[15px] font-bold text-jade-950">
+                    {headingContent}
+                </p>
+            )}
             <div className="mt-3">{children}</div>
         </div>
     );
