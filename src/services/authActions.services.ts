@@ -16,6 +16,10 @@ export interface VerifyEmailPayload {
     otp: string;
 }
 
+export interface ResendVerificationOtpPayload {
+    email: string;
+}
+
 export interface ForgetPasswordPayload {
     email: string;
 }
@@ -33,6 +37,15 @@ export const changePassword = async (payload: ChangePasswordPayload) =>
 /** POST /auth/verify-email — confirms an OTP sent to email. */
 export const verifyEmail = async (payload: VerifyEmailPayload) =>
     httpClient.post<{ success: true }>("/auth/verify-email", payload);
+
+/** POST /auth/resend-verification-otp — sends a fresh OTP to the same email. */
+export const resendVerificationOtp = async (
+    payload: ResendVerificationOtpPayload,
+) =>
+    httpClient.post<{ success: true }>(
+        "/auth/resend-verification-otp",
+        payload,
+    );
 
 /** POST /auth/forget-password — sends an OTP to the email. */
 export const forgetPassword = async (payload: ForgetPasswordPayload) =>

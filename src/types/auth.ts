@@ -30,14 +30,17 @@ export type RegisterPayload = {
     organization: {
         name: string;
         slug: string;
-        phone: string;
-        email: string;
+        /** Optional — backend accepts org without contact phone. */
+        phone?: string;
+        /** Optional — backend accepts org without contact email. */
+        email?: string;
         address: string;
     };
 };
 
 export type LoginPayload = {
-    email: string;
+    /** Email or Bangladeshi phone number — the backend accepts either. */
+    identifier: string;
     password: string;
 };
 
@@ -59,4 +62,18 @@ export type ApiErrorBody = {
     success: false;
     message: string;
     errors?: Record<string, string[]> | string[];
+    /**
+     * Some endpoints (notably auth flows) include a structured `error` block
+     * with a machine-readable `code` we can branch on. E.g. login may return
+     * `error.body.code === "EMAIL_NOT_VERIFIED"`, in which case the backend
+     * also auto-resends a fresh OTP and we should route the user to verify.
+     */
+    error?: {
+        status?: string;
+        statusCode?: number;
+        body?: {
+            code?: string;
+            message?: string;
+        };
+    };
 };

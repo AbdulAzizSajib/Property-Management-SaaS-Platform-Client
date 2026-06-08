@@ -5,7 +5,7 @@ import {
   getDefaultDashboardRoute,
   isValidRedirectForRole,
 } from "@/src/lib/authUtils";
-import { isEmail } from "@/src/lib/validation";
+import { isLoginIdentifier } from "@/src/lib/validation";
 import { AlertCircle, CheckCircle2, Eye, EyeOff, Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -24,22 +24,23 @@ function LoginForm() {
   const router = useRouter();
   const search = useSearchParams();
   const justRegistered = search.get("registered") === "1";
+  const justVerified = search.get("verified") === "1";
   const redirectParam = search.get("redirect");
 
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [emailError, setEmailError] = useState<string | null>(null);
+  const [identifierError, setIdentifierError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   function validate(): boolean {
     let ok = true;
-    if (!isEmail(email)) {
-      setEmailError("Enter a valid email address");
+    if (!isLoginIdentifier(identifier)) {
+      setIdentifierError("Enter a valid email or Bangladeshi phone number");
       ok = false;
-    } else setEmailError(null);
+    } else setIdentifierError(null);
     if (password.length < 1) {
       setPasswordError("Password is required");
       ok = false;
@@ -53,7 +54,10 @@ function LoginForm() {
     setSubmitting(true);
     setServerError(null);
     try {
-      const data = await loginUser({ email: email.trim(), password });
+      const data = await loginUser({
+        identifier: identifier.trim(),
+        password,
+      });
       persistAuth(data);
       const role = data.user.role;
       const fallback = getDefaultDashboardRoute(role);
@@ -63,6 +67,23 @@ function LoginForm() {
           : fallback;
       router.push(destination);
     } catch (err) {
+      // Special case: backend says the email isn't verified and has just
+      // auto-sent a fresh OTP. Route the user to the verify page with their
+      // email pre-filled and a banner explaining what happened — they can
+      // type the new code without going back here.
+      if (
+        err instanceof ApiError &&
+        err.body?.error?.body?.code === "EMAIL_NOT_VERIFIED"
+      ) {
+        // The identifier may be a phone, not an email. Only forward when it
+        // actually looks like an email so the verify page can pre-fill it.
+        const trimmed = identifier.trim();
+        const emailParam = trimmed.includes("@")
+          ? `?email=${encodeURIComponent(trimmed)}&fromLogin=1`
+          : "?fromLogin=1";
+        router.push(`/verify-email${emailParam}`);
+        return;
+      }
       setServerError(
         err instanceof ApiError
           ? err.message
@@ -99,7 +120,15 @@ function LoginForm() {
           </div>
 
           {/* Status banners */}
-          {justRegistered && (
+          {justVerified ? (
+            <div className="flex items-start gap-2 mb-5 px-3 py-2.5 rounded-[10px] bg-jade-50/70 border border-jade-100 text-jade-800 text-[13px]">
+              <CheckCircle2
+                size={15}
+                className="mt-0.5 shrink-0 text-jade-700"
+              />
+              <span>Email verified. Sign in to access your dashboard.</span>
+            </div>
+          ) : justRegistered ? (
             <div className="flex items-start gap-2 mb-5 px-3 py-2.5 rounded-[10px] bg-jade-50/70 border border-jade-100 text-jade-800 text-[13px]">
               <CheckCircle2
                 size={15}
@@ -107,7 +136,7 @@ function LoginForm() {
               />
               <span>Account created. Please sign in to continue.</span>
             </div>
-          )}
+          ) : null}
 
           {serverError && (
             <div className="flex items-start gap-2 mb-5 px-3 py-2.5 rounded-[10px] bg-coral-50/70 border border-coral-100 text-coral-700 text-[13px]">
@@ -135,16 +164,17 @@ function LoginForm() {
           {/* Form — underline inputs (editorial style) */}
           <form onSubmit={handleSubmit} className="space-y-5" noValidate>
             <UnderlineInput
-              label="Email"
-              type="email"
-              autoComplete="email"
-              value={email}
+              label="Email or phone"
+              type="text"
+              inputMode="email"
+              autoComplete="username"
+              value={identifier}
               onChange={(v) => {
-                setEmail(v);
-                setEmailError(null);
+                setIdentifier(v);
+                setIdentifierError(null);
                 setServerError(null);
               }}
-              error={emailError}
+              error={identifierError}
             />
 
             <UnderlineInput
@@ -313,6 +343,7 @@ function UnderlineInput({
   onChange,
   error,
   autoComplete,
+  inputMode,
   rightAdornment,
 }: {
   label: string;
@@ -321,6 +352,7 @@ function UnderlineInput({
   onChange: (v: string) => void;
   error?: string | null;
   autoComplete?: string;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
   rightAdornment?: React.ReactNode;
 }) {
   return (
@@ -331,6 +363,7 @@ function UnderlineInput({
         <input
           type={type}
           autoComplete={autoComplete}
+          inputMode={inputMode}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={label}

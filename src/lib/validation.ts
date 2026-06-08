@@ -23,3 +23,12 @@ export function isBdPhone(v: string): boolean {
 export function isSlug(v: string): boolean {
     return SLUG_RE.test(v.trim());
 }
+
+/**
+ * Login identifier — accepts either an email address or a Bangladeshi phone number.
+ * Matches the `identifier` field on the /auth/login endpoint.
+ */
+export function isLoginIdentifier(v: string): boolean {
+    const trimmed = v.trim();
+    return isEmail(trimmed) || isBdPhone(trimmed);
+}

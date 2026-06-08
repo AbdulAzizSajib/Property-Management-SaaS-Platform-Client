@@ -27,3 +27,15 @@ export const deleteCookie = async (name : string) => {
     const cookieStore = await cookies();
     cookieStore.delete(name);
 }
+
+/**
+ * Clears all auth-related cookies (access token, refresh token, session token).
+ * Used when we need the user to re-authenticate — e.g. after email verification
+ * in the register flow, so they're forced back through the login screen.
+ */
+export const clearAuthCookies = async () => {
+    const cookieStore = await cookies();
+    cookieStore.delete("accessToken");
+    cookieStore.delete("refreshToken");
+    cookieStore.delete("better-auth.session_token");
+}

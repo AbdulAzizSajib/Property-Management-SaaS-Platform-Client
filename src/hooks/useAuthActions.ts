@@ -4,10 +4,12 @@ import { getErrorMessage } from "@/src/lib/utils";
 import {
     changePassword,
     forgetPassword,
+    resendVerificationOtp,
     resetPassword,
     verifyEmail,
     type ChangePasswordPayload,
     type ForgetPasswordPayload,
+    type ResendVerificationOtpPayload,
     type ResetPasswordPayload,
     type VerifyEmailPayload,
 } from "@/src/services/authActions.services";
@@ -38,6 +40,20 @@ export function useVerifyEmail() {
         },
         onError: (error: unknown) => {
             toast.error(getErrorMessage(error, "Verification failed"));
+        },
+    });
+}
+
+export function useResendVerificationOtp() {
+    return useMutation({
+        mutationFn: async (payload: ResendVerificationOtpPayload) => {
+            await resendVerificationOtp(payload);
+        },
+        onSuccess: () => {
+            toast.success("New OTP sent to your email");
+        },
+        onError: (error: unknown) => {
+            toast.error(getErrorMessage(error, "Failed to resend OTP"));
         },
     });
 }
