@@ -36,7 +36,7 @@ export default function Footer() {
     const [lang, setLang] = useState<"en" | "bn">("en");
 
     return (
-        <footer className="max-w-[1280px] mx-auto px-5 md:px-8 pt-20 pb-10">
+        <footer className="container mx-auto px-5 md:px-8 pt-20 pb-10">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.6fr_1fr_1fr_1fr_1fr] gap-12 pb-12 border-b border-rule">
                 <div className="col-span-2 md:col-span-3 lg:col-span-1">
                     <Link href="/" className="flex items-center gap-2.5 text-jade-900 font-bold text-[19px] tracking-tight mb-4">

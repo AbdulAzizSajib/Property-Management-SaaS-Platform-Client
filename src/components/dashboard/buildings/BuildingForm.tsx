@@ -104,14 +104,14 @@ export function BuildingForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+    <form onSubmit={handleSubmit} className="space-y-1">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         <Field label="Building name" required className="sm:col-span-2">
           <Input
             id="name"
             value={values.name}
             onChange={(e) => set("name", e.target.value)}
-            placeholder="Lalmatia Block A"
+            placeholder="e.g. Green Residency"
             required
             className={fieldClass}
           />
@@ -172,7 +172,7 @@ export function BuildingForm({
             id="address"
             value={values.address}
             onChange={(e) => set("address", e.target.value)}
-            placeholder="House 12, Road 5, Lalmatia, Dhaka"
+            placeholder="e.g. House 12, Road 5, Lalmatia, Dhaka"
             required
             className={fieldClass}
           />
@@ -183,7 +183,7 @@ export function BuildingForm({
             id="city"
             value={values.city}
             onChange={(e) => set("city", e.target.value)}
-            placeholder="Dhaka"
+            placeholder="e.g. Dhaka"
             required
             className={fieldClass}
           />
@@ -194,7 +194,7 @@ export function BuildingForm({
             id="area"
             value={values.area}
             onChange={(e) => set("area", e.target.value)}
-            placeholder="Lalmatia"
+            placeholder="e.g. Lalmatia"
             className={fieldClass}
           />
         </Field>
@@ -205,7 +205,7 @@ export function BuildingForm({
             type="url"
             value={values.imageUrl}
             onChange={(e) => set("imageUrl", e.target.value)}
-            placeholder="https://example.com/building.png"
+            placeholder="e.g. https://example.com/building.png"
             className={fieldClass}
           />
         </Field>
@@ -220,13 +220,13 @@ export function BuildingForm({
             rows={3}
             value={values.description}
             onChange={(e) => set("description", e.target.value)}
-            placeholder="5-storey residential building, lift available"
+            placeholder="e.g. 5-storey residential building, lift available"
             className={`${fieldClass} resize-none`}
           />
         </Field>
       </div>
 
-      <div className="flex items-center justify-end gap-2 border-t border-rule-soft pt-4">
+      <div className="flex items-center justify-end gap-2">
         {onCancel && (
           <button
             type="button"

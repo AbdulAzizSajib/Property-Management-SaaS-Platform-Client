@@ -25,7 +25,8 @@ import type { BuildingListItem } from "@/src/types/building.types";
 import {
   ArrowRight,
   Building2,
-  ChevronRight,
+  ChevronDown,
+  ChevronUp,
   DoorOpen,
   Layers,
   MapPin,
@@ -99,8 +100,7 @@ export default function BuildingsListPage() {
                   Add new building
                 </DialogTitle>
                 <DialogDescription className="text-ink-soft">
-                  আপনার তালিকায় নতুন বিল্ডিং যোগ করুন — তৈরির পর floors আর
-                  units যোগ করতে পারবেন।
+                  আপনার তালিকায় নতুন ভবন যোগ করুন, তৈরির পর আপনি এতে ফ্লোর এবং ইউনিট যোগ করতে পারবেন।
                 </DialogDescription>
               </DialogHeader>
               <BuildingForm
@@ -135,9 +135,7 @@ export default function BuildingsListPage() {
               value={fmtNum(totalUnits)}
               icon={DoorOpen}
             />
-            <span className="font-bangla ml-auto hidden text-[12px] text-ink-soft sm:inline">
-              মোট সম্পত্তি
-            </span>
+        
           </section>
 
           {/* Toolbar */}
@@ -181,32 +179,17 @@ export default function BuildingsListPage() {
             </p>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-[14px] border border-rule-soft bg-paper">
-            {/* Desktop table header */}
-            <div className="hidden grid-cols-[28px_minmax(0,2.5fr)_110px_140px_80px_80px_140px_100px_44px] items-center gap-3 border-b border-rule-soft bg-cream/60 px-4 py-2.5 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft lg:grid">
-              <span />
-              <span>Name &amp; address</span>
-              <span>Type</span>
-              <span>City / Area</span>
-              <span className="text-right">Floors</span>
-              <span className="text-right">Units</span>
-              <span>Caretaker</span>
-              <span>Status</span>
-              <span />
-            </div>
-
-            <ul className="divide-y divide-rule-soft">
-              {filtered.map((b) => (
-                <BuildingRow
-                  key={b.id}
-                  building={b}
-                  isExpanded={expandedId === b.id}
-                  onToggle={() =>
-                    setExpandedId((cur) => (cur === b.id ? null : b.id))
-                  }
-                />
-              ))}
-            </ul>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {filtered.map((b) => (
+              <BuildingCard
+                key={b.id}
+                building={b}
+                isExpanded={expandedId === b.id}
+                onToggle={() =>
+                  setExpandedId((cur) => (cur === b.id ? null : b.id))
+                }
+              />
+            ))}
           </div>
         )}
       </div>
@@ -214,7 +197,7 @@ export default function BuildingsListPage() {
   );
 }
 
-function BuildingRow({
+function BuildingCard({
   building,
   isExpanded,
   onToggle,
@@ -224,186 +207,187 @@ function BuildingRow({
   onToggle: () => void;
 }) {
   return (
-    <li>
-      <div
-        role="button"
-        tabIndex={0}
-        onClick={onToggle}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            onToggle();
-          }
-        }}
-        className={cn(
-          "group grid cursor-pointer grid-cols-[28px_1fr_auto] items-center gap-3 px-4 py-3 transition-colors hover:bg-cream/60 lg:grid-cols-[28px_minmax(0,2.5fr)_110px_140px_80px_80px_140px_100px_44px]",
-          isExpanded && "bg-cream/60",
+    <article
+      className={cn(
+        "group flex flex-col overflow-hidden rounded-[14px] border border-rule-soft bg-paper transition-shadow hover:shadow-[0_2px_18px_-12px_rgba(0,0,0,0.18)]",
+        isExpanded && "shadow-[0_2px_18px_-12px_rgba(0,0,0,0.22)]",
+      )}
+    >
+      {/* Cover */}
+      <div className="relative h-32 w-full overflow-hidden bg-gradient-to-br from-jade-50 via-cream to-coral-50">
+        {building.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={building.imageUrl}
+            alt={building.name}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Building2 size={42} className="text-jade-800/30" />
+          </div>
         )}
-      >
-        <ChevronRight
-          size={14}
-          className={cn(
-            "shrink-0 text-ink-soft/60 transition-transform",
-            isExpanded && "rotate-90 text-coral-600",
-          )}
-        />
-
-        <div className="min-w-0">
-          <p className="truncate text-[14px] font-semibold text-ink group-hover:text-jade-900">
-            {building.name}
-          </p>
-          <p className="truncate text-[11.5px] text-ink-soft">
-            <MapPin size={10} className="mr-1 inline" />
-            {building.address}
-          </p>
-        </div>
 
         <span
           className={cn(
-            "hidden rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider lg:inline-flex",
+            "absolute left-3 top-3 inline-flex items-center rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider backdrop-blur",
             typeBadgeStyles[building.type],
           )}
         >
           {typeLabel(building.type)}
         </span>
 
-        <div className="hidden min-w-0 text-[12px] lg:block">
-          <p className="truncate font-medium text-ink">{building.city}</p>
-          {building.area && (
-            <p className="truncate text-[11px] text-ink-soft">
-              {building.area}
-            </p>
-          )}
-        </div>
-
-        <div className="hidden text-right tabular-nums lg:block">
-          <p className="text-[14px] font-semibold text-jade-950">
-            {building._count.floors}
-          </p>
-          <p className="text-[10px] text-ink-soft">/ {building.totalFloors}</p>
-        </div>
-
-        <p className="hidden text-right text-[14px] font-semibold tabular-nums text-jade-950 lg:block">
-          {building._count.units}
-        </p>
-
-        <div className="hidden text-[12px] lg:block">
-          {building.caretaker ? (
-            <span className="inline-flex items-center gap-1 truncate text-ink">
-              <User size={11} className="text-ink-soft/60" />
-              <span className="truncate">{building.caretaker.name}</span>
-            </span>
-          ) : (
-            <span className="text-ink-soft/50">—</span>
-          )}
-        </div>
-
         <span
           className={cn(
-            "hidden rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider lg:inline-flex",
+            "absolute right-3 top-3 inline-flex items-center rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider backdrop-blur",
             statusBadgeStyles(building.isActive),
           )}
         >
           {building.isActive ? "Active" : "Inactive"}
         </span>
+      </div>
 
-        {/* Mobile chip strip */}
-        <div className="flex flex-wrap items-center gap-1.5 lg:hidden">
-          <span
-            className={cn(
-              "rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
-              typeBadgeStyles[building.type],
-            )}
-          >
-            {typeLabel(building.type)}
-          </span>
-          <span className="inline-flex items-center gap-1 text-[11px] text-ink-soft tabular-nums">
-            <Layers size={10} /> {building._count.floors}
-          </span>
-          <span className="inline-flex items-center gap-1 text-[11px] text-ink-soft tabular-nums">
-            <DoorOpen size={10} /> {building._count.units}
-          </span>
+      {/* Body */}
+      <div className="flex flex-1 flex-col gap-3 px-4 py-3.5">
+        <div className="min-w-0">
+          <h3 className="truncate text-[16px] font-bold tracking-[-0.01em] text-jade-950 group-hover:text-jade-900">
+            {building.name}
+          </h3>
+          <p className="mt-0.5 flex items-center gap-1 truncate text-[12px] text-ink-soft">
+            <MapPin size={11} className="shrink-0" />
+            <span className="truncate">
+              {building.address}
+              {building.area ? `, ${building.area}` : ""}, {building.city}
+            </span>
+          </p>
         </div>
 
-        <Link
-          href={`/owner/dashboard/buildings/${building.id}`}
-          onClick={(e) => e.stopPropagation()}
-          className="ml-auto hidden size-7 items-center justify-center rounded-md text-ink-soft/70 hover:bg-paper hover:text-jade-900 lg:flex"
-          aria-label="Open detail"
-        >
-          <ArrowRight size={14} />
-        </Link>
+        {/* Stat row */}
+        <div className="grid grid-cols-3 gap-2 rounded-[10px] border border-rule-soft bg-cream/50 px-3 py-2">
+          <CardStat
+            icon={Layers}
+            label="Floors"
+            value={`${building._count.floors}/${building.totalFloors}`}
+          />
+          <CardStat
+            icon={DoorOpen}
+            label="Units"
+            value={String(building._count.units)}
+          />
+          <CardStat
+            icon={User}
+            label="Caretaker"
+            value={building.caretaker ? building.caretaker.name : "—"}
+            truncate
+          />
+        </div>
+
+        {/* Actions */}
+        <div className="mt-auto flex items-center justify-between gap-2 pt-1">
+          <button
+            type="button"
+            onClick={onToggle}
+            className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[12px] font-semibold text-ink-soft transition-colors hover:bg-cream hover:text-jade-900"
+          >
+            {isExpanded ? (
+              <>
+                Hide details <ChevronUp size={12} />
+              </>
+            ) : (
+              <>
+                More details <ChevronDown size={12} />
+              </>
+            )}
+          </button>
+
+          <Link
+            href={`/owner/dashboard/buildings/${building.id}`}
+            className="inline-flex items-center gap-1 rounded-[8px] bg-jade-900 px-3 py-1.5 text-[12px] font-semibold text-paper transition-colors hover:bg-jade-950"
+          >
+            View
+            <ArrowRight size={12} />
+          </Link>
+        </div>
       </div>
 
       {isExpanded && <ExpandedPanel building={building} />}
-    </li>
+    </article>
+  );
+}
+
+function CardStat({
+  icon: Icon,
+  label,
+  value,
+  truncate,
+}: {
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  label: string;
+  value: string;
+  truncate?: boolean;
+}) {
+  return (
+    <div className="min-w-0">
+      <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-ink-soft">
+        <Icon size={10} />
+        {label}
+      </div>
+      <p
+        className={cn(
+          "mt-0.5 text-[13px] font-semibold tabular-nums text-jade-950",
+          truncate && "truncate",
+        )}
+        title={truncate ? value : undefined}
+      >
+        {value}
+      </p>
+    </div>
   );
 }
 
 function ExpandedPanel({ building }: { building: BuildingListItem }) {
   return (
-    <div className="border-t border-rule-soft bg-cream/40 px-4 py-4">
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        {/* About */}
-        <div>
-          <SectionLabel>About</SectionLabel>
-          <p className="mt-1.5 text-[13px] text-ink">
-            {building.description || (
-              <span className="text-ink-soft/60">No description added.</span>
-            )}
-          </p>
+    <div className="space-y-4 border-t border-rule-soft bg-cream/40 px-4 py-4">
+      <div>
+        <SectionLabel>About</SectionLabel>
+        <p className="mt-1.5 text-[12.5px] text-ink">
+          {building.description || (
+            <span className="text-ink-soft/60">No description added.</span>
+          )}
+        </p>
 
-          <dl className="mt-3 space-y-1.5 text-[12px]">
-            <KV label="City" value={building.city} />
-            {building.area && <KV label="Area" value={building.area} />}
-            <KV label="Total floors" value={String(building.totalFloors)} />
-            <KV
-              label="Created"
-              value={new Date(building.createdAt).toLocaleDateString()}
-            />
-          </dl>
-        </div>
+        <dl className="mt-2.5 space-y-1.5 text-[12px]">
+          <KV label="City" value={building.city} />
+          {building.area && <KV label="Area" value={building.area} />}
+          <KV label="Total floors" value={String(building.totalFloors)} />
+          <KV
+            label="Created"
+            value={new Date(building.createdAt).toLocaleDateString()}
+          />
+        </dl>
+      </div>
 
-        <div>
-          <SectionLabel>Floors</SectionLabel>
-          <FloorsMiniList buildingId={building.id} />
-        </div>
+      <div>
+        <SectionLabel>Floors</SectionLabel>
+        <FloorsMiniList buildingId={building.id} />
+      </div>
 
+      {building.caretaker && (
         <div>
           <SectionLabel>Caretaker</SectionLabel>
-          {building.caretaker ? (
-            <div className="mt-1.5 rounded-[10px] border border-rule-soft bg-paper p-3 text-[12px]">
-              <p className="font-semibold text-ink">
-                {building.caretaker.name}
+          <div className="mt-1.5 rounded-[10px] border border-rule-soft bg-paper p-3 text-[12px]">
+            <p className="font-semibold text-ink">{building.caretaker.name}</p>
+            {building.caretaker.email && (
+              <p className="mt-0.5 text-ink-soft">{building.caretaker.email}</p>
+            )}
+            {building.caretaker.contactNumber && (
+              <p className="text-ink-soft tabular-nums">
+                {building.caretaker.contactNumber}
               </p>
-              {building.caretaker.email && (
-                <p className="mt-0.5 text-ink-soft">
-                  {building.caretaker.email}
-                </p>
-              )}
-              {building.caretaker.contactNumber && (
-                <p className="text-ink-soft tabular-nums">
-                  {building.caretaker.contactNumber}
-                </p>
-              )}
-            </div>
-          ) : (
-            <p className="mt-1.5 text-[12px] text-ink-soft/60">
-              No caretaker assigned
-            </p>
-          )}
-
-          <div className="mt-4">
-            <Link
-              href={`/owner/dashboard/buildings/${building.id}`}
-              className="inline-flex items-center gap-1.5 rounded-[8px] bg-jade-900 px-3 py-1.5 text-[12px] font-semibold text-paper transition-colors hover:bg-jade-950"
-            >
-              View full details
-              <ArrowRight size={12} />
-            </Link>
+            )}
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

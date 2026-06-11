@@ -23,7 +23,7 @@ const collectionRows = [
 export default function FeaturesSection() {
     return (
         <section id="features" className="py-24 lg:py-32">
-            <div className="max-w-[1280px] mx-auto px-5 md:px-8">
+            <div className="container mx-auto px-5 md:px-8">
                 <SectionHead
                     eyebrow="What you get"
                     title={

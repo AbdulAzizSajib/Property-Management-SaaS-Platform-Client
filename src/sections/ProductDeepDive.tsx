@@ -99,7 +99,7 @@ export default function ProductDeepDive() {
 
     return (
         <section id="product" className="bg-jade-950 text-paper py-24 lg:py-32 rounded-3xl mx-4 md:mx-8">
-            <div className="max-w-[1280px] mx-auto px-5 md:px-8">
+            <div className="container mx-auto px-5 md:px-8">
                 <SectionHead
                     light
                     eyebrow="The dashboard"

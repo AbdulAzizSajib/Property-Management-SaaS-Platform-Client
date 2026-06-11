@@ -22,7 +22,7 @@ const steps = [
 export default function HowItWorks() {
     return (
         <section className="bg-paper py-24 lg:py-32 border-t border-b border-rule-soft">
-            <div className="max-w-[1280px] mx-auto px-5 md:px-8">
+            <div className="container mx-auto px-5 md:px-8">
                 <SectionHead
                     eyebrow="Get started"
                     title={

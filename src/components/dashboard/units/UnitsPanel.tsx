@@ -124,7 +124,7 @@ export function UnitsPanel({ buildingId }: UnitsPanelProps) {
                         </button>
                     </div>
                 ) : (
-                    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-4">
                         {units.map((u) => (
                             <li key={u.id}>
                                 <Link

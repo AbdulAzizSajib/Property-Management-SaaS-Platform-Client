@@ -11,7 +11,7 @@ const logos = [
 
 export default function TrustedCompanies() {
     return (
-        <section className="max-w-[1280px] mx-auto px-5 md:px-8 py-20 text-center border-b border-rule-soft">
+        <section className="container mx-auto px-5 md:px-8 py-20 text-center border-b border-rule-soft">
             <div className="font-mono text-[11px] text-ink-soft tracking-[0.18em] uppercase mb-7">
                 Trusted by 1,200+ landlords across Bangladesh
             </div>

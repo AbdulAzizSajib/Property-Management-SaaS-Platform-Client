@@ -68,7 +68,7 @@ const plans: Plan[] = [
 export default function Pricing() {
     return (
         <section id="pricing" className="bg-paper py-24 lg:py-32">
-            <div className="max-w-[1280px] mx-auto px-5 md:px-8">
+            <div className="container mx-auto px-5 md:px-8">
                 <SectionHead
                     eyebrow="Simple, BDT pricing"
                     title={

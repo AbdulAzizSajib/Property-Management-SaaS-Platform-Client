@@ -206,7 +206,7 @@ export function RecordPaymentDialog({
                                             (x) => x.id === value,
                                         );
                                         return i
-                                            ? `${i.invoiceNumber} · ${i.tenant.name}`
+                                            ? ` ${i.tenant.name} (${i.unit.building.name} - ${i.unit.name}) - ${i.invoiceNumber} `
                                             : null;
                                     }}
                                 </SelectValue>

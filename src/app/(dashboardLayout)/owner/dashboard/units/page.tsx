@@ -93,7 +93,7 @@ export default function UnitsListPage() {
 
     return (
         <div className="min-h-screen bg-cream">
-            <div className="mx-auto max-w-[1280px] space-y-6 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+            <div className="mx-auto container space-y-6 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
                 {/* Heading */}
                 <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                     <div>
