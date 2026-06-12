@@ -1,7 +1,5 @@
 "use client";
 
-// src/app/owner/dashboard/buildings/page.tsx
-
 import { BuildingForm } from "@/src/components/dashboard/buildings/BuildingForm";
 import {
   typeBadgeStyles,
@@ -98,10 +96,10 @@ export default function BuildingsListPage() {
                 <DialogTitle className="text-jade-950">
                   Add new building
                 </DialogTitle>
-                <DialogDescription className="text-ink-soft">
-                  আপনার তালিকায় নতুন বিল্ডিং যোগ করুন — তৈরির পর floors আর
+                {/* <DialogDescription className="text-ink-soft">
+                  আপনার তালিকায় নতুন বিল্ডিং যোগ করুন  তৈরির পর floors আর
                   units যোগ করতে পারবেন।
-                </DialogDescription>
+                </DialogDescription> */}
               </DialogHeader>
               <BuildingForm
                 submitting={createMutation.isPending}
