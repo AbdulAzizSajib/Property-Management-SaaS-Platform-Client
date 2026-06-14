@@ -10,7 +10,6 @@ import {
     useResendVerificationOtp,
     useVerifyEmail,
 } from "@/src/hooks/useAuthActions";
-import { clearAuth } from "@/src/lib/auth";
 import { clearAuthCookies } from "@/src/lib/cookieUtils";
 import { ArrowRight, Loader2, MailCheck } from "lucide-react";
 import Link from "next/link";
@@ -68,10 +67,8 @@ function VerifyEmailForm() {
                     // (the request runs with credentials: "include"). If we
                     // don't wipe them, the proxy treats the user as logged in
                     // and bounces /login back to the dashboard — skipping
-                    // the sign-in step entirely. Clear server cookies +
-                    // client localStorage so /login renders normally.
+                    // the sign-in step entirely.
                     await clearAuthCookies();
-                    clearAuth();
                     router.push("/login?verified=1");
                 },
             },

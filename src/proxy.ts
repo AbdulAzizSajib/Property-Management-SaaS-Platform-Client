@@ -18,7 +18,7 @@ async function refreshTokenMiddleware (refreshToken : string) : Promise<boolean>
 }
 
 
-export async function middleware (request : NextRequest) {
+export async function proxy (request : NextRequest) {
    try {
        const { pathname } = request.nextUrl; // eg /dashboard, /admin/dashboard, /doctor/dashboard
     const pathWithQuery = `${pathname}${request.nextUrl.search}`;

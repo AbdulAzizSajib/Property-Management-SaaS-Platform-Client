@@ -1,6 +1,6 @@
 "use client";
 import { ApiError } from "@/src/lib/api";
-import { loginUser, persistAuth } from "@/src/lib/auth";
+import { loginUser } from "@/src/lib/auth";
 import {
   getDefaultDashboardRoute,
   isValidRedirectForRole,
@@ -58,7 +58,6 @@ function LoginForm() {
         identifier: identifier.trim(),
         password,
       });
-      persistAuth(data);
       const role = data.user.role;
       const fallback = getDefaultDashboardRoute(role);
       const destination =
