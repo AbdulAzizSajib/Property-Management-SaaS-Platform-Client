@@ -13,6 +13,24 @@ const REFRESH_TOKEN_KEY = "baribari.refreshToken";
 const USER_KEY = "baribari.user";
 const ORG_KEY = "baribari.org";
 
+// Middleware reads these cookie names — keep them in sync with middleware.ts.
+const ACCESS_COOKIE = "accessToken";
+const REFRESH_COOKIE = "refreshToken";
+
+const ACCESS_MAX_AGE = 60 * 60 * 24;       // 1 day
+const REFRESH_MAX_AGE = 60 * 60 * 24 * 7;  // 7 days
+
+function setCookie(name: string, value: string, maxAgeSeconds: number): void {
+    if (typeof document === "undefined") return;
+    const secure = window.location.protocol === "https:" ? "; Secure" : "";
+    document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=${maxAgeSeconds}; SameSite=Lax${secure}`;
+}
+
+function deleteCookie(name: string): void {
+    if (typeof document === "undefined") return;
+    document.cookie = `${name}=; Path=/; Max-Age=0; SameSite=Lax`;
+}
+
 export function persistAuth(data: AuthData): void {
     if (typeof window === "undefined") return;
     localStorage.setItem(ACCESS_TOKEN_KEY, data.accessToken);
@@ -21,6 +39,8 @@ export function persistAuth(data: AuthData): void {
     if (data.organization) {
         localStorage.setItem(ORG_KEY, JSON.stringify(data.organization));
     }
+    setCookie(ACCESS_COOKIE, data.accessToken, ACCESS_MAX_AGE);
+    setCookie(REFRESH_COOKIE, data.refreshToken, REFRESH_MAX_AGE);
 }
 
 export function clearAuth(): void {
@@ -29,6 +49,8 @@ export function clearAuth(): void {
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     localStorage.removeItem(ORG_KEY);
+    deleteCookie(ACCESS_COOKIE);
+    deleteCookie(REFRESH_COOKIE);
 }
 
 export function getAccessToken(): string | null {
