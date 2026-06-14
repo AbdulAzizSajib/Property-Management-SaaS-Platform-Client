@@ -1,10 +1,12 @@
 // src/lib/axios/browserHttpClient.ts
 //
-// Browser-side HTTP client. Calls the backend DIRECTLY from the browser
-// (no Next.js server action hop), which removes 200–500ms of latency per
-// request. Cookies (accessToken, refreshToken) flow automatically because
-// of `withCredentials: true` — they're HttpOnly so JS can't read them,
-// but the browser still sends them along with the request.
+// Browser-side HTTP client. Calls the backend through our SAME-ORIGIN proxy
+// route (`/api/be/*`, see src/app/api/be/[...path]/route.ts) instead of hitting
+// the backend domain directly. The auth tokens are httpOnly cookies on our
+// (Vercel) domain — a direct cross-site request can't carry them, so the
+// backend would report "Refresh token is missing". Going same-origin means the
+// browser sends our cookies automatically; the proxy forwards them to the
+// backend and relays any Set-Cookie back.
 //
 // Reactive auth refresh: on 401, this client calls /auth/refresh-token
 // (which Set-Cookie's a new pair) and retries the original request once.
@@ -12,11 +14,9 @@
 import { ApiResponse } from "@/src/types/api.types";
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-if (!API_BASE_URL) {
-    throw new Error("NEXT_PUBLIC_API_BASE_URL is not defined");
-}
+// Same-origin proxy base — NOT the backend domain. Relative URL keeps requests
+// on our origin so the httpOnly auth cookies are sent.
+const API_BASE_URL = "/api/be";
 
 // Singleton — created once per browser tab.
 const browserAxios: AxiosInstance = axios.create({
@@ -40,6 +40,9 @@ async function refreshTokens(): Promise<boolean> {
     if (refreshInFlight) return refreshInFlight;
     refreshInFlight = (async () => {
         try {
+            // Through the same-origin proxy so our httpOnly cookies are sent and
+            // the refreshed Set-Cookie comes back to our domain. The response
+            // interceptor below skips retrying this URL, so no recursion.
             const res = await axios.post(
                 `${API_BASE_URL}/auth/refresh-token`,
                 {},
