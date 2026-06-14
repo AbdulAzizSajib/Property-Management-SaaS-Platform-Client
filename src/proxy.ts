@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDefaultDashboardRoute, getRouteOwner, isAuthRoute, UserRole } from "./lib/authUtils";
 import { jwtUtils } from "./lib/jwtUtils";
-import { isTokenExpiringSoon } from "./lib/tokenUtils";
 import { getNewTokensWithRefreshToken, getUserInfo } from "./services/auth.services";
 
 async function refreshTokenMiddleware (refreshToken : string) : Promise<boolean> {
@@ -25,9 +24,12 @@ export async function proxy (request : NextRequest) {
        const accessToken = request.cookies.get("accessToken")?.value;
        const refreshToken = request.cookies.get("refreshToken")?.value;
 
-       const decodedAccessToken =  accessToken && jwtUtils.verifyToken(accessToken, process.env.JWT_ACCESS_SECRET as string).data;
+       const verified = accessToken
+           ? await jwtUtils.verifyToken(accessToken, process.env.JWT_ACCESS_SECRET as string)
+           : null;
 
-       const isValidAccessToken = accessToken && jwtUtils.verifyToken(accessToken, process.env.JWT_ACCESS_SECRET as string).success;
+       const isValidAccessToken = verified?.success === true;
+       const decodedAccessToken = verified?.success ? verified.data : null;
 
        let userRole: UserRole | null = null;
 
@@ -45,7 +47,7 @@ export async function proxy (request : NextRequest) {
 
 
        //proactively refresh token if refresh token exists and access token is expired or about to expire
-       if (isValidAccessToken && refreshToken && (await isTokenExpiringSoon(accessToken))){
+       if (isValidAccessToken && refreshToken && accessToken && jwtUtils.isTokenExpiringSoon(accessToken)){
             const requestHeaders = new Headers(request.headers);
 
             const response = NextResponse.next({
@@ -95,7 +97,10 @@ export async function proxy (request : NextRequest) {
        let cachedUserInfo: Awaited<ReturnType<typeof getUserInfo>> | undefined;
        const loadUserInfo = async () => {
            if (cachedUserInfo === undefined) {
-               cachedUserInfo = await getUserInfo();
+               cachedUserInfo = await getUserInfo({
+                   accessToken,
+                   sessionToken: request.cookies.get("better-auth.session_token")?.value,
+               });
            }
            return cachedUserInfo;
        };

@@ -120,11 +120,22 @@ export async function getNewTokensWithRefreshToken(refreshToken  : string) : Pro
     }
 }
 
-export async function getUserInfo() {
+export async function getUserInfo(tokens?: {
+    accessToken?: string;
+    sessionToken?: string;
+}) {
     try {
-        const cookieStore = await cookies();
-        const accessToken = cookieStore.get("accessToken")?.value;
-        const sessionToken = cookieStore.get("better-auth.session_token")?.value;
+        // In the Edge middleware `next/headers` cookies() isn't reliable, so the
+        // caller passes the tokens it already read from the request. Elsewhere
+        // (server components/actions) we fall back to the cookie store.
+        let accessToken = tokens?.accessToken;
+        let sessionToken = tokens?.sessionToken;
+
+        if (!tokens) {
+            const cookieStore = await cookies();
+            accessToken = cookieStore.get("accessToken")?.value;
+            sessionToken = cookieStore.get("better-auth.session_token")?.value;
+        }
 
         if (!accessToken) {
             return null;
