@@ -1,10 +1,5 @@
 "use client";
-import { ApiError } from "@/src/lib/api";
-import { loginUser } from "@/src/lib/auth";
-import {
-  getDefaultDashboardRoute,
-  isValidRedirectForRole,
-} from "@/src/lib/authUtils";
+import { loginAction } from "@/src/services/auth.services";
 import { isLoginIdentifier } from "@/src/lib/validation";
 import { AlertCircle, CheckCircle2, Eye, EyeOff, Loader2 } from "lucide-react";
 import Image from "next/image";
@@ -54,26 +49,24 @@ function LoginForm() {
     setSubmitting(true);
     setServerError(null);
     try {
-      const data = await loginUser({
-        identifier: identifier.trim(),
-        password,
-      });
-      const role = data.user.role;
-      const fallback = getDefaultDashboardRoute(role);
-      const destination =
-        redirectParam && isValidRedirectForRole(redirectParam, role)
-          ? redirectParam
-          : fallback;
-      router.push(destination);
-    } catch (err) {
+      // Login runs server-side so the httpOnly auth cookies are set on *our*
+      // domain — otherwise (cross-site) the middleware never sees them and
+      // bounces the user back here. The action also computes the destination.
+      const result = await loginAction(
+        { identifier: identifier.trim(), password },
+        redirectParam,
+      );
+
+      if (result.ok) {
+        router.push(result.destination);
+        return;
+      }
+
       // Special case: backend says the email isn't verified and has just
       // auto-sent a fresh OTP. Route the user to the verify page with their
       // email pre-filled and a banner explaining what happened — they can
       // type the new code without going back here.
-      if (
-        err instanceof ApiError &&
-        err.body?.error?.body?.code === "EMAIL_NOT_VERIFIED"
-      ) {
+      if (result.code === "EMAIL_NOT_VERIFIED") {
         // The identifier may be a phone, not an email. Only forward when it
         // actually looks like an email so the verify page can pre-fill it.
         const trimmed = identifier.trim();
@@ -83,11 +76,10 @@ function LoginForm() {
         router.push(`/verify-email${emailParam}`);
         return;
       }
-      setServerError(
-        err instanceof ApiError
-          ? err.message
-          : "Sign in failed. Please try again.",
-      );
+
+      setServerError(result.message);
+    } catch {
+      setServerError("Sign in failed. Please try again.");
     } finally {
       setSubmitting(false);
     }

@@ -1,12 +1,86 @@
 "use server";
 
+import {
+    getDefaultDashboardRoute,
+    isValidRedirectForRole,
+} from "@/src/lib/authUtils";
 import { setTokenInCookies } from "@/src/lib/tokenUtils";
+import type { AuthData, LoginPayload } from "@/src/types/auth";
 import { cookies } from "next/headers";
 
 const BASE_API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 if(!BASE_API_URL){
     throw new Error("NEXT_PUBLIC_API_BASE_URL is not defined");
+}
+
+export type LoginActionResult =
+    | { ok: true; destination: string }
+    | { ok: false; code?: string; message: string };
+
+/**
+ * Server-action login. Cross-site setup: the backend lives on a different
+ * domain, so cookies it sets land on *its* domain — the Next middleware
+ * (proxy.ts) reading the Vercel domain never sees them, and every login
+ * bounces straight back to /login. Fix: do the login server-side, read the
+ * tokens from the response body, and set httpOnly cookies on *our* domain so
+ * the middleware can read the role and route the user.
+ */
+export async function loginAction(
+    payload: LoginPayload,
+    redirectParam?: string | null,
+): Promise<LoginActionResult> {
+    try {
+        const res = await fetch(`${BASE_API_URL}/auth/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
+            body: JSON.stringify(payload),
+        });
+
+        const json = await res.json().catch(() => null);
+
+        if (!res.ok) {
+            return {
+                ok: false,
+                // Surface the machine-readable code (e.g. EMAIL_NOT_VERIFIED)
+                // so the client can route to the verify screen.
+                code: json?.error?.body?.code,
+                message: json?.message ?? "Sign in failed. Please try again.",
+            };
+        }
+
+        const data = json?.data as AuthData;
+        const { accessToken, refreshToken, token, user } = data;
+
+        if (accessToken) {
+            await setTokenInCookies("accessToken", accessToken);
+        }
+        if (refreshToken) {
+            await setTokenInCookies("refreshToken", refreshToken);
+        }
+        if (token) {
+            await setTokenInCookies(
+                "better-auth.session_token",
+                token,
+                24 * 60 * 60, // 1 day
+            );
+        }
+
+        const role = user.role;
+        const fallback = getDefaultDashboardRoute(role);
+        const destination =
+            redirectParam && isValidRedirectForRole(redirectParam, role)
+                ? redirectParam
+                : fallback;
+
+        return { ok: true, destination };
+    } catch (error) {
+        console.error("Error during login:", error);
+        return { ok: false, message: "Sign in failed. Please try again." };
+    }
 }
 
 export async function getNewTokensWithRefreshToken(refreshToken  : string) : Promise<boolean> {
