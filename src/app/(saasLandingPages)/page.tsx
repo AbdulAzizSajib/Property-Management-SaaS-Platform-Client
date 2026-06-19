@@ -13,10 +13,10 @@ export default function Page() {
     return (
         <>
             <HeroSection />
-            <TrustedCompanies />
+            {/* <TrustedCompanies /> */}
             <FeaturesSection />
             <ProductDeepDive />
-            <IntegrationsSection />
+            {/* <IntegrationsSection /> */}
             <HowItWorks />
             <Testimonials />
             <Pricing />

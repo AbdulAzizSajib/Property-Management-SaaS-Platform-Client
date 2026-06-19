@@ -36,7 +36,7 @@ export default function FeaturesSection() {
                             manages property
                         </>
                     }
-                    description="From a single flat in Mirpur to a 30-storey tower in Bashundhara, BariBari adapts to how you already work — not the other way around."
+                    description="From a single flat in Mirpur to a 30-storey tower in Bashundhara, Bariyan adapts to how you already work."
                 />
 
                 <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 auto-rows-[minmax(220px,auto)] gap-4">

@@ -1,6 +1,6 @@
 import QueryProviders from "@/src/providers/QueryProvider";
 import type { Metadata } from "next";
-import { Geist, Hind_Siliguri, Instrument_Serif, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import { Geist, Hind_Siliguri, Instrument_Serif, JetBrains_Mono, Plus_Jakarta_Sans, Poppins  } from "next/font/google";
 import localFont from "next/font/local";
 import type { ReactNode } from "react";
 import { ToastContainer } from "react-toastify";
@@ -9,6 +9,12 @@ import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
     variable: "--font-jakarta",
+    subsets: ["latin"],
+    weight: ["400", "500", "600", "700", "800"],
+});
+
+const poppins = Poppins({
+    variable: "--font-poppins",
     subsets: ["latin"],
     weight: ["400", "500", "600", "700", "800"],
 });
@@ -46,16 +52,16 @@ const rubita = localFont({
 });
 
 export const metadata: Metadata = {
-    title: "BariBari — Smart Property Management for Bangladesh",
+    title: "Bariyan - Property Management for Bangladeshi Landlords",
     description:
-        "BariBari is an all-in-one property management platform built for Bangladeshi landlords, real estate firms and housing societies. Collect rent via bKash/Nagad, manage tenants, leases and maintenance from one dashboard.",
+        "Bariyan is an all-in-one property management platform built for Bangladeshi landlords, real estate firms and housing societies. Collect rent via bKash/Nagad, manage tenants, leases and maintenance from one dashboard.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
     return (
         <html
             lang="en"
-            className={`${jakarta.variable} ${geist.variable} ${hind.variable} ${jetbrains.variable} ${instrument.variable} ${rubita.variable}`}
+            className={`${jakarta.variable} ${poppins.variable} ${geist.variable} ${hind.variable} ${jetbrains.variable} ${instrument.variable} ${rubita.variable}`}
         >
             <body>
                 <QueryProviders>{children}</QueryProviders>

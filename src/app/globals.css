@@ -1,12 +1,14 @@
 @import "tailwindcss";
+@plugin "daisyui";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-    --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+    --font-sans: var(--font-poppins), system-ui, sans-serif;
     --font-jakarta-sans: var(--font-jakarta), system-ui, sans-serif;
+    --font-poppins: var(--font-poppins), system-ui, sans-serif;
     --font-bangla: var(--font-hind), system-ui, sans-serif;
     --font-mono: var(--font-jetbrains), ui-monospace, monospace;
     --font-serif: var(--font-instrument), "Geist", serif;

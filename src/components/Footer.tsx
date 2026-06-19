@@ -40,9 +40,9 @@ export default function Footer() {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.6fr_1fr_1fr_1fr_1fr] gap-12 pb-12 border-b border-rule">
                 <div className="col-span-2 md:col-span-3 lg:col-span-1">
                     <Link href="/" className="flex items-center gap-2.5 text-jade-900 font-bold text-[19px] tracking-tight mb-4">
-                        <LogoMark />
+                        {/* <LogoMark /> */}
                         <span>
-                            Bari<b className="text-coral-600">Bari</b>
+                            <b className="text-coral-600">Bariyan</b>
                         </span>
                     </Link>
                     <p className="text-sm text-ink-soft leading-[1.6] max-w-[320px] mb-5">
@@ -79,8 +79,8 @@ export default function Footer() {
                             </a>
                         </li>
                         <li>
-                            <a href="mailto:hello@baribari.com.bd" className="hover:text-jade-900">
-                                hello@baribari.com.bd
+                            <a href="mailto:hello@Bariyan.com.bd" className="hover:text-jade-900">
+                                hello@Bariyan.com.bd
                             </a>
                         </li>
                         <li>Gulshan-1, Dhaka 1212</li>
@@ -90,8 +90,8 @@ export default function Footer() {
             </div>
 
             <div className="flex flex-wrap justify-between items-center gap-3 text-[12.5px] text-ink-soft">
-                <span>© {new Date().getFullYear()} BariBari Technologies Ltd. · All rights reserved.</span>
-                <div className="flex gap-1.5 bg-paper p-1 rounded-lg border border-rule-soft">
+                <span>© {new Date().getFullYear()} Bariyan.com - All rights reserved.</span>
+                {/* <div className="flex gap-1.5 bg-paper p-1 rounded-lg border border-rule-soft">
                     <button
                         type="button"
                         onClick={() => setLang("en")}
@@ -110,8 +110,8 @@ export default function Footer() {
                     >
                         বাংলা
                     </button>
-                </div>
-                <span>Trade Lic. 12345 · BIN 67890</span>
+                </div> */}
+                {/* <span>Trade Lic. 12345 · BIN 67890</span> */}
             </div>
         </footer>
     );

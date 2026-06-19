@@ -2,20 +2,20 @@ import SectionHead from "@/src/components/SectionHead";
 
 const steps = [
     {
-        title: "Sign up with your number",
-        text: "Verify with an OTP to your bKash-linked mobile. Add your building's NOC and trade license — we do the rest.",
+        title: "Sign up with your Email or Google account",
+        text: "Verify with an OTP to your mobile. Add your organization and building details, and you're ready to go.",
     },
     {
         title: "Add flats & tenants",
-        text: "Import from your existing rent register, or punch in flats in under a minute each. NID-verify tenants from your phone camera.",
+        text: "Import from your existing rent register, or punch in flats in under a minute each. Keep every tenant's details in one place.",
     },
     {
-        title: "Connect bKash/Nagad",
-        text: "Link your merchant account or personal wallet. Auto-generate tenant payment links — share over WhatsApp, IMO, or SMS.",
+        title: "Record rent & expenses",
+        text: "Log each month's rent, dues and expenses with a tap. Bariyan keeps a clear running balance for every flat — no Excel needed.",
     },
     {
-        title: "Sit back. Collect rent.",
-        text: "Tenants pay with a tap. You get notified. SMS reminders auto-send the 1st and 5th. Your bank deposits 24h later.",
+        title: "Stay on top, effortlessly",
+        text: "Auto SMS reminders for unpaid rent. See who's paid, who's behind, and pull income, expense & collection reports in one click.",
     },
 ];
 
@@ -27,11 +27,11 @@ export default function HowItWorks() {
                     eyebrow="Get started"
                     title={
                         <>
-                            From signup to first rent collected
+                            From signup to every taka tracked
                             <br />
                             in{" "}
                             <em className="font-serif italic font-normal text-coral-600">
-                                under 24 hours
+                                under 10 minutes
                             </em>
                         </>
                     }

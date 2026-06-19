@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 const navLinks = [
   { name: "Features", href: "#features" },
   { name: "Dashboard", href: "#product" },
-  { name: "Integrations", href: "#integrations", pill: "6 New" },
+  { name: "How it Works", href: "#howitworks" },
   { name: "Pricing", href: "#pricing" },
   { name: "FAQ", href: "#faq" },
 ];
@@ -27,9 +27,11 @@ export default function Navbar() {
       <nav className="max-w-7xl mx-auto grid grid-cols-[auto_1fr_auto] items-center gap-14 py-4 px-5 md:px-8">
         <Link
           href="/"
-          className="flex items-center gap-2.5 text-jade-900 text-4xl  font-rubita "
+          className="flex items-center gap-2.5 text-jade-900 text-3xl font-bold tracking-tight"
         >
-          <img className="w-28 h-full" src="/logoB.png" alt="Bariyan Logo" />
+          <h2 className="bg-linear-to-l from-jade-500  to-coral-500 bg-clip-text text-transparent">
+            Bariyan
+          </h2>
         </Link>
 
         <div className="hidden lg:flex justify-center gap-8 text-[14.5px] text-ink-soft font-medium">
@@ -40,11 +42,7 @@ export default function Navbar() {
               className="relative py-2 hover:text-jade-900 transition-colors"
             >
               {link.name}
-              {link.pill && (
-                <span className="ml-1.5 align-middle bg-coral-100 text-coral-600 font-bold uppercase tracking-wider text-[9.5px] px-1.5 py-0.5 rounded">
-                  {link.pill}
-                </span>
-              )}
+              
             </a>
           ))}
         </div>
@@ -60,7 +58,7 @@ export default function Navbar() {
             href="/register"
             className="hidden sm:inline-flex items-center gap-2 bg-jade-800 hover:bg-jade-900 transition text-paper px-4 py-2.5 rounded-lg text-sm font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.2),inset_0_-2px_0_rgba(0,0,0,0.3),0_4px_12px_rgba(13,79,63,0.18)] hover:-translate-y-0.5"
           >
-            Start free trial
+           Get Started Free
             <span className="font-mono">→</span>
           </Link>
           <button
