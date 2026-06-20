@@ -11,10 +11,10 @@ import {
   EyeOff,
   Loader2,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import NeatBackground from "@/src/components/NeatBackground";
 
 type Step = 1 | 2;
 
@@ -117,31 +117,41 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-[5fr_6fr]">
-      {/* LEFT — Form column */}
-      <div className="flex flex-col bg-paper px-6 py-8 sm:px-10 md:px-14 lg:px-12 xl:px-20">
+    <div className="relative min-h-screen flex items-center justify-center p-4 sm:p-6">
+      {/* Animated gradient background */}
+      <NeatBackground className="absolute inset-0 z-0 h-full w-full" />
+
+      
+
+      {/* Floating form card — solid rectangular panel */}
+      <div className="relative z-10 w-full max-w-md my-6 max-h-[calc(100dvh-3rem)]  border border-white/40 bg-[#F8F5EB] shadow-[0_20px_70px_-20px_rgba(0,0,0,0.5)] px-6 py-8 rounded-3xl sm:px-9">
         {/* Top: Logo */}
-        <Link
+       <Link
           href="/"
-          className="inline-flex items-center text-jade-900 text-3xl font-rubita w-fit"
+          className="flex flex-col items-center justify-center  text-jade-900 dark:text-jade-50 text-3xl font-bold tracking-tight relative "
         >
-          Bari<span className="text-coral-600">yan</span>
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" style={{ display: "block" }} viewBox="366.667 680 1230.667 682.667" className="h-7 w-auto absolute -top-3.5 left-[115px]" preserveAspectRatio="none">
+  <path transform="translate(0,0)" fill="#247460" d="M 1156.17 704.057 C 1165.62 709.999 1189.79 730.077 1199.78 737.954 C 1232.79 763.92 1265.63 790.088 1298.32 816.455 L 1573.77 1033.95 C 1559.4 1034.24 1499.39 1036.14 1489.09 1032.69 C 1475.17 1028.02 1460.98 1016.83 1448.48 1009.03 L 1378 965.121 C 1306.39 920.635 1231.94 876.987 1161.12 831.747 C 1148.71 838.78 1123.69 857.081 1111.02 865.707 L 1014.95 930.551 C 907.585 1003.92 799.428 1076.13 690.502 1147.16 L 495.835 1273.03 C 463.437 1293.65 423.702 1320.34 390.529 1338.03 C 406.372 1321.62 437.975 1295.44 455.536 1280.56 C 488.408 1252.41 521.487 1224.51 554.77 1196.85 L 695.66 1078.95 C 722.179 1056.67 751.695 1030.44 778.776 1009.4 C 777.735 986.8 778.572 957.352 778.594 934.29 L 778.619 789.032 C 815.8 789.05 853.371 788.795 890.52 789.278 C 890.683 815.378 890.691 841.478 890.544 867.578 C 890.556 883.121 891.24 904.906 890.214 919.622 C 979.24 853.148 1069.25 774.057 1156.17 704.057 z"></path>
+  <path transform="translate(0,0)" fill="#247460" d="M 1088.78 1065.28 C 1107.1 1066.51 1133.97 1065.68 1152.84 1065.65 C 1153.36 1086.21 1152.99 1108.84 1153.02 1129.55 C 1131.64 1129.28 1110.25 1129.25 1088.87 1129.46 C 1088.45 1108.45 1088.77 1086.37 1088.78 1065.28 z"></path>
+  <path transform="translate(0,0)" fill="#247460" d="M 1183.02 1065.44 C 1201.98 1065.05 1222.24 1065.3 1241.28 1065.23 C 1241.26 1073.17 1242.03 1125.66 1240.39 1129.39 L 1236.25 1129.6 L 1177.8 1129.53 C 1177.87 1121.15 1176.43 1069.6 1178.98 1065.78 L 1183.02 1065.44 z"></path>
+  <path transform="translate(0,0)" fill="#247460" d="M 1088.78 977.918 C 1107.09 976.886 1133.96 977.588 1152.88 977.566 L 1153 1040.87 C 1132.12 1040.51 1109.73 1040.95 1088.74 1041.01 L 1088.78 977.918 z"></path>
+  <path transform="translate(0,0)" fill="#247460" d="M 1177.96 977.928 L 1241.14 977.684 C 1241.64 997.869 1241.19 1020.46 1241.2 1040.81 L 1177.98 1040.94 C 1177.81 1019.94 1177.8 998.932 1177.96 977.928 z"></path>
+</svg>
+          <h2 className="bg-coral-500 bg-clip-text text-transparent z-10">
+            Bariyan
+          </h2>
         </Link>
 
-        {/* Form area — centered vertically */}
-        <div className="flex-1 flex flex-col justify-center py-10 lg:py-12">
-          <div className="w-full max-w-md mx-auto lg:mx-0">
+        {/* Form area */}
+        <div className="mt-4 ">
+          <div className="w-full">
             {/* Heading */}
             <div className="mb-5">
-              <p className="font-serif italic text-coral-600/85 text-[13px]">
-                Get started
-              </p>
+            
               <h1 className="mt-0.5 text-[26px] sm:text-[28px] font-bold tracking-[-0.02em] text-jade-950">
                 Create your account
               </h1>
-              <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-                Bariyan এ আপনার নতুন একাউন্ট তৈরি করুন।
-              </p>
+             
             </div>
 
             {/* Progress */}
@@ -172,7 +182,7 @@ export default function RegisterPage() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+            <form onSubmit={handleSubmit} className="space-y-2 " noValidate>
               {step === 1 ? (
                 <>
                   <Field label="Full name" required error={errors.name}>
@@ -333,89 +343,10 @@ export default function RegisterPage() {
         </div>
 
         {/* Bottom footer microcopy */}
-        <p className="text-[11.5px] text-ink-soft/65">
+        <p className="mt-7 text-center text-[11.5px] text-ink-soft/65">
           © {new Date().getFullYear()} Bariyan ·{" "}
           <span className="font-bangla">সব ভাড়াটিয়া, সব হিসাব</span>
         </p>
-      </div>
-
-      {/* RIGHT — Visual column */}
-      <RegisterShowcase />
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────
-// Showcase visual — same family as the login showcase, slightly
-// different copy to fit the "get started" moment.
-// ─────────────────────────────────────────────────────────────────
-
-function RegisterShowcase() {
-  return (
-    <div className="hidden lg:block relative overflow-hidden bg-jade-950 text-paper">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-32 -right-24 h-96 w-96 rounded-full opacity-55"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(46,196,140,0.5), transparent 65%)",
-        }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -bottom-40 -left-32 h-[28rem] w-[28rem] rounded-full opacity-50"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(255,123,87,0.4), transparent 60%)",
-        }}
-      />
-      <div
-        aria-hidden
-        className="absolute inset-0 pointer-events-none opacity-40"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 1px 1px, rgba(255,253,248,0.10) 1px, transparent 0)",
-          backgroundSize: "28px 28px",
-        }}
-      />
-
-      <div className="absolute inset-x-0 top-24 flex justify-center">
-        <Image
-          src="/assets/hero-section-card-image.svg"
-          alt=""
-          width={483}
-          height={307}
-          priority
-          className="w-[460px] max-w-[78%] opacity-95"
-        />
-      </div>
-
-      <div className="absolute top-8 right-8 z-10">
-        <span className="bg-paper/10 backdrop-blur-md border border-paper/15 text-paper/90 px-3 py-1.5 rounded-full text-[10.5px] font-bold uppercase tracking-[0.14em]">
-          Free during beta
-        </span>
-      </div>
-
-      <div className="absolute bottom-0 left-0 right-0 p-10 xl:p-14 z-10">
-        <p className="font-serif italic text-[28px] xl:text-[32px] text-paper leading-[1.2] tracking-[-0.01em]">
-          Start tracking
-        </p>
-        <p className="font-serif italic text-[28px] xl:text-[32px] text-coral-400 leading-[1.2] tracking-[-0.01em]">
-          every taka of rent.
-        </p>
-        <p className="font-bangla text-[15px] text-paper/80 mt-5 leading-relaxed">
-          Excel আর ডায়েরির ঝামেলা ছেড়ে — সব হিসাব এক জায়গায়।
-        </p>
-
-        <div className="mt-7 pt-5 border-t border-paper/10 flex items-baseline gap-3">
-          <span className="text-[26px] font-rubita text-paper leading-none">
-            Bari<span className="text-coral-400">yan</span>
-          </span>
-          <span className="text-paper/25">·</span>
-          <span className="text-[12.5px] text-paper/65">
-            Closed beta · Q1 2026 launch
-          </span>
-        </div>
       </div>
     </div>
   );

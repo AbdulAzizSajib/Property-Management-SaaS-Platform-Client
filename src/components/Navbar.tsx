@@ -1,22 +1,18 @@
 "use client";
 import { MenuIcon, XIcon } from "lucide-react";
-import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Link as IntlLink } from "@/src/i18n/navigation";
-import { LanguageToggle } from "./LanguageToggle";
 import { ModeToggle } from "./ModeToggle";
 
 const navLinks = [
-  { key: "features", href: "#features" },
-  { key: "dashboard", href: "#product" },
-  { key: "howItWorks", href: "#howitworks" },
-  { key: "pricing", href: "#pricing" },
-  { key: "faq", href: "#faq" },
-] as const;
+  { name: "Features", href: "#features" },
+  { name: "Dashboard", href: "#product" },
+  { name: "How it Works", href: "#howitworks" },
+  { name: "Pricing", href: "#pricing" },
+  { name: "FAQ", href: "#faq" },
+];
 
 export default function Navbar() {
-  const t = useTranslations("Nav");
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
 
   useEffect(() => {
@@ -30,7 +26,7 @@ export default function Navbar() {
   return (
     <div className="sticky top-0 z-50 bg-cream/85 dark:bg-night/85 backdrop-blur-md border-b border-rule-soft dark:border-white/10">
       <nav className="container mx-auto grid grid-cols-[auto_1fr_auto] items-center gap-14 py-4 px-5 md:px-8">
-        <IntlLink
+        <Link
           href="/"
           className="flex flex-col items-center  text-jade-900 dark:text-jade-50 text-3xl font-bold tracking-tight relative"
         >
@@ -44,34 +40,33 @@ export default function Navbar() {
           <h2 className="bg-coral-500 bg-clip-text text-transparent z-10">
             Bariyan
           </h2>
-        </IntlLink>
+        </Link>
 
         <div className="hidden lg:flex justify-center gap-8 text-[14.5px] text-ink-soft dark:text-mist-soft font-medium">
           {navLinks.map((link) => (
             <a
-              key={link.key}
+              key={link.name}
               href={link.href}
               className="relative py-2 hover:text-jade-900 dark:hover:text-jade-50 transition-colors"
             >
-              {t(link.key)}
+              {link.name}
             </a>
           ))}
         </div>
 
         <div className="flex items-center gap-3">
-        <LanguageToggle />
         <ModeToggle />
           <Link
             href="/login"
             className="hidden sm:inline-flex items-center text-jade-900 dark:text-jade-50 hover:bg-cream-2 dark:hover:bg-night-3 transition px-4 py-2.5 rounded-lg text-sm font-semibold"
           >
-            {t("signIn")}
+            Sign in
           </Link>
           <Link
             href="/register"
             className="hidden sm:inline-flex items-center gap-2 bg-jade-800 hover:bg-jade-900 dark:bg-jade-700 dark:hover:bg-jade-500 transition text-paper px-4 py-2.5 rounded-lg text-sm font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.2),inset_0_-2px_0_rgba(0,0,0,0.3),0_4px_12px_rgba(13,79,63,0.18)] hover:-translate-y-0.5"
           >
-           {t("getStarted")}
+           Get Started Free
             <span className="font-mono">→</span>
           </Link>
           <button
@@ -89,12 +84,12 @@ export default function Navbar() {
         <div className="lg:hidden border-t border-rule-soft dark:border-white/10 bg-cream dark:bg-night px-5 py-5 flex flex-col gap-2 text-jade-900 dark:text-jade-50 font-medium">
           {navLinks.map((link) => (
             <a
-              key={link.key}
+              key={link.name}
               href={link.href}
               onClick={() => setOpenMobileMenu(false)}
               className="py-2"
             >
-              {t(link.key)}
+              {link.name}
             </a>
           ))}
           <Link
@@ -102,14 +97,14 @@ export default function Navbar() {
             onClick={() => setOpenMobileMenu(false)}
             className="py-2 sm:hidden"
           >
-            {t("signIn")}
+            Sign in
           </Link>
           <Link
             href="/register"
             onClick={() => setOpenMobileMenu(false)}
             className="mt-2 inline-flex items-center justify-center bg-jade-800 dark:bg-jade-700 dark:hover:bg-jade-500 text-paper px-4 py-2.5 rounded-lg sm:hidden"
           >
-            {t("getStarted")} →
+            Start free trial →
           </Link>
         </div>
       )}

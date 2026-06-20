@@ -1,17 +1,7 @@
-import createIntlMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
-import { routing } from "./i18n/routing";
 import { getDefaultDashboardRoute, getRouteOwner, isAuthRoute, UserRole } from "./lib/authUtils";
 import { jwtUtils } from "./lib/jwtUtils";
 import { getNewTokensWithRefreshToken, getUserInfo } from "./services/auth.services";
-
-// Handles the public, locale-prefixed landing pages (/, /en, /bn).
-const intlMiddleware = createIntlMiddleware(routing);
-
-// The landing site is the only locale-prefixed area. Everything else
-// (/login, /owner/dashboard, …) is handled by the auth logic below.
-const isLocaleRoute = (pathname: string) =>
-    pathname === "/" || /^\/(en|bn)(\/.*)?$/.test(pathname);
 
 async function refreshTokenMiddleware (refreshToken : string) : Promise<boolean> {
     try {
@@ -30,13 +20,6 @@ async function refreshTokenMiddleware (refreshToken : string) : Promise<boolean>
 export async function proxy (request : NextRequest) {
    try {
        const { pathname } = request.nextUrl; // eg /dashboard, /admin/dashboard, /doctor/dashboard
-
-       // Public localized landing pages — delegate to next-intl (handles
-       // the / → /en redirect and locale negotiation). No auth needed here.
-       if (isLocaleRoute(pathname)) {
-           return intlMiddleware(request);
-       }
-
     const pathWithQuery = `${pathname}${request.nextUrl.search}`;
        const accessToken = request.cookies.get("accessToken")?.value;
        const refreshToken = request.cookies.get("refreshToken")?.value;

@@ -2,10 +2,10 @@
 import { loginAction } from "@/src/services/auth.services";
 import { isLoginIdentifier } from "@/src/lib/validation";
 import { AlertCircle, CheckCircle2, Eye, EyeOff, Loader2 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
+import NeatBackground from "@/src/components/NeatBackground";
 
 export default function LoginPage() {
   return (
@@ -86,12 +86,15 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen w-full grid lg:grid-cols-2">
-      {/* LEFT — clean form column */}
-      <div className="flex items-center justify-center px-6 py-12 lg:px-12">
-        <div className="w-full max-w-sm">
-          {/* Logo top-left (optional) */}
-          <Link href="/" className="inline-block mb-16">
+    <div className="relative min-h-screen flex items-center justify-center p-4 sm:p-6">
+      {/* Animated gradient background */}
+      <NeatBackground className="absolute inset-0 z-0 h-full w-full" />
+
+      {/* Floating form card — solid rectangular panel */}
+      <div className="relative z-10 w-full max-w-md my-6 max-h-[calc(100dvh-3rem)] overflow-y-auto border border-white/40 bg-[#F8F5EB] shadow-[0_20px_70px_-20px_rgba(0,0,0,0.5)] px-6 py-8 rounded-3xl sm:px-9">
+        <div className="w-full">
+          {/* Logo */}
+          <Link href="/" className="inline-block mb-8">
             <p className="text-[24px] leading-none font-rubita text-jade-950">
               Bari<span className="text-coral-600">yan</span>
             </p>
@@ -227,105 +230,11 @@ function LoginForm() {
           </p>
         </div>
       </div>
-
-      {/* RIGHT — full-bleed editorial image with overlay */}
-      <aside className="hidden lg:block relative overflow-hidden bg-jade-950">
-        {/* Background image */}
-        <Image
-          src="/assets/login-cover.jpg"
-          alt=""
-          fill
-          priority
-          className="object-cover"
-          sizes="50vw"
-        />
-
-        {/* Dark gradient overlay — top to bottom for legibility */}
-        <div
-          aria-hidden
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(13,49,38,0.15) 0%, rgba(13,49,38,0.45) 55%, rgba(7,32,25,0.85) 100%)",
-          }}
-        />
-
-        {/* Top-right small badge — closed beta signal */}
-        <div className="absolute top-8 right-8 flex items-center gap-2 px-3 py-1.5 rounded-full bg-paper/10 backdrop-blur-md border border-paper/20">
-          <span className="size-1.5 rounded-full bg-coral-400 animate-pulse" />
-          <span className="text-[11px] uppercase tracking-[0.14em] text-paper/90 font-semibold">
-            Closed beta · Q1 2026
-          </span>
-        </div>
-
-        {/* Bottom content — testimonial */}
-        <div className="absolute inset-x-0 bottom-0 p-10 xl:p-14">
-          <div className="max-w-lg">
-            {/* Quote mark decoration */}
-            <svg
-              width="40"
-              height="32"
-              viewBox="0 0 40 32"
-              fill="none"
-              className="text-coral-400/70 mb-5"
-            >
-              <path
-                d="M0 32V20.8C0 14.4 1.6 9.067 4.8 4.8C8 1.6 12.267 0 17.6 0V6.4C14.933 6.4 12.8 7.467 11.2 9.6C9.6 11.733 8.8 14.4 8.8 17.6H17.6V32H0ZM22.4 32V20.8C22.4 14.4 24 9.067 27.2 4.8C30.4 1.6 34.667 0 40 0V6.4C37.333 6.4 35.2 7.467 33.6 9.6C32 11.733 31.2 14.4 31.2 17.6H40V32H22.4Z"
-                fill="currentColor"
-              />
-            </svg>
-
-            <p className="text-paper text-[22px] xl:text-[26px] font-semibold leading-[1.35] tracking-[-0.015em]">
-              Excel আর ডায়েরির ঝামেলা শেষ। এখন প্রতিটা ভাড়াটিয়া, প্রতিটা
-              টাকার হিসাব এক জায়গায়।
-            </p>
-
-            <p className="font-serif italic text-paper/70 text-[14px] mt-3 leading-[1.5]">
-              No more spreadsheets. No more chasing tenants. Just clarity.
-            </p>
-
-            {/* Author */}
-            <div className="flex items-center gap-3 mt-7">
-              <div className="size-11 rounded-full bg-gradient-to-br from-coral-400 to-coral-600 flex items-center justify-center text-paper font-bold text-[15px] ring-2 ring-paper/20">
-                R
-              </div>
-              <div>
-                <p className="text-paper font-semibold text-[15px] leading-tight">
-                  Rashed Ahmed
-                </p>
-                <p className="text-paper/65 text-[12.5px] mt-0.5">
-                  Landlord · 14 properties · Dhanmondi, Dhaka
-                </p>
-              </div>
-            </div>
-
-            {/* Trust stats bar at very bottom */}
-            <div className="flex items-center gap-6 mt-9 pt-6 border-t border-paper/15">
-              <Stat value="340+" label="landlords" />
-              <span className="h-4 w-px bg-paper/15" />
-              <Stat value="৳12cr" label="collected" />
-              <span className="h-4 w-px bg-paper/15" />
-              <Stat value="4" label="divisions" />
-            </div>
-          </div>
-        </div>
-      </aside>
     </div>
   );
 }
 
 // ─── Components ──────────────────────────────────
-
-function Stat({ value, label }: { value: string; label: string }) {
-  return (
-    <div>
-      <p className="text-paper font-bold text-[18px] tracking-[-0.02em] tabular-nums leading-none">
-        {value}
-      </p>
-      <p className="text-paper/60 text-[11px] mt-1">{label}</p>
-    </div>
-  );
-}
 
 function UnderlineInput({
   label,

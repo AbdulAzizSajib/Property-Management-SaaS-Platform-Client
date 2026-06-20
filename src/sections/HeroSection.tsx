@@ -1,12 +1,15 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import DashboardMockup from "./hero/DashboardMockup";
 
-export default function HeroSection() {
-  const t = useTranslations("Hero");
-  const chips = t.raw("chips") as string[];
+const chips = [
+  "Rent & dues tracking",
+  "Bills & invoices",
+  "Income & expenses",
+  "One-click reports",
+];
 
+export default function HeroSection() {
   return (
     <section className="relative overflow-hidden pt-12 pb-24 lg:pt-20">
       {/* Background — soft jade aura + faint grid */}
@@ -44,9 +47,9 @@ export default function HeroSection() {
               <span className="absolute inset-0 animate-ping rounded-full bg-coral-600 opacity-60" />
               <span className="relative h-1.5 w-1.5 rounded-full bg-coral-600" />
             </span>
-            <span className="capitalize">{t("eyebrow")}</span>
+            <span className="capitalize">Built for Bangladeshi Land Owners</span>
             <span className="inline-flex items-center gap-1 rounded-full bg-jade-900 px-2.5 py-1 text-[12px] font-semibold text-paper transition-colors group-hover:bg-jade-950">
-              {t("pillCta")}
+              Read the data
               <span className="transition-transform group-hover:translate-x-0.5">
                 →
               </span>
@@ -55,23 +58,17 @@ export default function HeroSection() {
 
           {/* Headline */}
           <h1 className="mt-7 text-balance font-bold leading-[0.98] tracking-[-0.04em] text-jade-900 dark:text-jade-50 text-[48px] sm:text-[66px] lg:text-[78px]">
-            {t.rich("headline", {
-              prop: (c) => (
-                <span className="text-jade-700 dark:text-jade-300">{c}</span>
-              ),
-              fin: (c) => <span className="text-coral-600">{c}</span>,
-              em: (c) => (
-                <span className="font-serif font-normal italic tracking-[-0.02em]">
-                  {c}
-                </span>
-              ),
-              dot: (c) => <span className="text-coral-600">{c}</span>,
-            })}
+            Manage your <span className="text-jade-700 dark:text-jade-300">property</span>{" "}
+            <span className="text-coral-600">finances</span>{" "}
+            <span className="font-serif font-normal italic tracking-[-0.02em]">
+              easily
+            </span>
+            <span className="text-coral-600">.</span>
           </h1>
 
           {/* Sub-headline */}
           <p className="mt-6 capitalize  text-[15px] leading-[1.6] text-ink-soft dark:text-mist-soft">
-            {t("subhead")}
+            Smartly manage your property, tenants, and finances in one place.
           </p>
 
           {/* Inline feature list */}
@@ -94,7 +91,7 @@ export default function HeroSection() {
               className="group relative rounded-[10px] bg-jade-900 dark:bg-jade-700 px-6 py-3.5 text-[15px] font-semibold text-paper transition-all duration-200 hover:bg-jade-950 dark:hover:bg-jade-500 hover:shadow-[0_10px_30px_-10px_rgba(13,79,63,0.5)]"
             >
               <span className="relative z-10 inline-flex items-center gap-2">
-                {t("ctaPrimary")}
+                Get Started Free
                 <svg
                   width="14"
                   height="14"
@@ -134,7 +131,7 @@ export default function HeroSection() {
                 />
                 <path d="M8.5 7l4 3-4 3V7z" fill="currentColor" />
               </svg>
-              {t("ctaSecondary")}
+              Watch the 90-second demo
             </button>
           </div>
 
@@ -149,9 +146,9 @@ export default function HeroSection() {
              {/* Honest early-stage line */}
           <p className="mt-0 inline-flex items-center gap-2 text-[13px] text-ink-soft dark:text-mist-soft">
             <span className="inline-flex h-4 items-center rounded-full bg-coral-100 px-2 text-[10px] font-semibold uppercase tracking-wider text-coral-600">
-              {t("earlyBadge")}
+              Early access
             </span>
-            {t("earlyText")}
+            Be one of the first landlords — free, no card required.
           </p>
           </div>
         </div>
