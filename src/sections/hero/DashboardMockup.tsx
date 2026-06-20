@@ -17,7 +17,7 @@ export default function DashboardMockup() {
             <div className="">
                 {/* content (front face) — rounded corners & clip live here */}
                 <figure
-                    className="m-0 overflow-hidden rounded-[16px] bg-paper ring-1 ring-jade-900/10"
+                    className="m-0 overflow-hidden"
                     style={{
                         boxShadow:
                             "0 1px 0 rgba(255,255,255,0.6) inset, 0 40px 80px -28px rgba(10,46,34,0.35), 0 16px 40px -16px rgba(10,46,34,0.20)",
@@ -38,7 +38,7 @@ export default function DashboardMockup() {
                                     strokeLinejoin="round"
                                 />
                             </svg>
-                            bariyan.com / dashboard
+                            bariyan.com / owner / dashboard
                         </span>
                     </div>
 

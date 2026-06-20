@@ -1,4 +1,12 @@
 import SectionHead from "@/src/components/SectionHead";
+import {
+    Banknote,
+    LayoutGrid,
+    MessageSquare,
+    Users,
+    Wrench,
+    type LucideIcon,
+} from "lucide-react";
 
 const utilities = [
     { name: "Gas", amount: "৳800" },
@@ -42,15 +50,14 @@ export default function FeaturesSection() {
                 <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 auto-rows-[minmax(220px,auto)] gap-4">
                     {/* B-1 hero card */}
                     <div className="md:col-span-4 lg:col-span-4 md:row-span-2 bg-jade-900 border border-jade-900 rounded-[18px] p-8 text-paper overflow-hidden">
-                        <FeatureIcon dark>
-                            <path d="M3 6h18v13H3z M3 10h18 M7 15h4" />
-                        </FeatureIcon>
+                        <FeatureIcon dark icon={Banknote} />
                         <h3 className="font-bold text-[28px] tracking-[-0.015em] text-paper mb-3">
-                            One-tap rent collection on bKash, Nagad &amp; Rocket
+                            Track every rent payment in one place
                         </h3>
                         <p className="text-[15px] text-white/70 leading-[1.55] max-w-[360px] mb-6">
-                            Tenants pay with the wallet they already use. Funds settle to your
-                            bank in 24 hours with auto-generated rent receipts in PDF.
+                            Record how each tenant paid — cash, bKash, Nagad, Rocket or bank
+                            transfer — and Bariyan auto-generates a PDF rent receipt for every
+                            payment.
                         </p>
                         <div className="bg-white/[0.06] border border-white/10 rounded-xl p-3.5 grid gap-2">
                             {collectionRows.map((row) => (
@@ -81,15 +88,13 @@ export default function FeaturesSection() {
 
                     {/* B-2 */}
                     <BentoCard className="md:col-span-2 lg:col-span-2">
-                        <FeatureIcon>
-                            <path d="M4 21v-2a4 4 0 014-4h2 M16 11a4 4 0 100-8 4 4 0 000 8z M14 21c2-3 5-3 7 0 M18 17a3 3 0 100-6 3 3 0 000 6z" />
-                        </FeatureIcon>
-                        <h3 className="text-[19px] font-bold tracking-[-0.015em] text-jade-950 mb-2">
+                        <FeatureIcon icon={Users} />
+                        <h3 className="text-[19px] font-bold tracking-[-0.015em] text-jade-950 dark:text-jade-50 mb-2">
                             Tenant &amp; lease
                             <br />
                             management
                         </h3>
-                        <p className="text-sm text-ink-soft leading-[1.55]">
+                        <p className="text-sm text-ink-soft dark:text-mist-soft leading-[1.55]">
                             NID verification, digital lease agreements, deposit tracking,
                             renewal reminders — all paperless.
                         </p>
@@ -97,13 +102,11 @@ export default function FeaturesSection() {
 
                     {/* B-3 */}
                     <BentoCard className="md:col-span-2 lg:col-span-2">
-                        <FeatureIcon>
-                            <path d="M14.7 6.3a4 4 0 11-5.4 5.4l-7 7v3h3l7-7a4 4 0 015.4-5.4z" />
-                        </FeatureIcon>
-                        <h3 className="text-[19px] font-bold tracking-[-0.015em] text-jade-950 mb-2">
+                        <FeatureIcon icon={Wrench} />
+                        <h3 className="text-[19px] font-bold tracking-[-0.015em] text-jade-950 dark:text-jade-50 mb-2">
                             Maintenance &amp; complaints
                         </h3>
-                        <p className="text-sm text-ink-soft leading-[1.55]">
+                        <p className="text-sm text-ink-soft dark:text-mist-soft leading-[1.55]">
                             Tenants raise issues from their phone. Assign caretakers, track
                             repairs, close tickets faster.
                         </p>
@@ -111,17 +114,15 @@ export default function FeaturesSection() {
 
                     {/* B-4 SMS */}
                     <BentoCard className="md:col-span-2 lg:col-span-3">
-                        <FeatureIcon>
-                            <path d="M21 11.5a8.4 8.4 0 01-9.7 8.3l-5.3 1 1-5.3A8.5 8.5 0 1121 11.5z" />
-                        </FeatureIcon>
-                        <h3 className="text-[19px] font-bold tracking-[-0.015em] text-jade-950 mb-2">
+                        <FeatureIcon icon={MessageSquare} />
+                        <h3 className="text-[19px] font-bold tracking-[-0.015em] text-jade-950 dark:text-jade-50 mb-2">
                             Auto SMS reminders — in Bangla &amp; English
                         </h3>
-                        <p className="text-sm text-ink-soft leading-[1.55]">
+                        <p className="text-sm text-ink-soft dark:text-mist-soft leading-[1.55]">
                             Send rent reminders, society notices, gas/water bills, eid greetings
                             — all scheduled, all in your tenants&apos; language.
                         </p>
-                        <div className="relative mt-4 bg-jade-50 rounded-[10px] px-3.5 py-3 font-bangla text-[13px] leading-[1.5] text-jade-950">
+                        <div className="relative mt-4 bg-jade-50 dark:bg-jade-500/15 rounded-[10px] px-3.5 py-3 font-bangla text-[13px] leading-[1.5] text-jade-950 dark:text-jade-50">
                             <span className="absolute -top-2 left-3.5 bg-jade-800 text-paper font-mono text-[9px] px-1.5 py-0.5 rounded tracking-wider font-semibold">
                                 SMS
                             </span>
@@ -131,13 +132,11 @@ export default function FeaturesSection() {
 
                     {/* B-5 utilities */}
                     <BentoCard className="md:col-span-2 lg:col-span-3">
-                        <FeatureIcon>
-                            <path d="M3 3h18v18H3z M9 3v18 M3 9h18 M3 15h18 M15 3v18" />
-                        </FeatureIcon>
-                        <h3 className="text-[19px] font-bold tracking-[-0.015em] text-jade-950 mb-2">
+                        <FeatureIcon icon={LayoutGrid} />
+                        <h3 className="text-[19px] font-bold tracking-[-0.015em] text-jade-950 dark:text-jade-50 mb-2">
                             Service charge &amp; utilities, split automatically
                         </h3>
-                        <p className="text-sm text-ink-soft leading-[1.55]">
+                        <p className="text-sm text-ink-soft dark:text-mist-soft leading-[1.55]">
                             Gas, water, lift, security, generator — split across flats by area,
                             by family, or a flat fee. One click reconciles every bill.
                         </p>
@@ -145,39 +144,39 @@ export default function FeaturesSection() {
                             {utilities.map((u) => (
                                 <div
                                     key={u.name}
-                                    className="bg-cream-2 rounded-md p-2 text-center text-[10px] text-ink-soft font-semibold"
+                                    className="bg-cream-2 dark:bg-night-2 rounded-md p-2 text-center text-[10px] text-ink-soft dark:text-mist-soft font-semibold"
                                 >
                                     {u.name}
                                     <br />
-                                    <b className="text-jade-900 text-xs">{u.amount}</b>
+                                    <b className="text-jade-900 dark:text-jade-50 text-xs">{u.amount}</b>
                                 </div>
                             ))}
-                            <div className="bg-jade-50 rounded-md p-2 text-center text-[10px] text-jade-700 font-semibold">
+                            <div className="bg-jade-50 dark:bg-jade-500/15 rounded-md p-2 text-center text-[10px] text-jade-700 dark:text-jade-300 font-semibold">
                                 Total
                                 <br />
-                                <b className="text-jade-900 text-xs">৳1,850</b>
+                                <b className="text-jade-900 dark:text-jade-50 text-xs">৳1,850</b>
                             </div>
                         </div>
                     </BentoCard>
 
                     {/* B-6 reports stats */}
-                    <div className="md:col-span-4 lg:col-span-6 bg-cream-2 rounded-[18px] p-8 md:px-9">
+                    <div className="md:col-span-4 lg:col-span-6 bg-cream-2 dark:bg-night-2 rounded-[18px] p-8 md:px-9">
                         <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr_1fr_1fr_1fr] gap-6 items-center">
                             <div>
-                                <h3 className="text-[22px] font-bold text-jade-950 tracking-[-0.015em] mb-1.5">
+                                <h3 className="text-[22px] font-bold text-jade-950 dark:text-jade-50 tracking-[-0.015em] mb-1.5">
                                     Reports your accountant will love.
                                 </h3>
-                                <p className="text-[13px] text-ink-soft leading-[1.55]">
+                                <p className="text-[13px] text-ink-soft dark:text-mist-soft leading-[1.55]">
                                     Monthly income, occupancy, GST/TDS-ready statements. Export to
                                     Excel, PDF, or send straight to your CA.
                                 </p>
                             </div>
                             {reportStats.map((s) => (
                                 <div key={s.l} className="text-center max-md:text-left">
-                                    <div className="text-[28px] font-bold text-jade-800 tracking-[-0.02em] mb-0.5">
+                                    <div className="text-[28px] font-bold text-jade-800 dark:text-jade-300 tracking-[-0.02em] mb-0.5">
                                         {s.n}
                                     </div>
-                                    <div className="text-[11px] text-ink-soft uppercase tracking-wider font-semibold">
+                                    <div className="text-[11px] text-ink-soft dark:text-mist-soft uppercase tracking-wider font-semibold">
                                         {s.l}
                                     </div>
                                 </div>
@@ -193,30 +192,21 @@ export default function FeaturesSection() {
 function BentoCard({ children, className }: { children: React.ReactNode; className?: string }) {
     return (
         <div
-            className={`bg-paper border border-rule-soft rounded-[18px] p-7 relative overflow-hidden transition hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-12px_rgba(10,46,34,0.15)] ${className ?? ""}`}
+            className={`bg-paper dark:bg-night-2 border border-rule-soft dark:border-white/10 rounded-[18px] p-7 relative overflow-hidden transition hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-12px_rgba(10,46,34,0.15)] ${className ?? ""}`}
         >
             {children}
         </div>
     );
 }
 
-function FeatureIcon({ children, dark }: { children: React.ReactNode; dark?: boolean }) {
+function FeatureIcon({ icon: Icon, dark }: { icon: LucideIcon; dark?: boolean }) {
     return (
         <div
             className={`w-10 h-10 rounded-[10px] flex items-center justify-center mb-4.5 ${
-                dark ? "bg-white/10 text-amber-500" : "bg-jade-50 text-jade-800"
+                dark ? "bg-white/10 text-amber-500" : "bg-jade-50 dark:bg-jade-500/15 text-jade-800 dark:text-jade-300"
             }`}
         >
-            <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-            >
-                {children}
-            </svg>
+            <Icon size={22} strokeWidth={1.8} />
         </div>
     );
 }

@@ -1,21 +1,12 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import DashboardMockup from "./hero/DashboardMockup";
 
-const chips = [
-  "Rent & dues tracking",
-  "Bills & invoices",
-  "Income & expenses",
-  "One-click reports",
-];
-
-const stats = [
-  { value: "10+", label: "landlords" },
-  { value: "BDT 12 cr", label: "collected in 2025" },
-  { value: "4", label: "divisions live" },
-];
-
 export default function HeroSection() {
+  const t = useTranslations("Hero");
+  const chips = t.raw("chips") as string[];
+
   return (
     <section className="relative overflow-hidden pt-12 pb-24 lg:pt-20">
       {/* Background — soft jade aura + faint grid */}
@@ -47,15 +38,15 @@ export default function HeroSection() {
           {/* Eyebrow pill */}
           <a
             href="#report"
-            className="group inline-flex items-center gap-2.5 rounded-full border border-rule-soft bg-cream/80 py-1.5 pl-3.5 pr-1.5 text-[12.5px] text-ink-soft backdrop-blur transition-colors hover:border-jade-700/30"
+            className="group inline-flex items-center gap-2.5 rounded-full border border-rule-soft dark:border-white/10 bg-cream/80 dark:bg-night-2/80 py-1.5 pl-3.5 pr-1.5 text-[12.5px] text-ink-soft dark:text-mist-soft backdrop-blur transition-colors hover:border-jade-700/30"
           >
             <span className="relative flex h-1.5 w-1.5">
               <span className="absolute inset-0 animate-ping rounded-full bg-coral-600 opacity-60" />
               <span className="relative h-1.5 w-1.5 rounded-full bg-coral-600" />
             </span>
-            <span>2026 Rent Collection Report</span>
+            <span className="capitalize">{t("eyebrow")}</span>
             <span className="inline-flex items-center gap-1 rounded-full bg-jade-900 px-2.5 py-1 text-[12px] font-semibold text-paper transition-colors group-hover:bg-jade-950">
-              Read the data
+              {t("pillCta")}
               <span className="transition-transform group-hover:translate-x-0.5">
                 →
               </span>
@@ -63,27 +54,32 @@ export default function HeroSection() {
           </a>
 
           {/* Headline */}
-          <h1 className="mt-7 text-balance font-bold leading-[0.98] tracking-[-0.04em] text-jade-900 text-[48px] sm:text-[66px] lg:text-[78px]">
-            Manage your <span className="text-jade-700">property</span>{" "}
-            <span className="text-coral-600">finances</span>{" "}
-            <span className="font-serif font-normal italic tracking-[-0.02em]">
-              easily
-            </span>
-            <span className="text-coral-600">.</span>
+          <h1 className="mt-7 text-balance font-bold leading-[0.98] tracking-[-0.04em] text-jade-900 dark:text-jade-50 text-[48px] sm:text-[66px] lg:text-[78px]">
+            {t.rich("headline", {
+              prop: (c) => (
+                <span className="text-jade-700 dark:text-jade-300">{c}</span>
+              ),
+              fin: (c) => <span className="text-coral-600">{c}</span>,
+              em: (c) => (
+                <span className="font-serif font-normal italic tracking-[-0.02em]">
+                  {c}
+                </span>
+              ),
+              dot: (c) => <span className="text-coral-600">{c}</span>,
+            })}
           </h1>
 
           {/* Sub-headline */}
-          <p className="mt-6 max-w-md text-[17px] leading-[1.6] text-ink-soft">
-            All your tenants and all your accounts on one platform. Smartly
-            manage your building&apos;s rent and finances the digital way.
+          <p className="mt-6 capitalize  text-[15px] leading-[1.6] text-ink-soft dark:text-mist-soft">
+            {t("subhead")}
           </p>
 
           {/* Inline feature list */}
-          <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2">
+          <ul className="mt-6 max-w-sm flex flex-wrap gap-x-5 gap-y-2">
             {chips.map((c) => (
               <li
                 key={c}
-                className="inline-flex items-center gap-1.5 text-[13.5px] font-medium text-ink"
+                className="inline-flex items-center gap-1.5 text-[13.5px] font-medium text-ink dark:text-mist capitalize"
               >
                 <CheckIcon />
                 <span>{c}</span>
@@ -95,10 +91,10 @@ export default function HeroSection() {
           <div className="mt-8 flex flex-wrap items-center gap-2">
             <button
               type="button"
-              className="group relative rounded-[10px] bg-jade-900 px-6 py-3.5 text-[15px] font-semibold text-paper transition-all duration-200 hover:bg-jade-950 hover:shadow-[0_10px_30px_-10px_rgba(13,79,63,0.5)]"
+              className="group relative rounded-[10px] bg-jade-900 dark:bg-jade-700 px-6 py-3.5 text-[15px] font-semibold text-paper transition-all duration-200 hover:bg-jade-950 dark:hover:bg-jade-500 hover:shadow-[0_10px_30px_-10px_rgba(13,79,63,0.5)]"
             >
               <span className="relative z-10 inline-flex items-center gap-2">
-                Get Started Free
+                {t("ctaPrimary")}
                 <svg
                   width="14"
                   height="14"
@@ -119,7 +115,7 @@ export default function HeroSection() {
 
             <button
               type="button"
-              className="group inline-flex items-center gap-2.5 rounded-[10px] px-5 py-3.5 text-[15px] font-semibold text-jade-900 transition-colors hover:text-coral-600"
+              className="group inline-flex items-center gap-2.5 rounded-[10px] px-5 py-3.5 text-[15px] font-semibold text-jade-900 dark:text-jade-50 transition-colors hover:text-coral-600"
             >
               <svg
                 width="20"
@@ -138,27 +134,47 @@ export default function HeroSection() {
                 />
                 <path d="M8.5 7l4 3-4 3V7z" fill="currentColor" />
               </svg>
-              Watch the 90-second demo
+              {t("ctaSecondary")}
             </button>
           </div>
 
+         
+
           {/* Stats */}
-          <div className="mt-10 flex flex-wrap items-baseline gap-x-8 gap-y-3 border-t border-rule-soft pt-6">
-            {stats.map((s) => (
+          <div className="mt-10 flex flex-wrap items-baseline gap-x-8 gap-y-3 border-t border-rule-soft dark:border-white/10 pt-6">
+            {/* {stats.map((s) => (
               <Stat key={s.label} value={s.value} label={s.label} />
-            ))}
+            ))} */}
+
+             {/* Honest early-stage line */}
+          <p className="mt-0 inline-flex items-center gap-2 text-[13px] text-ink-soft dark:text-mist-soft">
+            <span className="inline-flex h-4 items-center rounded-full bg-coral-100 px-2 text-[10px] font-semibold uppercase tracking-wider text-coral-600">
+              {t("earlyBadge")}
+            </span>
+            {t("earlyText")}
+          </p>
           </div>
         </div>
 
         {/* ── Right: angled product shot, bleeding off the edge ── */}
         <div className="relative" style={{ perspective: "1800px" }}>
           <div
-            className="origin-left transition-transform duration-500 lg:-mr-4 xl:-mr-8 lg:scale-[1.06]"
+            className="relative origin-left border-2 border-rule-soft dark:border-white/10 transition-transform duration-500 lg:-mr-4 xl:-mr-8 lg:scale-[1.06]"
             style={{
               transform: "rotateY(-12deg) rotateX(6deg) rotateZ(0.5deg)",
               transformStyle: "preserve-3d",
             }}
           >
+            {/* Animated beam light traveling around the border */}
+            <div className="pointer-events-none absolute -inset-0.5 overflow-hidden ">
+              <div
+                className="absolute left-1/2 top-1/2 aspect-square w-[180%] animate-beam-spin"
+                style={{
+                  background:
+                    "conic-gradient(from 0deg, transparent 0deg 230deg, var(--color-jade-500) 300deg, #ffe2d4 335deg, var(--color-coral-500) 350deg, transparent 360deg)",
+                }}
+              />
+            </div>
             <DashboardMockup />
           </div>
         </div>
@@ -167,18 +183,7 @@ export default function HeroSection() {
   );
 }
 
-function Stat({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="flex items-baseline gap-1.5">
-      <span className="text-[22px] font-bold tracking-[-0.02em] tabular-nums text-jade-950">
-        {value}
-      </span>
-      <span className="text-[13px] text-ink-soft">{label}</span>
-    </div>
-  );
-}
-
-function CheckIcon({ className = "text-jade-500" }: { className?: string }) {
+function CheckIcon({ className = "text-jade-500 dark:text-jade-400" }: { className?: string }) {
   return (
     <svg
       width="13"

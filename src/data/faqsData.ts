@@ -2,14 +2,14 @@ import type { Faq } from "@/src/types";
 
 export const faqsData: Faq[] = [
     {
-        question: "What is BariBari and who is it for?",
+        question: "What is Bariyan and who is it for?",
         answer:
-            "BariBari is a property management SaaS built for landlords, building owners, real estate agencies and housing societies across Bangladesh. Whether you own a single flat in Dhanmondi or manage 200 units across Dhaka, Chattogram and Sylhet, you can run everything from one dashboard.",
+            "Bariyan is a property management SaaS built for landlords, building owners, real estate agencies and housing societies across Bangladesh. Whether you own a single flat in Dhanmondi or manage 200 units across Dhaka, Chattogram and Sylhet, you can run everything from one dashboard.",
     },
     {
         question: "Can tenants pay rent through bKash, Nagad or Rocket?",
         answer:
-            "Yes. BariBari is fully integrated with bKash, Nagad, Rocket and Upay. Tenants receive automated monthly invoices on SMS and can pay with one tap. Rent settles directly into your bank account and the receipt is generated automatically.",
+            "Yes. Bariyan is fully integrated with bKash, Nagad, Rocket and Upay. Tenants receive automated monthly invoices on SMS and can pay with one tap. Rent settles directly into your bank account and the receipt is generated automatically.",
     },
     {
         question: "Is there a free trial?",

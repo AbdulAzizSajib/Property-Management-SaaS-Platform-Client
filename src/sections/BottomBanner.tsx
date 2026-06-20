@@ -34,7 +34,7 @@ export default function BottomBanner() {
                 </h2>
                 <p className="text-lg leading-[1.5] text-white/70 mb-9 max-w-[540px] mx-auto">
                     Join 1,200+ landlords across Bangladesh already managing their properties
-                    with BariBari.
+                    with Bariyan.
                 </p>
                 <div className="flex flex-wrap gap-3.5 justify-center mb-12">
                     <button

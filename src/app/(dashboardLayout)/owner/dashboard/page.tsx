@@ -37,7 +37,7 @@ export default function OwnerDashboardPage() {
 
         {/* Quiet footer */}
         <p className="pt-2 text-center font-bangla text-[12.5px] text-ink-soft/70">
-          এক ফোনে — সব ভাড়াটিয়া, সব হিসাব। · BariBari
+          এক ফোনে — সব ভাড়াটিয়া, সব হিসাব। · Bariyan
         </p>
       </div>
     </div>

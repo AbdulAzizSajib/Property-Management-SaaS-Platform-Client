@@ -19,7 +19,7 @@ export default function SectionHead({ eyebrow, title, description, light }: Prop
             </div>
             <h2
                 className={`font-bold tracking-[-0.03em] leading-[1.05] mb-4 text-balance text-[36px] md:text-[44px] lg:text-[56px] ${
-                    light ? "text-paper" : "text-jade-950"
+                    light ? "text-paper" : "text-jade-950 dark:text-jade-50"
                 }`}
             >
                 {title}
@@ -27,7 +27,7 @@ export default function SectionHead({ eyebrow, title, description, light }: Prop
             {description && (
                 <p
                     className={`text-[17px] leading-[1.55] max-w-[580px] mx-auto text-pretty ${
-                        light ? "text-white/60" : "text-ink-soft"
+                        light ? "text-white/60" : "text-ink-soft dark:text-mist-soft"
                     }`}
                 >
                     {description}

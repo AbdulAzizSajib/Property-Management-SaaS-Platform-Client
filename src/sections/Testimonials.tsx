@@ -15,7 +15,7 @@ const others = [
     },
     {
         initials: "SK",
-        quote: "আমার বাবার বানানো বাড়ি, কিন্তু হিসাব রাখা কঠিন ছিল। BariBari সব সহজ করে দিয়েছে।",
+        quote: "আমার বাবার বানানো বাড়ি, কিন্তু হিসাব রাখা কঠিন ছিল। Bariyan সব সহজ করে দিয়েছে।",
         name: "Shahriar Kabir",
         meta: "Dhanmondi 27 · 4 flats",
         bangla: true,
@@ -53,7 +53,7 @@ export default function Testimonials() {
                         <div>
                             <p className="font-serif italic text-[26px] leading-[1.3] mb-8 text-pretty">
                                 &quot;Rent collection used to take me a full week every month. With
-                                BariBari and bKash, everything settles in 24 hours. The Bangla SMS
+                                Bariyan and bKash, everything settles in 24 hours. The Bangla SMS
                                 feature alone saved me 4 hours of phone calls.&quot;
                             </p>
                             <div className="flex gap-8 pt-7 border-t border-white/10">
@@ -78,10 +78,10 @@ export default function Testimonials() {
                     {others.map((t) => (
                         <article
                             key={t.name}
-                            className="bg-paper border border-rule-soft rounded-2xl p-7 flex flex-col"
+                            className="bg-paper dark:bg-night-2 border border-rule-soft dark:border-white/10 rounded-2xl p-7 flex flex-col"
                         >
                             <p
-                                className={`text-[18px] leading-[1.45] text-jade-950 mb-6 text-pretty ${
+                                className={`text-[18px] leading-[1.45] text-jade-950 dark:text-jade-50 mb-6 text-pretty ${
                                     t.bangla ? "font-bangla" : "font-serif italic"
                                 }`}
                             >
@@ -92,8 +92,8 @@ export default function Testimonials() {
                                     {t.initials}
                                 </span>
                                 <div>
-                                    <div className="font-bold text-sm text-jade-950">{t.name}</div>
-                                    <div className="text-xs text-ink-soft mt-0.5">{t.meta}</div>
+                                    <div className="font-bold text-sm text-jade-950 dark:text-jade-50">{t.name}</div>
+                                    <div className="text-xs text-ink-soft dark:text-mist-soft mt-0.5">{t.meta}</div>
                                 </div>
                             </div>
                         </article>

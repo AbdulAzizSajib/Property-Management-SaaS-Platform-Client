@@ -67,7 +67,7 @@ const plans: Plan[] = [
 
 export default function Pricing() {
     return (
-        <section id="pricing" className="bg-paper py-24 lg:py-32">
+        <section id="pricing" className="bg-paper dark:bg-night-2 py-24 lg:py-32">
             <div className="max-w-[1280px] mx-auto px-5 md:px-8">
                 <SectionHead
                     eyebrow="Simple, BDT pricing"
@@ -91,8 +91,8 @@ export default function Pricing() {
                     ))}
                 </div>
 
-                <p className="text-center mt-10 text-[13px] text-ink-soft">
-                    All prices in BDT, inclusive of VAT. <b className="text-jade-900">Transaction fees</b>{" "}
+                <p className="text-center mt-10 text-[13px] text-ink-soft dark:text-mist-soft">
+                    All prices in BDT, inclusive of VAT. <b className="text-jade-900 dark:text-jade-50">Transaction fees</b>{" "}
                     apply only to wallet payments — passed through at cost.
                 </p>
             </div>
@@ -128,21 +128,21 @@ function PlanCard({ plan }: { plan: Plan }) {
         );
     }
     return (
-        <div className="rounded-[18px] p-9 bg-paper border border-rule-soft flex flex-col">
-            <div className="text-sm font-bold uppercase tracking-[0.12em] text-jade-800 mb-3">
+        <div className="rounded-[18px] p-9 bg-paper dark:bg-night-2 border border-rule-soft dark:border-white/10 flex flex-col">
+            <div className="text-sm font-bold uppercase tracking-[0.12em] text-jade-800 dark:text-jade-300 mb-3">
                 {plan.name}
             </div>
-            <div className="text-[13px] text-ink-soft mb-6 leading-[1.5]">{plan.fit}</div>
+            <div className="text-[13px] text-ink-soft dark:text-mist-soft mb-6 leading-[1.5]">{plan.fit}</div>
             <Price amount={plan.amount} />
-            <div className="text-xs text-ink-soft mb-6">{plan.billed}</div>
-            <ul className="border-t border-rule-soft pt-6 mb-8 flex-1 space-y-2">
+            <div className="text-xs text-ink-soft dark:text-mist-soft mb-6">{plan.billed}</div>
+            <ul className="border-t border-rule-soft dark:border-white/10 pt-6 mb-8 flex-1 space-y-2">
                 {plan.features.map((f) => (
                     <FeatureLi key={f.text} feature={f} />
                 ))}
             </ul>
             <button
                 type="button"
-                className="w-full py-3.5 rounded-[10px] font-semibold text-sm border border-jade-900 text-jade-900 hover:bg-jade-900 hover:text-paper transition"
+                className="w-full py-3.5 rounded-[10px] font-semibold text-sm border border-jade-900 dark:border-jade-300 text-jade-900 dark:text-jade-50 hover:bg-jade-900 hover:text-paper transition"
             >
                 {plan.cta}
             </button>
@@ -153,17 +153,17 @@ function PlanCard({ plan }: { plan: Plan }) {
 function Price({ amount, featured }: { amount: string; featured?: boolean }) {
     return (
         <div className="flex items-baseline gap-1 mb-1">
-            <span className={`text-2xl font-medium ${featured ? "text-paper" : "text-jade-900"}`}>
+            <span className={`text-2xl font-medium ${featured ? "text-paper" : "text-jade-900 dark:text-jade-50"}`}>
                 ৳
             </span>
             <span
                 className={`text-5xl font-extrabold tracking-[-0.03em] leading-none ${
-                    featured ? "text-paper" : "text-jade-950"
+                    featured ? "text-paper" : "text-jade-950 dark:text-jade-50"
                 }`}
             >
                 {amount}
             </span>
-            <span className={`text-sm ${featured ? "text-white/50" : "text-ink-soft"}`}>/mo</span>
+            <span className={`text-sm ${featured ? "text-white/50" : "text-ink-soft dark:text-mist-soft"}`}>/mo</span>
         </div>
     );
 }
@@ -172,7 +172,7 @@ function FeatureLi({ feature, featured }: { feature: Feature; featured?: boolean
     return (
         <li
             className={`grid grid-cols-[16px_1fr] gap-2.5 text-[13.5px] leading-[1.45] ${
-                featured ? "text-white/85" : "text-ink"
+                featured ? "text-white/85" : "text-ink dark:text-mist"
             }`}
         >
             <span
@@ -183,7 +183,7 @@ function FeatureLi({ feature, featured }: { feature: Feature; featured?: boolean
                             : "bg-jade-700"
                         : featured
                           ? "bg-white/10"
-                          : "bg-jade-50"
+                          : "bg-jade-50 dark:bg-jade-500/15"
                 } relative inline-flex items-center justify-center text-[10px] font-bold`}
             >
                 {feature.check ? (

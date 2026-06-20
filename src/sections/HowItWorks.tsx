@@ -21,7 +21,7 @@ const steps = [
 
 export default function HowItWorks() {
     return (
-        <section className="bg-paper py-24 lg:py-32 border-t border-b border-rule-soft">
+        <section className="bg-paper dark:bg-night-2 py-24 lg:py-32 border-t border-b border-rule-soft dark:border-white/10">
             <div className="max-w-[1280px] mx-auto px-5 md:px-8">
                 <SectionHead
                     eyebrow="Get started"
@@ -41,13 +41,13 @@ export default function HowItWorks() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {steps.map((s, i) => (
                         <div key={s.title} className="pt-7 relative">
-                            <div className="font-mono text-[12px] font-bold text-coral-600 pb-3.5 mb-4.5 border-b border-rule">
+                            <div className="font-mono text-[12px] font-bold text-coral-600 pb-3.5 mb-4.5 border-b border-rule dark:border-white/15">
                                 {String(i + 1).padStart(2, "0")}
                             </div>
-                            <h4 className="text-[18px] font-bold text-jade-950 tracking-[-0.015em] mb-2.5">
+                            <h4 className="text-[18px] font-bold text-jade-950 dark:text-jade-50 tracking-[-0.015em] mb-2.5">
                                 {s.title}
                             </h4>
-                            <p className="text-sm leading-[1.6] text-ink-soft">{s.text}</p>
+                            <p className="text-sm leading-[1.6] text-ink-soft dark:text-mist-soft">{s.text}</p>
                         </div>
                     ))}
                 </div>

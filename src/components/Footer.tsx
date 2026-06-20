@@ -37,15 +37,15 @@ export default function Footer() {
 
     return (
         <footer className="max-w-[1280px] mx-auto px-5 md:px-8 pt-20 pb-10">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.6fr_1fr_1fr_1fr_1fr] gap-12 pb-12 border-b border-rule">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.6fr_1fr_1fr_1fr_1fr] gap-12 pb-12 border-b border-rule dark:border-white/15">
                 <div className="col-span-2 md:col-span-3 lg:col-span-1">
-                    <Link href="/" className="flex items-center gap-2.5 text-jade-900 font-bold text-[19px] tracking-tight mb-4">
+                    <Link href="/" className="flex items-center gap-2.5 text-jade-900 dark:text-jade-50 font-bold text-[19px] tracking-tight mb-4">
                         {/* <LogoMark /> */}
                         <span>
                             <b className="text-coral-600">Bariyan</b>
                         </span>
                     </Link>
-                    <p className="text-sm text-ink-soft leading-[1.6] max-w-[320px] mb-5">
+                    <p className="text-sm text-ink-soft dark:text-mist-soft leading-[1.6] max-w-[320px] mb-5">
                         Bangladesh&apos;s modern property management platform — built for
                         landlords, real estate firms and housing societies to collect rent,
                         manage tenants, and grow their portfolio with confidence.
@@ -56,7 +56,7 @@ export default function Footer() {
                                 key={s.name}
                                 href={s.href}
                                 aria-label={s.name}
-                                className="w-9 h-9 rounded-lg bg-cream-2 hover:bg-jade-900 hover:text-paper text-jade-900 font-bold text-sm flex items-center justify-center transition"
+                                className="w-9 h-9 rounded-lg bg-cream-2 dark:bg-night-2 hover:bg-jade-900 hover:text-paper text-jade-900 dark:text-jade-50 font-bold text-sm flex items-center justify-center transition"
                             >
                                 {s.label}
                             </a>
@@ -69,17 +69,17 @@ export default function Footer() {
                 <FootCol title="Resources" links={resourceLinks} />
 
                 <div>
-                    <h5 className="text-[11px] font-bold uppercase tracking-[0.14em] text-jade-900 mb-4.5">
+                    <h5 className="text-[11px] font-bold uppercase tracking-[0.14em] text-jade-900 dark:text-jade-50 mb-4.5">
                         Get in touch
                     </h5>
-                    <ul className="space-y-2.5 text-sm text-ink-soft">
+                    <ul className="space-y-2.5 text-sm text-ink-soft dark:text-mist-soft">
                         <li>
-                            <a href="tel:+8801700000000" className="hover:text-jade-900">
+                            <a href="tel:+8801700000000" className="hover:text-jade-900 dark:hover:text-jade-50">
                                 +৮৮০ ১৭০০-০০০০০০
                             </a>
                         </li>
                         <li>
-                            <a href="mailto:hello@Bariyan.com.bd" className="hover:text-jade-900">
+                            <a href="mailto:hello@Bariyan.com.bd" className="hover:text-jade-900 dark:hover:text-jade-50">
                                 hello@Bariyan.com.bd
                             </a>
                         </li>
@@ -89,7 +89,7 @@ export default function Footer() {
                 </div>
             </div>
 
-            <div className="flex flex-wrap justify-between items-center gap-3 text-[12.5px] text-ink-soft">
+            <div className="flex flex-wrap justify-between items-center gap-3 text-[12.5px] text-ink-soft dark:text-mist-soft">
                 <span>© {new Date().getFullYear()} Bariyan.com - All rights reserved.</span>
                 {/* <div className="flex gap-1.5 bg-paper p-1 rounded-lg border border-rule-soft">
                     <button
@@ -126,13 +126,13 @@ function FootCol({
 }) {
     return (
         <div>
-            <h5 className="text-[11px] font-bold uppercase tracking-[0.14em] text-jade-900 mb-4.5">
+            <h5 className="text-[11px] font-bold uppercase tracking-[0.14em] text-jade-900 dark:text-jade-50 mb-4.5">
                 {title}
             </h5>
             <ul className="space-y-2.5">
                 {links.map((l) => (
                     <li key={l.name}>
-                        <a href={l.href} className="text-sm text-ink-soft hover:text-jade-900 transition">
+                        <a href={l.href} className="text-sm text-ink-soft dark:text-mist-soft hover:text-jade-900 dark:hover:text-jade-50 transition">
                             {l.name}
                         </a>
                     </li>

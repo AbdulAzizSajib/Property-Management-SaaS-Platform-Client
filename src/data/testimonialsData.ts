@@ -6,7 +6,7 @@ export const testimonialsData: Testimonial[] = [
         name: "Tanvir Ahmed",
         handle: "@tanvirdhaka",
         date: "April 20, 2025",
-        quote: "Rent collection used to take me a week every month. With BariBari and bKash, everything settles in 24 hours.",
+        quote: "Rent collection used to take me a week every month. With Bariyan and bKash, everything settles in 24 hours.",
     },
     {
         image: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200",

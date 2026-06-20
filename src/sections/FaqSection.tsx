@@ -9,7 +9,7 @@ const faqs = [
         a: "No. Tenants pay through their existing bKash, Nagad, or Rocket app — the same one they already use for groceries. You send them a payment link over SMS or WhatsApp; they tap, confirm with their PIN, done. The whole flow takes about 12 seconds and works on any feature phone with mobile banking.",
     },
     {
-        q: "How is BariBari different from just using bKash and Excel?",
+        q: "How is Bariyan different from just using bKash and Excel?",
         a: "Excel doesn’t send reminders. bKash doesn’t track which flat owes what. We connect both — plus tenants, leases, maintenance, utility splits, and tax reports — into one workspace built specifically for Bangladeshi rental properties.",
     },
     {
@@ -67,24 +67,24 @@ export function FaqSection() {
                                 key={faq.q}
                                 type="button"
                                 onClick={() => setOpenIndex(open ? null : i)}
-                                className="w-full text-left border-b border-rule py-6 cursor-pointer"
+                                className="w-full text-left border-b border-rule dark:border-white/15 py-6 cursor-pointer"
                             >
                                 <div className="flex justify-between items-center gap-6">
-                                    <h3 className="text-[17px] font-semibold text-jade-950 tracking-[-0.01em]">
+                                    <h3 className="text-[17px] font-semibold text-jade-950 dark:text-jade-50 tracking-[-0.01em]">
                                         {faq.q}
                                     </h3>
                                     <span
                                         className={`w-7 h-7 shrink-0 rounded-full flex items-center justify-center font-bold text-base transition ${
                                             open
                                                 ? "bg-coral-600 text-paper rotate-45"
-                                                : "bg-cream-2 text-jade-900"
+                                                : "bg-cream-2 dark:bg-night-2 text-jade-900 dark:text-jade-50"
                                         }`}
                                     >
                                         +
                                     </span>
                                 </div>
                                 {open && (
-                                    <div className="mt-3.5 max-w-[680px] text-[15px] leading-[1.65] text-ink-soft">
+                                    <div className="mt-3.5 max-w-[680px] text-[15px] leading-[1.65] text-ink-soft dark:text-mist-soft">
                                         {faq.a}
                                     </div>
                                 )}

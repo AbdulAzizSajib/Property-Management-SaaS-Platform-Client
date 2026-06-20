@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
+import { ThemeProvider } from "../components/theme-provider";
 
 const jakarta = Plus_Jakarta_Sans({
     variable: "--font-jakarta",
@@ -60,12 +61,19 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
     return (
         <html
-            lang="en"
+            lang="en" suppressHydrationWarning
             className={`${jakarta.variable} ${poppins.variable} ${geist.variable} ${hind.variable} ${jetbrains.variable} ${instrument.variable} ${rubita.variable}`}
         >
             <body>
-                <QueryProviders>{children}</QueryProviders>
-                <ToastContainer position="top-right" autoClose={4000} closeOnClick pauseOnHover />
+                <ThemeProvider
+                    attribute="class"
+                    defaultTheme="system"
+                    enableSystem
+                    disableTransitionOnChange
+                >
+                    <QueryProviders>{children}</QueryProviders>
+                    <ToastContainer position="top-right" autoClose={4000} closeOnClick pauseOnHover />
+                </ThemeProvider>
             </body>
         </html>
     );

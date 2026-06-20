@@ -16,6 +16,8 @@
     --font-rubita: var(--font-rubita), system-ui, sans-serif;
 
     --color-jade-50: #e6f4ef;
+    --color-jade-300: #7fceb6;
+    --color-jade-400: #45b393;
     --color-jade-500: #1f9876;
     --color-jade-700: #136a55;
     --color-jade-800: #0d4f3f;
@@ -37,6 +39,13 @@
     --color-rule: #d8d0bb;
     --color-rule-soft: #ece4cf;
 
+    /* Dark-mode surface + text tokens (additive — used only via dark: utilities) */
+    --color-night: #0b1411;
+    --color-night-2: #16241e;
+    --color-night-3: #1d2f27;
+    --color-mist: #eef2ec;
+    --color-mist-soft: #9fb0a6;
+
     --color-bkash: #e2136e;
     --color-nagad: #ec1c24;
     --color-rocket: #8c3494;
@@ -44,9 +53,27 @@
     --color-citybank: #00509e;
 }
 
+@theme {
+    --animate-beam-spin: beam-spin 4s linear infinite;
+
+    @keyframes beam-spin {
+        from {
+            transform: translate(-50%, -50%) rotate(0deg);
+        }
+        to {
+            transform: translate(-50%, -50%) rotate(360deg);
+        }
+    }
+}
+
 body {
     @apply bg-cream text-ink antialiased;
     font-family: var(--font-sans);
+}
+
+.dark body {
+    background-color: var(--color-night);
+    color: var(--color-mist);
 }
 
 button {
