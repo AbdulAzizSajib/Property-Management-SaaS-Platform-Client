@@ -53,7 +53,7 @@ const rubita = localFont({
 });
 
 export const metadata: Metadata = {
-    title: "Bariyan - Property Management for Bangladeshi Landlords",
+    title: "Bariyan - Property Management for Bangladeshi Landlords, Real Estate Firms and Housing Societies",
     description:
         "Bariyan is an all-in-one property management platform built for Bangladeshi landlords, real estate firms and housing societies. Collect rent via bKash/Nagad, manage tenants, leases and maintenance from one dashboard.",
 };
