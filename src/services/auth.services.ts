@@ -83,6 +83,70 @@ export async function loginAction(
     }
 }
 
+export type VerifyEmailActionResult =
+    | { ok: true; destination: string }
+    | { ok: false; message: string };
+
+/**
+ * Server-action email verification. Same cross-site cookie problem as
+ * loginAction: the backend now returns the auth tokens straight from
+ * /auth/verify-email (the new flow logs the user in on verify), but cookies it
+ * sets land on *its* domain. So we POST server-side, read the tokens from the
+ * response body, set httpOnly cookies on *our* domain, and hand back the
+ * role-based dashboard route for the client to navigate to.
+ */
+export async function verifyEmailAction(payload: {
+    email: string;
+    otp: string;
+}): Promise<VerifyEmailActionResult> {
+    try {
+        const res = await fetch(`${BASE_API_URL}/auth/verify-email`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
+            body: JSON.stringify(payload),
+        });
+
+        const json = await res.json().catch(() => null);
+
+        if (!res.ok) {
+            return {
+                ok: false,
+                message:
+                    json?.message ??
+                    "Invalid or expired OTP. Please try again.",
+            };
+        }
+
+        const data = json?.data as AuthData;
+        const { accessToken, refreshToken, token, user } = data;
+
+        if (accessToken) {
+            await setTokenInCookies("accessToken", accessToken);
+        }
+        if (refreshToken) {
+            await setTokenInCookies("refreshToken", refreshToken);
+        }
+        if (token) {
+            await setTokenInCookies(
+                "better-auth.session_token",
+                token,
+                24 * 60 * 60, // 1 day
+            );
+        }
+
+        return { ok: true, destination: getDefaultDashboardRoute(user.role) };
+    } catch (error) {
+        console.error("Error during email verification:", error);
+        return {
+            ok: false,
+            message: "Verification failed. Please try again.",
+        };
+    }
+}
+
 export async function getNewTokensWithRefreshToken(refreshToken  : string) : Promise<boolean> {
     try {
         const res = await fetch(`${BASE_API_URL}/auth/refresh-token`, {

@@ -228,7 +228,7 @@ export function RecordPaymentDialog({
                                                 <span className="text-ink-soft">
                                                     · {i.tenant.name}
                                                 </span>
-                                                <span className="ml-auto font-semibold text-coral-700 tabular-nums">
+                                                <span className="ml-auto font-semibold text-coral-600 tabular-nums">
                                                     {formatMoney(i.dueAmount)}
                                                 </span>
                                             </span>
@@ -255,7 +255,7 @@ export function RecordPaymentDialog({
                                 </span>
                             </div>
                             <span className="shrink-0 text-ink-soft tabular-nums">
-                                <span className="font-bold text-coral-700">
+                                <span className="font-bold text-coral-600">
                                     {formatMoney(selectedInvoice.dueAmount)}
                                 </span>
                                 {" "}of{" "}
@@ -350,7 +350,7 @@ export function RecordPaymentDialog({
 
                     {/* Overage warning */}
                     {overage > 0 && (
-                        <div className="flex items-start gap-2 rounded-[10px] border border-coral-100 bg-coral-50/70 px-3 py-2 text-[12.5px] text-coral-700">
+                        <div className="flex items-start gap-2 rounded-[10px] border border-coral-100 bg-coral-50/70 px-3 py-2 text-[12.5px] text-coral-600">
                             <AlertTriangle
                                 size={13}
                                 className="mt-0.5 shrink-0"

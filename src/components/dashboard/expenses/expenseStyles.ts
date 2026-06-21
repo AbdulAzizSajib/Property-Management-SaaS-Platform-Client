@@ -15,11 +15,11 @@ import type { ExpenseCategory } from "@/src/types/expense.types";
 // ─────────────────────────────────────────────────────────────────
 
 export const expenseCategoryStyles: Record<ExpenseCategory, string> = {
-    ELECTRICITY: "bg-coral-50/60 text-coral-700 border-coral-100",
-    WATER: "bg-coral-50/60 text-coral-700 border-coral-100",
-    GAS: "bg-coral-50/60 text-coral-700 border-coral-100",
-    GENERATOR_FUEL: "bg-coral-50 text-coral-700 border-coral-100",
-    INTERNET: "bg-coral-50/60 text-coral-700 border-coral-100",
+    ELECTRICITY: "bg-coral-50/60 text-coral-600 border-coral-100",
+    WATER: "bg-coral-50/60 text-coral-600 border-coral-100",
+    GAS: "bg-coral-50/60 text-coral-600 border-coral-100",
+    GENERATOR_FUEL: "bg-coral-50 text-coral-600 border-coral-100",
+    INTERNET: "bg-coral-50/60 text-coral-600 border-coral-100",
     MAINTENANCE: "bg-cream text-ink border-rule-soft",
     REPAIR: "bg-cream text-ink border-rule-soft",
     CLEANING: "bg-cream/80 text-ink border-rule-soft",

@@ -87,10 +87,10 @@ export default function BuildingDetailPage() {
                         Back to buildings
                     </Link>
                     <div className="rounded-[14px] border border-coral-100 bg-coral-50/50 px-5 py-12 text-center">
-                        <h2 className="text-[15px] font-bold text-coral-700">
+                        <h2 className="text-[15px] font-bold text-coral-600">
                             Couldn&apos;t load building
                         </h2>
-                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-700/80">
+                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-600/80">
                             {error instanceof Error
                                 ? error.message
                                 : "Building not found."}
@@ -229,7 +229,7 @@ export default function BuildingDetailPage() {
                                 <button
                                     type="button"
                                     onClick={() => setDeleteOpen(true)}
-                                    className="inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-coral-100 bg-coral-50 px-3 text-[12.5px] font-semibold text-coral-700 transition-colors hover:bg-coral-100"
+                                    className="inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-coral-100 bg-coral-50 px-3 text-[12.5px] font-semibold text-coral-600 transition-colors hover:bg-coral-100"
                                 >
                                     <Trash2 size={12} />
                                     Delete

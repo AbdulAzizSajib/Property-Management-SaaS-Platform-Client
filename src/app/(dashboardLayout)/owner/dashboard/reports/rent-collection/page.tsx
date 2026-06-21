@@ -78,7 +78,7 @@ export default function RentCollectionReportPage() {
                         ))}
                     </div>
                 ) : isError || !data ? (
-                    <p className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-4 py-8 text-center text-[13px] text-coral-700">
+                    <p className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-4 py-8 text-center text-[13px] text-coral-600">
                         Couldn&apos;t load report.
                     </p>
                 ) : (
@@ -151,7 +151,7 @@ export default function RentCollectionReportPage() {
                                                     className={cn(
                                                         "px-3 py-2 text-right tabular-nums",
                                                         Number(r.totalDue) > 0
-                                                            ? "text-coral-700"
+                                                            ? "text-coral-600"
                                                             : "text-ink",
                                                     )}
                                                 >
@@ -197,7 +197,7 @@ function Stat({
                 className={cn(
                     "mt-1 text-[18px] font-bold tabular-nums tracking-[-0.01em]",
                     tone === "warn"
-                        ? "text-coral-700"
+                        ? "text-coral-600"
                         : tone === "good"
                             ? "text-jade-800"
                             : "text-jade-950",

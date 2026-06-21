@@ -273,10 +273,10 @@ function PaymentsListInner() {
                     <ListShell />
                 ) : isError ? (
                     <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
-                        <h2 className="text-[15px] font-bold text-coral-700">
+                        <h2 className="text-[15px] font-bold text-coral-600">
                             Couldn&apos;t load payments
                         </h2>
-                        <p className="mt-1 text-[13px] text-coral-700/80">
+                        <p className="mt-1 text-[13px] text-coral-600/80">
                             {error instanceof Error
                                 ? error.message
                                 : "Please try again."}
@@ -388,7 +388,7 @@ function PaymentRow({ payment }: { payment: PaymentListItem }) {
                                 payment.status === "PAID"
                                     ? "text-jade-800"
                                     : payment.status === "FAILED"
-                                        ? "text-coral-700"
+                                        ? "text-coral-600"
                                         : "text-ink-soft",
                             )}
                         >
@@ -420,7 +420,7 @@ function MiniStat({
 }) {
     const valueTone =
         tone === "warn"
-            ? "text-coral-700"
+            ? "text-coral-600"
             : tone === "good"
                 ? "text-jade-950"
                 : "text-ink-soft/85";

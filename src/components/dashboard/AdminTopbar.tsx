@@ -175,8 +175,8 @@ export function AdminTopbar({
                 disabled={loggingOut}
                 onClick={handleLogout}
                 className={cn(
-                  "text-[13px] text-coral-700",
-                  "focus:bg-coral-50 focus:text-coral-700",
+                  "text-[13px] text-coral-600",
+                  "focus:bg-coral-50 focus:text-coral-600",
                 )}
               >
                 <LogOut size={13} className="mr-2" />

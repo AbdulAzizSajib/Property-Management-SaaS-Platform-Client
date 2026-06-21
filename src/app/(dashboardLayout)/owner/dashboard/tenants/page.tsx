@@ -234,10 +234,10 @@ export default function TenantsListPage() {
                     </div>
                 ) : isError ? (
                     <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
-                        <h2 className="text-[15px] font-bold text-coral-700">
+                        <h2 className="text-[15px] font-bold text-coral-600">
                             Couldn&apos;t load tenants
                         </h2>
-                        <p className="mt-1 text-[13px] text-coral-700/80">
+                        <p className="mt-1 text-[13px] text-coral-600/80">
                             {error instanceof Error
                                 ? error.message
                                 : "Please try again."}
@@ -381,7 +381,7 @@ function TenantCard({ tenant }: { tenant: TenantListItem }) {
                         On lease
                     </span>
                 ) : tenant.isActive ? (
-                    <span className="inline-flex items-center gap-1 rounded-md border border-coral-100 bg-coral-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-coral-700">
+                    <span className="inline-flex items-center gap-1 rounded-md border border-coral-100 bg-coral-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-coral-600">
                         No lease
                     </span>
                 ) : (

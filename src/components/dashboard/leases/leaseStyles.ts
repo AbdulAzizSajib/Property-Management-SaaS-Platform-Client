@@ -17,7 +17,7 @@ import type { LeaseStatus } from "@/src/types/lease.types";
 export const leaseStatusStyles: Record<LeaseStatus, string> = {
     ACTIVE: "bg-jade-50 text-jade-800 border-jade-100",
     RENEWED: "bg-jade-50 text-jade-800 border-jade-100",
-    PENDING: "bg-coral-50 text-coral-700 border-coral-100",
+    PENDING: "bg-coral-50 text-coral-600 border-coral-100",
     TERMINATED: "bg-cream text-ink-soft border-rule-soft",
     EXPIRED: "bg-cream text-ink-soft border-rule-soft",
 };
@@ -53,9 +53,9 @@ export function getLeaseStatusTone(status: string): string {
 
 export const invoiceStatusStyles: Record<string, string> = {
     PAID: "bg-jade-50 text-jade-800 border-jade-100",
-    PARTIAL: "bg-coral-50/60 text-coral-700 border-coral-100",
-    DUE: "bg-coral-50 text-coral-700 border-coral-100",
-    OVERDUE: "bg-coral-50 text-coral-700 border-coral-100",
+    PARTIAL: "bg-coral-50/60 text-coral-600 border-coral-100",
+    DUE: "bg-coral-50 text-coral-600 border-coral-100",
+    OVERDUE: "bg-coral-50 text-coral-600 border-coral-100",
     VOID: "bg-cream text-ink-soft border-rule-soft",
 };
 

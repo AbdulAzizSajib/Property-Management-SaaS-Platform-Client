@@ -27,7 +27,11 @@ export type RegisterPayload = {
     email: string;
     password: string;
     contactNumber: string;
-    organization: {
+    /**
+     * Optional — the backend auto-creates the organization for a new owner,
+     * so the registration UI no longer collects org details.
+     */
+    organization?: {
         name: string;
         slug: string;
         /** Optional — backend accepts org without contact phone. */

@@ -75,10 +75,10 @@ export default function AdminSubscriptionsPage() {
                     </div>
                 ) : isError ? (
                     <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
-                        <h2 className="text-[15px] font-bold text-coral-700">
+                        <h2 className="text-[15px] font-bold text-coral-600">
                             Couldn&apos;t load subscriptions
                         </h2>
-                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-700/80">
+                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-600/80">
                             {error instanceof Error
                                 ? error.message
                                 : "Something went wrong."}
@@ -173,9 +173,9 @@ function StatusBadge({ status }: { status: SubscriptionStatus }) {
     const map: Record<SubscriptionStatus, string> = {
         TRIALING: "border-jade-100 bg-jade-50/60 text-jade-700",
         ACTIVE: "border-jade-100 bg-jade-50 text-jade-800",
-        PAST_DUE: "border-coral-100 bg-coral-50 text-coral-700",
+        PAST_DUE: "border-coral-100 bg-coral-50 text-coral-600",
         CANCELED: "border-rule-soft bg-cream text-ink-soft",
-        EXPIRED: "border-coral-100 bg-coral-50 text-coral-700",
+        EXPIRED: "border-coral-100 bg-coral-50 text-coral-600",
     };
     return (
         <span

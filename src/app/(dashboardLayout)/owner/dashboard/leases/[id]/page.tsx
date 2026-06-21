@@ -87,10 +87,10 @@ export default function LeaseDetailPage() {
                         Back to leases
                     </Link>
                     <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
-                        <h2 className="text-[15px] font-bold text-coral-700">
+                        <h2 className="text-[15px] font-bold text-coral-600">
                             Couldn&apos;t load lease
                         </h2>
-                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-700/80">
+                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-600/80">
                             {error instanceof Error
                                 ? error.message
                                 : "Lease not found."}
@@ -213,7 +213,7 @@ export default function LeaseDetailPage() {
                             <button
                                 type="button"
                                 onClick={() => setTerminateOpen(true)}
-                                className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-[8px] border border-coral-100 bg-coral-50 px-3 text-[12.5px] font-semibold text-coral-700 transition-colors hover:bg-coral-100"
+                                className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-[8px] border border-coral-100 bg-coral-50 px-3 text-[12.5px] font-semibold text-coral-600 transition-colors hover:bg-coral-100"
                             >
                                 <LogOut size={12} />
                                 Terminate
@@ -412,7 +412,7 @@ export default function LeaseDetailPage() {
                             className={cn(
                                 "inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[10.5px] font-semibold uppercase tracking-wider",
                                 isSeparate
-                                    ? "border-coral-100 bg-coral-50 text-coral-700"
+                                    ? "border-coral-100 bg-coral-50 text-coral-600"
                                     : "border-jade-100 bg-jade-50/60 text-jade-700",
                             )}
                         >
@@ -643,7 +643,7 @@ export default function LeaseDetailPage() {
                         </AlertDialogHeader>
 
                         {dueTotal > 0 && (
-                            <div className="flex items-start gap-2 rounded-[10px] border border-coral-100 bg-coral-50/70 px-3 py-2 text-[12.5px] text-coral-700">
+                            <div className="flex items-start gap-2 rounded-[10px] border border-coral-100 bg-coral-50/70 px-3 py-2 text-[12.5px] text-coral-600">
                                 <AlertTriangle
                                     size={13}
                                     className="mt-0.5 shrink-0"
@@ -783,7 +783,7 @@ function MoneyTile({
                 <p
                     className={cn(
                         "text-[10.5px] font-semibold uppercase tracking-[0.12em]",
-                        warn ? "text-coral-700" : "text-ink-soft",
+                        warn ? "text-coral-600" : "text-ink-soft",
                     )}
                 >
                     {label}
@@ -800,7 +800,7 @@ function MoneyTile({
             <p
                 className={cn(
                     "mt-1.5 text-[22px] font-bold tracking-[-0.025em] tabular-nums leading-none",
-                    warn ? "text-coral-700" : "text-jade-950",
+                    warn ? "text-coral-600" : "text-jade-950",
                 )}
             >
                 {value}
@@ -808,7 +808,7 @@ function MoneyTile({
             <p
                 className={cn(
                     "mt-1.5 text-[11.5px]",
-                    warn ? "text-coral-700/85 font-medium" : "text-ink-soft",
+                    warn ? "text-coral-600/85 font-medium" : "text-ink-soft",
                 )}
             >
                 {sub}

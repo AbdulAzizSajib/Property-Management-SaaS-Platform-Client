@@ -15,7 +15,6 @@ export type RouteOwner = UserRole | "COMMON";
 export const authRoutes = [
     "/login",
     "/register",
-    "/forgot-password",
     "/reset-password",
     "/verify-email",
 ];

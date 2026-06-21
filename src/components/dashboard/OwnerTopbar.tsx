@@ -15,14 +15,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/src/components/ui/sheet";
 import { httpClient } from "@/src/lib/axios/browserHttpClient";
 import { cn } from "@/src/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
-import {
-  ChevronDown,
-  Key,
-  LogOut,
-  Menu,
-  Search,
-  User,
-} from "lucide-react";
+import { ChevronDown, Key, LogOut, Menu, Search, User } from "lucide-react";
 import { NotificationsBell } from "./NotificationsBell";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -74,9 +67,7 @@ export function OwnerTopbar({
       router.refresh();
     } catch (error) {
       setLoggingOut(false);
-      toast.error(
-        error instanceof Error ? error.message : "Failed to log out",
-      );
+      toast.error(error instanceof Error ? error.message : "Failed to log out");
     }
   };
 
@@ -108,9 +99,6 @@ export function OwnerTopbar({
         <span className="flex-1 truncate text-ink-soft/75 group-hover:text-ink">
           Search buildings, tenants, invoices…
         </span>
-        <kbd className="hidden shrink-0 items-center gap-0.5 rounded border border-rule-soft bg-paper px-1.5 py-0.5 font-mono text-[10.5px] font-medium text-ink-soft sm:inline-flex">
-          ⌘K
-        </kbd>
       </button>
 
       <div className="ml-auto flex items-center gap-1.5">
@@ -176,8 +164,8 @@ export function OwnerTopbar({
                 disabled={loggingOut}
                 onClick={handleLogout}
                 className={cn(
-                  "text-[13px] text-coral-700",
-                  "focus:bg-coral-50 focus:text-coral-700",
+                  "text-[13px] text-coral-600",
+                  "focus:bg-coral-50 focus:text-coral-600",
                 )}
               >
                 <LogOut size={13} className="mr-2" />

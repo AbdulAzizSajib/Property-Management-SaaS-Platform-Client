@@ -75,10 +75,10 @@ export default function DocumentDetailPage() {
                         Back to documents
                     </Link>
                     <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
-                        <h2 className="text-[15px] font-bold text-coral-700">
+                        <h2 className="text-[15px] font-bold text-coral-600">
                             Couldn&apos;t load document
                         </h2>
-                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-700/80">
+                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-600/80">
                             {error instanceof Error
                                 ? error.message
                                 : "Document not found."}
@@ -126,7 +126,7 @@ export default function DocumentDetailPage() {
                         <button
                             type="button"
                             onClick={() => setDeleteOpen(true)}
-                            className="inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-coral-100 bg-coral-50/70 px-3 text-[12.5px] font-medium text-coral-700 transition-colors hover:bg-coral-50"
+                            className="inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-coral-100 bg-coral-50/70 px-3 text-[12.5px] font-medium text-coral-600 transition-colors hover:bg-coral-50"
                         >
                             <Trash2 size={12} />
                             Delete
@@ -196,7 +196,7 @@ export default function DocumentDetailPage() {
                         className="group flex items-center gap-3 rounded-[14px] border border-rule-soft bg-paper px-5 py-4 transition-colors hover:bg-cream/60"
                     >
                         <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-[10px] bg-coral-50">
-                            <glyph.Icon size={18} className="text-coral-700" />
+                            <glyph.Icon size={18} className="text-coral-600" />
                         </span>
                         <div className="min-w-0 flex-1">
                             <p className="text-[13.5px] font-semibold text-jade-950 group-hover:text-jade-900">

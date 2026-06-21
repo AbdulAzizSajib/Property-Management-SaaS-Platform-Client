@@ -53,7 +53,7 @@ const statusStyles: Record<
     },
     PAST_DUE: {
         label: "Past due",
-        className: "bg-coral-50 text-coral-700 border-coral-100",
+        className: "bg-coral-50 text-coral-600 border-coral-100",
     },
     CANCELED: {
         label: "Canceled",
@@ -61,7 +61,7 @@ const statusStyles: Record<
     },
     EXPIRED: {
         label: "Expired",
-        className: "bg-coral-50 text-coral-700 border-coral-100",
+        className: "bg-coral-50 text-coral-600 border-coral-100",
     },
 };
 
@@ -117,10 +117,10 @@ export default function SubscriptionPage() {
             <div className="min-h-screen bg-cream">
                 <div className="mx-auto max-w-[1240px] p-4 sm:p-6 lg:p-8">
                     <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
-                        <h2 className="text-[15px] font-bold text-coral-700">
+                        <h2 className="text-[15px] font-bold text-coral-600">
                             Couldn&apos;t load subscription
                         </h2>
-                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-700/80">
+                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-600/80">
                             {error instanceof Error
                                 ? error.message
                                 : "Something went wrong. Please try again."}
@@ -186,7 +186,7 @@ export default function SubscriptionPage() {
                                     cancelSub.mutate();
                                 }
                             }}
-                            className="inline-flex h-9 items-center gap-1.5 rounded-[10px] border border-coral-200 bg-coral-50/60 px-3 text-[13px] font-semibold text-coral-700 transition-colors hover:bg-coral-50 disabled:opacity-60"
+                            className="inline-flex h-9 items-center gap-1.5 rounded-[10px] border border-coral-200 bg-coral-50/60 px-3 text-[13px] font-semibold text-coral-600 transition-colors hover:bg-coral-50 disabled:opacity-60"
                         >
                             {cancelSub.isPending ? (
                                 <Loader2 size={14} className="animate-spin" />
@@ -201,16 +201,16 @@ export default function SubscriptionPage() {
                     trialDaysLeft !== null &&
                     trialDaysLeft <= 7 && (
                         <div className="flex items-start gap-3 rounded-[14px] border border-coral-100 bg-coral-50/70 px-4 py-3.5">
-                            <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-coral-100 text-coral-700">
+                            <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-coral-100 text-coral-600">
                                 <Clock size={16} />
                             </span>
                             <div className="flex-1">
-                                <p className="text-[14px] font-bold text-coral-700">
+                                <p className="text-[14px] font-bold text-coral-600">
                                     {trialDaysLeft <= 0
                                         ? "Your free trial has ended"
                                         : `${trialDaysLeft} day${trialDaysLeft === 1 ? "" : "s"} left on your free trial`}
                                 </p>
-                                <p className="text-[12.5px] text-coral-700/80 mt-0.5">
+                                <p className="text-[12.5px] text-coral-600/80 mt-0.5">
                                     Upgrade now to keep access to all your
                                     buildings, units and tenants without
                                     interruption.

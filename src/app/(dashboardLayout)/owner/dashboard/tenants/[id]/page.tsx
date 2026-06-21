@@ -87,10 +87,10 @@ export default function TenantDetailPage() {
                         Back to tenants
                     </Link>
                     <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
-                        <h2 className="text-[15px] font-bold text-coral-700">
+                        <h2 className="text-[15px] font-bold text-coral-600">
                             Couldn&apos;t load tenant
                         </h2>
-                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-700/80">
+                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-600/80">
                             {error instanceof Error
                                 ? error.message
                                 : "Tenant not found."}
@@ -222,7 +222,7 @@ export default function TenantDetailPage() {
                                 <button
                                     type="button"
                                     onClick={() => setDeactivateOpen(true)}
-                                    className="inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-coral-100 bg-coral-50 px-3 text-[12.5px] font-semibold text-coral-700 transition-colors hover:bg-coral-100"
+                                    className="inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-coral-100 bg-coral-50 px-3 text-[12.5px] font-semibold text-coral-600 transition-colors hover:bg-coral-100"
                                 >
                                     <Power size={12} />
                                     Deactivate
@@ -332,7 +332,7 @@ export default function TenantDetailPage() {
                                     )}
                                 </div>
                             ) : (
-                                <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-md border border-coral-100 bg-coral-50/60 px-2 py-1 text-[11.5px] text-coral-700">
+                                <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-md border border-coral-100 bg-coral-50/60 px-2 py-1 text-[11.5px] text-coral-600">
                                     <AlertTriangle size={11} />
                                     No emergency contact on file
                                 </div>
@@ -381,7 +381,7 @@ export default function TenantDetailPage() {
                                             "rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
                                             tenant.user.emailVerified
                                                 ? "bg-jade-50 text-jade-800 border-jade-100"
-                                                : "bg-coral-50 text-coral-700 border-coral-100",
+                                                : "bg-coral-50 text-coral-600 border-coral-100",
                                         )}
                                     >
                                         {tenant.user.emailVerified
@@ -621,7 +621,7 @@ export default function TenantDetailPage() {
                                 won&apos;t appear in new lease pickers.
                             </AlertDialogDescription>
                             {activeLeases.length > 0 && (
-                                <div className="mt-3 flex items-start gap-2 rounded-[10px] border border-coral-100 bg-coral-50/70 px-3 py-2 text-[12.5px] text-coral-700">
+                                <div className="mt-3 flex items-start gap-2 rounded-[10px] border border-coral-100 bg-coral-50/70 px-3 py-2 text-[12.5px] text-coral-600">
                                     <AlertTriangle
                                         size={13}
                                         className="mt-0.5 shrink-0"

@@ -231,7 +231,7 @@ export function GenerateInvoiceDialog({
                                     </li>
                                 )}
                                 {Number(penaltyAmount) > 0 && (
-                                    <li className="flex justify-between tabular-nums text-coral-700">
+                                    <li className="flex justify-between tabular-nums text-coral-600">
                                         <span>Penalty</span>
                                         <span>
                                             {formatMoney(Number(penaltyAmount))}

@@ -134,7 +134,7 @@ export function FloorsPanel({ buildingId, totalFloors }: FloorsPanelProps) {
                         ))}
                     </ul>
                 ) : isError ? (
-                    <div className="rounded-[10px] border border-coral-100 bg-coral-50/60 px-3 py-2.5 text-[13px] text-coral-700">
+                    <div className="rounded-[10px] border border-coral-100 bg-coral-50/60 px-3 py-2.5 text-[13px] text-coral-600">
                         {error instanceof Error
                             ? error.message
                             : "Couldn't load floors."}
@@ -276,7 +276,7 @@ function FloorRow({
                     <DropdownMenuItem
                         variant="destructive"
                         onClick={onDelete}
-                        className="text-coral-700 focus:bg-coral-50 focus:text-coral-700"
+                        className="text-coral-600 focus:bg-coral-50 focus:text-coral-600"
                     >
                         <Trash2 size={13} className="mr-2" /> Delete
                     </DropdownMenuItem>

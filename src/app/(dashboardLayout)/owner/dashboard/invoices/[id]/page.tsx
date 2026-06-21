@@ -69,10 +69,10 @@ export default function InvoiceDetailPage() {
                         Back to invoices
                     </Link>
                     <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
-                        <h2 className="text-[15px] font-bold text-coral-700">
+                        <h2 className="text-[15px] font-bold text-coral-600">
                             Couldn&apos;t load invoice
                         </h2>
-                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-700/80">
+                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-600/80">
                             {error instanceof Error
                                 ? error.message
                                 : "Invoice not found."}
@@ -120,7 +120,7 @@ export default function InvoiceDetailPage() {
                             <button
                                 type="button"
                                 onClick={() => setCancelOpen(true)}
-                                className="inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-coral-100 bg-coral-50/60 px-3 text-[12.5px] font-medium text-coral-700 transition-colors hover:bg-coral-50"
+                                className="inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-coral-100 bg-coral-50/60 px-3 text-[12.5px] font-medium text-coral-600 transition-colors hover:bg-coral-50"
                             >
                                 <XCircle size={12} />
                                 Cancel
@@ -198,7 +198,7 @@ export default function InvoiceDetailPage() {
                                 className={cn(
                                     "mt-3 text-[40px] font-bold leading-none tracking-[-0.025em] tabular-nums sm:text-[44px]",
                                     hasDue
-                                        ? "text-coral-700"
+                                        ? "text-coral-600"
                                         : "text-jade-800",
                                 )}
                             >
@@ -399,7 +399,7 @@ export default function InvoiceDetailPage() {
                                             className={cn(
                                                 "px-4 py-3 text-right text-[16px] font-bold tabular-nums",
                                                 hasDue
-                                                    ? "text-coral-700"
+                                                    ? "text-coral-600"
                                                     : "text-jade-800",
                                             )}
                                         >
@@ -565,7 +565,7 @@ function DateBlock({
             <p
                 className={cn(
                     "mt-1 text-[13.5px] font-semibold tabular-nums",
-                    emphasis ? "text-coral-700" : "text-jade-950",
+                    emphasis ? "text-coral-600" : "text-jade-950",
                 )}
             >
                 {value}
@@ -627,7 +627,7 @@ function ChargeRow({
             <td
                 className={cn(
                     "px-4 py-2.5 text-right tabular-nums font-semibold",
-                    warn ? "text-coral-700" : "text-jade-950",
+                    warn ? "text-coral-600" : "text-jade-950",
                 )}
             >
                 {formatMoney(value)}

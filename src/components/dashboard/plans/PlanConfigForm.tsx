@@ -468,7 +468,7 @@ export function PlanConfigForm({
                                         type="button"
                                         onClick={() => removeFeature(i)}
                                         aria-label={`Remove "${f}"`}
-                                        className="inline-flex size-6 items-center justify-center rounded-md text-ink-soft transition-colors hover:bg-coral-50 hover:text-coral-700"
+                                        className="inline-flex size-6 items-center justify-center rounded-md text-ink-soft transition-colors hover:bg-coral-50 hover:text-coral-600"
                                     >
                                         <X size={13} />
                                     </button>
@@ -597,7 +597,7 @@ function Field({
             </div>
             {children}
             {error ? (
-                <p className="text-[11px] font-medium text-coral-700">
+                <p className="text-[11px] font-medium text-coral-600">
                     {error}
                 </p>
             ) : hint ? (

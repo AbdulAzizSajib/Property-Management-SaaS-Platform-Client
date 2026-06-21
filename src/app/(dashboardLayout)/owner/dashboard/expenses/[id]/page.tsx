@@ -79,10 +79,10 @@ export default function ExpenseDetailPage() {
                         Back to expenses
                     </Link>
                     <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
-                        <h2 className="text-[15px] font-bold text-coral-700">
+                        <h2 className="text-[15px] font-bold text-coral-600">
                             Couldn&apos;t load expense
                         </h2>
-                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-700/80">
+                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-600/80">
                             {error instanceof Error
                                 ? error.message
                                 : "Expense not found."}
@@ -132,7 +132,7 @@ export default function ExpenseDetailPage() {
                         <button
                             type="button"
                             onClick={() => setDeleteOpen(true)}
-                            className="inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-coral-100 bg-coral-50/70 px-3 text-[12.5px] font-medium text-coral-700 transition-colors hover:bg-coral-50"
+                            className="inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-coral-100 bg-coral-50/70 px-3 text-[12.5px] font-medium text-coral-600 transition-colors hover:bg-coral-50"
                         >
                             <Trash2 size={12} />
                             Delete
@@ -211,7 +211,7 @@ export default function ExpenseDetailPage() {
                             label="Amount"
                             bn="পরিমাণ"
                         >
-                            <span className="text-[14px] font-bold tabular-nums text-coral-700">
+                            <span className="text-[14px] font-bold tabular-nums text-coral-600">
                                 {formatMoney(e.amount)}
                             </span>
                         </DetailRow>

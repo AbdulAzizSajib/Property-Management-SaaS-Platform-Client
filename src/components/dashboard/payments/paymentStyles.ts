@@ -17,8 +17,8 @@ import type {
 
 export const paymentStatusStyles: Record<PaymentStatus, string> = {
     PAID: "bg-jade-50 text-jade-800 border-jade-100",
-    PENDING: "bg-coral-50/60 text-coral-700 border-coral-100",
-    FAILED: "bg-coral-50 text-coral-700 border-coral-100",
+    PENDING: "bg-coral-50/60 text-coral-600 border-coral-100",
+    FAILED: "bg-coral-50 text-coral-600 border-coral-100",
     REFUNDED: "bg-cream text-ink-soft border-rule-soft",
 };
 
@@ -41,9 +41,9 @@ export function paymentStatusLabel(status: PaymentStatus): string {
 
 export const paymentMethodStyles: Record<PaymentMethod, string> = {
     CASH: "bg-jade-50 text-jade-800 border-jade-100",
-    BKASH: "bg-coral-50 text-coral-700 border-coral-100",
+    BKASH: "bg-coral-50 text-coral-600 border-coral-100",
     NAGAD: "bg-jade-50/60 text-jade-700 border-jade-100/70",
-    ROCKET: "bg-coral-50/60 text-coral-700 border-coral-100",
+    ROCKET: "bg-coral-50/60 text-coral-600 border-coral-100",
     BANK_TRANSFER: "bg-cream text-ink border-rule-soft",
     CARD: "bg-cream/80 text-ink border-rule-soft",
     CHEQUE: "bg-cream/60 text-ink-soft border-rule-soft",

@@ -1,16 +1,12 @@
 "use client";
 import { ApiError } from "@/src/lib/api";
 import { registerOwner } from "@/src/lib/auth";
-import { isBdPhone, isEmail, slugify } from "@/src/lib/validation";
+import { verifyEmailAction } from "@/src/services/auth.services";
+import { isBdPhone, isEmail } from "@/src/lib/validation";
 import type { RegisterPayload } from "@/src/types/auth";
-import {
-  useVerifyEmail,
-  useResendVerificationOtp,
-} from "@/src/hooks/useAuthActions";
-import { clearAuthCookies } from "@/src/lib/cookieUtils";
+import { useResendVerificationOtp } from "@/src/hooks/useAuthActions";
 import {
   AlertCircle,
-  ArrowLeft,
   ArrowRight,
   Eye,
   EyeOff,
@@ -22,7 +18,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import NeatBackground from "@/src/components/NeatBackground";
 
-type Step = 1 | 2 | 3;
+type Step = 1 | 2;
 
 const RESEND_COOLDOWN_SECONDS = 60;
 
@@ -31,8 +27,6 @@ type FormState = {
   email: string;
   password: string;
   contactNumber: string;
-  orgName: string;
-  orgAddress: string;
 };
 
 type FieldErrors = Partial<Record<keyof FormState, string>>;
@@ -42,8 +36,6 @@ const initialForm: FormState = {
   email: "",
   password: "",
   contactNumber: "",
-  orgName: "",
-  orgAddress: "",
 };
 
 export default function RegisterPage() {
@@ -57,8 +49,30 @@ export default function RegisterPage() {
   const [otpDigits, setOtpDigits] = useState<string[]>(["", "", "", ""]);
   const [otpError, setOtpError] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(0);
-  const verifyMut = useVerifyEmail();
+  const [verifying, setVerifying] = useState(false);
   const resendMut = useResendVerificationOtp();
+
+  async function handleVerify() {
+    setOtpError(null);
+    setVerifying(true);
+    try {
+      const result = await verifyEmailAction({
+        email: form.email.trim(),
+        otp: otpDigits.join(""),
+      });
+      if (result.ok) {
+        router.push(result.destination);
+        return;
+      }
+      setOtpError(result.message);
+      setOtpDigits(["", "", "", ""]);
+      document.getElementById("otp-0")?.focus();
+    } catch {
+      setOtpError("Verification failed. Please try again.");
+    } finally {
+      setVerifying(false);
+    }
+  }
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -84,21 +98,9 @@ export default function RegisterPage() {
     return Object.keys(e).length === 0;
   }
 
-  function validateStep2(): boolean {
-    const e: FieldErrors = {};
-    if (!form.orgName.trim()) e.orgName = "Organization name is required";
-    if (!form.orgAddress.trim()) e.orgAddress = "Address is required";
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  }
-
-  function handleNext() {
-    if (validateStep1()) setStep(2);
-  }
-
   async function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
-    if (!validateStep2()) return;
+    if (!validateStep1()) return;
 
     setSubmitting(true);
     setServerError(null);
@@ -108,17 +110,12 @@ export default function RegisterPage() {
       email: form.email.trim(),
       password: form.password,
       contactNumber: form.contactNumber.trim(),
-      organization: {
-        name: form.orgName.trim(),
-        slug: slugify(form.orgName),
-        address: form.orgAddress.trim(),
-      },
     };
 
     try {
       await registerOwner(payload);
       setCooldown(RESEND_COOLDOWN_SECONDS);
-      setStep(3);
+      setStep(2);
     } catch (err) {
       if (err instanceof ApiError) {
         setServerError(err.message);
@@ -140,7 +137,7 @@ export default function RegisterPage() {
           href="/"
           className="flex flex-col items-center justify-center text-jade-900 dark:text-jade-50 text-3xl font-bold tracking-tight relative"
         >
-          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" style={{ display: "block" }} viewBox="366.667 680 1230.667 682.667" className="h-7 w-auto absolute -top-3.5 left-[115px]" preserveAspectRatio="none">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" style={{ display: "block" }} viewBox="366.667 680 1230.667 682.667" className="h-7 w-auto absolute -top-3.5 left-28.75" preserveAspectRatio="none">
             <path transform="translate(0,0)" fill="#247460" d="M 1156.17 704.057 C 1165.62 709.999 1189.79 730.077 1199.78 737.954 C 1232.79 763.92 1265.63 790.088 1298.32 816.455 L 1573.77 1033.95 C 1559.4 1034.24 1499.39 1036.14 1489.09 1032.69 C 1475.17 1028.02 1460.98 1016.83 1448.48 1009.03 L 1378 965.121 C 1306.39 920.635 1231.94 876.987 1161.12 831.747 C 1148.71 838.78 1123.69 857.081 1111.02 865.707 L 1014.95 930.551 C 907.585 1003.92 799.428 1076.13 690.502 1147.16 L 495.835 1273.03 C 463.437 1293.65 423.702 1320.34 390.529 1338.03 C 406.372 1321.62 437.975 1295.44 455.536 1280.56 C 488.408 1252.41 521.487 1224.51 554.77 1196.85 L 695.66 1078.95 C 722.179 1056.67 751.695 1030.44 778.776 1009.4 C 777.735 986.8 778.572 957.352 778.594 934.29 L 778.619 789.032 C 815.8 789.05 853.371 788.795 890.52 789.278 C 890.683 815.378 890.691 841.478 890.544 867.578 C 890.556 883.121 891.24 904.906 890.214 919.622 C 979.24 853.148 1069.25 774.057 1156.17 704.057 z"></path>
             <path transform="translate(0,0)" fill="#247460" d="M 1088.78 1065.28 C 1107.1 1066.51 1133.97 1065.68 1152.84 1065.65 C 1153.36 1086.21 1152.99 1108.84 1153.02 1129.55 C 1131.64 1129.28 1110.25 1129.25 1088.87 1129.46 C 1088.45 1108.45 1088.77 1086.37 1088.78 1065.28 z"></path>
             <path transform="translate(0,0)" fill="#247460" d="M 1183.02 1065.44 C 1201.98 1065.05 1222.24 1065.3 1241.28 1065.23 C 1241.26 1073.17 1242.03 1125.66 1240.39 1129.39 L 1236.25 1129.6 L 1177.8 1129.53 C 1177.87 1121.15 1176.43 1069.6 1178.98 1065.78 L 1183.02 1065.44 z"></path>
@@ -155,7 +152,7 @@ export default function RegisterPage() {
         <div className="mt-4">
           <div className="w-full">
             <div className="mb-5">
-              <h1 className="mt-0.5 text-[26px] sm:text-[28px] font-bold tracking-[-0.02em] text-jade-950">
+              <h1 className="mt-0.5 text-[26px] sm:text-[28px] font-bold tracking-[-0.02em] text-jade-950 text-center">
                 Create your account
               </h1>
             </div>
@@ -165,24 +162,24 @@ export default function RegisterPage() {
               <div className="flex items-center gap-2">
                 <div className={`h-1.5 flex-1 rounded-full transition-colors ${step >= 1 ? "bg-jade-900" : "bg-rule-soft"}`} />
                 <div className={`h-1.5 flex-1 rounded-full transition-colors ${step >= 2 ? "bg-jade-900" : "bg-rule-soft"}`} />
-                <div className={`h-1.5 flex-1 rounded-full transition-colors ${step >= 3 ? "bg-jade-900" : "bg-rule-soft"}`} />
               </div>
               <p className="mt-2 text-[11.5px] text-ink-soft tabular-nums">
                 Step <span className="font-semibold text-ink">{step}</span> of{" "}
-                <span className="tabular-nums">3</span> —{" "}
-                {step === 1 ? "Owner details" : step === 2 ? "Organization details" : "Verify your email"}
+                <span className="tabular-nums">2</span> —{" "}
+                {step === 1 ? "Owner details" : "Verify your email"}
               </p>
             </div>
+            
 
             {serverError && (
-              <div className="flex items-start gap-2 mb-4 px-3 py-2.5 rounded-[10px] bg-coral-50/70 border border-coral-100 text-coral-700 text-[13px]">
+              <div className="flex items-start gap-2 mb-4 px-3 py-2.5 rounded-[10px] bg-coral-50/70 border border-coral-100 text-coral-600 text-[13px]">
                 <AlertCircle size={15} className="mt-0.5 shrink-0" />
                 <span>{serverError}</span>
               </div>
             )}
 
-            {/* Step 3: Email verification */}
-            {step === 3 && (
+            {/* Step 2: Email verification */}
+            {step === 2 && (
               <div className="space-y-5">
                 {/* Email sent notice */}
                 <div className="rounded-[12px] bg-jade-50/60 border border-jade-100 px-4 py-3.5 flex gap-3 items-start">
@@ -199,7 +196,7 @@ export default function RegisterPage() {
                 </div>
 
                 {otpError && (
-                  <div className="flex items-start gap-2 px-3 py-2.5 rounded-[10px] bg-coral-50/70 border border-coral-100 text-coral-700 text-[13px]">
+                  <div className="flex items-start gap-2 px-3 py-2.5 rounded-[10px] bg-coral-50/70 border border-coral-100 text-coral-600 text-[13px]">
                     <AlertCircle size={15} className="mt-0.5 shrink-0" />
                     <span>{otpError}</span>
                   </div>
@@ -260,27 +257,11 @@ export default function RegisterPage() {
 
                 <button
                   type="button"
-                  disabled={verifyMut.isPending || otpDigits.some((d) => d === "")}
-                  onClick={() => {
-                    setOtpError(null);
-                    verifyMut.mutate(
-                      { email: form.email.trim(), otp: otpDigits.join("") },
-                      {
-                        onSuccess: async () => {
-                          await clearAuthCookies();
-                          router.push("/login?verified=1");
-                        },
-                        onError: () => {
-                          setOtpError("Invalid or expired OTP. Please try again.");
-                          setOtpDigits(["", "", "", ""]);
-                          document.getElementById("otp-0")?.focus();
-                        },
-                      },
-                    );
-                  }}
+                  disabled={verifying || otpDigits.some((d) => d === "")}
+                  onClick={handleVerify}
                   className="w-full inline-flex items-center justify-center gap-2 bg-jade-900 hover:bg-jade-950 transition-colors px-4 py-3 rounded-[10px] text-paper text-[14px] font-semibold disabled:opacity-60 disabled:cursor-not-allowed shadow-[0_10px_30px_-12px_rgba(13,79,63,0.45)]"
                 >
-                  {verifyMut.isPending ? (
+                  {verifying ? (
                     <>
                       <Loader2 size={15} className="animate-spin" />
                       Verifying…
@@ -328,142 +309,94 @@ export default function RegisterPage() {
               </div>
             )}
 
-            {/* Steps 1 & 2: Registration form */}
-            {step !== 3 && (
+            {/* Step 1: Registration form */}
+            {step === 1 && (
               <form onSubmit={handleSubmit} className="space-y-2" noValidate>
-                {step === 1 ? (
-                  <>
-                    <Field label="Full name" required error={errors.name}>
-                      <input
-                        type="text"
-                        autoComplete="name"
-                        value={form.name}
-                        onChange={(e) => update("name", e.target.value)}
-                        placeholder="e.g. Aziz Sajib"
-                        className={inputClass(!!errors.name)}
-                      />
-                    </Field>
+                <Field label="Full name" required error={errors.name}>
+                  <input
+                    type="text"
+                    autoComplete="name"
+                    value={form.name}
+                    onChange={(e) => update("name", e.target.value)}
+                    placeholder="e.g. Aziz Sajib"
+                    className={inputClass(!!errors.name)}
+                  />
+                </Field>
 
-                    <Field label="Email address" required error={errors.email}>
-                      <input
-                        type="email"
-                        autoComplete="email"
-                        value={form.email}
-                        onChange={(e) => update("email", e.target.value)}
-                        placeholder="owner@example.com"
-                        className={inputClass(!!errors.email)}
-                      />
-                    </Field>
+                <Field label="Email address" required error={errors.email}>
+                  <input
+                    type="email"
+                    autoComplete="email"
+                    value={form.email}
+                    onChange={(e) => update("email", e.target.value)}
+                    placeholder="owner@example.com"
+                    className={inputClass(!!errors.email)}
+                  />
+                </Field>
 
-                    <Field
-                      label="Password"
-                      required
-                      error={errors.password}
-                      hint="Minimum 8 characters"
-                    >
-                      <div className="relative">
-                        <input
-                          type={showPassword ? "text" : "password"}
-                          autoComplete="new-password"
-                          value={form.password}
-                          onChange={(e) => update("password", e.target.value)}
-                          placeholder="••••••••"
-                          className={inputClass(!!errors.password, "pr-10")}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword((s) => !s)}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-ink-soft hover:text-jade-900"
-                          aria-label={showPassword ? "Hide password" : "Show password"}
-                        >
-                          {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
-                        </button>
-                      </div>
-                    </Field>
-
-                    <Field
-                      label="Contact number"
-                      required
-                      error={errors.contactNumber}
-                      hint="11-digit Bangladeshi mobile"
-                    >
-                      <input
-                        type="tel"
-                        inputMode="numeric"
-                        autoComplete="tel"
-                        value={form.contactNumber}
-                        onChange={(e) =>
-                          update("contactNumber", e.target.value.replace(/\s+/g, ""))
-                        }
-                        placeholder="01711000111"
-                        maxLength={11}
-                        className={inputClass(!!errors.contactNumber, "tabular-nums")}
-                      />
-                    </Field>
-
+                <Field
+                  label="Password"
+                  required
+                  error={errors.password}
+                  hint="Minimum 8 characters"
+                >
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      autoComplete="new-password"
+                      value={form.password}
+                      onChange={(e) => update("password", e.target.value)}
+                      placeholder="••••••••"
+                      className={inputClass(!!errors.password, "pr-10")}
+                    />
                     <button
                       type="button"
-                      onClick={handleNext}
-                      className="w-full mt-2 inline-flex items-center justify-center gap-2 bg-jade-900 hover:bg-jade-950 transition-colors px-4 py-3 rounded-[10px] text-paper text-[14px] font-semibold shadow-[0_10px_30px_-12px_rgba(13,79,63,0.45)]"
+                      onClick={() => setShowPassword((s) => !s)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-ink-soft hover:text-jade-900"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
                     >
-                      Continue
-                      <ArrowRight size={15} />
+                      {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                     </button>
-                  </>
-                ) : (
-                  <>
-                    <Field label="Organization name" required error={errors.orgName}>
-                      <input
-                        type="text"
-                        autoComplete="organization"
-                        value={form.orgName}
-                        onChange={(e) => update("orgName", e.target.value)}
-                        placeholder="Sajib Properties Ltd."
-                        className={inputClass(!!errors.orgName)}
-                      />
-                    </Field>
+                  </div>
+                </Field>
 
-                    <Field label="Address" required error={errors.orgAddress}>
-                      <input
-                        type="text"
-                        autoComplete="street-address"
-                        value={form.orgAddress}
-                        onChange={(e) => update("orgAddress", e.target.value)}
-                        placeholder="Lalmatia, Dhaka"
-                        className={inputClass(!!errors.orgAddress)}
-                      />
-                    </Field>
+                <Field
+                  label="Contact number"
+                  required
+                  error={errors.contactNumber}
+                  hint="11-digit Bangladeshi mobile"
+                >
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    autoComplete="tel"
+                    value={form.contactNumber}
+                    onChange={(e) =>
+                      update("contactNumber", e.target.value.replace(/\s+/g, ""))
+                    }
+                    placeholder="01711000111"
+                    maxLength={11}
+                    className={inputClass(!!errors.contactNumber, "tabular-nums")}
+                  />
+                </Field>
 
-                    <div className="flex items-center gap-3 pt-2">
-                      <button
-                        type="button"
-                        onClick={() => setStep(1)}
-                        disabled={submitting}
-                        className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-[10px] border border-rule-soft bg-paper text-ink-soft hover:border-jade-700/30 hover:text-jade-900 transition-colors text-[14px] font-medium disabled:opacity-50"
-                      >
-                        <ArrowLeft size={15} />
-                        Back
-                      </button>
-                      <button
-                        type="submit"
-                        disabled={submitting}
-                        className="flex-1 inline-flex items-center justify-center gap-2 bg-jade-900 hover:bg-jade-950 transition-colors px-4 py-3 rounded-[10px] text-paper text-[14px] font-semibold disabled:opacity-60 disabled:cursor-not-allowed shadow-[0_10px_30px_-12px_rgba(13,79,63,0.45)]"
-                      >
-                        {submitting ? (
-                          <>
-                            <Loader2 size={15} className="animate-spin" />
-                            Creating account…
-                          </>
-                        ) : (
-                          <>
-                            Create account
-                            <ArrowRight size={15} />
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </>
-                )}
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full mt-2 inline-flex items-center justify-center gap-2 bg-jade-900 hover:bg-jade-950 transition-colors px-4 py-3 rounded-[10px] text-paper text-[14px] font-semibold disabled:opacity-60 disabled:cursor-not-allowed shadow-[0_10px_30px_-12px_rgba(13,79,63,0.45)]"
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 size={15} className="animate-spin" />
+                      Creating account…
+                    </>
+                  ) : (
+                    <>
+                      Create account
+                      <ArrowRight size={15} />
+                    </>
+                  )}
+                </button>
               </form>
             )}
 
@@ -513,7 +446,7 @@ function Field({
       </span>
       <div className="mt-1.5">{children}</div>
       {error ? (
-        <span className="text-[11.5px] text-coral-700 mt-1 block">{error}</span>
+        <span className="text-[11.5px] text-coral-600 mt-1 block">{error}</span>
       ) : hint ? (
         <span className="text-[11.5px] text-ink-soft/85 mt-1 block">{hint}</span>
       ) : null}

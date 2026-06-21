@@ -33,7 +33,7 @@ export default function OccupancyReportPage() {
                         <Skeleton className="h-48 rounded-[14px] bg-paper" />
                     </div>
                 ) : isError || !data ? (
-                    <p className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-4 py-8 text-center text-[13px] text-coral-700">
+                    <p className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-4 py-8 text-center text-[13px] text-coral-600">
                         Couldn&apos;t load report.
                     </p>
                 ) : (
@@ -163,7 +163,7 @@ function Stat({
                 className={cn(
                     "mt-1 text-[20px] font-bold tabular-nums",
                     tone === "warn"
-                        ? "text-coral-700"
+                        ? "text-coral-600"
                         : tone === "good"
                             ? "text-jade-800"
                             : "text-jade-950",

@@ -59,10 +59,10 @@ export default function PaymentDetailPage() {
                         Back to payments
                     </Link>
                     <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
-                        <h2 className="text-[15px] font-bold text-coral-700">
+                        <h2 className="text-[15px] font-bold text-coral-600">
                             Couldn&apos;t load payment
                         </h2>
-                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-700/80">
+                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-600/80">
                             {error instanceof Error
                                 ? error.message
                                 : "Payment not found."}
@@ -173,7 +173,7 @@ export default function PaymentDetailPage() {
                                         isPaid
                                             ? "text-jade-800"
                                             : isFailed
-                                                ? "text-coral-700"
+                                                ? "text-coral-600"
                                                 : "text-ink-soft",
                                     )}
                                 >
@@ -303,7 +303,7 @@ export default function PaymentDetailPage() {
                                             className={cn(
                                                 "font-bold tabular-nums",
                                                 Number(p.invoice.dueAmount) > 0
-                                                    ? "text-coral-700"
+                                                    ? "text-coral-600"
                                                     : "text-jade-800",
                                             )}
                                         >
@@ -391,7 +391,7 @@ export default function PaymentDetailPage() {
                                                 isPaid
                                                     ? "text-jade-800"
                                                     : isFailed
-                                                        ? "text-coral-700"
+                                                        ? "text-coral-600"
                                                         : "text-ink-soft",
                                             )}
                                         >

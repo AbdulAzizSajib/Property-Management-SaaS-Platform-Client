@@ -144,7 +144,7 @@ export function GenerateMonthlyBatchDialog({
                     )}
 
                     {activeLeaseCount === 0 && (
-                        <div className="flex items-start gap-2 rounded-[10px] border border-coral-100 bg-coral-50/60 px-3 py-2 text-[12.5px] text-coral-700">
+                        <div className="flex items-start gap-2 rounded-[10px] border border-coral-100 bg-coral-50/60 px-3 py-2 text-[12.5px] text-coral-600">
                             <span>
                                 No active leases. Generate this batch later once
                                 you have active leases on record.

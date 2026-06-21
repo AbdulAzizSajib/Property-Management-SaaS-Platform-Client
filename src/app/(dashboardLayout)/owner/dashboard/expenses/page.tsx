@@ -307,10 +307,10 @@ function ExpensesListInner() {
                     <ListShell />
                 ) : isError ? (
                     <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
-                        <h2 className="text-[15px] font-bold text-coral-700">
+                        <h2 className="text-[15px] font-bold text-coral-600">
                             Couldn&apos;t load expenses
                         </h2>
-                        <p className="mt-1 text-[13px] text-coral-700/80">
+                        <p className="mt-1 text-[13px] text-coral-600/80">
                             {error instanceof Error
                                 ? error.message
                                 : "Please try again."}
@@ -415,7 +415,7 @@ function ExpenseRow({ expense }: { expense: ExpenseListItem }) {
                         <p className="text-[10px] font-semibold uppercase tracking-wider text-ink-soft">
                             Amount
                         </p>
-                        <p className="text-[16px] font-bold tabular-nums text-coral-700">
+                        <p className="text-[16px] font-bold tabular-nums text-coral-600">
                             {formatMoney(expense.amount)}
                         </p>
                     </div>
@@ -444,7 +444,7 @@ function MiniStat({
 }) {
     const valueTone =
         tone === "warn"
-            ? "text-coral-700"
+            ? "text-coral-600"
             : tone === "good"
                 ? "text-jade-950"
                 : "text-ink-soft/85";

@@ -14,7 +14,7 @@ import { fmtTaka } from "@/src/lib/numerals";
 // ─────────────────────────────────────────────────────────────────
 
 export const unitStatusStyles: Record<UnitStatus, string> = {
-    VACANT: "bg-coral-50 text-coral-700 border-coral-100",
+    VACANT: "bg-coral-50 text-coral-600 border-coral-100",
     OCCUPIED: "bg-jade-50 text-jade-800 border-jade-100",
     RESERVED: "bg-jade-50/60 text-jade-700 border-jade-100/70",
     UNDER_MAINTENANCE: "bg-cream text-ink-soft border-rule-soft",
@@ -36,7 +36,7 @@ export const unitStatusAccent: Record<UnitStatus, string> = {
 
 export const unitTypeStyles: Record<UnitType, string> = {
     FLAT: "bg-jade-50 text-jade-800 border-jade-100",
-    SHOP: "bg-coral-50 text-coral-700 border-coral-100",
+    SHOP: "bg-coral-50 text-coral-600 border-coral-100",
     OFFICE: "bg-cream text-ink border-rule-soft",
     ROOM: "bg-jade-50/60 text-jade-700 border-jade-100/70",
     GARAGE: "bg-cream/60 text-ink-soft border-rule-soft",

@@ -106,7 +106,7 @@ function Pulse({ bucket, index }: { bucket: Bucket; index: number }) {
     const Icon = bucket.icon;
     const tone =
         bucket.key === "overdue"
-            ? { ink: "text-coral-600", chip: "bg-coral-50 text-coral-700", dot: "bg-coral-600" }
+            ? { ink: "text-coral-600", chip: "bg-coral-50 text-coral-600", dot: "bg-coral-600" }
             : bucket.key === "due"
                 ? { ink: "text-jade-900", chip: "bg-jade-50 text-jade-800", dot: "bg-jade-700" }
                 : { ink: "text-ink", chip: "bg-cream text-ink-soft", dot: "bg-ink-soft/40" };

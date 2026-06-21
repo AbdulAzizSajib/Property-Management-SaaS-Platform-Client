@@ -85,7 +85,7 @@ function DeltaChip({
 }) {
     const styles = good
         ? "bg-jade-50 text-jade-800"
-        : "bg-coral-50 text-coral-700";
+        : "bg-coral-50 text-coral-600";
     const Icon = trend === "up" ? ArrowUpRight : ArrowDownRight;
     return (
         <span

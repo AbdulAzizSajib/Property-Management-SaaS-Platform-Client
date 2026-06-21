@@ -510,10 +510,10 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
 function ErrorBox({ message }: { message: string }) {
   return (
     <div className="rounded-[14px] border border-coral-100 bg-coral-50/50 px-6 py-12 text-center">
-      <h2 className="text-[15px] font-bold text-coral-700">
+      <h2 className="text-[15px] font-bold text-coral-600">
         Couldn&apos;t load buildings
       </h2>
-      <p className="mt-1 text-[13px] text-coral-700/80">{message}</p>
+      <p className="mt-1 text-[13px] text-coral-600/80">{message}</p>
     </div>
   );
 }

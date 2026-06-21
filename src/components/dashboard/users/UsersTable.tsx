@@ -343,7 +343,7 @@ function UserRow({
                         size="sm"
                         variant="ghost"
                         onClick={onAskDeactivate}
-                        className="text-coral-700 hover:bg-coral-50 hover:text-coral-700"
+                        className="text-coral-600 hover:bg-coral-50 hover:text-coral-600"
                         aria-label="Delete user"
                     >
                         <Trash2 size={12} />
@@ -357,10 +357,10 @@ function UserRow({
 function ErrorBlock({ message }: { message: string }) {
     return (
         <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
-            <h2 className="text-[15px] font-bold text-coral-700">
+            <h2 className="text-[15px] font-bold text-coral-600">
                 Couldn&apos;t load users
             </h2>
-            <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-700/80">
+            <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-600/80">
                 {message}
             </p>
         </div>

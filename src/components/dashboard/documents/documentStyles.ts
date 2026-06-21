@@ -29,10 +29,10 @@ export const documentTypeStyles: Record<DocumentType, string> = {
     LEASE_AGREEMENT: "bg-jade-50 text-jade-800 border-jade-100",
     RENTAL_AGREEMENT: "bg-jade-50 text-jade-800 border-jade-100",
     BUILDING_DEED: "bg-jade-50 text-jade-800 border-jade-100",
-    PROPERTY_TAX_RECEIPT: "bg-coral-50/60 text-coral-700 border-coral-100",
-    UTILITY_BILL: "bg-coral-50/60 text-coral-700 border-coral-100",
-    INVOICE_RECEIPT: "bg-coral-50/60 text-coral-700 border-coral-100",
-    EXPENSE_RECEIPT: "bg-coral-50/60 text-coral-700 border-coral-100",
+    PROPERTY_TAX_RECEIPT: "bg-coral-50/60 text-coral-600 border-coral-100",
+    UTILITY_BILL: "bg-coral-50/60 text-coral-600 border-coral-100",
+    INVOICE_RECEIPT: "bg-coral-50/60 text-coral-600 border-coral-100",
+    EXPENSE_RECEIPT: "bg-coral-50/60 text-coral-600 border-coral-100",
     INSURANCE: "bg-cream text-ink border-rule-soft",
     MAINTENANCE_RECORD: "bg-cream text-ink border-rule-soft",
     BANK_STATEMENT: "bg-cream text-ink border-rule-soft",
@@ -86,7 +86,7 @@ export function getFileGlyph(mimeType: string | null | undefined): FileGlyph {
         return {
             Icon: FileText,
             bg: "bg-coral-50",
-            fg: "text-coral-700",
+            fg: "text-coral-600",
         };
     }
     if (

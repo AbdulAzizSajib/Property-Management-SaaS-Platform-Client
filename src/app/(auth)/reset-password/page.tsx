@@ -92,7 +92,7 @@ function ResetPasswordForm() {
                     </Field>
 
                     {error && (
-                        <p className="text-[12px] font-medium text-coral-700">
+                        <p className="text-[12px] font-medium text-coral-600">
                             {error}
                         </p>
                     )}
@@ -119,7 +119,7 @@ function ResetPasswordForm() {
                 <p className="mt-4 text-center text-[12px] text-ink-soft">
                     Didn&apos;t get the code?{" "}
                     <Link
-                        href="/forgot-password"
+                        href="/login"
                         className="font-semibold text-jade-700 hover:text-coral-600"
                     >
                         Send again

@@ -4,11 +4,8 @@ import { AlertCircle, ArrowRight, Loader2, MailCheck } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import {
-    useResendVerificationOtp,
-    useVerifyEmail,
-} from "@/src/hooks/useAuthActions";
-import { clearAuthCookies } from "@/src/lib/cookieUtils";
+import { useResendVerificationOtp } from "@/src/hooks/useAuthActions";
+import { verifyEmailAction } from "@/src/services/auth.services";
 
 const RESEND_COOLDOWN_SECONDS = 60;
 
@@ -27,7 +24,7 @@ function VerifyEmailForm() {
     const [otpDigits, setOtpDigits] = useState<string[]>(["", "", "", ""]);
     const [error, setError] = useState<string | null>(null);
     const [cooldown, setCooldown] = useState(0);
-    const mut = useVerifyEmail();
+    const [verifying, setVerifying] = useState(false);
     const resend = useResendVerificationOtp();
 
     const fromLogin = params.get("fromLogin") === "1";
@@ -44,27 +41,30 @@ function VerifyEmailForm() {
 
     const otp = otpDigits.join("");
 
-    const submit = (e: React.FormEvent) => {
+    const submit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
         if (!email || otp.length < 4) {
             setError("Please enter your email and the 4-digit code");
             return;
         }
-        mut.mutate(
-            { email, otp },
-            {
-                onSuccess: async () => {
-                    await clearAuthCookies();
-                    router.push("/login?verified=1");
-                },
-                onError: () => {
-                    setError("Invalid or expired OTP. Please try again.");
-                    setOtpDigits(["", "", "", ""]);
-                    document.getElementById("otp-ve-0")?.focus();
-                },
-            },
-        );
+        setVerifying(true);
+        try {
+            const result = await verifyEmailAction({ email, otp });
+            if (result.ok) {
+                router.push(result.destination);
+                return;
+            }
+            setError(result.message);
+            setOtpDigits(["", "", "", ""]);
+            document.getElementById("otp-ve-0")?.focus();
+        } catch {
+            setError("Invalid or expired OTP. Please try again.");
+            setOtpDigits(["", "", "", ""]);
+            document.getElementById("otp-ve-0")?.focus();
+        } finally {
+            setVerifying(false);
+        }
     };
 
     const handleResend = () => {
@@ -110,7 +110,7 @@ function VerifyEmailForm() {
                 </h1>
 
                 {fromLogin && (
-                    <div className="mt-3 rounded-[10px] border border-coral-100 bg-coral-50/70 px-3 py-2.5 text-[12.5px] text-coral-700">
+                    <div className="mt-3 rounded-[10px] border border-coral-100 bg-coral-50/70 px-3 py-2.5 text-[12.5px] text-coral-600">
                         Your email isn&apos;t verified yet. We just sent a fresh
                         4-digit code to{" "}
                         <span className="font-semibold">
@@ -188,7 +188,7 @@ function VerifyEmailForm() {
                     </div>
 
                     {error && (
-                        <div className="flex items-start gap-2 px-3 py-2.5 rounded-[10px] bg-coral-50/70 border border-coral-100 text-coral-700 text-[13px]">
+                        <div className="flex items-start gap-2 px-3 py-2.5 rounded-[10px] bg-coral-50/70 border border-coral-100 text-coral-600 text-[13px]">
                             <AlertCircle size={15} className="mt-0.5 shrink-0" />
                             <span>{error}</span>
                         </div>
@@ -196,10 +196,10 @@ function VerifyEmailForm() {
 
                     <button
                         type="submit"
-                        disabled={mut.isPending || otpDigits.some((d) => d === "")}
+                        disabled={verifying || otpDigits.some((d) => d === "")}
                         className="w-full inline-flex items-center justify-center gap-2 bg-jade-900 hover:bg-jade-950 transition-colors px-4 py-3 rounded-[10px] text-paper text-[14px] font-semibold disabled:opacity-60 disabled:cursor-not-allowed shadow-[0_10px_30px_-12px_rgba(13,79,63,0.45)]"
                     >
-                        {mut.isPending ? (
+                        {verifying ? (
                             <>
                                 <Loader2 size={14} className="animate-spin" />
                                 Verifying…

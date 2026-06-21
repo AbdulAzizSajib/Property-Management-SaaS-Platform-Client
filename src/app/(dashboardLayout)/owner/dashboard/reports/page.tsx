@@ -249,10 +249,10 @@ export default function ReportsPage() {
                     <ReportShell />
                 ) : isError ? (
                     <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
-                        <h2 className="text-[15px] font-bold text-coral-700">
+                        <h2 className="text-[15px] font-bold text-coral-600">
                             Couldn&apos;t load report
                         </h2>
-                        <p className="mt-1 text-[13px] text-coral-700/80">
+                        <p className="mt-1 text-[13px] text-coral-600/80">
                             {error instanceof Error
                                 ? error.message
                                 : "Please adjust the date range and try again."}
@@ -317,7 +317,7 @@ export default function ReportsPage() {
                                         "relative mt-3 text-[40px] font-bold leading-none tracking-[-0.025em] tabular-nums sm:text-[46px]",
                                         isProfit
                                             ? "text-jade-300"
-                                            : "text-coral-700",
+                                            : "text-coral-600",
                                     )}
                                 >
                                     {formatMoney(Math.abs(net))}
@@ -361,7 +361,7 @@ export default function ReportsPage() {
                                             "relative mt-4 inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[11.5px] font-medium",
                                             isProfit
                                                 ? "bg-jade-500/20 text-jade-300"
-                                                : "bg-coral-50 text-coral-700",
+                                                : "bg-coral-50 text-coral-600",
                                         )}
                                     >
                                         <Sparkles size={11} />
@@ -604,7 +604,7 @@ function MonthlyTable({
                                         </span>
                                     )}
                                 </td>
-                                <td className="px-3 py-2 text-right tabular-nums text-coral-700">
+                                <td className="px-3 py-2 text-right tabular-nums text-coral-600">
                                     {expenseVal > 0 ? (
                                         <span className="inline-flex items-center gap-1">
                                             <ArrowDownRight
@@ -624,7 +624,7 @@ function MonthlyTable({
                                         "px-5 py-2 text-right font-semibold tabular-nums sm:px-6",
                                         isProfit
                                             ? "text-jade-950"
-                                            : "text-coral-700",
+                                            : "text-coral-600",
                                     )}
                                 >
                                     {isProfit ? "" : "−"}
@@ -656,7 +656,7 @@ function SummaryStat({
     tone: "good" | "warn";
     Icon: typeof TrendingUp;
 }) {
-    const valueTone = tone === "warn" ? "text-coral-700" : "text-jade-950";
+    const valueTone = tone === "warn" ? "text-coral-600" : "text-jade-950";
     const iconBg = tone === "warn" ? "bg-coral-50" : "bg-jade-50";
     const iconFg = tone === "warn" ? "text-coral-600" : "text-jade-700";
 

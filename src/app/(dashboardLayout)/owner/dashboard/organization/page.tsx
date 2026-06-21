@@ -109,10 +109,10 @@ export default function OrganizationPage() {
             <div className="min-h-screen bg-cream">
                 <div className="mx-auto max-w-[1080px] p-4 sm:p-6 lg:p-8">
                     <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
-                        <h2 className="text-[15px] font-bold text-coral-700">
+                        <h2 className="text-[15px] font-bold text-coral-600">
                             Couldn&apos;t load organization
                         </h2>
-                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-700/80">
+                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-600/80">
                             {error instanceof Error
                                 ? error.message
                                 : "Something went wrong. Please try again."}

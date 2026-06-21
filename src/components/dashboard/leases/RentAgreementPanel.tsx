@@ -186,7 +186,7 @@ export function RentAgreementPanel({ leaseId }: { leaseId: string }) {
                         data.status === "SIGNED"
                             ? "border-jade-100 bg-jade-50 text-jade-700"
                             : data.status === "PARTIALLY_SIGNED"
-                                ? "border-coral-100 bg-coral-50/60 text-coral-700"
+                                ? "border-coral-100 bg-coral-50/60 text-coral-600"
                                 : "border-rule-soft bg-cream text-ink-soft",
                     )}
                 >

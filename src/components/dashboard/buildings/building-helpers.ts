@@ -37,7 +37,7 @@ export function typeLabelBn(t: BuildingType): string {
 export const typeBadgeStyles: Record<BuildingType, string> = {
     RESIDENTIAL: "bg-jade-50 text-jade-800 border-jade-100",
     COMMERCIAL: "bg-cream text-ink border-rule-soft",
-    MIXED: "bg-coral-50 text-coral-700 border-coral-100",
+    MIXED: "bg-coral-50 text-coral-600 border-coral-100",
     HOSTEL: "bg-jade-50/60 text-jade-700 border-jade-100/70",
     MESS: "bg-jade-50/60 text-jade-700 border-jade-100/70",
 };

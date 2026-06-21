@@ -18,8 +18,8 @@ import type {
 // ─────────────────────────────────────────────────────────────────
 
 export const complaintStatusStyles: Record<ComplaintStatus, string> = {
-    OPEN: "bg-coral-50 text-coral-700 border-coral-100",
-    IN_PROGRESS: "bg-coral-50/60 text-coral-700 border-coral-100",
+    OPEN: "bg-coral-50 text-coral-600 border-coral-100",
+    IN_PROGRESS: "bg-coral-50/60 text-coral-600 border-coral-100",
     RESOLVED: "bg-jade-50 text-jade-800 border-jade-100",
     CLOSED: "bg-cream text-ink-soft border-rule-soft",
 };
@@ -53,8 +53,8 @@ export function complaintStatusLabel(status: ComplaintStatus): string {
 export const complaintPriorityStyles: Record<ComplaintPriority, string> = {
     LOW: "bg-cream/60 text-ink-soft border-rule-soft",
     MEDIUM: "bg-cream text-ink border-rule-soft",
-    HIGH: "bg-coral-50/60 text-coral-700 border-coral-100",
-    URGENT: "bg-coral-50 text-coral-700 border-coral-100",
+    HIGH: "bg-coral-50/60 text-coral-600 border-coral-100",
+    URGENT: "bg-coral-50 text-coral-600 border-coral-100",
 };
 
 const priorityLabels: Record<ComplaintPriority, string> = {
@@ -83,17 +83,17 @@ export const complaintPriorityDot: Record<ComplaintPriority, string> = {
 // ─────────────────────────────────────────────────────────────────
 
 export const complaintCategoryStyles: Record<ComplaintCategory, string> = {
-    PLUMBING: "bg-coral-50/60 text-coral-700 border-coral-100",
-    ELECTRICAL: "bg-coral-50 text-coral-700 border-coral-100",
+    PLUMBING: "bg-coral-50/60 text-coral-600 border-coral-100",
+    ELECTRICAL: "bg-coral-50 text-coral-600 border-coral-100",
     AC: "bg-cream text-ink border-rule-soft",
     ELEVATOR: "bg-cream/80 text-ink border-rule-soft",
-    WATER: "bg-coral-50/60 text-coral-700 border-coral-100",
-    GAS: "bg-coral-50 text-coral-700 border-coral-100",
-    SECURITY: "bg-coral-50 text-coral-700 border-coral-100",
+    WATER: "bg-coral-50/60 text-coral-600 border-coral-100",
+    GAS: "bg-coral-50 text-coral-600 border-coral-100",
+    SECURITY: "bg-coral-50 text-coral-600 border-coral-100",
     CLEANLINESS: "bg-cream text-ink border-rule-soft",
     NOISE: "bg-cream/60 text-ink-soft border-rule-soft",
     PEST_CONTROL: "bg-cream text-ink border-rule-soft",
-    STRUCTURAL: "bg-coral-50 text-coral-700 border-coral-100",
+    STRUCTURAL: "bg-coral-50 text-coral-600 border-coral-100",
     INTERNET: "bg-cream/60 text-ink-soft border-rule-soft",
     PARKING: "bg-cream/60 text-ink-soft border-rule-soft",
     OTHER: "bg-cream/60 text-ink-soft border-rule-soft",

@@ -227,7 +227,7 @@ function Field({
             </span>
             {children}
             {error ? (
-                <p className="text-[11px] font-medium text-coral-700">{error}</p>
+                <p className="text-[11px] font-medium text-coral-600">{error}</p>
             ) : hint ? (
                 <p className="text-[11px] text-ink-soft">{hint}</p>
             ) : null}

@@ -63,7 +63,7 @@ export function UnitsPanel({ buildingId }: UnitsPanelProps) {
                             <span
                                 className={cn(
                                     "tabular-nums",
-                                    vacantCount > 0 && "font-semibold text-coral-700",
+                                    vacantCount > 0 && "font-semibold text-coral-600",
                                 )}
                             >
                                 {fmtNum(vacantCount)} vacant
@@ -98,7 +98,7 @@ export function UnitsPanel({ buildingId }: UnitsPanelProps) {
                         ))}
                     </div>
                 ) : isError ? (
-                    <div className="rounded-[10px] border border-coral-100 bg-coral-50/60 px-3 py-2.5 text-[13px] text-coral-700">
+                    <div className="rounded-[10px] border border-coral-100 bg-coral-50/60 px-3 py-2.5 text-[13px] text-coral-600">
                         {error instanceof Error
                             ? error.message
                             : "Couldn't load units."}

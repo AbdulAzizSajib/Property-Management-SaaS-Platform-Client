@@ -17,9 +17,9 @@ import type { InvoiceStatus, InvoiceType } from "@/src/types/invoice.types";
 
 export const invoiceStatusStyles: Record<InvoiceStatus, string> = {
     PAID: "bg-jade-50 text-jade-800 border-jade-100",
-    DUE: "bg-coral-50 text-coral-700 border-coral-100",
-    PARTIAL: "bg-coral-50/60 text-coral-700 border-coral-100",
-    OVERDUE: "bg-coral-50 text-coral-700 border-coral-100",
+    DUE: "bg-coral-50 text-coral-600 border-coral-100",
+    PARTIAL: "bg-coral-50/60 text-coral-600 border-coral-100",
+    OVERDUE: "bg-coral-50 text-coral-600 border-coral-100",
     CANCELED: "bg-cream text-ink-soft border-rule-soft",
 };
 
@@ -53,9 +53,9 @@ export function getInvoiceStatusTone(status: string): string {
 
 export const invoiceTypeStyles: Record<InvoiceType, string> = {
     RENT: "bg-jade-50 text-jade-800 border-jade-100",
-    DEPOSIT: "bg-coral-50/60 text-coral-700 border-coral-100",
+    DEPOSIT: "bg-coral-50/60 text-coral-600 border-coral-100",
     UTILITY: "bg-cream text-ink border-rule-soft",
-    PENALTY: "bg-coral-50 text-coral-700 border-coral-100",
+    PENALTY: "bg-coral-50 text-coral-600 border-coral-100",
     OTHER: "bg-cream/60 text-ink-soft border-rule-soft",
 };
 

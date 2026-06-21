@@ -82,10 +82,10 @@ export default function ComplaintDetailPage() {
                         Back to complaints
                     </Link>
                     <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
-                        <h2 className="text-[15px] font-bold text-coral-700">
+                        <h2 className="text-[15px] font-bold text-coral-600">
                             Couldn&apos;t load complaint
                         </h2>
-                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-700/80">
+                        <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-600/80">
                             {error instanceof Error
                                 ? error.message
                                 : "Complaint not found."}
@@ -130,7 +130,7 @@ export default function ComplaintDetailPage() {
                         <button
                             type="button"
                             onClick={() => setDeleteOpen(true)}
-                            className="inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-coral-100 bg-coral-50/70 px-3 text-[12.5px] font-medium text-coral-700 transition-colors hover:bg-coral-50"
+                            className="inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-coral-100 bg-coral-50/70 px-3 text-[12.5px] font-medium text-coral-600 transition-colors hover:bg-coral-50"
                         >
                             <Trash2 size={12} />
                             Delete
@@ -382,7 +382,7 @@ export default function ComplaintDetailPage() {
                                 <button
                                     type="button"
                                     onClick={() => setAssignOpen(true)}
-                                    className="text-[12.5px] font-medium text-coral-700 hover:text-coral-800"
+                                    className="text-[12.5px] font-medium text-coral-600 hover:text-coral-800"
                                 >
                                     Unassigned — assign now
                                 </button>
