@@ -80,6 +80,68 @@ button {
     @apply cursor-pointer;
 }
 
+/* ─── react-toastify custom theme ─────────────────────────────────────────── */
+.Toastify__toast {
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    border-radius: 12px;
+    padding: 12px 14px;
+    box-shadow: 0 4px 24px -4px rgba(6, 31, 23, 0.15);
+    min-height: unset;
+}
+
+/* default / info */
+.Toastify__toast--default,
+.Toastify__toast--info {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    border: 1px solid var(--color-rule-soft);
+}
+
+/* success → jade */
+.Toastify__toast--success {
+    background: var(--color-jade-50);
+    color: var(--color-jade-900);
+    border: 1px solid #b4ddd1;
+}
+.Toastify__toast--success .Toastify__toast-icon svg {
+    fill: var(--color-jade-500);
+}
+.Toastify__toast--success .Toastify__progress-bar {
+    background: var(--color-jade-400);
+}
+
+/* error → coral */
+.Toastify__toast--error {
+    background: #fef3f1;
+    color: #8b2a1a;
+    border: 1px solid #f8c8c0;
+}
+.Toastify__toast--error .Toastify__toast-icon svg {
+    fill: var(--color-coral-500);
+}
+.Toastify__toast--error .Toastify__progress-bar {
+    background: var(--color-coral-500);
+}
+
+/* warning → amber */
+.Toastify__toast--warning {
+    background: var(--color-amber-100);
+    color: #6b4200;
+    border: 1px solid #f0d080;
+}
+.Toastify__toast--warning .Toastify__progress-bar {
+    background: var(--color-amber-500);
+}
+
+.Toastify__close-button {
+    color: var(--color-ink-soft);
+    opacity: 0.6;
+}
+.Toastify__close-button:hover {
+    opacity: 1;
+}
+
 @theme inline {
     --font-heading: var(--font-sans);
     --color-sidebar-ring: var(--sidebar-ring);

@@ -67,12 +67,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <body>
                 <ThemeProvider
                     attribute="class"
-                    defaultTheme="system"
-                    enableSystem
+                    defaultTheme="light"
                     disableTransitionOnChange
                 >
                     <QueryProviders>{children}</QueryProviders>
-                    <ToastContainer position="top-right" autoClose={4000} closeOnClick pauseOnHover />
+                    <ToastContainer position="top-right" autoClose={4000} closeOnClick pauseOnHover theme="light" />
                 </ThemeProvider>
             </body>
         </html>
