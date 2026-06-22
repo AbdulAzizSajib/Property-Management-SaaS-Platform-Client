@@ -5,6 +5,7 @@
 // authenticated users; verify / forget / reset are public flows.
 
 import { httpClient } from "@/src/lib/axios/browserHttpClient";
+import type { CurrentUser } from "@/src/types/auth";
 
 export interface ChangePasswordPayload {
     currentPassword: string;
@@ -29,6 +30,9 @@ export interface ResetPasswordPayload {
     otp: string;
     newPassword: string;
 }
+
+/** GET /auth/me — the currently authenticated user's profile. */
+export const getMe = async () => httpClient.get<CurrentUser>("/auth/me");
 
 /** POST /auth/change-password — caller must be logged in. */
 export const changePassword = async (payload: ChangePasswordPayload) =>

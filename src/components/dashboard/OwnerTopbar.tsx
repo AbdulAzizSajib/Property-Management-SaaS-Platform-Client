@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/src/components/ui/sheet";
+import { useCurrentUser } from "@/src/hooks/useAuthActions";
 import { httpClient } from "@/src/lib/axios/browserHttpClient";
 import { cn } from "@/src/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
@@ -24,37 +25,40 @@ import { ChangePasswordDialog } from "./auth/ChangePasswordDialog";
 import { OwnerSidebar } from "./OwnerSidebar";
 
 interface OwnerTopbarProps {
-  /** Currently signed-in user. */
-  user?: {
-    name: string;
-    role?: string;
-    photoUrl?: string;
-  };
   /** Click handler for the search bar / command palette. */
   onSearchClick?: () => void;
 }
 
-const defaultUser = {
-  name: "Aziz Sajib",
-  role: "Owner",
-};
+/** "OWNER" → "Owner", "SUPER_ADMIN" → "Super Admin". */
+function formatRole(role: string): string {
+  return role
+    .toLowerCase()
+    .split("_")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
 
-export function OwnerTopbar({
-  user = defaultUser,
-  onSearchClick,
-}: OwnerTopbarProps) {
+export function OwnerTopbar({ onSearchClick }: OwnerTopbarProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { data: me } = useCurrentUser();
   const [loggingOut, setLoggingOut] = useState(false);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 
-  const initials = user.name
-    .split(" ")
-    .filter(Boolean)
-    .map((p) => p[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
+  const user = {
+    name: me?.name ?? "",
+    role: me ? formatRole(me.role) : "Owner",
+    photoUrl: me?.image ?? undefined,
+  };
+
+  const initials =
+    user.name
+      .split(" ")
+      .filter(Boolean)
+      .map((p) => p[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase() || "·";
 
   const handleLogout = async () => {
     if (loggingOut) return;

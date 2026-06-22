@@ -22,6 +22,19 @@ export type AuthUser = {
 export type { Organization } from "./organization.types";
 import type { Organization } from "./organization.types";
 
+/**
+ * Shape returned by GET /auth/me — the authenticated user's full profile.
+ * Extends AuthUser with the embedded organization and role-scoped relations
+ * the backend attaches (tenant profile, managed/caretaken buildings).
+ */
+export type CurrentUser = AuthUser & {
+    status: string;
+    organization: Organization | null;
+    tenantProfile: unknown | null;
+    managedBuildings: unknown[];
+    caretakerOf: unknown[];
+};
+
 export type RegisterPayload = {
     name: string;
     email: string;
