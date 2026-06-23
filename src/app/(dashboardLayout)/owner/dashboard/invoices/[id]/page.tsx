@@ -371,6 +371,22 @@ export default function InvoiceDetailPage() {
                                             warn
                                         />
                                     )}
+                                    {inv.lineItems?.find(
+                                        (li) => li.category === "PREVIOUS_DUE",
+                                    ) && (
+                                        <ChargeRow
+                                            label="Previous outstanding"
+                                            bn="পূর্ববর্তী বকেয়া"
+                                            value={
+                                                inv.lineItems.find(
+                                                    (li) =>
+                                                        li.category ===
+                                                        "PREVIOUS_DUE",
+                                                )!.amount
+                                            }
+                                            warn
+                                        />
+                                    )}
                                 </tbody>
                                 <tfoot className="bg-cream/40 text-[13px]">
                                     <tr>

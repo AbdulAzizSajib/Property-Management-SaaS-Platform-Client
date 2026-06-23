@@ -43,7 +43,6 @@ export interface Building {
   area: string | null;
   totalFloors: number;
   description: string | null;
-  imageUrl: string | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -75,7 +74,6 @@ export interface CreateBuildingPayload {
   area?: string;
   totalFloors: number;
   description?: string;
-  imageUrl?: string;
 }
 
 export type UpdateBuildingPayload = Partial<CreateBuildingPayload> & {

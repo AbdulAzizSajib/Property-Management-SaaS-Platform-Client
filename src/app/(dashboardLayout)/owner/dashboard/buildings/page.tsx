@@ -75,9 +75,6 @@ export default function BuildingsListPage() {
             <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
               Buildings
             </h1>
-            <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-              সব বিল্ডিং এক জায়গায়।
-            </p>
           </div>
 
           <Dialog open={createOpen} onOpenChange={setCreateOpen}>
@@ -134,9 +131,6 @@ export default function BuildingsListPage() {
               value={fmtNum(totalUnits)}
               icon={DoorOpen}
             />
-            <span className="font-bangla ml-auto hidden text-[12px] text-ink-soft sm:inline">
-              মোট সম্পত্তি
-            </span>
           </section>
 
           {/* Toolbar */}
@@ -214,24 +208,11 @@ function BuildingCard({
         isExpanded && "shadow-[0_2px_18px_-12px_rgba(0,0,0,0.22)]",
       )}
     >
-      {/* Cover */}
-      <div className="relative h-32 w-full overflow-hidden bg-linear-to-br from-jade-50 via-cream to-coral-50">
-        {building.imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={building.imageUrl}
-            alt={building.name}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Building2 size={42} className="text-jade-800/30" />
-          </div>
-        )}
-
+      {/* Header strip */}
+      <div className="flex items-center justify-between px-4 pt-4">
         <span
           className={cn(
-            "absolute left-3 top-3 inline-flex items-center rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider backdrop-blur",
+            "inline-flex items-center rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
             typeBadgeStyles[building.type],
           )}
         >
@@ -240,7 +221,7 @@ function BuildingCard({
 
         <span
           className={cn(
-            "absolute right-3 top-3 inline-flex items-center rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider backdrop-blur",
+            "inline-flex items-center rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
             statusBadgeStyles(building.isActive),
           )}
         >

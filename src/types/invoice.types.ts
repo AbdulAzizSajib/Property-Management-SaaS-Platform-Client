@@ -88,12 +88,31 @@ export interface InvoicePaymentSummary {
     createdAt: string;
 }
 
+export type LineItemCategory =
+    | "RENT"
+    | "SERVICE_CHARGE"
+    | "GAS"
+    | "WATER"
+    | "ELECTRICITY"
+    | "INTERNET"
+    | "PENALTY"
+    | "PREVIOUS_DUE"
+    | "OTHER";
+
+export interface InvoiceLineItem {
+    id: string;
+    category: LineItemCategory;
+    description: string;
+    amount: string;
+}
+
 // GET /invoices/:id — full detail with tenant, unit (with building), lease, payments
 export interface InvoiceDetail extends Invoice {
     tenant: Tenant;
     unit: Unit & { building: Building };
     lease: Lease;
     payments: InvoicePaymentSummary[];
+    lineItems: InvoiceLineItem[];
 }
 
 export interface GenerateSingleInvoicePayload {

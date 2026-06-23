@@ -29,7 +29,6 @@ export interface BuildingFormValues {
   area: string;
   totalFloors: number;
   description: string;
-  imageUrl: string;
 }
 
 export const emptyBuildingForm: BuildingFormValues = {
@@ -40,7 +39,6 @@ export const emptyBuildingForm: BuildingFormValues = {
   area: "",
   totalFloors: 1,
   description: "",
-  imageUrl: "",
 };
 
 interface BuildingFormProps {
@@ -97,7 +95,6 @@ export function BuildingForm({
       ...(values.description.trim() && {
         description: values.description.trim(),
       }),
-      ...(values.imageUrl.trim() && { imageUrl: values.imageUrl.trim() }),
     };
 
     onSubmit(payload);
@@ -195,17 +192,6 @@ export function BuildingForm({
             value={values.area}
             onChange={(e) => set("area", e.target.value)}
             placeholder="Lalmatia"
-            className={fieldClass}
-          />
-        </Field>
-
-        <Field label="Image URL" className="sm:col-span-2">
-          <Input
-            id="imageUrl"
-            type="url"
-            value={values.imageUrl}
-            onChange={(e) => set("imageUrl", e.target.value)}
-            placeholder="https://example.com/building.png"
             className={fieldClass}
           />
         </Field>

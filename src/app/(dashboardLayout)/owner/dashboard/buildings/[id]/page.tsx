@@ -121,44 +121,6 @@ export default function BuildingDetailPage() {
                             "0 1px 0 rgba(255,255,255,0.6) inset, 0 14px 36px -22px rgba(10,46,34,0.22)",
                     }}
                 >
-                    {/* Image / fallback band */}
-                    <div className="relative h-44 sm:h-52">
-                        {building.imageUrl ? (
-                            /* eslint-disable-next-line @next/next/no-img-element */
-                            <img
-                                src={building.imageUrl}
-                                alt={building.name}
-                                className="size-full object-cover"
-                            />
-                        ) : (
-                            <div
-                                className="relative flex h-full items-center justify-center bg-jade-950"
-                                aria-hidden
-                            >
-                                {/* dotted pattern + coral wash, mirrors the landing hero */}
-                                <div
-                                    className="absolute inset-0 opacity-30"
-                                    style={{
-                                        backgroundImage:
-                                            "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)",
-                                        backgroundSize: "26px 26px",
-                                    }}
-                                />
-                                <div
-                                    className="absolute -right-20 -top-20 h-72 w-72 rounded-full opacity-50"
-                                    style={{
-                                        background:
-                                            "radial-gradient(circle, rgba(255,123,87,0.35), transparent 65%)",
-                                    }}
-                                />
-                                <Building2
-                                    size={56}
-                                    className="relative text-paper/40"
-                                />
-                            </div>
-                        )}
-                    </div>
-
                     <div className="px-5 py-4 sm:px-6 sm:py-5">
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                             <div className="min-w-0 flex-1">
@@ -357,7 +319,6 @@ export default function BuildingDetailPage() {
                                 area: building.area ?? "",
                                 totalFloors: building.totalFloors,
                                 description: building.description ?? "",
-                                imageUrl: building.imageUrl ?? "",
                             }}
                             onCancel={() => setEditOpen(false)}
                             onSubmit={(payload) => {
