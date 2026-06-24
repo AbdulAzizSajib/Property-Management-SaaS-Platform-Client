@@ -91,13 +91,9 @@ export default function BuildingsListPage() {
             />
             <DialogContent className="sm:max-w-2xl">
               <DialogHeader>
-                <DialogTitle className="text-jade-950">
+                <DialogTitle className="capitalize text-[17px] text-center rounded px-2 bg-coral-600 text-white w-44 tracking-[-0.02em] py-0.5">
                   Add new building
                 </DialogTitle>
-                {/* <DialogDescription className="text-ink-soft">
-                  আপনার তালিকায় নতুন বিল্ডিং যোগ করুন  তৈরির পর floors আর
-                  units যোগ করতে পারবেন।
-                </DialogDescription> */}
               </DialogHeader>
               <BuildingForm
                 submitting={createMutation.isPending}
