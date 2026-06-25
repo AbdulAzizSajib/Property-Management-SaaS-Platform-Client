@@ -69,9 +69,7 @@ export default function BuildingsListPage() {
         {/* Heading */}
         <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="font-serif text-[13px] italic text-coral-600/85">
-              Your real estate
-            </p>
+            <p className="text-[13px]  text-coral-600/85 ">Your real estate</p>
             <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
               Buildings
             </h1>
@@ -465,11 +463,9 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
         No buildings yet
       </h2>
       <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
-        Get started by adding your first property to your portfolio.
+        Get started by adding your first property.
       </p>
-      <p className="font-bangla mt-0.5 text-[12px] text-ink-soft/75">
-        আপনার প্রথম বিল্ডিং যোগ করুন
-      </p>
+
       <div className="mt-5">
         <button
           type="button"

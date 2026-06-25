@@ -371,22 +371,26 @@ export default function InvoiceDetailPage() {
                                             warn
                                         />
                                     )}
-                                    {inv.lineItems?.find(
-                                        (li) => li.category === "PREVIOUS_DUE",
-                                    ) && (
-                                        <ChargeRow
-                                            label="Previous outstanding"
-                                            bn="পূর্ববর্তী বকেয়া"
-                                            value={
-                                                inv.lineItems.find(
-                                                    (li) =>
-                                                        li.category ===
-                                                        "PREVIOUS_DUE",
-                                                )!.amount
-                                            }
-                                            warn
-                                        />
-                                    )}
+                                    {inv.lineItems
+                                        ?.filter(
+                                            (li) =>
+                                                li.category === "PREVIOUS_DUE",
+                                        )
+                                        .map((li) => {
+                                            const src = parsePreviousDue(
+                                                li.description,
+                                            );
+                                            return (
+                                                <PreviousDueRow
+                                                    key={li.id}
+                                                    label={src.label}
+                                                    sourceInvoiceId={
+                                                        src.sourceInvoiceId
+                                                    }
+                                                    value={li.amount}
+                                                />
+                                            );
+                                        })}
                                 </tbody>
                                 <tfoot className="bg-cream/40 text-[13px]">
                                     <tr>
@@ -618,6 +622,57 @@ function PartyBlock({
             </Link>
             <div className="mt-3">{children}</div>
         </div>
+    );
+}
+
+// The backend embeds the source invoice in a PREVIOUS_DUE line's description
+// as `Previous due · INV-... (Jun 2026) [id:<uuid>]`. Pull out the id so we
+// can link back, and strip the tag for a clean human label. Keep this in sync
+// with buildPreviousDueLineItems on the server.
+function parsePreviousDue(description: string): {
+    label: string;
+    sourceInvoiceId: string | null;
+} {
+    const match = /\[id:([^\]]+)\]/.exec(description);
+    const sourceInvoiceId = match ? match[1] : null;
+    const label = description.replace(/\s*\[id:[^\]]+\]/, "").trim();
+    return { label: label || "Previous outstanding", sourceInvoiceId };
+}
+
+function PreviousDueRow({
+    label,
+    sourceInvoiceId,
+    value,
+}: {
+    label: string;
+    sourceInvoiceId: string | null;
+    value: string;
+}) {
+    return (
+        <tr>
+            <td className="px-4 py-2.5">
+                {sourceInvoiceId ? (
+                    <Link
+                        href={`/owner/dashboard/invoices/${sourceInvoiceId}`}
+                        className="inline-flex items-center gap-1 font-medium text-jade-900 transition-colors hover:text-coral-600 print:text-ink print:no-underline"
+                    >
+                        {label}
+                        <ArrowUpRight
+                            size={11}
+                            className="text-ink-soft/50 print:hidden"
+                        />
+                    </Link>
+                ) : (
+                    <span className="text-ink">{label}</span>
+                )}
+                <span className="font-bangla ml-1.5 text-[11px] text-ink-soft/70">
+                    · পূর্ববর্তী বকেয়া
+                </span>
+            </td>
+            <td className="px-4 py-2.5 text-right tabular-nums font-semibold text-coral-600">
+                {formatMoney(value)}
+            </td>
+        </tr>
     );
 }
 
