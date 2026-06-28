@@ -261,7 +261,12 @@ function LoginForm() {
               <button
                 onClick={() => {
                   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
-                  window.location.href = `${baseUrl}/auth/login/google`;
+                  // Forward where the user was headed so the backend can round-trip
+                  // it back through the OAuth callback to the right dashboard.
+                  const qs = redirectParam
+                    ? `?redirect=${encodeURIComponent(redirectParam)}`
+                    : "";
+                  window.location.href = `${baseUrl}/auth/login/google${qs}`;
                 }}
                 type="button"
                 className="w-full flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-[10px] border border-rule-soft bg-paper hover:bg-jade-50/30 transition-colors text-[14px] font-medium text-ink"
