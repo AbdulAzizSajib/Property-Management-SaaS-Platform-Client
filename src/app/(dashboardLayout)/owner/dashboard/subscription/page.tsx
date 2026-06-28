@@ -213,32 +213,6 @@ export default function SubscriptionPage() {
             </button>
           )}
         </header>
-        {/* ffff */}
-        {/* ffff */}
-        {/* ffff */}
-
-        {/* Trial warning */}
-        {/* {sub.status === "TRIALING" &&
-          trialDaysLeft !== null &&
-          trialDaysLeft <= 7 && (
-            <div className="flex items-start gap-3 rounded-[14px] border border-coral-100 bg-coral-50/70 px-4 py-3.5">
-              <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-coral-100 text-coral-600">
-                <Clock size={16} />
-              </span>
-              <div className="flex-1">
-                <p className="text-[14px] font-bold text-coral-600">
-                  {trialDaysLeft <= 0
-                    ? "Your free trial has ended"
-                    : `${trialDaysLeft} day${trialDaysLeft === 1 ? "" : "s"} left on your free trial`}
-                </p>
-                <p className="text-[12.5px] text-coral-600/80 mt-0.5">
-                  Upgrade now to keep access to all your buildings, units and
-                  tenants without interruption.
-                </p>
-              </div>
-            </div>
-          )} */}
-
         {/* Pending payment request */}
         {pendingRequest && (
           <div className="flex items-start gap-3 rounded-[14px] border border-coral-100 bg-coral-50/70 px-4 py-3.5">
