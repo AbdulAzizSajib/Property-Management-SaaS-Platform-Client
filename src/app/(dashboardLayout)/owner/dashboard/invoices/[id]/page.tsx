@@ -106,7 +106,9 @@ export default function InvoiceDetailPage() {
                         All invoices
                     </Link>
                     <div className="flex items-center gap-2">
-                        {inv.status !== "CANCELED" && inv.status !== "PAID" && (
+                        {inv.status !== "CANCELLED" &&
+                            inv.status !== "PAID" &&
+                            inv.status !== "CARRIED_FORWARD" && (
                             <button
                                 type="button"
                                 onClick={() => setEditOpen(true)}
@@ -116,7 +118,9 @@ export default function InvoiceDetailPage() {
                                 Edit
                             </button>
                         )}
-                        {inv.status !== "CANCELED" && inv.status !== "PAID" && (
+                        {inv.status !== "CANCELLED" &&
+                            inv.status !== "PAID" &&
+                            inv.status !== "CARRIED_FORWARD" && (
                             <button
                                 type="button"
                                 onClick={() => setCancelOpen(true)}
@@ -245,6 +249,28 @@ export default function InvoiceDetailPage() {
                             />
                         </div>
                     </div>
+
+                    {/* Carried-forward notice — this invoice's balance moved on */}
+                    {inv.status === "CARRIED_FORWARD" && inv.carriedForwardTo && (
+                        <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 border-b border-rule-soft bg-cream/60 px-6 py-3 text-[12.5px] text-ink-soft sm:px-8">
+                            <span>
+                                This balance was carried forward into
+                            </span>
+                            <Link
+                                href={`/owner/dashboard/invoices/${inv.carriedForwardTo.id}`}
+                                className="font-mono font-semibold text-jade-900 transition-colors hover:text-coral-600"
+                            >
+                                {inv.carriedForwardTo.invoiceNumber}
+                            </Link>
+                            <span>
+                                ({formatBillingMonth(inv.carriedForwardTo.billingMonth)})
+                                — nothing is owed here.
+                            </span>
+                            <span className="font-bangla text-ink-soft/75">
+                                · এই বকেয়া পরের বিলে যোগ হয়েছে।
+                            </span>
+                        </div>
+                    )}
 
                     {/* Bill to + Property */}
                     <div className="grid grid-cols-1 border-b border-rule-soft sm:grid-cols-2 sm:divide-x sm:divide-rule-soft">

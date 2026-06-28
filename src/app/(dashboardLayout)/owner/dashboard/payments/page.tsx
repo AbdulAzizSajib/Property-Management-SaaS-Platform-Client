@@ -5,7 +5,6 @@
 import { RecordPaymentDialog } from "@/src/components/dashboard/payments/RecordPaymentDialog";
 import {
     paymentMethodLabel,
-    paymentMethodStyles,
     paymentStatusAccent,
     paymentStatusLabel,
     paymentStatusStyles,
@@ -29,16 +28,7 @@ import {
     type PaymentMethod,
     type PaymentStatus,
 } from "@/src/types/payment.types";
-import {
-    ArrowUpRight,
-    Calendar,
-    Plus,
-    Receipt,
-    Search,
-    User,
-    Wallet,
-    X,
-} from "lucide-react";
+import { ArrowUpRight, Plus, Search, Wallet, X } from "lucide-react";
 import Link from "next/link";
 import { Suspense, useMemo, useState } from "react";
 
@@ -311,11 +301,15 @@ function PaymentsListInner() {
 }
 
 function PaymentRow({ payment }: { payment: PaymentListItem }) {
+    const due = Number(payment.invoice?.dueAmount ?? 0);
+    const hasDue = Number.isFinite(due) && due > 0;
+    const purpose = paymentPurpose(payment);
+
     return (
         <li>
             <Link
                 href={`/owner/dashboard/payments/${payment.id}`}
-                className="group relative flex flex-col gap-3 px-5 py-4 transition-colors hover:bg-cream/60 sm:flex-row sm:items-center"
+                className="group relative flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-cream/60 sm:gap-4 sm:px-5 sm:py-4"
             >
                 <span
                     aria-hidden
@@ -325,66 +319,66 @@ function PaymentRow({ payment }: { payment: PaymentListItem }) {
                     )}
                 />
 
-                <div className="min-w-0 flex-1 pl-2">
-                    <div className="flex flex-wrap items-center gap-1.5">
-                        <p className="truncate font-mono text-[12.5px] font-semibold text-jade-950 group-hover:text-jade-900">
-                            {payment.receiptNumber}
+                {/* Avatar — instantly says "who" */}
+                <span
+                    aria-hidden
+                    className="grid size-9 shrink-0 place-items-center rounded-full bg-jade-50 text-[13px] font-bold text-jade-800 sm:size-10 sm:text-[14px]"
+                >
+                    {tenantInitials(payment.tenant.name)}
+                </span>
+
+                {/* WHO + WHAT, in plain words */}
+                <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                        <p className="truncate text-[14px] font-bold text-jade-950 group-hover:text-jade-900">
+                            {payment.tenant.name}
                         </p>
                         <span
                             className={cn(
-                                "rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
+                                "rounded-full border px-2 py-px text-[10.5px] font-semibold",
                                 paymentStatusStyles[payment.status],
                             )}
                         >
                             {paymentStatusLabel(payment.status)}
                         </span>
-                        <span
-                            className={cn(
-                                "rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
-                                paymentMethodStyles[payment.method],
-                            )}
-                        >
-                            {paymentMethodLabel(payment.method)}
-                        </span>
                         {payment.isAdvance && (
-                            <span className="rounded-md border border-jade-100 bg-jade-50/60 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-jade-700">
+                            <span className="rounded-full border border-jade-100 bg-jade-50/60 px-2 py-px text-[10.5px] font-semibold text-jade-700">
                                 Advance
                             </span>
                         )}
                     </div>
 
-                    <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11.5px] text-ink-soft">
-                        <span className="inline-flex items-center gap-1">
-                            <User size={11} className="text-ink-soft/60" />
-                            <span className="text-ink">{payment.tenant.name}</span>
+                    <p className="mt-1 truncate text-[12.5px] text-ink-soft">
+                        <span className="font-medium text-ink">
+                            {paymentMethodLabel(payment.method)}
                         </span>
-                        <span className="inline-flex items-center gap-1">
-                            <Receipt size={11} className="text-ink-soft/60" />
-                            <span className="font-mono">
-                                {payment.invoice?.invoiceNumber ?? "—"}
-                            </span>
-                        </span>
-                        <span className="inline-flex items-center gap-1 tabular-nums">
-                            <Calendar size={11} className="text-ink-soft/60" />
-                            {new Date(payment.paidAt).toLocaleDateString()}
-                        </span>
-                        {payment.transactionId && (
-                            <span className="inline-flex items-center gap-1 font-mono">
-                                <Wallet size={11} className="text-ink-soft/60" />
-                                {payment.transactionId}
-                            </span>
+                        {purpose && (
+                            <>
+                                {" · "}
+                                <span>for {purpose}</span>
+                            </>
                         )}
-                    </div>
+                        {" · "}
+                        <span className="tabular-nums">
+                            {formatPaidDate(payment.paidAt)}
+                        </span>
+                    </p>
+
+                    {/* Codes demoted to a quiet footnote */}
+                    <p className="mt-0.5 truncate font-mono text-[10.5px] text-ink-soft/55">
+                        {payment.receiptNumber}
+                        {payment.invoice?.invoiceNumber && (
+                            <> · {payment.invoice.invoiceNumber}</>
+                        )}
+                    </p>
                 </div>
 
-                <div className="flex items-center gap-3 pl-2 sm:pl-0">
+                {/* HOW MUCH + what's left */}
+                <div className="flex items-center gap-2 sm:gap-3">
                     <div className="text-right">
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-ink-soft">
-                            Amount
-                        </p>
                         <p
                             className={cn(
-                                "text-[16px] font-bold tabular-nums",
+                                "text-[17px] font-bold leading-none tabular-nums sm:text-[18px]",
                                 payment.status === "PAID"
                                     ? "text-jade-800"
                                     : payment.status === "FAILED"
@@ -394,15 +388,67 @@ function PaymentRow({ payment }: { payment: PaymentListItem }) {
                         >
                             {formatMoney(payment.amount)}
                         </p>
+                        {hasDue ? (
+                            <p className="mt-1 text-[11px] font-semibold tabular-nums text-coral-600">
+                                {formatMoney(due)} still due
+                            </p>
+                        ) : (
+                            payment.invoice?.status === "PAID" && (
+                                <p className="mt-1 text-[11px] font-medium text-jade-700">
+                                    Fully paid
+                                </p>
+                            )
+                        )}
                     </div>
                     <ArrowUpRight
-                        size={14}
+                        size={15}
                         className="shrink-0 text-ink-soft/40 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-jade-900"
                     />
                 </div>
             </Link>
         </li>
     );
+}
+
+// First letters of the first two name words — "Mr Akash" → "MA".
+function tenantInitials(name: string): string {
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    if (parts.length === 0) return "?";
+    const first = parts[0]![0] ?? "";
+    const last = parts.length > 1 ? parts[parts.length - 1]![0] ?? "" : "";
+    return (first + last).toUpperCase();
+}
+
+// "26 Jun 2026" — short, unambiguous, no locale surprises.
+function formatPaidDate(iso: string): string {
+    return new Date(iso).toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+    });
+}
+
+// Plain-language reason: "June 2026 rent", "May 2026 utility", etc.
+const INVOICE_TYPE_WORD: Record<string, string> = {
+    RENT: "rent",
+    DEPOSIT: "deposit",
+    PENALTY: "penalty",
+    UTILITY: "utility bill",
+    OTHER: "charges",
+};
+
+function paymentPurpose(payment: PaymentListItem): string | null {
+    const inv = payment.invoice;
+    if (!inv) return payment.isAdvance ? "advance" : null;
+    const month = inv.billingMonth
+        ? new Date(inv.billingMonth).toLocaleDateString("en-GB", {
+              month: "long",
+              year: "numeric",
+          })
+        : null;
+    const word = inv.type ? INVOICE_TYPE_WORD[inv.type] ?? "charges" : null;
+    if (month && word) return `${month} ${word}`;
+    return month ?? word ?? null;
 }
 
 function MiniStat({

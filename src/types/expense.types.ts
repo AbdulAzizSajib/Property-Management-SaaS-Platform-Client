@@ -1,20 +1,21 @@
 import type { PaymentMethod } from "./payment.types";
 
+// Must mirror the backend Prisma `ExpenseCategory` enum exactly — the API
+// validates against these values and rejects anything else.
 export type ExpenseCategory =
     | "ELECTRICITY"
     | "WATER"
     | "GAS"
-    | "GENERATOR_FUEL"
     | "INTERNET"
-    | "MAINTENANCE"
-    | "REPAIR"
-    | "CLEANING"
-    | "SECURITY"
-    | "WASTE_MANAGEMENT"
+    | "SECURITY_SALARY"
+    | "CARETAKER_SALARY"
+    | "CLEANER_SALARY"
     | "LIFT_MAINTENANCE"
-    | "PROPERTY_TAX"
-    | "LEGAL_FEES"
-    | "SALARY"
+    | "GENERATOR_FUEL"
+    | "REPAIRING"
+    | "CLEANING"
+    | "TAX"
+    | "INSURANCE"
     | "OTHER";
 
 export const EXPENSE_CATEGORY_OPTIONS: {
@@ -24,17 +25,16 @@ export const EXPENSE_CATEGORY_OPTIONS: {
     { value: "ELECTRICITY", label: "Electricity" },
     { value: "WATER", label: "Water" },
     { value: "GAS", label: "Gas" },
-    { value: "GENERATOR_FUEL", label: "Generator fuel" },
     { value: "INTERNET", label: "Internet" },
-    { value: "MAINTENANCE", label: "Maintenance" },
-    { value: "REPAIR", label: "Repair" },
-    { value: "CLEANING", label: "Cleaning" },
-    { value: "SECURITY", label: "Security" },
-    { value: "WASTE_MANAGEMENT", label: "Waste management" },
+    { value: "SECURITY_SALARY", label: "Security salary" },
+    { value: "CARETAKER_SALARY", label: "Caretaker salary" },
+    { value: "CLEANER_SALARY", label: "Cleaner salary" },
     { value: "LIFT_MAINTENANCE", label: "Lift maintenance" },
-    { value: "PROPERTY_TAX", label: "Property tax" },
-    { value: "LEGAL_FEES", label: "Legal fees" },
-    { value: "SALARY", label: "Salary" },
+    { value: "GENERATOR_FUEL", label: "Generator fuel" },
+    { value: "REPAIRING", label: "Repairing" },
+    { value: "CLEANING", label: "Cleaning" },
+    { value: "TAX", label: "Tax" },
+    { value: "INSURANCE", label: "Insurance" },
     { value: "OTHER", label: "Other" },
 ];
 

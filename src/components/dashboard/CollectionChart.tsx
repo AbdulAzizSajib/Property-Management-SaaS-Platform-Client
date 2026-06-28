@@ -7,29 +7,29 @@
 
 import { motion } from "framer-motion";
 import { fmtTaka } from "@/src/lib/numerals";
+import { useDashboardOverview } from "@/src/hooks/useDashboard";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-const data = [
-    { month: "Jun", collected: 245000, target: 280000 },
-    { month: "Jul", collected: 268000, target: 290000 },
-    { month: "Aug", collected: 254000, target: 290000 },
-    { month: "Sep", collected: 289000, target: 310000 },
-    { month: "Oct", collected: 312000, target: 320000 },
-    { month: "Nov", collected: 305000, target: 330000 },
-    { month: "Dec", collected: 334000, target: 350000 },
-    { month: "Jan", collected: 348000, target: 360000 },
-    { month: "Feb", collected: 361000, target: 380000 },
-    { month: "Mar", collected: 372000, target: 400000 },
-    { month: "Apr", collected: 389000, target: 420000 },
-    { month: "May", collected: 418500, target: 480000, current: true },
-];
-
 export function CollectionChart() {
-    const max = Math.max(...data.map((d) => Math.max(d.collected, d.target)));
+    const { data: overview } = useDashboardOverview();
+    const data = overview?.collectionTrend ?? [];
+
+    const max = data.length
+        ? Math.max(...data.map((d) => Math.max(d.collected, d.target)), 1)
+        : 1;
     const total = data.reduce((s, d) => s + d.collected, 0);
     const targetTotal = data.reduce((s, d) => s + d.target, 0);
-    const rate = ((total / targetTotal) * 100).toFixed(1);
+    const rate =
+        targetTotal > 0 ? ((total / targetTotal) * 100).toFixed(1) : "0.0";
+    const best = data.reduce(
+        (a, d) => (d.collected > a.collected ? d : a),
+        { label: "—", collected: 0 } as { label: string; collected: number },
+    );
+    const avgGap = data.length
+        ? data.reduce((s, d) => s + Math.max(0, d.target - d.collected), 0) /
+          data.length
+        : 0;
 
     return (
         <motion.div
@@ -75,7 +75,7 @@ export function CollectionChart() {
             <div className="relative mt-3 h-[180px]">
                 <div className="relative grid h-full grid-cols-12 items-end gap-2">
                     {data.map((d, i) => (
-                        <div key={d.month} className="relative flex h-full flex-col justify-end">
+                        <div key={d.month} className="relative flex h-full flex-col justify-end" title={`${d.label}: ${fmtTaka(d.collected, { compact: true })}`}>
                             {/* Target marker */}
                             <div
                                 className="absolute left-0 right-0 border-t border-dashed border-ink-soft/35"
@@ -100,7 +100,7 @@ export function CollectionChart() {
                                 } transition-colors`}
                             />
                             <span className="absolute -bottom-5 left-0 right-0 text-center font-mono text-[10px] text-ink-soft">
-                                {d.month}
+                                {d.label}
                             </span>
                         </div>
                     ))}
@@ -112,13 +112,13 @@ export function CollectionChart() {
                 <span>
                     Best month:{" "}
                     <span className="font-semibold text-ink">
-                        May · {fmtTaka(418500, { compact: true })}
+                        {best.label} · {fmtTaka(best.collected, { compact: true })}
                     </span>
                 </span>
                 <span>
                     Avg gap to target:{" "}
                     <span className="font-semibold text-ink tabular-nums">
-                        ৳ 23,000
+                        {fmtTaka(avgGap, { compact: true })}
                     </span>
                 </span>
             </div>

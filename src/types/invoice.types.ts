@@ -3,7 +3,13 @@ import type { Lease } from "./lease.types";
 import type { Tenant } from "./tenant.types";
 import type { Unit } from "./unit.types";
 
-export type InvoiceStatus = "DUE" | "PARTIAL" | "PAID" | "OVERDUE" | "CANCELED";
+export type InvoiceStatus =
+    | "DUE"
+    | "PARTIAL"
+    | "PAID"
+    | "OVERDUE"
+    | "CANCELLED"
+    | "CARRIED_FORWARD";
 
 export type InvoiceType = "RENT" | "DEPOSIT" | "PENALTY" | "UTILITY" | "OTHER";
 
@@ -12,7 +18,8 @@ export const INVOICE_STATUS_OPTIONS: { value: InvoiceStatus; label: string }[] =
     { value: "PARTIAL", label: "Partial" },
     { value: "PAID", label: "Paid" },
     { value: "OVERDUE", label: "Overdue" },
-    { value: "CANCELED", label: "Canceled" },
+    { value: "CARRIED_FORWARD", label: "Carried forward" },
+    { value: "CANCELLED", label: "Cancelled" },
 ];
 
 export const INVOICE_TYPE_OPTIONS: { value: InvoiceType; label: string }[] = [
@@ -56,6 +63,24 @@ export interface Invoice {
     leaseId: string;
     unitId: string;
     tenantId: string;
+    /**
+     * Carry-forward link. When this invoice's unpaid balance was rolled into a
+     * newer invoice, status becomes "CARRIED_FORWARD" and this points to the
+     * invoice that absorbed it.
+     */
+    carriedForwardToId?: string | null;
+    carriedForwardTo?: InvoiceCarryRef | null;
+}
+
+/** Lightweight reference to a linked invoice in a carry-forward relationship. */
+export interface InvoiceCarryRef {
+    id: string;
+    invoiceNumber: string;
+    billingMonth: string;
+    status?: InvoiceStatus;
+    /** Present on detail (carriedForwardFrom) so the remaining due can be shown. */
+    totalAmount?: string;
+    paidAmount?: string;
 }
 
 export interface InvoiceTenantSummary {
@@ -113,6 +138,8 @@ export interface InvoiceDetail extends Invoice {
     lease: Lease;
     payments: InvoicePaymentSummary[];
     lineItems: InvoiceLineItem[];
+    /** Older invoices whose unpaid balances this invoice absorbed. */
+    carriedForwardFrom?: InvoiceCarryRef[];
 }
 
 export interface GenerateSingleInvoicePayload {
@@ -121,11 +148,18 @@ export interface GenerateSingleInvoicePayload {
     billingMonth: string;
     utilityAmount?: number;
     penaltyAmount?: number;
+    /**
+     * Earlier unpaid invoices of this lease to roll into this one. Omit / [] to
+     * bill only the current month (previous dues stay as their own invoices).
+     */
+    carryForwardInvoiceIds?: string[];
 }
 
 export interface GenerateMonthlyBatchPayload {
     /** YYYY-MM-DD */
     billingMonth: string;
+    /** Carry every outstanding balance forward. Defaults to true on the backend. */
+    carryForward?: boolean;
 }
 
 export interface GenerateMonthlyBatchResult {

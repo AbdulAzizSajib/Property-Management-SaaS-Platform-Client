@@ -1,31 +1,18 @@
+"use client";
+
 import { Avatar, AvatarFallback } from "@/src/components/ui/avatar";
 import { Badge } from "@/src/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardAction } from "@/src/components/ui/card";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { useDashboardOverview } from "@/src/hooks/useDashboard";
 
-interface Lease {
-    id: string;
-    tenant: string;
-    initials: string;
-    unit: string;
-    building: string;
-    rent: number;
-    status: "ACTIVE" | "PENDING" | "TERMINATED";
-}
-
-const leases: Lease[] = [
-    { id: "L-1042", tenant: "Rahim Uddin", initials: "RU", unit: "3A", building: "Lalmatia Block A", rent: 18000, status: "ACTIVE" },
-    { id: "L-1041", tenant: "Salma Khan", initials: "SK", unit: "2B", building: "Lalmatia Block A", rent: 22000, status: "ACTIVE" },
-    { id: "L-1040", tenant: "Karim Hossain", initials: "KH", unit: "5C", building: "Dhanmondi Tower", rent: 28000, status: "PENDING" },
-    { id: "L-1039", tenant: "Nadia Rahman", initials: "NR", unit: "1A", building: "Gulshan Heights", rent: 35000, status: "ACTIVE" },
-    { id: "L-1038", tenant: "Tahsin Ahmed", initials: "TA", unit: "4D", building: "Lalmatia Block A", rent: 19500, status: "TERMINATED" },
-];
-
-const statusStyles: Record<Lease["status"], string> = {
+const statusStyles: Record<string, string> = {
     ACTIVE: "bg-emerald-50 text-emerald-700 border-emerald-200",
     PENDING: "bg-amber-50 text-amber-700 border-amber-200",
     TERMINATED: "bg-slate-100 text-slate-600 border-slate-200",
+    EXPIRED: "bg-slate-100 text-slate-600 border-slate-200",
+    RENEWED: "bg-emerald-50 text-emerald-700 border-emerald-200",
 };
 
 const fmt = (n: number) =>
@@ -35,7 +22,18 @@ const fmt = (n: number) =>
         maximumFractionDigits: 0,
     }).format(n);
 
+function initialsOf(name: string): string {
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    if (parts.length === 0) return "?";
+    const first = parts[0][0] ?? "";
+    const last = parts.length > 1 ? parts[parts.length - 1][0] ?? "" : "";
+    return (first + last).toUpperCase();
+}
+
 export function RecentLeases() {
+    const { data } = useDashboardOverview();
+    const leases = data?.recentLeases ?? [];
+
     return (
         <Card className="px-5">
             <CardHeader className="px-0">
@@ -59,26 +57,26 @@ export function RecentLeases() {
                         >
                             <Avatar className="size-9">
                                 <AvatarFallback className="bg-slate-100 text-xs font-semibold text-slate-700">
-                                    {lease.initials}
+                                    {initialsOf(lease.tenantName)}
                                 </AvatarFallback>
                             </Avatar>
                             <div className="min-w-0 flex-1">
                                 <p className="truncate text-sm font-medium text-slate-800">
-                                    {lease.tenant}
+                                    {lease.tenantName}
                                 </p>
                                 <p className="truncate text-xs text-slate-500">
-                                    Unit {lease.unit} · {lease.building}
+                                    Unit {lease.unitName} · {lease.buildingName}
                                 </p>
                             </div>
                             <div className="hidden text-right sm:block">
                                 <p className="text-sm font-semibold text-slate-900 tabular-nums">
-                                    {fmt(lease.rent)}
+                                    {fmt(lease.monthlyRent)}
                                 </p>
                                 <p className="text-[11px] text-slate-500">/month</p>
                             </div>
                             <Badge
                                 variant="outline"
-                                className={`${statusStyles[lease.status]} text-[10px]`}
+                                className={`${statusStyles[lease.status] ?? "bg-slate-100 text-slate-600 border-slate-200"} text-[10px]`}
                             >
                                 {lease.status}
                             </Badge>

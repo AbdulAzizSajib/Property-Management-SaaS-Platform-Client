@@ -28,13 +28,17 @@ export const invoiceKeys = {
     detail: (id: string) => [...invoiceKeys.all, "detail", id] as const,
 };
 
-export function useInvoices(filters?: InvoiceFilters) {
+export function useInvoices(
+    filters?: InvoiceFilters,
+    options?: { enabled?: boolean },
+) {
     return useQuery({
         queryKey: invoiceKeys.list(filters),
         queryFn: async () => {
             const res = await getInvoices(filters);
             return res.data;
         },
+        enabled: options?.enabled ?? true,
     });
 }
 

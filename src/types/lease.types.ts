@@ -91,6 +91,11 @@ export interface LeaseUnitSummary {
 export interface LeaseListItem extends Lease {
     tenant: LeaseTenantSummary;
     unit: LeaseUnitSummary;
+    // Outstanding rollup across the tenant's unpaid invoices on this lease.
+    // Decimal string; present on the list endpoint.
+    totalDue?: string;
+    dueInvoiceCount?: number;
+    hasPreviousDue?: boolean;
 }
 
 export interface LeaseInvoice {

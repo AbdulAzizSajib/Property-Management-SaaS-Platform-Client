@@ -33,7 +33,7 @@ const STATUSES: SubscriptionStatus[] = [
     "TRIALING",
     "ACTIVE",
     "PAST_DUE",
-    "CANCELED",
+    "CANCELLED",
     "EXPIRED",
 ];
 
@@ -174,7 +174,7 @@ function StatusBadge({ status }: { status: SubscriptionStatus }) {
         TRIALING: "border-jade-100 bg-jade-50/60 text-jade-700",
         ACTIVE: "border-jade-100 bg-jade-50 text-jade-800",
         PAST_DUE: "border-coral-100 bg-coral-50 text-coral-600",
-        CANCELED: "border-rule-soft bg-cream text-ink-soft",
+        CANCELLED: "border-rule-soft bg-cream text-ink-soft",
         EXPIRED: "border-coral-100 bg-coral-50 text-coral-600",
     };
     return (

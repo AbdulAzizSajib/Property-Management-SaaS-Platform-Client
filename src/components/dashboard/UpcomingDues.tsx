@@ -1,22 +1,9 @@
+"use client";
+
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardAction } from "@/src/components/ui/card";
 import Link from "next/link";
 import { AlertCircle, ArrowUpRight, Clock } from "lucide-react";
-
-interface Due {
-    id: string;
-    tenant: string;
-    unit: string;
-    amount: number;
-    dueIn: number; // days; negative = overdue
-}
-
-const dues: Due[] = [
-    { id: "I-2401", tenant: "Hassan Ali", unit: "Block A · 2B", amount: 22000, dueIn: -3 },
-    { id: "I-2398", tenant: "Mehedi Hasan", unit: "Tower · 5C", amount: 28000, dueIn: -1 },
-    { id: "I-2415", tenant: "Sumaiya Akter", unit: "Heights · 3A", amount: 30000, dueIn: 2 },
-    { id: "I-2418", tenant: "Imran Khan", unit: "Block A · 1C", amount: 18000, dueIn: 4 },
-    { id: "I-2421", tenant: "Fariha Islam", unit: "Tower · 6A", amount: 32000, dueIn: 7 },
-];
+import { useDashboardOverview } from "@/src/hooks/useDashboard";
 
 const fmt = (n: number) =>
     new Intl.NumberFormat("en-BD", {
@@ -26,8 +13,11 @@ const fmt = (n: number) =>
     }).format(n);
 
 export function UpcomingDues() {
+    const { data } = useDashboardOverview();
+    const dues = data?.upcomingDues ?? [];
+
     const overdueTotal = dues
-        .filter((d) => d.dueIn < 0)
+        .filter((d) => d.overdue)
         .reduce((sum, d) => sum + d.amount, 0);
 
     return (
@@ -50,7 +40,7 @@ export function UpcomingDues() {
             <CardContent className="px-0">
                 <ul className="divide-y divide-slate-100">
                     {dues.map((due) => {
-                        const isOverdue = due.dueIn < 0;
+                        const isOverdue = due.overdue;
                         return (
                             <li
                                 key={due.id}
@@ -71,10 +61,10 @@ export function UpcomingDues() {
                                 </span>
                                 <div className="min-w-0 flex-1">
                                     <p className="truncate text-sm font-medium text-slate-800">
-                                        {due.tenant}
+                                        {due.tenantName}
                                     </p>
                                     <p className="truncate text-xs text-slate-500">
-                                        {due.id} · {due.unit}
+                                        {due.invoiceNumber} · {due.unitLabel}
                                     </p>
                                 </div>
                                 <div className="text-right">
@@ -87,8 +77,8 @@ export function UpcomingDues() {
                                         }`}
                                     >
                                         {isOverdue
-                                            ? `${Math.abs(due.dueIn)}d overdue`
-                                            : `Due in ${due.dueIn}d`}
+                                            ? `${Math.abs(due.dueInDays)}d overdue`
+                                            : `Due in ${due.dueInDays}d`}
                                     </p>
                                 </div>
                             </li>

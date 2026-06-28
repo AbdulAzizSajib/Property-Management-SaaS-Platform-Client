@@ -20,7 +20,8 @@ export const invoiceStatusStyles: Record<InvoiceStatus, string> = {
     DUE: "bg-coral-50 text-coral-600 border-coral-100",
     PARTIAL: "bg-coral-50/60 text-coral-600 border-coral-100",
     OVERDUE: "bg-coral-50 text-coral-600 border-coral-100",
-    CANCELED: "bg-cream text-ink-soft border-rule-soft",
+    CARRIED_FORWARD: "bg-cream text-ink-soft border-rule-soft",
+    CANCELLED: "bg-cream text-ink-soft border-rule-soft",
 };
 
 /** Used by rows to highlight which invoices need attention. */
@@ -29,11 +30,22 @@ export const invoiceStatusAccent: Record<InvoiceStatus, string> = {
     DUE: "bg-coral-500",
     PARTIAL: "bg-coral-400",
     OVERDUE: "bg-coral-600",
-    CANCELED: "bg-ink-soft/30",
+    CARRIED_FORWARD: "bg-ink-soft/25",
+    CANCELLED: "bg-ink-soft/30",
+};
+
+// Human labels — underscores would otherwise leak into the UI
+// ("Carried_forward"). Falls back to Title-case for anything not listed.
+const INVOICE_STATUS_LABELS: Partial<Record<InvoiceStatus, string>> = {
+    CARRIED_FORWARD: "Carried forward",
+    CANCELLED: "Cancelled",
 };
 
 export function invoiceStatusLabel(status: InvoiceStatus): string {
-    return status.charAt(0) + status.slice(1).toLowerCase();
+    return (
+        INVOICE_STATUS_LABELS[status] ??
+        status.charAt(0) + status.slice(1).toLowerCase()
+    );
 }
 
 export function getInvoiceStatusTone(status: string): string {

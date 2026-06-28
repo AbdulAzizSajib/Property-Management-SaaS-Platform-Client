@@ -43,10 +43,12 @@ export function GenerateMonthlyBatchDialog({
     const mutation = useGenerateMonthlyBatch();
     const { data: leases } = useLeases();
     const [billingMonth, setBillingMonth] = useState(nextMonthYearMonth());
+    const [carryForward, setCarryForward] = useState(true);
 
     useEffect(() => {
         if (open) {
             setBillingMonth(nextMonthYearMonth());
+            setCarryForward(true);
         }
     }, [open]);
 
@@ -58,7 +60,7 @@ export function GenerateMonthlyBatchDialog({
     function handleSubmit(ev: React.FormEvent) {
         ev.preventDefault();
         mutation.mutate(
-            { billingMonth: toBillingMonthDate(billingMonth) },
+            { billingMonth: toBillingMonthDate(billingMonth), carryForward },
             { onSuccess: () => onOpenChange(false) },
         );
     }
@@ -119,6 +121,30 @@ export function GenerateMonthlyBatchDialog({
                             />
                         </div>
                     </Field>
+
+                    {/* Carry-forward toggle */}
+                    <label className="flex cursor-pointer items-start gap-2.5 rounded-[10px] border border-rule-soft bg-paper px-3 py-2.5">
+                        <input
+                            type="checkbox"
+                            checked={carryForward}
+                            onChange={(e) => setCarryForward(e.target.checked)}
+                            className="mt-0.5 size-4 shrink-0 accent-jade-800"
+                        />
+                        <span className="text-[12.5px] leading-relaxed">
+                            <span className="font-semibold text-jade-950">
+                                Carry forward unpaid balances
+                            </span>
+                            <span className="mt-0.5 block text-ink-soft">
+                                Each tenant&apos;s outstanding due is rolled into
+                                their new invoice (older invoices marked carried
+                                forward). Uncheck to bill only this month&apos;s
+                                rent.
+                            </span>
+                            <span className="font-bangla mt-0.5 block text-[11px] text-ink-soft/75">
+                                আগের বকেয়া নতুন বিলের সাথে যোগ হবে।
+                            </span>
+                        </span>
+                    </label>
 
                     {/* Preview — how many invoices this will create */}
                     {activeLeaseCount > 0 && (

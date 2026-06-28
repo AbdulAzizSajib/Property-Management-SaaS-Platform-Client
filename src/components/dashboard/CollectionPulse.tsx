@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowUpRight, AlertCircle, Clock, CheckCheck } from "lucide-react";
 import { fmtTaka } from "@/src/lib/numerals";
+import { useDashboardOverview } from "@/src/hooks/useDashboard";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -25,37 +26,55 @@ interface Bucket {
     icon: typeof AlertCircle;
 }
 
-const buckets: Bucket[] = [
-    {
-        key: "overdue",
-        label: "Overdue",
-        bn: "বকেয়া",
-        tenants: 3,
-        amount: 62000,
-        href: "/owner/dashboard/collections?filter=overdue",
-        icon: AlertCircle,
-    },
-    {
-        key: "due",
-        label: "Due this week",
-        bn: "এ সপ্তাহে",
-        tenants: 7,
-        amount: 148500,
-        href: "/owner/dashboard/collections?filter=due",
-        icon: Clock,
-    },
-    {
-        key: "paid",
-        label: "Paid this month",
-        bn: "পরিশোধিত",
-        tenants: 132,
-        amount: 418500,
-        href: "/owner/dashboard/collections?filter=paid",
-        icon: CheckCheck,
-    },
-];
+// ISO week number, for the "— week N" eyebrow.
+function isoWeek(d: Date): number {
+    const date = new Date(
+        Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()),
+    );
+    const dayNum = date.getUTCDay() || 7;
+    date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+    return Math.ceil(
+        ((date.getTime() - yearStart.getTime()) / 86_400_000 + 1) / 7,
+    );
+}
 
 export function CollectionPulse() {
+    const { data } = useDashboardOverview();
+    const p = data?.pulse;
+
+    const buckets: Bucket[] = [
+        {
+            key: "overdue",
+            label: "Overdue",
+            bn: "বকেয়া",
+            tenants: p?.overdue.tenants ?? 0,
+            amount: p?.overdue.amount ?? 0,
+            href: "/owner/dashboard/invoices?status=OVERDUE",
+            icon: AlertCircle,
+        },
+        {
+            key: "due",
+            label: "Outstanding",
+            bn: "মোট বকেয়া",
+            tenants: p?.outstanding.tenants ?? 0,
+            amount: p?.outstanding.amount ?? 0,
+            href: "/owner/dashboard/invoices?status=DUE,PARTIAL,OVERDUE",
+            icon: Clock,
+        },
+        {
+            key: "paid",
+            label: "Paid this month",
+            bn: "পরিশোধিত",
+            tenants: p?.paidThisMonth.tenants ?? 0,
+            amount: p?.paidThisMonth.amount ?? 0,
+            href: "/owner/dashboard/payments",
+            icon: CheckCheck,
+        },
+    ];
+
+    const week = isoWeek(new Date());
+
     return (
         <motion.section
             initial={{ opacity: 0, y: 12 }}
@@ -78,7 +97,7 @@ export function CollectionPulse() {
                         Collection pulse
                     </span>
                     <span className="font-serif text-[13px] italic text-ink-soft/70">
-                        — week 21
+                        — week {week}
                     </span>
                 </div>
                 <Link

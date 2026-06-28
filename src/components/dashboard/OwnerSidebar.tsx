@@ -8,6 +8,8 @@
 // - Logo glyph mirrors the landing-page mockup
 // - Footer now shows plan/usage instead of a generic "Need help?" placeholder
 
+import { useCurrentUser } from "@/src/hooks/useAuthActions";
+import { useSubscription } from "@/src/hooks/useSubscription";
 import { getIconComponent } from "@/src/lib/iconMapper";
 import { ownerNavItems, getCommonNavItems } from "@/src/lib/navItems";
 import { cn } from "@/src/lib/utils";
@@ -20,6 +22,23 @@ const sections = [...commonItems, ...ownerNavItems];
 
 export function OwnerSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
+  const { data: me } = useCurrentUser();
+  const { data: sub } = useSubscription();
+
+  const planName = sub?.planName ?? sub?.plan ?? "—";
+  const statusRaw = sub?.status ?? "";
+  const statusLabel = statusRaw
+    ? statusRaw.charAt(0) + statusRaw.slice(1).toLowerCase()
+    : "";
+  const statusHealthy = statusRaw === "ACTIVE" || statusRaw === "TRIALING";
+
+  const unitsUsed = sub?.usage?.units ?? 0;
+  const unitLimit = sub?.unitLimit ?? 0;
+  const unlimited = unitLimit >= 9999;
+  const usagePct =
+    unitLimit > 0 ? Math.min(100, (unitsUsed / unitLimit) * 100) : 0;
+  const nearLimit = !unlimited && usagePct >= 90;
+  const buildingsUsed = sub?.usage?.buildings ?? 0;
 
   const activeHref = sections
     .flatMap((s) => s.items.map((i) => i.href))
@@ -95,11 +114,11 @@ export function OwnerSidebar({ onNavigate }: { onNavigate?: () => void }) {
             Workspace
           </p>
           <p className="truncate text-[13px] font-semibold text-ink">
-            Aziz Rahman
+            {me?.name ?? "Workspace"}
           </p>
         </div>
         <span className="rounded-md bg-jade-50 px-1.5 py-0.5 text-[10.5px] font-semibold text-jade-800 tabular-nums">
-          8 bldgs
+          {buildingsUsed} {buildingsUsed === 1 ? "bldg" : "bldgs"}
         </span>
       </Link>
 
@@ -163,13 +182,26 @@ export function OwnerSidebar({ onNavigate }: { onNavigate?: () => void }) {
           <div className="flex items-center justify-between">
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
-                <p className="text-[12px] font-bold text-jade-950">Pro plan</p>
-                <span className="rounded-sm bg-coral-50 px-1 text-[9.5px] font-bold uppercase tracking-wider text-coral-600">
-                  Active
-                </span>
+                <p className="truncate text-[12px] font-bold text-jade-950">
+                  {planName}
+                </p>
+                {statusLabel && (
+                  <span
+                    className={cn(
+                      "rounded-sm px-1 text-[9.5px] font-bold uppercase tracking-wider",
+                      statusHealthy
+                        ? "bg-jade-50 text-jade-800"
+                        : "bg-coral-50 text-coral-600",
+                    )}
+                  >
+                    {statusLabel}
+                  </span>
+                )}
               </div>
-              <p className="font-bangla text-[10.5px] text-ink-soft/85">
-                প্রো প্ল্যান
+              <p className="text-[10.5px] text-ink-soft/85">
+                {Number(sub?.priceMonthly ?? 0) > 0
+                  ? `৳${Number(sub?.priceMonthly).toLocaleString()}/mo`
+                  : "Free forever"}
               </p>
             </div>
             <Link
@@ -186,19 +218,25 @@ export function OwnerSidebar({ onNavigate }: { onNavigate?: () => void }) {
             <div className="flex items-baseline justify-between text-[10.5px] tabular-nums">
               <span className="text-ink-soft">Units used</span>
               <span className="font-semibold text-ink">
-                166 <span className="text-ink-soft/70">/ 250</span>
+                {unitsUsed}{" "}
+                <span className="text-ink-soft/70">
+                  / {unlimited ? "∞" : unitLimit}
+                </span>
               </span>
             </div>
             <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-paper">
               <div
-                className="h-full rounded-full bg-jade-700"
-                style={{ width: `${(166 / 250) * 100}%` }}
+                className={cn(
+                  "h-full rounded-full transition-all",
+                  nearLimit ? "bg-coral-600" : "bg-jade-700",
+                )}
+                style={{ width: `${unlimited ? 6 : usagePct}%` }}
               />
             </div>
           </div>
 
           <Link
-            href="/owner/dashboard/billing"
+            href="/owner/dashboard/subscription"
             className="mt-2.5 block text-center text-[11.5px] font-semibold text-jade-900 hover:text-coral-600 transition-colors"
           >
             Manage plan →

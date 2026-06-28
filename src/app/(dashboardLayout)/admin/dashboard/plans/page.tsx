@@ -2,24 +2,14 @@
 
 // src/app/(dashboardLayout)/admin/dashboard/plans/page.tsx
 //
-// Plan-config CRUD for SUPER_ADMIN. Catalog page listing every plan,
-// with create / edit (dialog) and delete (alert dialog) actions.
+// Plan-config editor for SUPER_ADMIN. Plans are enum-bound and seeded once, so
+// there is no create/delete — only edit price / limits / features / isActive.
 
 import { PlanConfigForm } from "@/src/components/dashboard/plans/PlanConfigForm";
-import {
-    AlertDialog,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from "@/src/components/ui/alert-dialog";
 import { Button } from "@/src/components/ui/button";
 import { Dialog, DialogPortal } from "@/src/components/ui/dialog";
 import { Skeleton } from "@/src/components/ui/skeleton";
 import {
-    useCreatePlanConfig,
-    useDeletePlanConfig,
     usePlanConfigs,
     useUpdatePlanConfig,
 } from "@/src/hooks/usePlanConfigs";
@@ -33,12 +23,9 @@ import { PLAN_ORDER } from "@/src/types/subscription.types";
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import {
     Check,
-    Loader2,
     Palette,
     Pencil,
-    Plus,
     Sparkles,
-    Trash2,
     UsersRound,
     X,
 } from "lucide-react";
@@ -54,14 +41,9 @@ const fmt = (n: number) =>
 export default function AdminPlansPage() {
     const { data: plans, isLoading, isError, error } = usePlanConfigs();
 
-    // Dialog state — either a plan (edit) or "new" (create) or null (closed)
+    // The plan currently being edited (null = dialog closed).
     const [editing, setEditing] = useState<PlanConfig | null>(null);
-    const [creating, setCreating] = useState(false);
-    const [deleteTarget, setDeleteTarget] = useState<PlanConfig | null>(null);
-
-    const createMut = useCreatePlanConfig();
     const updateMut = useUpdatePlanConfig(editing?.id ?? "");
-    const deleteMut = useDeletePlanConfig();
 
     const sortedPlans = useMemo(() => {
         if (!plans) return [];
@@ -72,30 +54,14 @@ export default function AdminPlansPage() {
         return [...plans].sort((a, b) => rank(a.plan) - rank(b.plan));
     }, [plans]);
 
-    const closeForm = () => {
-        setEditing(null);
-        setCreating(false);
-    };
+    const closeForm = () => setEditing(null);
 
     const handleFormSubmit = (
         payload: CreatePlanConfigPayload | UpdatePlanConfigPayload,
-        mode: "create" | "edit",
     ) => {
-        if (mode === "create") {
-            createMut.mutate(payload as CreatePlanConfigPayload, {
-                onSuccess: () => closeForm(),
-            });
-        } else if (editing) {
-            updateMut.mutate(payload as UpdatePlanConfigPayload, {
-                onSuccess: () => closeForm(),
-            });
-        }
-    };
-
-    const confirmDelete = () => {
-        if (!deleteTarget) return;
-        deleteMut.mutate(deleteTarget.id, {
-            onSuccess: () => setDeleteTarget(null),
+        if (!editing) return;
+        updateMut.mutate(payload as UpdatePlanConfigPayload, {
+            onSuccess: () => closeForm(),
         });
     };
 
@@ -112,16 +78,9 @@ export default function AdminPlansPage() {
                             Plans
                         </h1>
                         <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-                            সাবস্ক্রিপশন প্ল্যান কনফিগারেশন পরিচালনা করুন।
+                            দাম, সীমা ও ফিচার সম্পাদনা করুন।
                         </p>
                     </div>
-                    <Button
-                        onClick={() => setCreating(true)}
-                        className="bg-jade-900 text-paper hover:bg-jade-950"
-                    >
-                        <Plus size={14} />
-                        New plan
-                    </Button>
                 </header>
 
                 {/* States */}
@@ -137,7 +96,7 @@ export default function AdminPlansPage() {
                 ) : isError ? (
                     <ErrorBlock message={errorMessage(error)} />
                 ) : sortedPlans.length === 0 ? (
-                    <EmptyBlock onCreate={() => setCreating(true)} />
+                    <EmptyBlock />
                 ) : (
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                         {sortedPlans.map((p) => (
@@ -145,16 +104,15 @@ export default function AdminPlansPage() {
                                 key={p.id}
                                 plan={p}
                                 onEdit={() => setEditing(p)}
-                                onDelete={() => setDeleteTarget(p)}
                             />
                         ))}
                     </div>
                 )}
             </div>
 
-            {/* Create / edit dialog */}
+            {/* Edit dialog */}
             <Dialog
-                open={creating || editing !== null}
+                open={editing !== null}
                 onOpenChange={(open) => {
                     if (!open) closeForm();
                 }}
@@ -169,87 +127,21 @@ export default function AdminPlansPage() {
                         )}
                     >
                         <DialogPrimitive.Title className="sr-only">
-                            {editing ? "Edit plan" : "Create plan"}
+                            Edit plan
                         </DialogPrimitive.Title>
                         <DialogPrimitive.Description className="sr-only">
-                            Configure a subscription plan that organizations can
-                            subscribe to.
+                            Edit a subscription plan&apos;s price, limits and
+                            features.
                         </DialogPrimitive.Description>
                         <PlanConfigForm
                             initial={editing ?? undefined}
-                            submitting={
-                                createMut.isPending || updateMut.isPending
-                            }
+                            submitting={updateMut.isPending}
                             onCancel={closeForm}
                             onSubmit={handleFormSubmit}
                         />
                     </DialogPrimitive.Popup>
                 </DialogPortal>
             </Dialog>
-
-            {/* Delete confirmation */}
-            <AlertDialog
-                open={deleteTarget !== null}
-                onOpenChange={(open) => {
-                    if (!open && !deleteMut.isPending) setDeleteTarget(null);
-                }}
-            >
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Delete this plan?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            {deleteTarget && (
-                                <>
-                                    <span className="block">
-                                        <span className="font-semibold text-ink">
-                                            {deleteTarget.displayName}
-                                        </span>{" "}
-                                        <span className="text-ink-soft">
-                                            ({deleteTarget.plan})
-                                        </span>
-                                    </span>
-                                    <span className="mt-1 block text-[12.5px] text-ink-soft">
-                                        Server will reject this if any active
-                                        subscription references the plan, or if
-                                        it is the FREE_TRIAL preset. Prefer{" "}
-                                        <em>disable</em> over hard delete to
-                                        soft-hide it from public pricing.
-                                    </span>
-                                </>
-                            )}
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <Button
-                            variant="outline"
-                            disabled={deleteMut.isPending}
-                            onClick={() => setDeleteTarget(null)}
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            variant="destructive"
-                            disabled={deleteMut.isPending}
-                            onClick={confirmDelete}
-                        >
-                            {deleteMut.isPending ? (
-                                <>
-                                    <Loader2
-                                        size={14}
-                                        className="animate-spin"
-                                    />
-                                    Deleting…
-                                </>
-                            ) : (
-                                <>
-                                    <Trash2 size={14} />
-                                    Delete plan
-                                </>
-                            )}
-                        </Button>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
         </div>
     );
 }
@@ -259,11 +151,9 @@ export default function AdminPlansPage() {
 function PlanCard({
     plan,
     onEdit,
-    onDelete,
 }: {
     plan: PlanConfig;
     onEdit: () => void;
-    onDelete: () => void;
 }) {
     const price = parseFloat(plan.priceMonthly) || 0;
     const featureCount = plan.features.length;
@@ -379,15 +269,6 @@ function PlanCard({
                     <Pencil size={12} />
                     Edit
                 </Button>
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={onDelete}
-                    aria-label={`Delete ${plan.displayName}`}
-                    className="text-coral-600 hover:bg-coral-50 hover:text-coral-600"
-                >
-                    <Trash2 size={13} />
-                </Button>
             </div>
         </div>
     );
@@ -437,25 +318,16 @@ function CapPill({
     );
 }
 
-function EmptyBlock({ onCreate }: { onCreate: () => void }) {
+function EmptyBlock() {
     return (
         <div className="rounded-[14px] border border-dashed border-rule-soft bg-paper px-6 py-12 text-center">
             <h2 className="text-[15px] font-bold text-jade-950">
-                No plans yet
+                No plans found
             </h2>
             <p className="mt-1 text-[13px] text-ink-soft">
-                Create your first plan to populate the public pricing page.
+                Plans are seeded automatically. Restart the server to
+                re-initialize the catalog.
             </p>
-            <p className="font-bangla mt-0.5 text-[11.5px] text-ink-soft/75">
-                প্রথম প্ল্যান তৈরি করুন
-            </p>
-            <Button
-                onClick={onCreate}
-                className="mt-4 bg-jade-900 text-paper hover:bg-jade-950"
-            >
-                <Plus size={14} />
-                New plan
-            </Button>
         </div>
     );
 }

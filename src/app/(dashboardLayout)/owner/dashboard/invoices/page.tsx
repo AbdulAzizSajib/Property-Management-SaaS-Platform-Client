@@ -37,14 +37,10 @@ import {
 } from "@/src/types/invoice.types";
 import {
     AlertTriangle,
-    Building,
-    Calendar,
     ChevronDown,
-    DoorOpen,
     Plus,
     Receipt,
     Search,
-    User,
     X,
     Zap,
 } from "lucide-react";
@@ -421,13 +417,15 @@ function InvoicesListInner() {
 // ─────────────────────────────────────────────────────────────────
 
 function InvoiceRow({ invoice }: { invoice: InvoiceListItem }) {
-    const hasDue = Number(invoice.dueAmount) > 0;
+    const due = Number(invoice.dueAmount);
+    const hasDue = Number.isFinite(due) && due > 0;
+    const isCarried = invoice.status === "CARRIED_FORWARD";
 
     return (
         <li>
             <Link
                 href={`/owner/dashboard/invoices/${invoice.id}`}
-                className="group relative flex flex-col gap-3 px-5 py-4 transition-colors hover:bg-cream/60 sm:flex-row sm:items-center"
+                className="group relative flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-cream/60 sm:gap-4 sm:px-5 sm:py-4"
             >
                 {/* Status accent */}
                 <span
@@ -438,15 +436,23 @@ function InvoiceRow({ invoice }: { invoice: InvoiceListItem }) {
                     )}
                 />
 
-                {/* Left: meta */}
-                <div className="min-w-0 flex-1 pl-2">
-                    <div className="flex flex-wrap items-center gap-1.5">
-                        <p className="truncate font-mono text-[12.5px] font-semibold text-jade-950 group-hover:text-jade-900">
-                            {invoice.invoiceNumber}
+                {/* Avatar — instantly says "who" */}
+                <span
+                    aria-hidden
+                    className="grid size-9 shrink-0 place-items-center rounded-full bg-jade-50 text-[13px] font-bold text-jade-800 sm:size-10 sm:text-[14px]"
+                >
+                    {tenantInitials(invoice.tenant.name)}
+                </span>
+
+                {/* WHO + WHAT, in plain words */}
+                <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                        <p className="truncate text-[14px] font-bold text-jade-950 group-hover:text-jade-900">
+                            {invoice.tenant.name}
                         </p>
                         <span
                             className={cn(
-                                "rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
+                                "rounded-full border px-2 py-px text-[10.5px] font-semibold",
                                 invoiceTypeStyles[invoice.type],
                             )}
                         >
@@ -454,7 +460,7 @@ function InvoiceRow({ invoice }: { invoice: InvoiceListItem }) {
                         </span>
                         <span
                             className={cn(
-                                "rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
+                                "rounded-full border px-2 py-px text-[10.5px] font-semibold",
                                 invoiceStatusStyles[invoice.status],
                             )}
                         >
@@ -462,57 +468,59 @@ function InvoiceRow({ invoice }: { invoice: InvoiceListItem }) {
                         </span>
                     </div>
 
-                    <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11.5px] text-ink-soft">
-                        <span className="inline-flex items-center gap-1">
-                            <User size={11} className="text-ink-soft/60" />
-                            <span className="text-ink">
-                                {invoice.tenant.name}
-                            </span>
+                    <p className="mt-1 truncate text-[12.5px] text-ink-soft">
+                        <span className="font-medium text-ink">
+                            {invoice.unit.building.name} · Unit {invoice.unit.name}
                         </span>
-                        <span className="inline-flex items-center gap-1">
-                            <Building size={11} className="text-ink-soft/60" />
-                            {invoice.unit.building.name}
-                        </span>
-                        <span className="inline-flex items-center gap-1">
-                            <DoorOpen size={11} className="text-ink-soft/60" />
-                            Unit {invoice.unit.name}
-                        </span>
-                        <span className="inline-flex items-center gap-1">
-                            <Calendar size={11} className="text-ink-soft/60" />
-                            {formatBillingMonth(invoice.billingMonth)}
-                        </span>
-                    </div>
+                        {" · "}
+                        <span>{formatBillingMonth(invoice.billingMonth)}</span>
+                    </p>
+
+                    {/* Code demoted to a quiet footnote */}
+                    <p className="mt-0.5 truncate font-mono text-[10.5px] text-ink-soft/55">
+                        {invoice.invoiceNumber}
+                    </p>
                 </div>
 
-                {/* Right: amounts */}
-                <div className="flex items-baseline gap-6 sm:gap-8 pl-2 sm:pl-0">
-                    <div className="text-right">
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-ink-soft">
-                            Due
-                        </p>
-                        <p
-                            className={cn(
-                                "text-[14px] font-semibold tabular-nums",
-                                hasDue
-                                    ? "text-coral-600"
-                                    : "text-ink-soft/50",
+                {/* HOW MUCH + what's left */}
+                <div className="text-right">
+                    <p className="text-[17px] font-bold leading-none tabular-nums text-jade-950 sm:text-[18px]">
+                        {formatMoney(invoice.totalAmount)}
+                    </p>
+                    {isCarried ? (
+                        <p className="mt-1 text-[11px] font-medium text-ink-soft">
+                            Carried forward
+                            {invoice.carriedForwardTo && (
+                                <span className="font-mono text-ink-soft/70">
+                                    {" → "}
+                                    {invoice.carriedForwardTo.invoiceNumber.slice(
+                                        -5,
+                                    )}
+                                </span>
                             )}
-                        >
-                            {formatMoney(invoice.dueAmount)}
                         </p>
-                    </div>
-                    <div className="text-right">
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-ink-soft">
-                            Total
+                    ) : hasDue ? (
+                        <p className="mt-1 text-[11px] font-semibold tabular-nums text-coral-600">
+                            {formatMoney(due)} still due
                         </p>
-                        <p className="text-[16px] font-bold text-jade-950 tabular-nums">
-                            {formatMoney(invoice.totalAmount)}
+                    ) : (
+                        <p className="mt-1 text-[11px] font-medium text-jade-700">
+                            Fully paid
                         </p>
-                    </div>
+                    )}
                 </div>
             </Link>
         </li>
     );
+}
+
+// First letters of the first and last name words — "Mr Akash" → "MA".
+function tenantInitials(name: string): string {
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    if (parts.length === 0) return "?";
+    const first = parts[0]![0] ?? "";
+    const last = parts.length > 1 ? parts[parts.length - 1]![0] ?? "" : "";
+    return (first + last).toUpperCase();
 }
 
 // ─────────────────────────────────────────────────────────────────

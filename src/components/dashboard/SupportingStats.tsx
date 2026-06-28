@@ -7,6 +7,7 @@
 
 import { motion } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { useDashboardOverview } from "@/src/hooks/useDashboard";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -18,31 +19,47 @@ interface Stat {
     context: string;
 }
 
-const stats: Stat[] = [
-    {
-        label: "Buildings",
-        bn: "বিল্ডিং",
-        value: "8",
-        delta: { value: "2 new", trend: "up", good: true },
-        context: "added this quarter",
-    },
-    {
-        label: "Total units",
-        bn: "মোট ইউনিট",
-        value: "166",
-        delta: { value: "12", trend: "up", good: true },
-        context: "added vs last month",
-    },
-    {
-        label: "Occupancy",
-        bn: "ভাড়া",
-        value: "85.5%",
-        delta: { value: "3.2pp", trend: "up", good: true },
-        context: "24 vacancies filled",
-    },
-];
-
 export function SupportingStats() {
+    const { data } = useDashboardOverview();
+    const s = data?.stats;
+
+    const noVacancy = (s?.vacant ?? 0) === 0;
+    const stats: Stat[] = [
+        {
+            label: "Buildings",
+            bn: "বিল্ডিং",
+            value: String(s?.buildings ?? 0),
+            delta: {
+                value: `${s?.buildingsNewThisQuarter ?? 0} new`,
+                trend: "up",
+                good: true,
+            },
+            context: "added this quarter",
+        },
+        {
+            label: "Total units",
+            bn: "মোট ইউনিট",
+            value: String(s?.totalUnits ?? 0),
+            delta: {
+                value: `${s?.unitsNewThisMonth ?? 0}`,
+                trend: "up",
+                good: true,
+            },
+            context: "added this month",
+        },
+        {
+            label: "Occupancy",
+            bn: "ভাড়া",
+            value: `${s?.occupancyRate ?? 0}%`,
+            delta: {
+                value: `${s?.vacant ?? 0} vacant`,
+                trend: noVacancy ? "up" : "down",
+                good: noVacancy,
+            },
+            context: `${s?.occupied ?? 0} of ${s?.totalUnits ?? 0} occupied`,
+        },
+    ];
+
     return (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-1">
             {stats.map((s, i) => (

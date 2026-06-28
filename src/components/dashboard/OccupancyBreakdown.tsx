@@ -1,13 +1,19 @@
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/src/components/ui/card";
+"use client";
 
-const segments = [
-    { label: "Occupied", value: 142, color: "bg-emerald-500", text: "text-emerald-700"},
-    { label: "Vacant", value: 18, color: "bg-amber-500", text: "text-amber-700" },
-    { label: "Maintenance", value: 6, color: "bg-rose-500", text: "text-rose-700" },
-];
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/src/components/ui/card";
+import { useDashboardOverview } from "@/src/hooks/useDashboard";
 
 export function OccupancyBreakdown() {
-    const total = segments.reduce((sum, s) => sum + s.value, 0);
+    const { data } = useDashboardOverview();
+    const o = data?.occupancy;
+
+    const segments = [
+        { label: "Occupied", value: o?.occupied ?? 0, color: "bg-emerald-500", text: "text-emerald-700" },
+        { label: "Vacant", value: o?.vacant ?? 0, color: "bg-amber-500", text: "text-amber-700" },
+        { label: "Maintenance", value: o?.underMaintenance ?? 0, color: "bg-rose-500", text: "text-rose-700" },
+    ];
+
+    const total = o?.total ?? segments.reduce((sum, s) => sum + s.value, 0);
 
     return (
         <Card className="px-5">
@@ -22,7 +28,7 @@ export function OccupancyBreakdown() {
                         <div
                             key={s.label}
                             className={s.color}
-                            style={{ width: `${(s.value / total) * 100}%` }}
+                            style={{ width: total > 0 ? `${(s.value / total) * 100}%` : "0%" }}
                             title={`${s.label}: ${s.value}`}
                         />
                     ))}
@@ -30,7 +36,7 @@ export function OccupancyBreakdown() {
 
                 <ul className="space-y-2.5">
                     {segments.map((s) => {
-                        const pct = ((s.value / total) * 100).toFixed(1);
+                        const pct = total > 0 ? ((s.value / total) * 100).toFixed(1) : "0.0";
                         return (
                             <li
                                 key={s.label}

@@ -1,12 +1,12 @@
 import type { Organization } from "./organization.types";
 
-export type SubscriptionPlan = "FREE_TRIAL" | "BASIC" | "STANDARD" | "ENTERPRISE";
+export type SubscriptionPlan = "FREE" | "BASIC" | "STANDARD" | "BUSINESS";
 
 export type SubscriptionStatus =
     | "TRIALING"
     | "ACTIVE"
     | "PAST_DUE"
-    | "CANCELED"
+    | "CANCELLED"
     | "EXPIRED";
 
 /**
@@ -34,6 +34,15 @@ export interface Subscription {
     createdAt: string;
     updatedAt: string;
     organizationId: string;
+    /** Plan's catalog display name (e.g. "Professional"). */
+    planName?: string;
+    /** Live usage against the plan limits. */
+    usage?: {
+        buildings: number;
+        floors: number;
+        units: number;
+        tenants: number;
+    };
 }
 
 // GET /subscriptions/me returns the subscription with the organization embedded.
@@ -75,8 +84,8 @@ export interface Plan {
 }
 
 export const PLAN_ORDER: SubscriptionPlan[] = [
-    "FREE_TRIAL",
+    "FREE",
     "BASIC",
     "STANDARD",
-    "ENTERPRISE",
+    "BUSINESS",
 ];

@@ -62,6 +62,15 @@ export interface PaymentTenantSummary {
 export interface PaymentInvoiceSummary {
     id: string;
     invoiceNumber: string;
+    // The list endpoint embeds these so the row can show what the payment
+    // was *for* and whether anything is still outstanding. Optional because
+    // older/advance payloads may omit them.
+    type?: import("./invoice.types").InvoiceType;
+    status?: import("./invoice.types").InvoiceStatus;
+    billingMonth?: string;
+    totalAmount?: string;
+    paidAmount?: string;
+    dueAmount?: string;
 }
 
 // GET /payments — list item. `invoice` can be null for advance payments or

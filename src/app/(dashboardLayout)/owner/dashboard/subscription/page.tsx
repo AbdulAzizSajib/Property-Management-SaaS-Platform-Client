@@ -1,5 +1,6 @@
 "use client";
 
+import { RequestPaymentDialog } from "@/src/components/dashboard/subscription/RequestPaymentDialog";
 import { Skeleton } from "@/src/components/ui/skeleton";
 import {
   useCancelSubscription,
@@ -8,12 +9,14 @@ import {
   useReactivateSubscription,
   useSubscription,
 } from "@/src/hooks/useSubscription";
+import { useMySubscriptionRequests } from "@/src/hooks/useSubscriptionRequests";
 import { cn } from "@/src/lib/utils";
 import {
   type Plan,
   type SubscriptionPlan,
   type SubscriptionStatus,
 } from "@/src/types/subscription.types";
+import { useState } from "react";
 import {
   Building,
   Check,
@@ -55,8 +58,8 @@ const statusStyles: Record<
     label: "Past due",
     className: "bg-coral-50 text-coral-600 border-coral-100",
   },
-  CANCELED: {
-    label: "Canceled",
+  CANCELLED: {
+    label: "Cancelled",
     className: "bg-cream text-ink-soft border-rule-soft",
   },
   EXPIRED: {
@@ -89,9 +92,12 @@ function formatDate(iso: string): string {
 export default function SubscriptionPage() {
   const { data: sub, isLoading, isError, error } = useSubscription();
   const { data: plans, isLoading: plansLoading } = usePlans();
+  const { data: myRequests } = useMySubscriptionRequests();
   const changePlan = useChangePlan();
   const cancelSub = useCancelSubscription();
   const reactivateSub = useReactivateSubscription();
+  const [payOpen, setPayOpen] = useState(false);
+  const [payPlan, setPayPlan] = useState<Plan | null>(null);
 
   if (isLoading) {
     return (
@@ -136,19 +142,24 @@ export default function SubscriptionPage() {
     className: "bg-cream text-ink-soft border-rule-soft",
   };
 
-  console.log("status------->", status);
-
   const trialDaysLeft = daysUntil(sub.trialEndsAt);
-
-  console.log("trialDaysLeft------->", trialDaysLeft);
-
   const price = parseFloat(sub.priceMonthly) || 0;
-
-  console.log("price------->", price);
   // Find catalog entry for the user's current plan (for displayName + description)
   const currentPlanMeta = plans?.find((p) => p.plan === sub.plan);
 
-  console.log("currentPlanMeta------->", currentPlanMeta);
+  const usage = sub.usage;
+  const pendingRequest = myRequests?.find((r) => r.status === "PENDING") ?? null;
+
+  // Owners pick a plan: Free is a direct downgrade; paid plans open the manual
+  // payment dialog (no direct activation).
+  const handleSelect = (plan: Plan) => {
+    if (plan.plan === "FREE") {
+      changePlan.mutate(plan.plan);
+    } else {
+      setPayPlan(plan);
+      setPayOpen(true);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-cream">
@@ -167,7 +178,7 @@ export default function SubscriptionPage() {
             </p>
           </div>
           {/* Cancel / reactivate */}
-          {sub.status === "CANCELED" || sub.status === "EXPIRED" ? (
+          {sub.status === "CANCELLED" || sub.status === "EXPIRED" ? (
             <button
               type="button"
               disabled={reactivateSub.isPending}
@@ -224,6 +235,34 @@ export default function SubscriptionPage() {
             </div>
           )} */}
 
+        {/* Pending payment request */}
+        {pendingRequest && (
+          <div className="flex items-start gap-3 rounded-[14px] border border-coral-100 bg-coral-50/70 px-4 py-3.5">
+            <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-coral-100 text-coral-600">
+              <Clock size={16} />
+            </span>
+            <div className="flex-1">
+              <p className="text-[14px] font-bold text-coral-600">
+                Payment under review —{" "}
+                {plans?.find((p) => p.plan === pendingRequest.targetPlan)
+                  ?.displayName ?? pendingRequest.targetPlan}{" "}
+                plan
+              </p>
+              <p className="mt-0.5 text-[12.5px] text-coral-600/80">
+                {pendingRequest.method} · {fmt(Number(pendingRequest.amount))} ·
+                TrxID{" "}
+                <span className="font-mono">
+                  {pendingRequest.transactionId}
+                </span>
+                . Your plan activates once an admin verifies the payment.
+              </p>
+              <p className="font-bangla mt-0.5 text-[11.5px] text-coral-600/70">
+                অ্যাডমিন যাচাই করার পর আপনার প্ল্যান চালু হবে।
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Current plan summary */}
         <div className="rounded-[14px] border border-rule-soft bg-paper p-5 sm:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -267,24 +306,28 @@ export default function SubscriptionPage() {
                 icon={Building}
                 label="Buildings"
                 bn="বিল্ডিং"
+                used={usage?.buildings}
                 limit={sub.buildingLimit}
               />
               <UsageStat
                 icon={Layers}
                 label="Floors"
                 bn="ফ্লোর"
+                used={usage?.floors}
                 limit={sub.floorLimit}
               />
               <UsageStat
                 icon={DoorOpen}
                 label="Units"
                 bn="ইউনিট"
+                used={usage?.units}
                 limit={sub.unitLimit}
               />
               <UsageStat
                 icon={Users}
                 label="Tenants"
                 bn="ভাড়াটিয়া"
+                used={usage?.tenants}
                 limit={sub.tenantLimit}
               />
             </div>
@@ -368,19 +411,44 @@ export default function SubscriptionPage() {
                       ? sub.plan
                       : null
                   }
-                  onSelect={() => changePlan.mutate(plan.plan)}
+                  onSelect={() => handleSelect(plan)}
                   pending={
                     changePlan.isPending && changePlan.variables === plan.plan
                   }
-                  disabled={changePlan.isPending}
+                  // A pending payment request blocks switching to anything else.
+                  disabled={changePlan.isPending || !!pendingRequest}
+                  blockedReason={planBlockedReason(plan, usage)}
                 />
               ))}
             </div>
           )}
         </section>
       </div>
+
+      <RequestPaymentDialog
+        open={payOpen}
+        onOpenChange={setPayOpen}
+        plan={payPlan}
+      />
     </div>
   );
+}
+
+// Reason a plan can't be selected because current usage exceeds its limits.
+function planBlockedReason(
+  plan: Plan,
+  usage?: { buildings: number; floors: number; units: number; tenants: number },
+): string | null {
+  if (!usage) return null;
+  if (usage.buildings > plan.buildingLimit)
+    return `${usage.buildings} buildings exceed limit of ${plan.buildingLimit}`;
+  if (usage.floors > plan.floorLimit)
+    return `${usage.floors} floors exceed limit of ${plan.floorLimit}`;
+  if (usage.units > plan.unitLimit)
+    return `${usage.units} units exceed limit of ${plan.unitLimit}`;
+  if (usage.tenants > plan.tenantLimit)
+    return `${usage.tenants} tenants exceed limit of ${plan.tenantLimit}`;
+  return null;
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -391,13 +459,18 @@ function UsageStat({
   icon: Icon,
   label,
   bn,
+  used,
   limit,
 }: {
   icon: React.ComponentType<{ size?: number; className?: string }>;
   label: string;
   bn: string;
-  limit: number | string;
+  used?: number;
+  limit: number;
 }) {
+  const unlimited = limit >= 9999;
+  const pct = limit > 0 ? Math.min(100, ((used ?? 0) / limit) * 100) : 0;
+  const near = !unlimited && pct >= 90;
   return (
     <div className="rounded-[10px] border border-rule-soft bg-cream/60 px-3 py-2.5">
       <div className="flex items-center justify-between gap-2">
@@ -408,8 +481,20 @@ function UsageStat({
         <p className="font-bangla text-[10px] text-ink-soft/65">{bn}</p>
       </div>
       <p className="mt-1 text-[16px] font-bold text-jade-950 tabular-nums">
-        {typeof limit === "number" ? limit.toLocaleString() : limit}
+        {used ?? 0}{" "}
+        <span className="text-[12px] font-medium text-ink-soft/70">
+          / {unlimited ? "∞" : limit.toLocaleString()}
+        </span>
       </p>
+      <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-paper">
+        <div
+          className={cn(
+            "h-full rounded-full",
+            near ? "bg-coral-600" : "bg-jade-700",
+          )}
+          style={{ width: `${unlimited ? 4 : pct}%` }}
+        />
+      </div>
     </div>
   );
 }
@@ -465,6 +550,7 @@ function PlanCard({
   onSelect,
   pending,
   disabled,
+  blockedReason,
 }: {
   plan: Plan;
   /** Null when the subscription is not in an active-ish state. */
@@ -472,10 +558,13 @@ function PlanCard({
   onSelect: () => void;
   pending: boolean;
   disabled: boolean;
+  /** Set when current usage exceeds this plan's limits (can't downgrade). */
+  blockedReason: string | null;
 }) {
   const isCurrent = current !== null && plan.plan === current;
   const highlight = plan.isPopular;
   const price = parseFloat(plan.priceMonthly) || 0;
+  const blocked = !isCurrent && !!blockedReason;
 
   return (
     <div
@@ -536,11 +625,11 @@ function PlanCard({
 
       <button
         type="button"
-        disabled={isCurrent || disabled}
+        disabled={isCurrent || disabled || blocked}
         onClick={onSelect}
         className={cn(
           "inline-flex h-10 items-center justify-center gap-1.5 rounded-[10px] px-4 text-[13px] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-60",
-          isCurrent
+          isCurrent || blocked
             ? "border border-rule-soft bg-cream text-ink-soft"
             : highlight
               ? "bg-coral-600 text-paper hover:bg-coral-700 shadow-[0_10px_24px_-12px_rgba(232,93,68,0.55)]"
@@ -554,6 +643,10 @@ function PlanCard({
           </>
         ) : isCurrent ? (
           "Current plan"
+        ) : blocked ? (
+          "Limit exceeded"
+        ) : plan.plan === "FREE" ? (
+          "Switch to Free"
         ) : (
           <>
             Switch
@@ -561,6 +654,11 @@ function PlanCard({
           </>
         )}
       </button>
+      {blocked && (
+        <p className="mt-1.5 text-center text-[10.5px] text-coral-600">
+          {blockedReason}
+        </p>
+      )}
     </div>
   );
 }

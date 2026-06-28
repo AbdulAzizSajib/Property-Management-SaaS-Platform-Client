@@ -2,17 +2,12 @@
 
 import { getErrorMessage } from "@/src/lib/utils";
 import {
-    createPlanConfig,
-    deletePlanConfig,
     getPlanConfigById,
     getPlanConfigByPlan,
     getPlanConfigs,
     updatePlanConfig,
 } from "@/src/services/planConfig.services";
-import type {
-    CreatePlanConfigPayload,
-    UpdatePlanConfigPayload,
-} from "@/src/types/planConfig.types";
+import type { UpdatePlanConfigPayload } from "@/src/types/planConfig.types";
 import type { SubscriptionPlan } from "@/src/types/subscription.types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -63,24 +58,6 @@ export function usePlanConfigByPlan(plan: SubscriptionPlan | undefined) {
     });
 }
 
-export function useCreatePlanConfig() {
-    const queryClient = useQueryClient();
-
-    return useMutation({
-        mutationFn: async (payload: CreatePlanConfigPayload) => {
-            const res = await createPlanConfig(payload);
-            return res.data;
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: planConfigKeys.all });
-            toast.success("Plan created");
-        },
-        onError: (error: unknown) => {
-            toast.error(getErrorMessage(error, "Failed to create plan"));
-        },
-    });
-}
-
 export function useUpdatePlanConfig(id: string) {
     const queryClient = useQueryClient();
 
@@ -99,25 +76,3 @@ export function useUpdatePlanConfig(id: string) {
     });
 }
 
-export function useDeletePlanConfig() {
-    const queryClient = useQueryClient();
-
-    return useMutation({
-        mutationFn: async (id: string) => {
-            await deletePlanConfig(id);
-            return id;
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: planConfigKeys.all });
-            toast.success("Plan deleted");
-        },
-        onError: (error: unknown) => {
-            toast.error(
-                getErrorMessage(
-                    error,
-                    "Failed to delete plan. Soft-hide with Disable instead.",
-                ),
-            );
-        },
-    });
-}

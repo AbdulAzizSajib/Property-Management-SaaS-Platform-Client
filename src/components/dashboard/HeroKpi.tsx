@@ -7,15 +7,28 @@
 
 import { motion } from "framer-motion";
 import { fmtTaka } from "@/src/lib/numerals";
+import { useDashboardOverview } from "@/src/hooks/useDashboard";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export function HeroKpi() {
-    const collected = 418500;
-    const target = 480000;
-    const pct = (collected / target) * 100;
-    const gap = target - collected;
-    const daysLeft = 6;
+    const { data } = useDashboardOverview();
+    const c = data?.collection;
+
+    const collected = c?.collected ?? 0;
+    const target = c?.target ?? 0;
+    const pct = target > 0 ? (collected / target) * 100 : 0;
+    const gap = Math.max(0, target - collected);
+    const daysLeft = c?.daysLeftInMonth ?? 0;
+    const monthLabel = c?.monthLabel ?? "";
+    const deltaPct = c?.deltaPct ?? 0;
+    const delta = c?.deltaVsLastMonth ?? 0;
+    const up = delta >= 0;
+    const prevMonth = new Date(
+        new Date().getFullYear(),
+        new Date().getMonth() - 1,
+        1,
+    ).toLocaleString("en-US", { month: "long" });
 
     return (
         <motion.div
@@ -48,7 +61,7 @@ export function HeroKpi() {
                     </p>
                 </div>
                 <span className="rounded-md border border-paper/15 px-2 py-1 text-[10.5px] font-semibold uppercase tracking-wider text-paper/70">
-                    May 2026
+                    {monthLabel}
                 </span>
             </div>
 
@@ -92,10 +105,11 @@ export function HeroKpi() {
             {/* delta vs last month */}
             <div className="relative mt-5 flex items-center gap-2 border-t border-paper/10 pt-4">
                 <span className="inline-flex items-center gap-1 rounded-full bg-jade-700/40 px-2 py-0.5 text-[11px] font-semibold text-paper">
-                    ↑ 12.4%
+                    {up ? "↑" : "↓"} {Math.abs(deltaPct).toFixed(1)}%
                 </span>
                 <span className="text-[12.5px] text-paper/65">
-                    vs April · ৳46,200 more
+                    vs {prevMonth} · {fmtTaka(Math.abs(delta), { compact: true })}{" "}
+                    {up ? "more" : "less"}
                 </span>
             </div>
         </motion.div>

@@ -1,6 +1,5 @@
 import { httpClient } from "@/src/lib/axios/browserHttpClient";
 import type {
-    CreatePlanConfigPayload,
     PlanConfig,
     UpdatePlanConfigPayload,
 } from "@/src/types/planConfig.types";
@@ -22,32 +21,17 @@ export const getPlanConfigById = async (id: string) =>
 
 /**
  * GET /plan-configs/by-plan/:plan
- * Allowed: SUPER_ADMIN. `plan` is the enum value (FREE_TRIAL, BASIC, ...).
+ * Allowed: SUPER_ADMIN. `plan` is the enum value (FREE, BASIC, STANDARD, BUSINESS).
  */
 export const getPlanConfigByPlan = async (plan: SubscriptionPlan) =>
     httpClient.get<PlanConfig>(`/plan-configs/by-plan/${plan}`);
 
 /**
- * POST /plan-configs
- * Allowed: SUPER_ADMIN.
- */
-export const createPlanConfig = async (payload: CreatePlanConfigPayload) =>
-    httpClient.post<PlanConfig>("/plan-configs", payload);
-
-/**
  * PATCH /plan-configs/:id
- * Allowed: SUPER_ADMIN. `plan` itself is immutable; send only fields to change.
+ * Allowed: SUPER_ADMIN. Plans are enum-bound and seeded, so this is the only
+ * mutation — edit price / limits / features / isActive. No create or delete.
  */
 export const updatePlanConfig = async (
     id: string,
     payload: UpdatePlanConfigPayload,
 ) => httpClient.patch<PlanConfig>(`/plan-configs/${id}`, payload);
-
-/**
- * DELETE /plan-configs/:id
- * Allowed: SUPER_ADMIN. Server rejects with 400 if any active subscription
- * references the plan, or if the plan is FREE_TRIAL. Soft-hide via
- * PATCH { isActive: false } instead.
- */
-export const deletePlanConfig = async (id: string) =>
-    httpClient.delete<{ id: string }>(`/plan-configs/${id}`);
