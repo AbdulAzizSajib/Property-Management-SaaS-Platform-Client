@@ -148,7 +148,8 @@ export default function SubscriptionPage() {
   const currentPlanMeta = plans?.find((p) => p.plan === sub.plan);
 
   const usage = sub.usage;
-  const pendingRequest = myRequests?.find((r) => r.status === "PENDING") ?? null;
+  const pendingRequest =
+    myRequests?.find((r) => r.status === "PENDING") ?? null;
 
   // Owners pick a plan: Free is a direct downgrade; paid plans open the manual
   // payment dialog (no direct activation).
@@ -212,6 +213,7 @@ export default function SubscriptionPage() {
             </button>
           )}
         </header>
+        {/* ffff */}
 
         {/* Trial warning */}
         {/* {sub.status === "TRIALING" &&
