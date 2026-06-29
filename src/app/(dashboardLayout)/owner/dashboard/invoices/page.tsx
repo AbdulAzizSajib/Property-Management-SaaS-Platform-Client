@@ -27,6 +27,7 @@ import {
     SelectValue,
 } from "@/src/components/ui/select";
 import { Skeleton } from "@/src/components/ui/skeleton";
+import { useBuildings } from "@/src/hooks/useBuildings";
 import { useInvoices } from "@/src/hooks/useInvoices";
 import { fmtNum } from "@/src/lib/numerals";
 import { cn } from "@/src/lib/utils";
@@ -59,12 +60,16 @@ export default function InvoicesListPage() {
 
 function InvoicesListInner() {
     const [statusFilter, setStatusFilter] = useState<string>(ALL);
+    const [buildingFilter, setBuildingFilter] = useState<string>(ALL);
     const [query, setQuery] = useState("");
     const [generateOpen, setGenerateOpen] = useState(false);
     const [batchOpen, setBatchOpen] = useState(false);
 
+    const { data: buildings } = useBuildings();
+
     const filters = {
         ...(statusFilter !== ALL && { status: statusFilter as InvoiceStatus }),
+        ...(buildingFilter !== ALL && { buildingId: buildingFilter }),
     };
 
     const { data: invoices, isLoading, isError, error } = useInvoices(filters);
@@ -97,7 +102,13 @@ function InvoicesListInner() {
         (i) => i.status === "OVERDUE",
     ).length;
 
-    const hasActiveFilters = statusFilter !== ALL || query.trim() !== "";
+    const hasActiveFilters =
+        statusFilter !== ALL || buildingFilter !== ALL || query.trim() !== "";
+
+    const selectedBuildingName =
+        buildingFilter !== ALL
+            ? buildings?.find((b) => b.id === buildingFilter)?.name
+            : undefined;
 
     return (
         <div className="min-h-screen bg-cream">
@@ -305,6 +316,35 @@ function InvoicesListInner() {
                             />
                         </div>
 
+                        <div className="w-full sm:w-52">
+                            <Select
+                                value={buildingFilter}
+                                onValueChange={(v) => setBuildingFilter(v ?? ALL)}
+                            >
+                                <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
+                                    <SelectValue placeholder="Building">
+                                        {(value) =>
+                                            value === ALL
+                                                ? "All buildings"
+                                                : (buildings?.find(
+                                                      (b) => b.id === value,
+                                                  )?.name ?? "Building")
+                                        }
+                                    </SelectValue>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value={ALL}>
+                                        All buildings
+                                    </SelectItem>
+                                    {(buildings ?? []).map((b) => (
+                                        <SelectItem key={b.id} value={b.id}>
+                                            {b.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
                         <div className="w-full sm:w-48">
                             <Select
                                 value={statusFilter}
@@ -337,6 +377,11 @@ function InvoicesListInner() {
                                     {fmtNum(filtered.length)}
                                 </span>{" "}
                                 {filtered.length === 1 ? "result" : "results"}
+                                {selectedBuildingName && (
+                                    <span className="ml-1.5 text-ink-soft/70">
+                                        · {selectedBuildingName}
+                                    </span>
+                                )}
                                 {statusFilter !== ALL && (
                                     <span className="ml-1.5 text-ink-soft/70">
                                         ·{" "}
@@ -353,6 +398,7 @@ function InvoicesListInner() {
                                     onClick={() => {
                                         setQuery("");
                                         setStatusFilter(ALL);
+                                        setBuildingFilter(ALL);
                                     }}
                                     className="inline-flex items-center gap-1 font-medium text-ink-soft transition-colors hover:text-coral-600"
                                 >
