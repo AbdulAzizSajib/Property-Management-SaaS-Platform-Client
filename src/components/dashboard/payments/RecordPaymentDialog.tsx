@@ -25,6 +25,7 @@ import {
     SelectValue,
 } from "@/src/components/ui/select";
 import { Textarea } from "@/src/components/ui/textarea";
+import { useBuildings } from "@/src/hooks/useBuildings";
 import { useInvoices } from "@/src/hooks/useInvoices";
 import { useRecordPayment } from "@/src/hooks/usePayments";
 import {
@@ -48,24 +49,23 @@ export function RecordPaymentDialog({
     // Empty string means "all months" — used as the default so the user
     // can scan every outstanding invoice without picking a period first.
     const [billingMonth, setBillingMonth] = useState("");
+    // Empty string means "all buildings".
+    const [buildingId, setBuildingId] = useState("");
 
-    const dueFilter = useMemo(
+    const { data: buildings } = useBuildings();
+
+    // Single request for both outstanding statuses — the backend matches any of
+    // the comma-separated values, so DUE + PARTIAL come back in one GET /invoices.
+    const outstandingFilter = useMemo(
         () => ({
-            status: "DUE" as const,
+            status: "DUE,PARTIAL",
             ...(billingMonth && { billingMonth }),
+            ...(buildingId && { buildingId }),
         }),
-        [billingMonth],
-    );
-    const partialFilter = useMemo(
-        () => ({
-            status: "PARTIAL" as const,
-            ...(billingMonth && { billingMonth }),
-        }),
-        [billingMonth],
+        [billingMonth, buildingId],
     );
 
-    const { data: dueInvoices } = useInvoices(dueFilter);
-    const { data: partialInvoices } = useInvoices(partialFilter);
+    const { data: outstanding } = useInvoices(outstandingFilter);
     const mutation = useRecordPayment();
 
     const [invoiceId, setInvoiceId] = useState(fixedInvoiceId ?? "");
@@ -84,16 +84,14 @@ export function RecordPaymentDialog({
             setTransactionId("");
             setNotes("");
             setBillingMonth("");
+            setBuildingId("");
         }
     }, [open, fixedInvoiceId]);
 
-    const outstandingInvoices = useMemo(() => {
-        const combined = [...(dueInvoices ?? []), ...(partialInvoices ?? [])];
-        const seen = new Set<string>();
-        return combined.filter((i) =>
-            seen.has(i.id) ? false : (seen.add(i.id), true),
-        );
-    }, [dueInvoices, partialInvoices]);
+    const outstandingInvoices = useMemo(
+        () => outstanding ?? [],
+        [outstanding],
+    );
 
     const selectedInvoice = useMemo(
         () => outstandingInvoices.find((i) => i.id === invoiceId),
@@ -152,42 +150,79 @@ export function RecordPaymentDialog({
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {!fixedInvoiceId && (
-                        <Field
-                            label="Billing month"
-                            htmlFor="p-billing-month"
-                            hint="Leave blank to see every outstanding invoice."
-                        >
-                            <div className="flex gap-2">
-                                <Input
-                                    id="p-billing-month"
-                                    type="month"
-                                    value={billingMonth}
-                                    onChange={(e) => {
-                                        setBillingMonth(e.target.value);
-                                        // Clear the picked invoice — it may
-                                        // not belong to the new month.
+                        <div className="grid grid-cols-2 gap-3">
+                            <Field
+                                label="Building"
+                                htmlFor="p-building"
+                                hint="Narrow to one building."
+                            >
+                                <Select
+                                    value={buildingId || "__all__"}
+                                    onValueChange={(v) => {
+                                        setBuildingId(v === "__all__" ? "" : v ?? "");
+                                        // Picked invoice may not belong to the
+                                        // newly selected building.
                                         setInvoiceId("");
                                         setAmount("");
                                         setAutoFilledAmount(false);
                                     }}
-                                    className={`${fieldClass} tabular-nums`}
-                                />
-                                {billingMonth && (
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setBillingMonth("");
+                                >
+                                    <SelectTrigger
+                                        id="p-building"
+                                        className={`w-full ${fieldClass}`}
+                                    >
+                                        <SelectValue placeholder="All buildings" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="__all__">
+                                            All buildings
+                                        </SelectItem>
+                                        {(buildings ?? []).map((b) => (
+                                            <SelectItem key={b.id} value={b.id}>
+                                                {b.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </Field>
+
+                            <Field
+                                label="Billing month"
+                                htmlFor="p-billing-month"
+                                hint="Blank = every month."
+                            >
+                                <div className="flex gap-2">
+                                    <Input
+                                        id="p-billing-month"
+                                        type="month"
+                                        value={billingMonth}
+                                        onChange={(e) => {
+                                            setBillingMonth(e.target.value);
+                                            // Clear the picked invoice — it may
+                                            // not belong to the new month.
                                             setInvoiceId("");
                                             setAmount("");
                                             setAutoFilledAmount(false);
                                         }}
-                                        className="inline-flex h-8 shrink-0 items-center rounded-md border border-rule-soft bg-paper px-2 text-[12px] text-ink-soft hover:border-jade-700/30 hover:text-jade-900"
-                                    >
-                                        Clear
-                                    </button>
-                                )}
-                            </div>
-                        </Field>
+                                        className={`${fieldClass} tabular-nums`}
+                                    />
+                                    {billingMonth && (
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setBillingMonth("");
+                                                setInvoiceId("");
+                                                setAmount("");
+                                                setAutoFilledAmount(false);
+                                            }}
+                                            className="inline-flex h-8 shrink-0 items-center rounded-md border border-rule-soft bg-paper px-2 text-[12px] text-ink-soft hover:border-jade-700/30 hover:text-jade-900"
+                                        >
+                                            Clear
+                                        </button>
+                                    )}
+                                </div>
+                            </Field>
+                        </div>
                     )}
 
                     <Field label="Invoice" htmlFor="p-invoice" required>
