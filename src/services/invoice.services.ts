@@ -18,6 +18,7 @@ function buildInvoiceQuery(filters?: InvoiceFilters): string {
     if (filters.leaseId) params.set("leaseId", filters.leaseId);
     if (filters.tenantId) params.set("tenantId", filters.tenantId);
     if (filters.unitId) params.set("unitId", filters.unitId);
+    if (filters.buildingId) params.set("buildingId", filters.buildingId);
     if (filters.billingMonth) params.set("billingMonth", filters.billingMonth);
     const qs = params.toString();
     return qs ? `?${qs}` : "";

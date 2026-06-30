@@ -73,6 +73,7 @@ export interface CreateBuildingPayload {
   city: string;
   area?: string;
   totalFloors: number;
+  hasGroundFloor?: boolean;
   description?: string;
 }
 
