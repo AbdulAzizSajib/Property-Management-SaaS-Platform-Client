@@ -441,14 +441,6 @@ export default function UnitDetailPage() {
                                 name: unit.name,
                                 type: unit.type,
                                 status: unit.status,
-                                bedrooms:
-                                    unit.bedrooms !== null ? String(unit.bedrooms) : "",
-                                bathrooms:
-                                    unit.bathrooms !== null
-                                        ? String(unit.bathrooms)
-                                        : "",
-                                sizeSqft:
-                                    unit.sizeSqft !== null ? String(unit.sizeSqft) : "",
                                 baseRent: unit.baseRent,
                                 serviceCharge: unit.serviceCharge,
                                 description: unit.description ?? "",
@@ -464,29 +456,6 @@ export default function UnitDetailPage() {
                                     payload.type = values.type;
                                 if (values.status !== unit.status)
                                     payload.status = values.status;
-
-                                const bedroomsNum =
-                                    values.bedrooms === ""
-                                        ? null
-                                        : Number(values.bedrooms);
-                                if (bedroomsNum !== unit.bedrooms) {
-                                    payload.bedrooms = bedroomsNum;
-                                }
-
-                                const bathroomsNum =
-                                    values.bathrooms === ""
-                                        ? null
-                                        : Number(values.bathrooms);
-                                if (bathroomsNum !== unit.bathrooms) {
-                                    payload.bathrooms = bathroomsNum;
-                                }
-
-                                const sizeNum =
-                                    values.sizeSqft === ""
-                                        ? null
-                                        : Number(values.sizeSqft);
-                                if (sizeNum !== unit.sizeSqft)
-                                    payload.sizeSqft = sizeNum;
 
                                 const baseRentNum = Number(values.baseRent);
                                 if (baseRentNum !== Number(unit.baseRent)) {

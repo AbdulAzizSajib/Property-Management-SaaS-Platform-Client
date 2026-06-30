@@ -312,7 +312,7 @@ export default function SubscriptionPage() {
           </div>
 
           {/* Feature pills */}
-          <div className="mt-5 flex flex-wrap gap-2 border-t border-rule-soft pt-5">
+          {/* <div className="mt-5 flex flex-wrap gap-2 border-t border-rule-soft pt-5">
             <FeatureBadge
               icon={MessageSquare}
               label="SMS notifications"
@@ -333,7 +333,7 @@ export default function SubscriptionPage() {
               label={sub.autoRenew ? "Auto-renews" : "Manual renewal"}
               enabled={sub.autoRenew}
             />
-          </div>
+          </div>  */}
 
           {/* Dates */}
           <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">

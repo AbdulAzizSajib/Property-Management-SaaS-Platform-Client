@@ -1,7 +1,7 @@
 // src/components/dashboard/units/unitStyles.ts
 
 import type { UnitStatus, UnitType } from "@/src/types/unit.types";
-import { fmtTaka } from "@/src/lib/numerals";
+import { fmtTaka, toBnDigits } from "@/src/lib/numerals";
 
 // ─────────────────────────────────────────────────────────────────
 // STATUS — semantic, color carries meaning. Use the brand palette,
@@ -54,6 +54,41 @@ export function statusLabel(status: UnitStatus): string {
 
 export function typeLabel(type: UnitType): string {
     return type.charAt(0) + type.slice(1).toLowerCase();
+}
+
+// ─────────────────────────────────────────────────────────────────
+// BANGLA LABELS — bilingual brand promise. Every status/type/floor a
+// Bangla-first owner reads gets a Bangla counterpart, not English only.
+// ─────────────────────────────────────────────────────────────────
+
+const STATUS_BN: Record<UnitStatus, string> = {
+    VACANT: "খালি",
+    OCCUPIED: "ভাড়া হয়েছে",
+    RESERVED: "সংরক্ষিত",
+    UNDER_MAINTENANCE: "মেরামত চলছে",
+};
+
+export function statusLabelBn(status: UnitStatus): string {
+    return STATUS_BN[status];
+}
+
+const TYPE_BN: Record<UnitType, string> = {
+    FLAT: "ফ্ল্যাট",
+    SHOP: "দোকান",
+    OFFICE: "অফিস",
+    ROOM: "রুম",
+    GARAGE: "গ্যারেজ",
+    WAREHOUSE: "গুদাম",
+};
+
+export function typeLabelBn(type: UnitType): string {
+    return TYPE_BN[type];
+}
+
+/** "নিচতলা" for ground, otherwise "২ তলা" (Bangla numeral + তলা). */
+export function floorLabelBn(floorNumber: number): string {
+    if (floorNumber === 0) return "নিচতলা";
+    return `${toBnDigits(String(floorNumber))} তলা`;
 }
 
 // ─────────────────────────────────────────────────────────────────
