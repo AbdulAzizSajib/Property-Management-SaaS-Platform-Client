@@ -7,15 +7,8 @@ import {
   buildCreatePayload,
 } from "@/src/components/dashboard/units/UnitForm";
 import {
-<<<<<<< HEAD
-  floorLabelBn,
   formatMoney,
   statusLabel,
-  statusLabelBn,
-=======
-  formatMoney,
-  statusLabel,
->>>>>>> 900720013f9cceaf8620accdec7998cd38a06a01
   typeLabel,
   unitStatusAccent,
   unitStatusStyles,
@@ -54,12 +47,9 @@ export function UnitsPanel({ buildingId }: UnitsPanelProps) {
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-<<<<<<< HEAD
-=======
           <p className="font-serif text-[13px] italic text-coral-600/85">
             Units in this building
           </p>
->>>>>>> 900720013f9cceaf8620accdec7998cd38a06a01
           <h3 className="mt-0.5 text-[16px] font-bold tracking-[-0.015em] text-jade-950">
             Units
           </h3>
@@ -141,40 +131,6 @@ export function UnitsPanel({ buildingId }: UnitsPanelProps) {
                     )}
                   />
 
-<<<<<<< HEAD
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <p className="truncate text-[15px] font-bold tracking-[-0.01em] text-jade-950 group-hover:text-jade-900">
-                        {u.name}
-                      </p>
-                      <p className="truncate text-[11.5px] text-ink-soft">
-                        {u.floor.name}
-                        <span className="font-bangla text-ink-soft/70">
-                          {" · "}
-                          {floorLabelBn(u.floor.floorNumber)}
-                        </span>
-                      </p>
-                    </div>
-                    {/* Bilingual status — English pill + Bangla word stacked, so a
-                        Bangla-first owner reads it at a glance. */}
-                    <div className="flex shrink-0 flex-col items-end gap-0.5">
-                      <span
-                        className={cn(
-                          "rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
-                          unitStatusStyles[u.status],
-                        )}
-                      >
-                        {statusLabel(u.status)}
-                      </span>
-                      <span className="font-bangla text-[10px] leading-none text-ink-soft/70">
-                        {statusLabelBn(u.status)}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Feature chips */}
-                  <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11.5px] text-ink-soft">
-=======
                   {/* Header: unit name + status */}
                   <div className="flex items-start justify-between gap-2">
                     <p className="min-w-0 flex-1 truncate text-[15px] font-bold tracking-[-0.01em] text-jade-950 group-hover:text-jade-900">
@@ -200,7 +156,6 @@ export function UnitsPanel({ buildingId }: UnitsPanelProps) {
                       </span>
                       {u.floor.name}
                     </span>
->>>>>>> 900720013f9cceaf8620accdec7998cd38a06a01
                     <span
                       className={cn(
                         "rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
@@ -209,44 +164,6 @@ export function UnitsPanel({ buildingId }: UnitsPanelProps) {
                     >
                       {typeLabel(u.type)}
                     </span>
-<<<<<<< HEAD
-                    {u.bedrooms !== null && (
-                      <span className="inline-flex items-center gap-1 tabular-nums">
-                        <Bed size={11} className="text-ink-soft/60" />
-                        {fmtNum(u.bedrooms)}
-                      </span>
-                    )}
-                    {u.bathrooms !== null && (
-                      <span className="inline-flex items-center gap-1 tabular-nums">
-                        <Bath size={11} className="text-ink-soft/60" />
-                        {fmtNum(u.bathrooms)}
-                      </span>
-                    )}
-                    {u.sizeSqft !== null && (
-                      <span className="inline-flex items-center gap-1 tabular-nums">
-                        <Ruler size={11} className="text-ink-soft/60" />
-                        {fmtNum(u.sizeSqft)} sqft
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Rent — spelled out in plain Bangla, no "svc" jargon, with the
-                      total the tenant actually pays each month. */}
-                  <div className="mt-3 border-t border-rule-soft pt-2.5">
-                    <p className="text-[15px] font-bold text-jade-950 tabular-nums">
-                      {formatMoney(u.baseRent)}
-                      <span className="font-bangla ml-1 text-[10.5px] font-medium text-ink-soft">
-                        /মাস ভাড়া
-                      </span>
-                    </p>
-                    {Number(u.serviceCharge) > 0 && (
-                      <p className="font-bangla mt-1 text-[11px] text-ink-soft tabular-nums">
-                        + {formatMoney(u.serviceCharge)} সার্ভিস চার্জ
-                        <span className="mx-1 text-ink-soft/40">·</span>
-                        <span className="font-semibold text-ink">
-                          মোট {formatMoney(Number(u.baseRent) + Number(u.serviceCharge))}
-                        </span>
-=======
                   </div>
 
                   {/* Room/size details — only when the data exists */}
@@ -286,7 +203,6 @@ export function UnitsPanel({ buildingId }: UnitsPanelProps) {
                     {Number(u.serviceCharge) > 0 && (
                       <p className="text-[10.5px] text-ink-soft tabular-nums">
                         + {formatMoney(u.serviceCharge)} service
->>>>>>> 900720013f9cceaf8620accdec7998cd38a06a01
                       </p>
                     )}
                   </div>
@@ -301,11 +217,7 @@ export function UnitsPanel({ buildingId }: UnitsPanelProps) {
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
-<<<<<<< HEAD
-            <DialogTitle className="text-jade-950">Add Unit</DialogTitle>
-=======
             <DialogTitle className="text-jade-950">Add unit</DialogTitle>
->>>>>>> 900720013f9cceaf8620accdec7998cd38a06a01
             <DialogDescription className="text-ink-soft">
               Add a flat, shop, office or other unit to a floor in this
               building.

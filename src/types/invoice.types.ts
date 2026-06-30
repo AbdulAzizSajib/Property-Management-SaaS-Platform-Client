@@ -168,7 +168,12 @@ export interface GenerateMonthlyBatchResult {
 }
 
 export interface InvoiceFilters {
-    status?: InvoiceStatus;
+    /**
+     * One status, or a comma-separated list (e.g. "DUE,PARTIAL"). The backend
+     * splits on commas and matches any of them, so a single GET /invoices call
+     * can fetch several statuses at once.
+     */
+    status?: InvoiceStatus | string;
     leaseId?: string;
     tenantId?: string;
     unitId?: string;
