@@ -33,15 +33,6 @@ export interface UnitFormValues {
   name: string;
   type: UnitType;
   status: UnitStatus;
-<<<<<<< HEAD
-  //   bedrooms: string;
-  //   bathrooms: string;
-  //   drawingRooms: string;
-  //   diningRooms: string;
-  //   kitchens: string;
-  //   balconies: string;
-  //   sizeSqft: string;
-=======
   bedrooms: string;
   bathrooms: string;
   drawingRooms: string;
@@ -49,7 +40,6 @@ export interface UnitFormValues {
   kitchens: string;
   balconies: string;
   sizeSqft: string;
->>>>>>> 900720013f9cceaf8620accdec7998cd38a06a01
   baseRent: string;
   serviceCharge: string;
   description: string;
@@ -71,15 +61,6 @@ const emptyForm: UnitFormValues = {
   // sizeSqft: "",
 =======
   bedrooms: "",
-  bathrooms: "",
-  drawingRooms: "",
-  diningRooms: "",
-  kitchens: "",
-  balconies: "",
-  sizeSqft: "",
->>>>>>> 900720013f9cceaf8620accdec7998cd38a06a01
-  baseRent: "",
-  serviceCharge: "",
   description: "",
 };
 
@@ -87,7 +68,6 @@ export interface UnitFormSubmitPayload {
   create: CreateUnitPayload;
   update: Partial<CreateUnitPayload> & { status?: UnitStatus };
 }
-
 interface UnitFormProps {
   mode: "create" | "edit";
   fixedBuildingId?: string;
