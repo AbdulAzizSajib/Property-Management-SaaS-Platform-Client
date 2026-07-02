@@ -53,8 +53,8 @@ export function GenerateInvoiceDialog({
 
     const [leaseId, setLeaseId] = useState(fixedLeaseId ?? "");
     const [billingMonth, setBillingMonth] = useState(currentYearMonth());
-    const [utilityAmount, setUtilityAmount] = useState("");
-    const [penaltyAmount, setPenaltyAmount] = useState("");
+    // Building filter — narrows the lease dropdown to one building.
+    const [buildingId, setBuildingId] = useState("");
     // Which earlier unpaid invoices the owner chose to roll into this one.
     const [carryIds, setCarryIds] = useState<string[]>([]);
 
@@ -62,14 +62,33 @@ export function GenerateInvoiceDialog({
         if (open) {
             setLeaseId(fixedLeaseId ?? "");
             setBillingMonth(currentYearMonth());
-            setUtilityAmount("");
-            setPenaltyAmount("");
+            setBuildingId("");
         }
     }, [open, fixedLeaseId]);
 
     const activeLeases = useMemo(
         () => (leases ?? []).filter((l) => l.status === "ACTIVE"),
         [leases],
+    );
+
+    // Unique buildings across the active leases — for the building filter.
+    const buildings = useMemo(() => {
+        const map = new Map<string, string>();
+        for (const l of activeLeases) {
+            if (l.unit?.building) {
+                map.set(l.unit.building.id, l.unit.building.name);
+            }
+        }
+        return Array.from(map, ([id, name]) => ({ id, name }));
+    }, [activeLeases]);
+
+    // Leases shown in the dropdown, optionally filtered by the chosen building.
+    const visibleLeases = useMemo(
+        () =>
+            buildingId
+                ? activeLeases.filter((l) => l.unit.building.id === buildingId)
+                : activeLeases,
+        [activeLeases, buildingId],
     );
 
     const selectedLease = activeLeases.find((l) => l.id === leaseId);
@@ -115,9 +134,7 @@ export function GenerateInvoiceDialog({
     // Preview of this month's own charges
     const previewTotal = selectedLease
         ? Number(selectedLease.monthlyRent) +
-          Number(selectedLease.serviceCharge) +
-          Number(utilityAmount || 0) +
-          Number(penaltyAmount || 0)
+          Number(selectedLease.serviceCharge)
         : 0;
 
     function handleSubmit(ev: React.FormEvent) {
@@ -126,8 +143,6 @@ export function GenerateInvoiceDialog({
             {
                 leaseId,
                 billingMonth: toBillingMonthDate(billingMonth),
-                ...(utilityAmount && { utilityAmount: Number(utilityAmount) }),
-                ...(penaltyAmount && { penaltyAmount: Number(penaltyAmount) }),
                 ...(carryIds.length > 0 && {
                     carryForwardInvoiceIds: carryIds,
                 }),
@@ -150,6 +165,49 @@ export function GenerateInvoiceDialog({
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    {!fixedLeaseId && buildings.length > 1 && (
+                        <Field label="Building" htmlFor="g-building">
+                            <Select
+                                value={buildingId || "__all__"}
+                                onValueChange={(v) => {
+                                    const next = v === "__all__" ? "" : (v ?? "");
+                                    setBuildingId(next);
+                                    // Clear the lease if it no longer belongs to
+                                    // the chosen building.
+                                    if (
+                                        next &&
+                                        selectedLease &&
+                                        selectedLease.unit.building.id !== next
+                                    ) {
+                                        setLeaseId("");
+                                    }
+                                }}
+                            >
+                                <SelectTrigger
+                                    id="g-building"
+                                    className={`w-full ${fieldClass}`}
+                                >
+                                    <SelectValue placeholder="All buildings">
+                                        {(value) =>
+                                            buildings.find((b) => b.id === value)
+                                                ?.name ?? "All buildings"
+                                        }
+                                    </SelectValue>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="__all__">
+                                        All buildings
+                                    </SelectItem>
+                                    {buildings.map((b) => (
+                                        <SelectItem key={b.id} value={b.id}>
+                                            {b.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </Field>
+                    )}
+
                     <Field label="Lease" htmlFor="g-lease" required>
                         <Select
                             value={leaseId}
@@ -172,12 +230,12 @@ export function GenerateInvoiceDialog({
                                 </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
-                                {activeLeases.length === 0 ? (
+                                {visibleLeases.length === 0 ? (
                                     <div className="px-2 py-2 text-[12px] text-ink-soft">
                                         No active leases
                                     </div>
                                 ) : (
-                                    activeLeases.map((l) => {
+                                    visibleLeases.map((l) => {
                                         const initials = l.tenant.name
                                             .split(" ")
                                             .filter(Boolean)
@@ -275,33 +333,6 @@ export function GenerateInvoiceDialog({
                         </div>
                     )}
 
-                    <div className="grid grid-cols-2 gap-3">
-                        <Field
-                            label="Utility"
-                            htmlFor="g-utility"
-                            hint="optional · BDT"
-                        >
-                            <MoneyInput
-                                id="g-utility"
-                                value={utilityAmount}
-                                onChange={setUtilityAmount}
-                                placeholder="0"
-                            />
-                        </Field>
-                        <Field
-                            label="Penalty"
-                            htmlFor="g-penalty"
-                            hint="optional · BDT"
-                        >
-                            <MoneyInput
-                                id="g-penalty"
-                                value={penaltyAmount}
-                                onChange={setPenaltyAmount}
-                                placeholder="0"
-                            />
-                        </Field>
-                    </div>
-
                     {/* Preview */}
                     {selectedLease ? (
                         <div className="rounded-[10px] border border-jade-100 bg-jade-50/60 px-3 py-2.5 text-[12px]">
@@ -321,22 +352,6 @@ export function GenerateInvoiceDialog({
                                         {formatMoney(selectedLease.serviceCharge)}
                                     </span>
                                 </li>
-                                {Number(utilityAmount) > 0 && (
-                                    <li className="flex justify-between tabular-nums">
-                                        <span>Utility</span>
-                                        <span>
-                                            {formatMoney(Number(utilityAmount))}
-                                        </span>
-                                    </li>
-                                )}
-                                {Number(penaltyAmount) > 0 && (
-                                    <li className="flex justify-between tabular-nums text-coral-600">
-                                        <span>Penalty</span>
-                                        <span>
-                                            {formatMoney(Number(penaltyAmount))}
-                                        </span>
-                                    </li>
-                                )}
                             </ul>
 
                             {hasCarry ? (
@@ -390,39 +405,5 @@ export function GenerateInvoiceDialog({
                 </form>
             </DialogContent>
         </Dialog>
-    );
-}
-
-// Local money input with ৳ prefix
-function MoneyInput({
-    id,
-    value,
-    onChange,
-    placeholder,
-}: {
-    id: string;
-    value: string;
-    onChange: (v: string) => void;
-    placeholder?: string;
-}) {
-    return (
-        <div className="relative">
-            <span
-                aria-hidden
-                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[14px] font-semibold text-ink-soft"
-            >
-                ৳
-            </span>
-            <Input
-                id={id}
-                type="number"
-                min={0}
-                step="any"
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-                placeholder={placeholder}
-                className={`${fieldClass} pl-7 tabular-nums`}
-            />
-        </div>
     );
 }

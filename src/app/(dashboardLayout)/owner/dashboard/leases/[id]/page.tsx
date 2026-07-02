@@ -36,17 +36,12 @@ import {
     CalendarOff,
     CreditCard,
     DoorOpen,
-    Droplets,
-    Flame,
-    Layers,
     Loader2,
     LogOut,
     Mail,
     Phone,
     Receipt,
     User,
-    Wifi,
-    Zap,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -101,17 +96,8 @@ export default function LeaseDetailPage() {
         );
     }
 
-    const isSeparate = lease.billingMode === "FIXED_SEPARATE";
-    const utilitiesTotal = isSeparate
-        ? Number(lease.gasCharge) +
-          Number(lease.waterCharge) +
-          Number(lease.electricityCharge) +
-          Number(lease.internetCharge)
-        : 0;
     const totalMonthly =
-        Number(lease.monthlyRent) +
-        Number(lease.serviceCharge) +
-        utilitiesTotal;
+        Number(lease.monthlyRent) + Number(lease.serviceCharge);
 
     const paidTotal = lease.payments.reduce(
         (sum, p) => sum + Number(p.amount),
@@ -242,11 +228,7 @@ export default function LeaseDetailPage() {
                         label="Total monthly"
                         bn="মোট মাসিক"
                         value={formatMoney(totalMonthly)}
-                        sub={
-                            isSeparate
-                                ? "rent + service + utilities"
-                                : "rent + service"
-                        }
+                        sub="rent + service"
                     />
                     <MoneyTile
                         label="Security deposit"
@@ -408,17 +390,6 @@ export default function LeaseDetailPage() {
                                 · বিলিং বিভাজন
                             </p>
                         </div>
-                        <span
-                            className={cn(
-                                "inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[10.5px] font-semibold uppercase tracking-wider",
-                                isSeparate
-                                    ? "border-coral-100 bg-coral-50 text-coral-600"
-                                    : "border-jade-100 bg-jade-50/60 text-jade-700",
-                            )}
-                        >
-                            <Layers size={11} />
-                            {isSeparate ? "Fixed separate" : "Inclusive"}
-                        </span>
                     </div>
 
                     <div className="mt-4 overflow-hidden rounded-[10px] border border-rule-soft">
@@ -432,30 +403,6 @@ export default function LeaseDetailPage() {
                                     label="Service charge"
                                     value={formatMoney(lease.serviceCharge)}
                                 />
-                                {isSeparate && (
-                                    <>
-                                        <UtilityRow
-                                            icon={Flame}
-                                            label="Gas"
-                                            value={lease.gasCharge}
-                                        />
-                                        <UtilityRow
-                                            icon={Droplets}
-                                            label="Water"
-                                            value={lease.waterCharge}
-                                        />
-                                        <UtilityRow
-                                            icon={Zap}
-                                            label="Electricity"
-                                            value={lease.electricityCharge}
-                                        />
-                                        <UtilityRow
-                                            icon={Wifi}
-                                            label="Internet"
-                                            value={lease.internetCharge}
-                                        />
-                                    </>
-                                )}
                             </tbody>
                             <tfoot className="bg-paper">
                                 <tr className="border-t border-rule-soft">
@@ -470,12 +417,10 @@ export default function LeaseDetailPage() {
                         </table>
                     </div>
 
-                    {!isSeparate && (
-                        <p className="mt-3 text-[11.5px] text-ink-soft">
-                            All utilities are included in the rent amount —
-                            tenants pay one fixed price per month.
-                        </p>
-                    )}
+                    <p className="mt-3 text-[11.5px] text-ink-soft">
+                        Tenants pay one fixed price per month — rent plus service
+                        charge.
+                    </p>
                 </div>
 
                 {/* Agreement + Rent increases */}
@@ -900,41 +845,6 @@ function BreakdownRow({ label, value }: { label: string; value: string }) {
             <td className="px-3.5 py-2 text-ink-soft">{label}</td>
             <td className="px-3.5 py-2 text-right font-semibold tabular-nums text-jade-950">
                 {value}
-            </td>
-        </tr>
-    );
-}
-
-/**
- * Utility row — icon + label, value dimmed when zero so the "billed" lines
- * stand out from the "not charged" lines.
- */
-function UtilityRow({
-    icon: Icon,
-    label,
-    value,
-}: {
-    icon: React.ComponentType<{ size?: number; className?: string }>;
-    label: string;
-    value: string;
-}) {
-    const n = Number(value);
-    const isZero = !n;
-    return (
-        <tr>
-            <td className="px-3.5 py-2">
-                <span className="inline-flex items-center gap-1.5 text-ink-soft">
-                    <Icon size={12} className="text-ink-soft/60" />
-                    {label}
-                </span>
-            </td>
-            <td
-                className={cn(
-                    "px-3.5 py-2 text-right tabular-nums",
-                    isZero ? "text-ink-soft/45" : "font-semibold text-jade-950",
-                )}
-            >
-                {formatMoney(value)}
             </td>
         </tr>
     );

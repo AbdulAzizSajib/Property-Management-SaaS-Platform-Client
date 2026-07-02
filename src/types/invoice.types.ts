@@ -30,14 +30,6 @@ export const INVOICE_TYPE_OPTIONS: { value: InvoiceType; label: string }[] = [
     { value: "OTHER", label: "Other" },
 ];
 
-/**
- * Per-utility breakdown stored on the invoice when the lease is billed
- * with billingMode = "FIXED_SEPARATE". All amounts as numbers from the
- * backend's JSON column. Keys are open-ended (gas/water/electricity/internet
- * but other custom keys may appear), so we keep them loose.
- */
-export type InvoiceUtilities = Record<string, number>;
-
 // Backend returns Prisma Decimal as a string.
 export interface Invoice {
     id: string;
@@ -49,14 +41,10 @@ export interface Invoice {
     dueDate: string;
     rentAmount: string;
     serviceCharge: string;
-    utilityAmount: string;
-    penaltyAmount: string;
     totalAmount: string;
     paidAmount: string;
     dueAmount: string;
     notes: string | null;
-    /** Per-utility breakdown — only present for FIXED_SEPARATE leases. */
-    utilities?: InvoiceUtilities | null;
     createdAt: string;
     updatedAt: string;
     organizationId: string;
@@ -146,8 +134,6 @@ export interface GenerateSingleInvoicePayload {
     leaseId: string;
     /** YYYY-MM-DD */
     billingMonth: string;
-    utilityAmount?: number;
-    penaltyAmount?: number;
     /**
      * Earlier unpaid invoices of this lease to roll into this one. Omit / [] to
      * bill only the current month (previous dues stay as their own invoices).
@@ -158,6 +144,8 @@ export interface GenerateSingleInvoicePayload {
 export interface GenerateMonthlyBatchPayload {
     /** YYYY-MM-DD */
     billingMonth: string;
+    /** Only bill leases whose unit is in this building. Omit for all buildings. */
+    buildingId?: string;
     /** Carry every outstanding balance forward. Defaults to true on the backend. */
     carryForward?: boolean;
 }
@@ -183,16 +171,12 @@ export interface InvoiceFilters {
 }
 
 /**
- * PATCH /invoices/:id — update due date, penalty, notes, and/or utilities.
- * All fields optional. The backend recomputes totals when amounts change.
+ * PATCH /invoices/:id — update the due date and/or notes. All fields optional.
  */
 export interface UpdateInvoicePayload {
     /** YYYY-MM-DD */
     dueDate?: string;
-    penaltyAmount?: number;
     notes?: string | null;
-    /** Replace the utilities breakdown — merges with existing on the backend. */
-    utilities?: InvoiceUtilities;
 }
 
 /** PATCH /invoices/:id/cancel — soft cancels the invoice. */

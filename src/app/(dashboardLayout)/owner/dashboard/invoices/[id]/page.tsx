@@ -382,21 +382,6 @@ export default function InvoiceDetailPage() {
                                         bn="সার্ভিস চার্জ"
                                         value={inv.serviceCharge}
                                     />
-                                    {Number(inv.utilityAmount) > 0 && (
-                                        <ChargeRow
-                                            label="Utility"
-                                            bn="ইউটিলিটি"
-                                            value={inv.utilityAmount}
-                                        />
-                                    )}
-                                    {Number(inv.penaltyAmount) > 0 && (
-                                        <ChargeRow
-                                            label="Penalty"
-                                            bn="জরিমানা"
-                                            value={inv.penaltyAmount}
-                                            warn
-                                        />
-                                    )}
                                     {inv.lineItems
                                         ?.filter(
                                             (li) =>

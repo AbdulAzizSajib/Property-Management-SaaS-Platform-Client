@@ -19,6 +19,13 @@ import {
     DialogTitle,
 } from "@/src/components/ui/dialog";
 import { Input } from "@/src/components/ui/input";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/src/components/ui/select";
 import { useGenerateMonthlyBatch } from "@/src/hooks/useInvoices";
 import { useLeases } from "@/src/hooks/useLeases";
 import { fmtNum } from "@/src/lib/numerals";
@@ -43,24 +50,51 @@ export function GenerateMonthlyBatchDialog({
     const mutation = useGenerateMonthlyBatch();
     const { data: leases } = useLeases();
     const [billingMonth, setBillingMonth] = useState(nextMonthYearMonth());
+    const [buildingId, setBuildingId] = useState("");
     const [carryForward, setCarryForward] = useState(true);
 
     useEffect(() => {
         if (open) {
             setBillingMonth(nextMonthYearMonth());
+            setBuildingId("");
             setCarryForward(true);
         }
     }, [open]);
 
-    const activeLeaseCount = useMemo(
-        () => (leases ?? []).filter((l) => l.status === "ACTIVE").length,
+    const activeLeases = useMemo(
+        () => (leases ?? []).filter((l) => l.status === "ACTIVE"),
         [leases],
+    );
+
+    // Unique buildings across active leases — for the optional building filter.
+    const buildings = useMemo(() => {
+        const map = new Map<string, string>();
+        for (const l of activeLeases) {
+            if (l.unit?.building) {
+                map.set(l.unit.building.id, l.unit.building.name);
+            }
+        }
+        return Array.from(map, ([id, name]) => ({ id, name }));
+    }, [activeLeases]);
+
+    // How many invoices this run will attempt — narrowed by the building filter.
+    const activeLeaseCount = useMemo(
+        () =>
+            buildingId
+                ? activeLeases.filter((l) => l.unit.building.id === buildingId)
+                      .length
+                : activeLeases.length,
+        [activeLeases, buildingId],
     );
 
     function handleSubmit(ev: React.FormEvent) {
         ev.preventDefault();
         mutation.mutate(
-            { billingMonth: toBillingMonthDate(billingMonth), carryForward },
+            {
+                billingMonth: toBillingMonthDate(billingMonth),
+                carryForward,
+                ...(buildingId && { buildingId }),
+            },
             { onSuccess: () => onOpenChange(false) },
         );
     }
@@ -121,6 +155,39 @@ export function GenerateMonthlyBatchDialog({
                             />
                         </div>
                     </Field>
+
+                    {buildings.length > 1 && (
+                        <Field label="Building" htmlFor="b-building">
+                            <Select
+                                value={buildingId || "__all__"}
+                                onValueChange={(v) =>
+                                    setBuildingId(v === "__all__" ? "" : (v ?? ""))
+                                }
+                            >
+                                <SelectTrigger
+                                    id="b-building"
+                                    className={`w-full ${fieldClass}`}
+                                >
+                                    <SelectValue placeholder="All buildings">
+                                        {(value) =>
+                                            buildings.find((b) => b.id === value)
+                                                ?.name ?? "All buildings"
+                                        }
+                                    </SelectValue>
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="__all__">
+                                        All buildings
+                                    </SelectItem>
+                                    {buildings.map((b) => (
+                                        <SelectItem key={b.id} value={b.id}>
+                                            {b.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </Field>
+                    )}
 
                     {/* Carry-forward toggle */}
                     <label className="flex cursor-pointer items-start gap-2.5 rounded-[10px] border border-rule-soft bg-paper px-3 py-2.5">
