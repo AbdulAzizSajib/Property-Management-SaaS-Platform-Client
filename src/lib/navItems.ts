@@ -155,6 +155,11 @@ export const ownerNavItems: NavSection[] = [
         href: "/owner/dashboard/documents",
         icon: "FolderArchive",
       },
+      {
+        title: "Tenants Form",
+        href: "/owner/dashboard/tenants-form",
+        icon: "FileText",
+      },
     ],
   },
   {

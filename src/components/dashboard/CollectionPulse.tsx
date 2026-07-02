@@ -9,7 +9,7 @@
 // Each is clickable, leads to the filtered tenant list.
 
 import { motion } from "framer-motion";
-import Link from "next/link";
+import { Link } from "@/src/i18n/navigation";
 import { ArrowUpRight, AlertCircle, Clock, CheckCheck } from "lucide-react";
 import { fmtTaka } from "@/src/lib/numerals";
 import { useDashboardOverview } from "@/src/hooks/useDashboard";

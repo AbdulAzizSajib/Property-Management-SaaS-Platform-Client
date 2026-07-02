@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardAction } from "@/src/components/ui/card";
-import Link from "next/link";
+import { Link } from "@/src/i18n/navigation";
 import { AlertCircle, ArrowUpRight, Clock } from "lucide-react";
 import { useDashboardOverview } from "@/src/hooks/useDashboard";
 

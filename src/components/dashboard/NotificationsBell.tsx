@@ -18,7 +18,7 @@ import {
 import { cn } from "@/src/lib/utils";
 import type { AppNotification } from "@/src/types/notification.types";
 import { Bell, CheckCheck, Loader2 } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/src/i18n/navigation";
 
 function formatTimeAgo(iso: string): string {
     const diff = Date.now() - new Date(iso).getTime();

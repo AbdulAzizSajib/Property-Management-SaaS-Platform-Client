@@ -18,7 +18,8 @@ import { cn } from "@/src/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import { ChevronDown, Key, LogOut, Menu, Search, User } from "lucide-react";
 import { NotificationsBell } from "./NotificationsBell";
-import { useRouter } from "next/navigation";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import { useRouter } from "@/src/i18n/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { ChangePasswordDialog } from "./auth/ChangePasswordDialog";
@@ -106,6 +107,7 @@ export function OwnerTopbar({ onSearchClick }: OwnerTopbarProps) {
       </button>
 
       <div className="ml-auto flex items-center gap-1.5">
+        <LanguageSwitcher />
         <NotificationsBell />
 
         {/* User menu */}

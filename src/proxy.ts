@@ -1,7 +1,43 @@
 import { NextRequest, NextResponse } from "next/server";
+import createIntlMiddleware from "next-intl/middleware";
 import { getDefaultDashboardRoute, getRouteOwner, isAuthRoute, UserRole } from "./lib/authUtils";
+import { routing } from "./i18n/routing";
 import { jwtUtils } from "./lib/jwtUtils";
 import { getNewTokensWithRefreshToken, getUserInfo } from "./services/auth.services";
+
+// next-intl's middleware: detects the locale, sets the NEXT_LOCALE cookie and
+// (for the default locale, which is un-prefixed by default) rewrites internally.
+const intlMiddleware = createIntlMiddleware(routing);
+
+const LOCALE_PATTERN = new RegExp(`^/(${routing.locales.join("|")})(?=/|$)`);
+
+/**
+ * Strip a leading locale segment so all auth rules below can reason about
+ * clean, locale-agnostic paths (e.g. "/bn/owner/dashboard" -> "/owner/dashboard",
+ * "/en" -> "/"). Returns the detected locale (or null) and the bare pathname.
+ */
+function stripLocale(pathname: string): { locale: string | null; rest: string } {
+    const match = pathname.match(LOCALE_PATTERN);
+    if (!match) return { locale: null, rest: pathname };
+    const rest = pathname.slice(match[0].length) || "/";
+    return { locale: match[1], rest };
+}
+
+/** Re-attach the active locale prefix when building redirect targets. */
+function withLocale(locale: string | null, path: string): string {
+    if (!locale) return path;
+    return path === "/" ? `/${locale}` : `/${locale}${path}`;
+}
+
+/**
+ * Copy the cookies/headers next-intl wants to set (e.g. NEXT_LOCALE) onto a
+ * response produced by the auth logic, so locale detection isn't lost on
+ * redirects.
+ */
+function mergeIntlCookies(from: NextResponse, to: NextResponse): NextResponse {
+    from.cookies.getAll().forEach((c) => to.cookies.set(c));
+    return to;
+}
 
 async function refreshTokenMiddleware (refreshToken : string) : Promise<boolean> {
     try {
@@ -19,7 +55,21 @@ async function refreshTokenMiddleware (refreshToken : string) : Promise<boolean>
 
 export async function proxy (request : NextRequest) {
    try {
-       const { pathname } = request.nextUrl; // eg /dashboard, /admin/dashboard, /doctor/dashboard
+       // The raw URL still carries the locale prefix (/en, /bn). Run next-intl
+       // first so locale detection / NEXT_LOCALE cookie is always applied, then
+       // strip the prefix so every auth rule below stays locale-agnostic.
+       const intlResponse = intlMiddleware(request);
+
+       const rawPathname = request.nextUrl.pathname;
+       const { locale, rest: pathname } = stripLocale(rawPathname); // eg /owner/dashboard
+       // Preserve the locale prefix on any path we redirect to.
+       const localized = (path: string) => withLocale(locale, path);
+       // The "continue" response — hand control back to next-intl's result.
+       const proceed = () => intlResponse;
+       // Build a locale-prefixed redirect that also carries next-intl's cookies.
+       const redirectTo = (url: URL) =>
+           mergeIntlCookies(intlResponse, NextResponse.redirect(url));
+
     const pathWithQuery = `${pathname}${request.nextUrl.search}`;
        const accessToken = request.cookies.get("accessToken")?.value;
        const refreshToken = request.cookies.get("refreshToken")?.value;
@@ -65,20 +115,21 @@ export async function proxy (request : NextRequest) {
                     requestHeaders.set("x-token-refreshed", "1");
                 }
 
-                return NextResponse.next(
-                    {
+                return mergeIntlCookies(
+                    intlResponse,
+                    NextResponse.next({
                         request: {
                             headers : requestHeaders
                         },
                         headers : response.headers
-                    }
+                    })
                 )
             } catch (error) {
                 console.error("Error refreshing token:", error);
 
             }
 
-            return response;
+            return mergeIntlCookies(intlResponse, response);
        }
 
 
@@ -90,7 +141,7 @@ export async function proxy (request : NextRequest) {
      pathname !== "/verify-email" &&
      pathname !== "/reset-password"
     ){
-        return NextResponse.redirect(new URL(getDefaultDashboardRoute(userRole as UserRole), request.url));
+        return redirectTo(new URL(localized(getDefaultDashboardRoute(userRole as UserRole)), request.url));
        }
 
        // Cache getUserInfo() across rules in this request lifecycle
@@ -116,33 +167,33 @@ export async function proxy (request : NextRequest) {
                 const userInfo = await loadUserInfo();
 
                 if(userInfo?.needPasswordChange){
-                    return NextResponse.next();
+                    return proceed();
                 }else{
-                    return NextResponse.redirect(new URL(getDefaultDashboardRoute(userRole as UserRole), request.url));
+                    return redirectTo(new URL(localized(getDefaultDashboardRoute(userRole as UserRole)), request.url));
                 }
             }
 
             // Case-2 user coming from forgot password
 
             if(email){
-                return NextResponse.next();
+                return proceed();
             }
 
-            const loginUrl = new URL("/login", request.url);
+            const loginUrl = new URL(localized("/login"), request.url);
             loginUrl.searchParams.set("redirect", pathWithQuery);
-            return NextResponse.redirect(loginUrl);
+            return redirectTo(loginUrl);
        }
 
        // Rule-3 User trying to access Public route -> allow
        if(routerOwner === null){
-        return NextResponse.next();
+        return proceed();
        }
 
        // Rule - 4 User is Not logged in but trying to access protected route -> redirect to login
        if(!accessToken || !isValidAccessToken){
-        const loginUrl = new URL("/login", request.url);
+        const loginUrl = new URL(localized("/login"), request.url);
         loginUrl.searchParams.set("redirect", pathWithQuery);
-        return NextResponse.redirect(loginUrl);
+        return redirectTo(loginUrl);
        }
 
        //Rule - Enforcing user to stay in reset password or verify email page if their needPasswordChange or isEmailVerified flags are not satisfied respectively
@@ -154,38 +205,38 @@ export async function proxy (request : NextRequest) {
                 // need email verification scenario
                 if(userInfo.emailVerified === false){
                     if(pathname !== "/verify-email"){
-                        const verifyEmailUrl = new URL("/verify-email", request.url);
+                        const verifyEmailUrl = new URL(localized("/verify-email"), request.url);
                         verifyEmailUrl.searchParams.set("email", userInfo.email);
-                        return NextResponse.redirect(verifyEmailUrl);
+                        return redirectTo(verifyEmailUrl);
                     }
 
-                    return NextResponse.next();
+                    return proceed();
                 }
 
                 if(userInfo.emailVerified && pathname === "/verify-email"){
-                    return NextResponse.redirect(new URL(getDefaultDashboardRoute(userRole as UserRole), request.url));
+                    return redirectTo(new URL(localized(getDefaultDashboardRoute(userRole as UserRole)), request.url));
                 }
 
                 // need password change scenario
                 if (userInfo.needPasswordChange){
                     if(pathname !== "/reset-password"){
-                        const resetPasswordUrl = new URL("/reset-password", request.url);
+                        const resetPasswordUrl = new URL(localized("/reset-password"), request.url);
                         resetPasswordUrl.searchParams.set("email", userInfo.email);
-                        return NextResponse.redirect(resetPasswordUrl);
+                        return redirectTo(resetPasswordUrl);
                     }
 
-                    return NextResponse.next();
+                    return proceed();
                 }
 
                 if(!userInfo.needPasswordChange && pathname === "/reset-password"){
-                    return NextResponse.redirect(new URL(getDefaultDashboardRoute(userRole as UserRole), request.url));
+                    return redirectTo(new URL(localized(getDefaultDashboardRoute(userRole as UserRole)), request.url));
                 }
             }
        }
 
        // Rule - 5 User trying to access Common protected route -> allow
        if(routerOwner === "COMMON"){
-        return NextResponse.next();
+        return proceed();
        }
 
        //Rule-6 User trying to visit role based protected but doesn't have required role -> redirect to their default dashboard
@@ -198,16 +249,17 @@ export async function proxy (request : NextRequest) {
            routerOwner === "TENANT"
        ){
             if(routerOwner !== userRole){
-                return NextResponse.redirect(new URL(getDefaultDashboardRoute(userRole as UserRole), request.url));
+                return redirectTo(new URL(localized(getDefaultDashboardRoute(userRole as UserRole)), request.url));
             }
        }
 
-       return NextResponse.next();
+       return proceed();
 
    } catch (error) {
          console.error("Error in proxy middleware:", error);
          // Fail closed: never silently return undefined (which Next treats as "continue"
          // and would let protected routes through on middleware errors).
+         // Note: no locale prefix here — this is the last-resort error path.
          const loginUrl = new URL("/login", request.url);
          return NextResponse.redirect(loginUrl);
    }

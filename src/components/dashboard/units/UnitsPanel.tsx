@@ -26,7 +26,7 @@ import { useCreateUnit, useUnits } from "@/src/hooks/useUnits";
 import { fmtNum } from "@/src/lib/numerals";
 import { cn } from "@/src/lib/utils";
 import { Bath, Bed, DoorOpen, Plus, Ruler } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/src/i18n/navigation";
 import { useState } from "react";
 
 interface UnitsPanelProps {

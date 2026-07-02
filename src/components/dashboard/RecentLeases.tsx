@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback } from "@/src/components/ui/avatar";
 import { Badge } from "@/src/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardAction } from "@/src/components/ui/card";
-import Link from "next/link";
+import { Link } from "@/src/i18n/navigation";
 import { ArrowUpRight } from "lucide-react";
 import { useDashboardOverview } from "@/src/hooks/useDashboard";
 

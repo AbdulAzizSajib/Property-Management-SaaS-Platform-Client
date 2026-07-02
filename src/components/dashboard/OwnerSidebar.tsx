@@ -14,14 +14,15 @@ import { getIconComponent } from "@/src/lib/iconMapper";
 import { ownerNavItems, getCommonNavItems } from "@/src/lib/navItems";
 import { cn } from "@/src/lib/utils";
 import { LifeBuoy } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, usePathname } from "@/src/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 const commonItems = getCommonNavItems("OWNER");
 const sections = [...commonItems, ...ownerNavItems];
 
 export function OwnerSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
+  const t = useTranslations("Nav");
   const { data: me } = useCurrentUser();
   const { data: sub } = useSubscription();
 
@@ -128,7 +129,9 @@ export function OwnerSidebar({ onNavigate }: { onNavigate?: () => void }) {
           <div key={idx} className="mb-5 last:mb-0">
             {section.title && (
               <p className="px-2.5 pb-2 text-[10.5px] font-semibold uppercase tracking-[0.14em] text-ink-soft/70">
-                {section.title}
+                {t.has(`sections.${section.title}`)
+                  ? t(`sections.${section.title}`)
+                  : section.title}
               </p>
             )}
             <ul className="space-y-0.5">
@@ -166,7 +169,9 @@ export function OwnerSidebar({ onNavigate }: { onNavigate?: () => void }) {
                           )}
                         />
                       )}
-                      <span className="truncate">{item.title}</span>
+                      <span className="truncate">
+                        {t.has(item.title) ? t(item.title) : item.title}
+                      </span>
                     </Link>
                   </li>
                 );

@@ -1,0 +1,58 @@
+{
+    "Nav": {
+        "Dashboard": "Dashboard",
+        "Buildings": "Buildings",
+        "Floors": "Floors",
+        "Units": "Units",
+        "Tenants": "Tenants",
+        "Leases": "Leases",
+        "Invoices": "Invoices",
+        "Payments": "Payments",
+        "Expenses": "Expenses",
+        "Reports": "Reports",
+        "Complaints": "Complaints",
+        "Documents": "Documents",
+        "Tenants Form": "Tenants Form",
+        "Staff": "Staff",
+        "Organization": "Organization",
+        "Subscription": "Subscription",
+        "Activity logs": "Activity logs",
+        "Admins": "Admins",
+        "Organizations": "Organizations",
+        "Plans": "Plans",
+        "Subscriptions": "Subscriptions",
+        "Payment requests": "Payment requests",
+        "Users": "Users",
+        "My Lease": "My Lease",
+        "My Unit": "My Unit",
+        "sections": {
+            "Properties": "Properties",
+            "Tenants & Leases": "Tenants & Leases",
+            "Billing": "Billing",
+            "Operations": "Operations",
+            "Organization": "Organization",
+            "Platform Management": "Platform Management",
+            "My Rental": "My Rental"
+        }
+    },
+    "Topbar": {
+        "searchPlaceholder": "Search buildings, tenants, invoices…",
+        "myProfile": "My Profile",
+        "changePassword": "Change Password",
+        "logout": "Log out",
+        "loggingOut": "Logging out…",
+        "language": "Language",
+        "english": "English",
+        "bangla": "বাংলা"
+    },
+    "Common": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "add": "Add",
+        "search": "Search",
+        "clear": "Clear",
+        "loading": "Loading…"
+    }
+}
