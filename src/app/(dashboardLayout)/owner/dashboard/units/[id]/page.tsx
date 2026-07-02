@@ -77,7 +77,7 @@ export default function UnitDetailPage() {
     if (isLoading) {
         return (
             <div className="min-h-screen bg-cream">
-                <div className="mx-auto max-w-[1240px] space-y-5 p-4 sm:p-6 lg:p-8">
+                <div className="mx-auto container space-y-5 p-4 sm:p-6 lg:p-8">
                     <Skeleton className="h-5 w-32 bg-paper" />
                     <Skeleton className="h-44 w-full bg-paper rounded-[18px]" />
                     <Skeleton className="h-56 w-full bg-paper rounded-[14px]" />
@@ -89,7 +89,7 @@ export default function UnitDetailPage() {
     if (isError || !unit) {
         return (
             <div className="min-h-screen bg-cream">
-                <div className="mx-auto max-w-[1240px] p-4 sm:p-6 lg:p-8">
+                <div className="mx-auto container p-4 sm:p-6 lg:p-8">
                     <Link
                         href="/owner/dashboard/units"
                         className="mb-4 inline-flex items-center gap-1 text-[12.5px] font-medium text-ink-soft hover:text-jade-900"
@@ -117,7 +117,7 @@ export default function UnitDetailPage() {
 
     return (
         <div className="min-h-screen bg-cream">
-            <div className="mx-auto max-w-[1240px] space-y-5 p-4 sm:p-6 lg:p-8">
+            <div className="mx-auto container space-y-5 p-4 sm:p-6 lg:p-8">
                 {/* Breadcrumb */}
                 <nav className="flex flex-wrap items-center gap-1.5 text-[12px] text-ink-soft">
                     <Link

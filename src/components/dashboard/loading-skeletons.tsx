@@ -13,10 +13,7 @@ import { cn } from "@/src/lib/utils";
 function Sk({ className }: { className?: string }) {
   return (
     <div
-      className={cn(
-        "animate-pulse rounded-[10px] bg-rule-soft/55",
-        className,
-      )}
+      className={cn("animate-pulse rounded-[10px] bg-rule-soft/55", className)}
     />
   );
 }
@@ -25,7 +22,7 @@ function Sk({ className }: { className?: string }) {
 export function ListPageSkeleton({ rows = 6 }: { rows?: number }) {
   return (
     <div className="min-h-screen bg-cream">
-      <div className="mx-auto container max-w-[1240px] space-y-6 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+      <div className="mx-auto container container space-y-6 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         {/* Header */}
         <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div className="space-y-2">
@@ -56,10 +53,7 @@ export function ListPageSkeleton({ rows = 6 }: { rows?: number }) {
           </div>
           <ul className="divide-y divide-rule-soft">
             {Array.from({ length: rows }).map((_, i) => (
-              <li
-                key={i}
-                className="flex items-center gap-3 px-4 py-3.5"
-              >
+              <li key={i} className="flex items-center gap-3 px-4 py-3.5">
                 <Sk className="size-9 shrink-0 rounded-full" />
                 <div className="min-w-0 flex-1 space-y-2">
                   <Sk className="h-3.5 w-1/3" />

@@ -58,7 +58,7 @@ function FloorsPageInner() {
 
     return (
         <div className="min-h-screen bg-cream">
-            <div className="mx-auto max-w-[1240px] space-y-6 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+            <div className="mx-auto container space-y-6 px-4 py-6 sm:px-6 lg:px-8 lg:py-8 ">
                 {/* Header — picker lives inline, not in its own card */}
                 <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                     <div>
