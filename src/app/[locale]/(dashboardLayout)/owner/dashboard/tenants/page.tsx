@@ -4,7 +4,7 @@
 
 import {
   TenantForm,
-  buildCreateTenantPayload,
+  buildCreateTenantFormData,
 } from "@/src/components/dashboard/tenants/TenantForm";
 import {
   Dialog,
@@ -114,8 +114,8 @@ export default function TenantsListPage() {
                 submitLabel="Create tenant"
                 onCancel={() => setCreateOpen(false)}
                 onSubmit={(values) => {
-                  const payload = buildCreateTenantPayload(values);
-                  createMutation.mutate(payload, {
+                  const formData = buildCreateTenantFormData(values);
+                  createMutation.mutate(formData, {
                     onSuccess: () => setCreateOpen(false),
                   });
                 }}

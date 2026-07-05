@@ -39,20 +39,6 @@ export interface TenantDetail extends Tenant {
     leases: LeaseSummary[];
 }
 
-export interface CreateTenantPayload {
-    name: string;
-    phone: string;
-    email?: string;
-    nidNumber?: string;
-    emergencyContact?: string;
-    emergencyName?: string;
-    occupation?: string;
-    permanentAddress?: string;
-    photoUrl?: string;
-    createLoginAccount?: boolean;
-    password?: string;
-}
-
 export interface UpdateTenantPayload {
     name?: string;
     phone?: string;

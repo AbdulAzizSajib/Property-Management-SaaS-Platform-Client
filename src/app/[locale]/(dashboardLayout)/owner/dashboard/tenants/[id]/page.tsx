@@ -3,7 +3,10 @@
 // src/app/owner/dashboard/tenants/[id]/page.tsx
 
 import { getLeaseStatusTone } from "@/src/components/dashboard/leases/leaseStyles";
-import { TenantForm } from "@/src/components/dashboard/tenants/TenantForm";
+import {
+  TenantForm,
+  buildUpdateTenantFormData,
+} from "@/src/components/dashboard/tenants/TenantForm";
 import { formatMoney } from "@/src/components/dashboard/units/unitStyles";
 import {
   AlertDialog,
@@ -546,14 +549,21 @@ export default function TenantDetailPage() {
                   values.permanentAddress,
                   tenant.permanentAddress,
                 );
-                setIfChanged("photoUrl", values.photoUrl, tenant.photoUrl);
 
-                if (Object.keys(payload).length === 0) {
+                // Nothing to send: no field changed and no new photo picked.
+                if (
+                  Object.keys(payload).length === 0 &&
+                  !values.photoFile
+                ) {
                   setEditOpen(false);
                   return;
                 }
 
-                updateMutation.mutate(payload, {
+                const formData = buildUpdateTenantFormData(
+                  payload,
+                  values.photoFile,
+                );
+                updateMutation.mutate(formData, {
                   onSuccess: () => setEditOpen(false),
                 });
               }}

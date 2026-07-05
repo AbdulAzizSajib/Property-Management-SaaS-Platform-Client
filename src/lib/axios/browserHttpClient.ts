@@ -104,6 +104,8 @@ function throwClientError(error: unknown): never {
 export interface ApiRequestOptions {
     params?: Record<string, unknown>;
     headers?: Record<string, string>;
+    /** HTTP method for multipart uploads. Defaults to POST. */
+    method?: "POST" | "PUT" | "PATCH";
 }
 
 const httpGet = async <TData>(
@@ -194,7 +196,10 @@ const httpUpload = async <TData>(
     options?: ApiRequestOptions,
 ): Promise<ApiResponse<TData>> => {
     try {
-        const response = await browserAxios.post<ApiResponse<TData>>(endpoint, formData, {
+        const response = await browserAxios.request<ApiResponse<TData>>({
+            url: endpoint,
+            method: options?.method ?? "POST",
+            data: formData,
             params: options?.params,
             headers: {
                 ...options?.headers,

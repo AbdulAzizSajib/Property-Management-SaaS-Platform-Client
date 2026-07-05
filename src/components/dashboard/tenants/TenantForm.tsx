@@ -5,8 +5,8 @@ import { Checkbox } from "@/src/components/ui/checkbox";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
 import { Textarea } from "@/src/components/ui/textarea";
-import { Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Loader2, Upload, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 export interface TenantFormValues {
     name: string;
@@ -18,6 +18,8 @@ export interface TenantFormValues {
     emergencyName: string;
     permanentAddress: string;
     photoUrl: string;
+    // Create-only: uploaded photo file (sent as multipart `photo`).
+    photoFile: File | null;
     // Create-only:
     createLoginAccount: boolean;
     password: string;
@@ -33,6 +35,7 @@ const emptyForm: TenantFormValues = {
     emergencyName: "",
     permanentAddress: "",
     photoUrl: "",
+    photoFile: null,
     createLoginAccount: false,
     password: "",
 };
@@ -58,6 +61,7 @@ export function TenantForm({
         ...emptyForm,
         ...defaultValues,
     });
+    const photoInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (defaultValues) {
@@ -145,14 +149,75 @@ export function TenantForm({
                     </div>
 
                     <div className="space-y-1.5 sm:col-span-2">
-                        <Label htmlFor="t-photo">Photo URL</Label>
-                        <Input
-                            id="t-photo"
-                            type="url"
-                            value={values.photoUrl}
-                            onChange={(e) => set("photoUrl", e.target.value)}
-                            placeholder="https://example.com/photo.jpg"
-                        />
+                        <Label htmlFor="t-photo">Photo</Label>
+                        {!values.photoFile ? (
+                            <label
+                                htmlFor="t-photo"
+                                className="flex cursor-pointer items-center gap-3 rounded-[10px] border border-dashed border-slate-300 bg-slate-50 px-4 py-4 transition-colors hover:border-slate-400 hover:bg-slate-100"
+                            >
+                                {mode === "edit" && values.photoUrl ? (
+                                    /* eslint-disable-next-line @next/next/no-img-element */
+                                    <img
+                                        src={values.photoUrl}
+                                        alt="Current tenant photo"
+                                        className="size-10 shrink-0 rounded-md object-cover"
+                                    />
+                                ) : (
+                                    <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-slate-100">
+                                        <Upload size={16} className="text-slate-500" />
+                                    </span>
+                                )}
+                                <div className="min-w-0">
+                                    <p className="text-[13px] font-semibold text-slate-700">
+                                        {mode === "edit" && values.photoUrl
+                                            ? "Click to replace photo"
+                                            : "Click to select a photo"}
+                                    </p>
+                                    <p className="text-[11.5px] text-slate-500">
+                                        JPG or PNG · up to 5 MB
+                                    </p>
+                                </div>
+                                <input
+                                    id="t-photo"
+                                    ref={photoInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) =>
+                                        set("photoFile", e.target.files?.[0] ?? null)
+                                    }
+                                    className="sr-only"
+                                />
+                            </label>
+                        ) : (
+                            <div className="flex items-center gap-3 rounded-[10px] border border-slate-200 bg-white px-3 py-2.5">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                    src={URL.createObjectURL(values.photoFile)}
+                                    alt="Tenant photo preview"
+                                    className="size-10 shrink-0 rounded-md object-cover"
+                                />
+                                <div className="min-w-0 flex-1">
+                                    <p className="truncate text-[13px] font-semibold text-slate-800">
+                                        {values.photoFile.name}
+                                    </p>
+                                    <p className="text-[11.5px] text-slate-500 tabular-nums">
+                                        {(values.photoFile.size / 1024).toFixed(0)} KB
+                                    </p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        set("photoFile", null);
+                                        if (photoInputRef.current)
+                                            photoInputRef.current.value = "";
+                                    }}
+                                    className="inline-flex size-7 shrink-0 items-center justify-center rounded-md text-slate-500 transition-colors hover:bg-slate-100 hover:text-rose-600"
+                                    aria-label="Remove photo"
+                                >
+                                    <X size={13} />
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -275,10 +340,11 @@ export function TenantForm({
 }
 
 /**
- * Build a CreateTenantPayload from form values: trim strings, omit empty optionals.
+ * Build the multipart FormData for POST /tenants: a JSON `data` field with the
+ * trimmed tenant values (empty optionals omitted) plus an optional `photo` file.
  */
-export function buildCreateTenantPayload(values: TenantFormValues) {
-    return {
+export function buildCreateTenantFormData(values: TenantFormValues): FormData {
+    const data = {
         name: values.name.trim(),
         phone: values.phone.trim(),
         ...(values.email.trim() && { email: values.email.trim() }),
@@ -293,8 +359,26 @@ export function buildCreateTenantPayload(values: TenantFormValues) {
         ...(values.permanentAddress.trim() && {
             permanentAddress: values.permanentAddress.trim(),
         }),
-        ...(values.photoUrl.trim() && { photoUrl: values.photoUrl.trim() }),
         createLoginAccount: values.createLoginAccount,
         ...(values.createLoginAccount && { password: values.password }),
     };
+
+    const formData = new FormData();
+    formData.append("data", JSON.stringify(data));
+    if (values.photoFile) formData.append("photo", values.photoFile);
+    return formData;
+}
+
+/**
+ * Build the multipart FormData for PATCH /tenants/:id: a JSON `data` field with
+ * only the changed fields plus an optional `photo` file when a new one is picked.
+ */
+export function buildUpdateTenantFormData(
+    changed: object,
+    photoFile: File | null,
+): FormData {
+    const formData = new FormData();
+    formData.append("data", JSON.stringify(changed));
+    if (photoFile) formData.append("photo", photoFile);
+    return formData;
 }

@@ -7,10 +7,6 @@ import {
     getTenants,
     updateTenant,
 } from "@/src/services/tenant.services";
-import type {
-    CreateTenantPayload,
-    UpdateTenantPayload,
-} from "@/src/types/tenant.types";
 import { getErrorMessage } from "@/src/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -47,8 +43,8 @@ export function useCreateTenant() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (payload: CreateTenantPayload) => {
-            const res = await createTenant(payload);
+        mutationFn: async (formData: FormData) => {
+            const res = await createTenant(formData);
             return res.data;
         },
         onSuccess: () => {
@@ -67,8 +63,8 @@ export function useUpdateTenant(id: string) {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (payload: UpdateTenantPayload) => {
-            const res = await updateTenant(id, payload);
+        mutationFn: async (formData: FormData) => {
+            const res = await updateTenant(id, formData);
             return res.data;
         },
         onSuccess: () => {

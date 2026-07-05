@@ -1,19 +1,18 @@
 import { httpClient } from "@/src/lib/axios/browserHttpClient";
 import type {
-    CreateTenantPayload,
     Tenant,
     TenantDetail,
     TenantListItem,
-    UpdateTenantPayload,
 } from "@/src/types/tenant.types";
 
 /**
- * POST /tenants — Allowed: OWNER, MANAGER, CARETAKER.
+ * POST /tenants — multipart upload. Allowed: OWNER, MANAGER, CARETAKER.
  * Subscription tenant limit is enforced.
- * When createLoginAccount=true, password is required.
+ * FormData fields: `data` (JSON string of the tenant fields) and an optional
+ * `photo` file. When createLoginAccount=true, password is required inside `data`.
  */
-export const createTenant = async (payload: CreateTenantPayload) =>
-    httpClient.post<Tenant>("/tenants", payload);
+export const createTenant = async (formData: FormData) =>
+    httpClient.upload<Tenant>("/tenants", formData);
 
 /** GET /tenants — list all tenants in caller's organization. */
 export const getTenants = async () =>
@@ -23,9 +22,13 @@ export const getTenants = async () =>
 export const getTenantById = async (id: string) =>
     httpClient.get<TenantDetail>(`/tenants/${id}`);
 
-/** PATCH /tenants/:id — partial update. */
-export const updateTenant = async (id: string, payload: UpdateTenantPayload) =>
-    httpClient.patch<Tenant>(`/tenants/${id}`, payload);
+/**
+ * PATCH /tenants/:id — partial update, multipart.
+ * FormData fields: `data` (JSON string of changed fields) and an optional
+ * `photo` file to replace the tenant's photo.
+ */
+export const updateTenant = async (id: string, formData: FormData) =>
+    httpClient.upload<Tenant>(`/tenants/${id}`, formData, { method: "PATCH" });
 
 /** DELETE /tenants/:id — soft delete (deactivates the tenant). */
 export const deactivateTenant = async (id: string) =>
