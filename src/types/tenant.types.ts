@@ -28,9 +28,19 @@ export interface Tenant {
     userId: string | null;
 }
 
+// A tenant's active lease as returned by GET /tenants — includes the unit's
+// building so tenants can be grouped/filtered by building on the client.
+export interface TenantLeaseSummary extends LeaseSummary {
+    unit: {
+        id: string;
+        name: string;
+        building: { id: string; name: string };
+    };
+}
+
 // GET /tenants — list item shape (with leases array)
 export interface TenantListItem extends Tenant {
-    leases: LeaseSummary[];
+    leases: TenantLeaseSummary[];
 }
 
 // GET /tenants/:id — detail shape (with user + leases)
