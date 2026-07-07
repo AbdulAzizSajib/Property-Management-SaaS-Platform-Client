@@ -47,11 +47,13 @@ import {
     X,
 } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 type PoliceFilter = "ALL" | "SUBMITTED" | "PENDING";
 
 export default function TenantFormsPage() {
+    const t = useTranslations("tenantsFormPage");
     const { data: forms, isLoading, isError, error } = useTenantForms();
     const { data: tenants } = useTenants();
     const createMutation = useCreateTenantForm();
@@ -97,13 +99,13 @@ export default function TenantFormsPage() {
                 <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                     <div>
                         <p className="font-serif text-[13px] italic text-coral-600/85">
-                            Tenant intake records
+                            {t("eyebrow")}
                         </p>
                         <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
-                            Tenant Forms
+                            {t("title")}
                         </h1>
                         <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-                            ভাড়াটিয়ার বিস্তারিত ফর্ম ও পুলিশ ভেরিফিকেশন স্ট্যাটাস।
+                            {t("subtitle")}
                         </p>
                     </div>
 
@@ -115,24 +117,24 @@ export default function TenantFormsPage() {
                                     className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
                                 >
                                     <Plus size={14} />
-                                    Add form
+                                    {t("addForm")}
                                 </button>
                             }
                         />
                         <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
                             <DialogHeader>
                                 <DialogTitle className="text-jade-950">
-                                    New tenant form
+                                    {t("newFormTitle")}
                                 </DialogTitle>
                                 <DialogDescription className="text-ink-soft">
-                                    Fill the detailed intake form for a tenant.
+                                    {t("newFormDescription")}
                                 </DialogDescription>
                             </DialogHeader>
                             <TenantFormForm
                                 mode="create"
                                 tenants={tenants ?? []}
                                 submitting={createMutation.isPending}
-                                submitLabel="Create form"
+                                submitLabel={t("createForm")}
                                 onCancel={() => setCreateOpen(false)}
                                 onSubmit={(values) => {
                                     const payload =
@@ -149,24 +151,28 @@ export default function TenantFormsPage() {
                 {/* Summary strip */}
                 <section className="flex flex-wrap items-baseline gap-x-7 gap-y-2 rounded-[14px] border border-rule-soft bg-paper px-5 py-3.5">
                     <SummaryStat
-                        label="Forms"
-                        bn="মোট"
+                        label={t("summaryForms")}
+                        bn={t("summaryFormsBn")}
                         value={fmtNum(totalCount)}
                     />
                     <SummaryStat
-                        label="Submitted to police"
-                        bn="পুলিশে জমা"
+                        label={t("summarySubmitted")}
+                        bn={t("summarySubmittedBn")}
                         value={fmtNum(submittedCount)}
                     />
                     <SummaryStat
-                        label="Pending"
-                        bn="বাকি"
+                        label={t("summaryPending")}
+                        bn={t("summaryPendingBn")}
                         value={fmtNum(pendingCount)}
                     />
                     {totalCount > 0 && (
                         <span className="ml-auto hidden text-[12px] text-ink-soft sm:inline tabular-nums">
-                            {((submittedCount / totalCount) * 100).toFixed(0)}%
-                            submitted
+                            {t("submittedPercent", {
+                                percent: (
+                                    (submittedCount / totalCount) *
+                                    100
+                                ).toFixed(0),
+                            })}
                         </span>
                     )}
                 </section>
@@ -183,7 +189,7 @@ export default function TenantFormsPage() {
                                 type="search"
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
-                                placeholder="Search by name, father's name, phone, NID…"
+                                placeholder={t("searchPlaceholder")}
                                 className="h-9 w-full rounded-md border border-rule-soft bg-paper pl-9 pr-3 text-[13.5px] text-ink placeholder:text-ink-soft/60 focus:border-jade-700 focus:outline-none focus:ring-2 focus:ring-jade-700/20"
                             />
                         </div>
@@ -204,10 +210,10 @@ export default function TenantFormsPage() {
                                     )}
                                 >
                                     {s === "ALL"
-                                        ? "All"
+                                        ? t("filterAll")
                                         : s === "SUBMITTED"
-                                          ? "Submitted"
-                                          : "Pending"}
+                                          ? t("filterSubmitted")
+                                          : t("filterPending")}
                                 </button>
                             ))}
                         </div>
@@ -219,7 +225,7 @@ export default function TenantFormsPage() {
                                 <span className="font-semibold text-ink">
                                     {fmtNum(filtered.length)}
                                 </span>{" "}
-                                {filtered.length === 1 ? "result" : "results"}
+                                {t("resultCount", { count: filtered.length })}
                             </span>
                             {hasActiveFilters && (
                                 <button
@@ -227,7 +233,7 @@ export default function TenantFormsPage() {
                                     onClick={clearFilters}
                                     className="inline-flex items-center gap-1 font-medium text-ink-soft transition-colors hover:text-coral-600"
                                 >
-                                    <X size={11} /> Clear
+                                    <X size={11} /> {t("clear")}
                                 </button>
                             )}
                         </div>
@@ -247,12 +253,12 @@ export default function TenantFormsPage() {
                 ) : isError ? (
                     <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
                         <h2 className="text-[15px] font-bold text-coral-600">
-                            Couldn&apos;t load tenant forms
+                            {t("errorTitle")}
                         </h2>
                         <p className="mt-1 text-[13px] text-coral-600/80">
                             {error instanceof Error
                                 ? error.message
-                                : "Please try again."}
+                                : t("errorFallback")}
                         </p>
                     </div>
                 ) : !forms || forms.length === 0 ? (
@@ -260,14 +266,14 @@ export default function TenantFormsPage() {
                 ) : filtered.length === 0 ? (
                     <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-12 text-center">
                         <p className="text-[13.5px] text-ink-soft">
-                            No forms match your filters.
+                            {t("noMatch")}
                         </p>
                         <button
                             type="button"
                             onClick={clearFilters}
                             className="mt-3 inline-flex items-center gap-1 text-[12.5px] font-semibold text-jade-900 hover:text-coral-600 transition-colors"
                         >
-                            <X size={12} /> Clear filters
+                            <X size={12} /> {t("clearFilters")}
                         </button>
                     </div>
                 ) : (
@@ -292,10 +298,10 @@ export default function TenantFormsPage() {
                 <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle className="text-jade-950">
-                            Edit tenant form
+                            {t("editFormTitle")}
                         </DialogTitle>
                         <DialogDescription className="text-ink-soft">
-                            Update the form details.
+                            {t("editFormDescription")}
                         </DialogDescription>
                     </DialogHeader>
                     {editing && (
@@ -314,20 +320,23 @@ export default function TenantFormsPage() {
             >
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Delete this form?</AlertDialogTitle>
+                        <AlertDialogTitle>
+                            {t("deleteConfirmTitle")}
+                        </AlertDialogTitle>
                         <AlertDialogDescription>
-                            This will permanently delete{" "}
-                            <span className="font-semibold">
-                                {toDelete?.name}
-                            </span>
-                            &apos;s form and all attached records (emergency
-                            contact, family members, etc). This cannot be
-                            undone.
+                            {t.rich("deleteConfirmBody", {
+                                name: toDelete?.name ?? "",
+                                b: (chunks) => (
+                                    <span className="font-semibold">
+                                        {chunks}
+                                    </span>
+                                ),
+                            })}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel disabled={deleteMutation.isPending}>
-                            Cancel
+                            {t("cancel")}
                         </AlertDialogCancel>
                         <AlertDialogAction
                             disabled={deleteMutation.isPending}
@@ -338,7 +347,9 @@ export default function TenantFormsPage() {
                                 });
                             }}
                         >
-                            {deleteMutation.isPending ? "Deleting…" : "Delete"}
+                            {deleteMutation.isPending
+                                ? t("deleting")
+                                : t("delete")}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
@@ -356,6 +367,7 @@ function EditForm({
     form: TenantFormDetail;
     onDone: () => void;
 }) {
+    const t = useTranslations("tenantsFormPage");
     const updateMutation = useUpdateTenantForm(form.id);
 
     const defaults: Partial<TenantFormValues> = {
@@ -418,7 +430,7 @@ function EditForm({
             mode="edit"
             defaultValues={defaults}
             submitting={updateMutation.isPending}
-            submitLabel="Save changes"
+            submitLabel={t("saveChanges")}
             onCancel={onDone}
             onSubmit={(values) => {
                 const payload = buildUpdateTenantFormPayload(values);
@@ -439,6 +451,7 @@ function FormCard({
     onEdit: () => void;
     onDelete: () => void;
 }) {
+    const t = useTranslations("tenantsFormPage");
     const initials = form.name
         .split(" ")
         .filter(Boolean)
@@ -477,11 +490,13 @@ function FormCard({
                             )}
                         >
                             <ShieldCheck size={11} />
-                            {form.submittedToPolice ? "Police" : "Pending"}
+                            {form.submittedToPolice
+                                ? t("badgePolice")
+                                : t("badgePending")}
                         </span>
                     </div>
                     <p className="mt-0.5 truncate text-[12px] text-ink-soft">
-                        Father: {form.fatherName}
+                        {t("father")}: {form.fatherName}
                     </p>
                 </div>
             </div>
@@ -499,7 +514,9 @@ function FormCard({
                             size={11}
                             className="shrink-0 text-ink-soft/60"
                         />
-                        <span className="truncate">NID: {form.nidNumber}</span>
+                        <span className="truncate">
+                            {t("nid")}: {form.nidNumber}
+                        </span>
                     </p>
                 )}
             </div>
@@ -509,21 +526,21 @@ function FormCard({
                     href={`/owner/dashboard/tenants-form/${form.id}/print`}
                     className="inline-flex items-center gap-1 rounded-md border border-rule-soft px-2 py-1 text-[11.5px] font-semibold text-jade-900 transition-colors hover:bg-jade-50"
                 >
-                    <Printer size={11} /> Print
+                    <Printer size={11} /> {t("print")}
                 </Link>
                 <button
                     type="button"
                     onClick={onEdit}
                     className="inline-flex items-center gap-1 rounded-md border border-rule-soft px-2 py-1 text-[11.5px] font-semibold text-jade-900 transition-colors hover:bg-jade-50"
                 >
-                    <Pencil size={11} /> Edit
+                    <Pencil size={11} /> {t("edit")}
                 </button>
                 <button
                     type="button"
                     onClick={onDelete}
                     className="inline-flex items-center gap-1 rounded-md border border-coral-100 px-2 py-1 text-[11.5px] font-semibold text-coral-600 transition-colors hover:bg-coral-50"
                 >
-                    <Trash2 size={11} /> Delete
+                    <Trash2 size={11} /> {t("delete")}
                 </button>
             </div>
         </div>
@@ -558,20 +575,20 @@ function SummaryStat({
 }
 
 function EmptyState({ onCreate }: { onCreate: () => void }) {
+    const t = useTranslations("tenantsFormPage");
     return (
         <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-16 text-center">
             <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-jade-50">
                 <FileText size={26} className="text-jade-800" />
             </div>
             <h2 className="mt-4 text-[17px] font-bold text-jade-950">
-                No tenant forms yet
+                {t("emptyTitle")}
             </h2>
             <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
-                Create a detailed intake form for a tenant to track their
-                information and police verification status.
+                {t("emptySubtitle")}
             </p>
             <p className="font-bangla mt-0.5 text-[12px] text-ink-soft/75">
-                প্রথম ভাড়াটিয়ার ফর্ম তৈরি করুন
+                {t("emptyBanglaHint")}
             </p>
             <div className="mt-5">
                 <button
@@ -580,7 +597,7 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
                     className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
                 >
                     <Plus size={14} />
-                    Create your first form
+                    {t("createFirstForm")}
                 </button>
             </div>
         </div>

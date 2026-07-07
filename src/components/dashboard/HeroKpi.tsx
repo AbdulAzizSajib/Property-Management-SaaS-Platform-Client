@@ -6,14 +6,19 @@
 // plus the context that makes it actionable: target, gap, days remaining.
 
 import { motion } from "framer-motion";
-import { fmtTaka } from "@/src/lib/numerals";
+import { fmtTaka, toBnDigits } from "@/src/lib/numerals";
 import { useDashboardOverview } from "@/src/hooks/useDashboard";
+import { useTranslations, useLocale } from "next-intl";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export function HeroKpi() {
+    const t = useTranslations("heroKpi");
+    const isBn = useLocale() === "bn";
     const { data } = useDashboardOverview();
     const c = data?.collection;
+
+    const bn = (s: string | number) => (isBn ? toBnDigits(String(s)) : String(s));
 
     const collected = c?.collected ?? 0;
     const target = c?.target ?? 0;
@@ -28,7 +33,7 @@ export function HeroKpi() {
         new Date().getFullYear(),
         new Date().getMonth() - 1,
         1,
-    ).toLocaleString("en-US", { month: "long" });
+    ).toLocaleString(isBn ? "bn-BD" : "en-US", { month: "long" });
 
     return (
         <motion.div
@@ -54,10 +59,7 @@ export function HeroKpi() {
             <div className="relative flex items-start justify-between">
                 <div>
                     <p className="font-serif text-[14px] italic text-paper/60">
-                        Collected this month
-                    </p>
-                    <p className="font-bangla mt-0.5 text-[12.5px] text-paper/45">
-                        মে মাসে কালেক্ট
+                        {t("collectedThisMonth")}
                     </p>
                 </div>
                 <span className="rounded-md border border-paper/15 px-2 py-1 text-[10.5px] font-semibold uppercase tracking-wider text-paper/70">
@@ -67,20 +69,20 @@ export function HeroKpi() {
 
             <div className="relative mt-4 flex items-baseline gap-2">
                 <span className="text-[44px] font-bold tracking-[-0.03em] tabular-nums leading-none sm:text-[52px]">
-                    {fmtTaka(collected)}
+                    {fmtTaka(collected, { bn: isBn })}
                 </span>
             </div>
 
             <p className="relative mt-2.5 text-[13px] text-paper/70">
-                Target{" "}
+                {t("target")}{" "}
                 <span className="font-semibold text-paper tabular-nums">
-                    {fmtTaka(target, { compact: true })}
+                    {fmtTaka(target, { compact: true, bn: isBn })}
                 </span>{" "}
                 ·{" "}
                 <span className="text-coral-500">
-                    {fmtTaka(gap, { compact: true })} to go
+                    {t("toGo", { amount: fmtTaka(gap, { compact: true, bn: isBn }) })}
                 </span>{" "}
-                · <span className="tabular-nums">{daysLeft} days left</span>
+                · <span className="tabular-nums">{t("daysLeft", { days: bn(daysLeft) })}</span>
             </p>
 
             {/* Progress bar */}
@@ -97,19 +99,27 @@ export function HeroKpi() {
                     />
                 </div>
                 <div className="mt-2 flex justify-between text-[11px] text-paper/55 tabular-nums">
-                    <span>{pct.toFixed(1)}% of target</span>
-                    <span>৳0 → {fmtTaka(target, { compact: true })}</span>
+                    <span>{t("pctOfTarget", { pct: bn(pct.toFixed(1)) })}</span>
+                    <span>
+                        {t("range", {
+                            from: fmtTaka(0, { compact: true, bn: isBn }),
+                            to: fmtTaka(target, { compact: true, bn: isBn }),
+                        })}
+                    </span>
                 </div>
             </div>
 
             {/* delta vs last month */}
             <div className="relative mt-5 flex items-center gap-2 border-t border-paper/10 pt-4">
                 <span className="inline-flex items-center gap-1 rounded-full bg-jade-700/40 px-2 py-0.5 text-[11px] font-semibold text-paper">
-                    {up ? "↑" : "↓"} {Math.abs(deltaPct).toFixed(1)}%
+                    {up ? "↑" : "↓"} {bn(Math.abs(deltaPct).toFixed(1))}%
                 </span>
                 <span className="text-[12.5px] text-paper/65">
-                    vs {prevMonth} · {fmtTaka(Math.abs(delta), { compact: true })}{" "}
-                    {up ? "more" : "less"}
+                    {t("vsMonth", {
+                        month: prevMonth,
+                        amount: fmtTaka(Math.abs(delta), { compact: true, bn: isBn }),
+                        direction: up ? "up" : "down",
+                    })}
                 </span>
             </div>
         </motion.div>

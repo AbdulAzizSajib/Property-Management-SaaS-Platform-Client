@@ -46,6 +46,7 @@ import {
   Zap,
 } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { Suspense, useMemo, useState } from "react";
 
 const ALL = "__ALL__";
@@ -59,6 +60,7 @@ export default function InvoicesListPage() {
 }
 
 function InvoicesListInner() {
+  const t = useTranslations("invoicesPage");
   const [statusFilter, setStatusFilter] = useState<string>(ALL);
   const [buildingFilter, setBuildingFilter] = useState<string>(ALL);
   const [query, setQuery] = useState("");
@@ -117,13 +119,13 @@ function InvoicesListInner() {
         <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="font-serif text-[13px] italic text-coral-600/85">
-              Billing &amp; collections
+              {t("eyebrow")}
             </p>
             <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
-              Invoices
+              {t("title")}
             </h1>
             <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-              সব বিল ও বকেয়া।
+              {t("subtitle")}
             </p>
           </div>
 
@@ -134,7 +136,7 @@ function InvoicesListInner() {
               className="inline-flex h-9 items-center gap-1.5 rounded-[9px] border border-rule-soft bg-paper px-3.5 text-[13px] font-medium text-ink transition-colors hover:border-jade-700/30 hover:text-jade-900"
             >
               <Zap size={14} />
-              Monthly batch
+              {t("monthlyBatch")}
             </button>
 
             <DropdownMenu>
@@ -145,7 +147,7 @@ function InvoicesListInner() {
                     className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
                   >
                     <Plus size={14} />
-                    Generate
+                    {t("generate")}
                     <ChevronDown size={13} />
                   </button>
                 }
@@ -153,11 +155,11 @@ function InvoicesListInner() {
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuItem onClick={() => setGenerateOpen(true)}>
                   <Receipt size={13} className="mr-2" />
-                  Single invoice
+                  {t("singleInvoice")}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setBatchOpen(true)}>
                   <Zap size={13} className="mr-2" />
-                  Monthly batch
+                  {t("monthlyBatch")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -200,7 +202,7 @@ function InvoicesListInner() {
                 totalDue > 0 ? "text-paper/60" : "text-coral-600/85",
               )}
             >
-              Outstanding balance
+              {t("heroLabel")}
             </p>
             <p
               className={cn(
@@ -208,7 +210,7 @@ function InvoicesListInner() {
                 totalDue > 0 ? "text-paper/45" : "text-ink-soft/65",
               )}
             >
-              অপরিশোধিত বকেয়া
+              {t("heroLabelBn")}
             </p>
             <p
               className={cn(
@@ -216,7 +218,7 @@ function InvoicesListInner() {
                 totalDue > 0 ? "text-coral-400" : "text-jade-950",
               )}
             >
-              {totalDue > 0 ? formatMoney(totalDue) : "All clear"}
+              {totalDue > 0 ? formatMoney(totalDue) : t("heroAllClear")}
             </p>
             <p
               className={cn(
@@ -224,7 +226,7 @@ function InvoicesListInner() {
                 totalDue > 0 ? "text-paper/70" : "text-ink-soft",
               )}
             >
-              across{" "}
+              {t("heroAcross")}{" "}
               <span
                 className={cn(
                   "font-semibold tabular-nums",
@@ -233,14 +235,14 @@ function InvoicesListInner() {
               >
                 {fmtNum(invoices?.length ?? 0)}
               </span>{" "}
-              invoice{(invoices?.length ?? 0) === 1 ? "" : "s"}
+              {t("heroInvoices", { count: invoices?.length ?? 0 })}
               {totalPaid > 0 && (
                 <>
                   {" · "}
                   <span
                     className={totalDue > 0 ? "text-jade-300" : "text-jade-700"}
                   >
-                    {formatMoney(totalPaid)} collected
+                    {t("heroCollected", { amount: formatMoney(totalPaid) })}
                   </span>
                 </>
               )}
@@ -257,7 +259,7 @@ function InvoicesListInner() {
               >
                 <AlertTriangle size={11} />
                 <span className="tabular-nums">{fmtNum(overdueCount)}</span>
-                <span>invoice{overdueCount === 1 ? "" : "s"} overdue</span>
+                <span>{t("overdueCount", { count: overdueCount })}</span>
               </div>
             )}
           </div>
@@ -265,17 +267,17 @@ function InvoicesListInner() {
           {/* Supporting context */}
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
             <MiniStat
-              label="Collected"
-              bn="পরিশোধিত"
+              label={t("statCollected")}
+              bn={t("statCollectedBn")}
               value={formatMoney(totalPaid)}
-              sub="paid to date"
+              sub={t("statCollectedSub")}
               tone="good"
             />
             <MiniStat
-              label="Total invoices"
-              bn="মোট বিল"
+              label={t("statTotal")}
+              bn={t("statTotalBn")}
               value={fmtNum(invoices?.length ?? 0)}
-              sub="all statuses"
+              sub={t("statTotalSub")}
               tone="neutral"
             />
           </div>
@@ -293,7 +295,7 @@ function InvoicesListInner() {
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by invoice #, tenant, unit, building…"
+                placeholder={t("searchPlaceholder")}
                 className="h-9 w-full rounded-md border border-rule-soft bg-paper pl-9 pr-3 text-[13.5px] text-ink placeholder:text-ink-soft/60 focus:border-jade-700 focus:outline-none focus:ring-2 focus:ring-jade-700/20"
               />
             </div>
@@ -304,17 +306,17 @@ function InvoicesListInner() {
                 onValueChange={(v) => setBuildingFilter(v ?? ALL)}
               >
                 <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
-                  <SelectValue placeholder="Building">
+                  <SelectValue placeholder={t("buildingPlaceholder")}>
                     {(value) =>
                       value === ALL
-                        ? "All buildings"
+                        ? t("allBuildings")
                         : (buildings?.find((b) => b.id === value)?.name ??
-                          "Building")
+                          t("buildingPlaceholder"))
                     }
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={ALL}>All buildings</SelectItem>
+                  <SelectItem value={ALL}>{t("allBuildings")}</SelectItem>
                   {(buildings ?? []).map((b) => (
                     <SelectItem key={b.id} value={b.id}>
                       {b.name}
@@ -330,10 +332,10 @@ function InvoicesListInner() {
                 onValueChange={(v) => setStatusFilter(v ?? ALL)}
               >
                 <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
-                  <SelectValue placeholder="Status" />
+                  <SelectValue placeholder={t("statusPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={ALL}>All statuses</SelectItem>
+                  <SelectItem value={ALL}>{t("allStatuses")}</SelectItem>
                   {INVOICE_STATUS_OPTIONS.map((opt) => (
                     <SelectItem key={opt.value} value={opt.value}>
                       {opt.label}
@@ -350,7 +352,7 @@ function InvoicesListInner() {
                 <span className="font-semibold text-ink">
                   {fmtNum(filtered.length)}
                 </span>{" "}
-                {filtered.length === 1 ? "result" : "results"}
+                {t("resultCount", { count: filtered.length })}
                 {selectedBuildingName && (
                   <span className="ml-1.5 text-ink-soft/70">
                     · {selectedBuildingName}
@@ -358,7 +360,9 @@ function InvoicesListInner() {
                 )}
                 {statusFilter !== ALL && (
                   <span className="ml-1.5 text-ink-soft/70">
-                    · {invoiceStatusLabel(statusFilter as InvoiceStatus)} only
+                    {t("onlySuffix", {
+                      label: invoiceStatusLabel(statusFilter as InvoiceStatus),
+                    })}
                   </span>
                 )}
               </span>
@@ -372,7 +376,7 @@ function InvoicesListInner() {
                   }}
                   className="inline-flex items-center gap-1 font-medium text-ink-soft transition-colors hover:text-coral-600"
                 >
-                  <X size={11} /> Clear filters
+                  <X size={11} /> {t("clearFilters")}
                 </button>
               )}
             </div>
@@ -385,10 +389,10 @@ function InvoicesListInner() {
         ) : isError ? (
           <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
             <h2 className="text-[15px] font-bold text-coral-600">
-              Couldn&apos;t load invoices
+              {t("errorTitle")}
             </h2>
             <p className="mt-1 text-[13px] text-coral-600/80">
-              {error instanceof Error ? error.message : "Please try again."}
+              {error instanceof Error ? error.message : t("errorFallback")}
             </p>
           </div>
         ) : !invoices || invoices.length === 0 ? (
@@ -398,9 +402,7 @@ function InvoicesListInner() {
           />
         ) : filtered.length === 0 ? (
           <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-12 text-center">
-            <p className="text-[13.5px] text-ink-soft">
-              No invoices match your filters.
-            </p>
+            <p className="text-[13.5px] text-ink-soft">{t("noMatch")}</p>
           </div>
         ) : (
           <div className="overflow-hidden rounded-[14px] border border-rule-soft bg-paper">
@@ -431,6 +433,7 @@ function InvoicesListInner() {
 // ─────────────────────────────────────────────────────────────────
 
 function InvoiceRow({ invoice }: { invoice: InvoiceListItem }) {
+  const t = useTranslations("invoicesPage");
   const due = Number(invoice.dueAmount);
   const hasDue = Number.isFinite(due) && due > 0;
   const isCarried = invoice.status === "CARRIED_FORWARD";
@@ -484,7 +487,8 @@ function InvoiceRow({ invoice }: { invoice: InvoiceListItem }) {
 
           <p className="mt-1 truncate text-[12.5px] text-ink-soft">
             <span className="font-medium text-ink">
-              {invoice.unit.building.name} · Unit {invoice.unit.name}
+              {invoice.unit.building.name} ·{" "}
+              {t("unitPrefix", { name: invoice.unit.name })}
             </span>
             {" · "}
             <span>{formatBillingMonth(invoice.billingMonth)}</span>
@@ -503,7 +507,7 @@ function InvoiceRow({ invoice }: { invoice: InvoiceListItem }) {
           </p>
           {isCarried ? (
             <p className="mt-1 text-[11px] font-medium text-ink-soft">
-              Carried forward
+              {t("carriedForward")}
               {invoice.carriedForwardTo && (
                 <span className="font-mono text-ink-soft/70">
                   {" → "}
@@ -513,11 +517,11 @@ function InvoiceRow({ invoice }: { invoice: InvoiceListItem }) {
             </p>
           ) : hasDue ? (
             <p className="mt-1 text-[11px] font-semibold tabular-nums text-coral-600">
-              {formatMoney(due)} still due
+              {t("stillDue", { amount: formatMoney(due) })}
             </p>
           ) : (
             <p className="mt-1 text-[11px] font-medium text-jade-700">
-              Fully paid
+              {t("fullyPaid")}
             </p>
           )}
         </div>
@@ -597,20 +601,20 @@ function EmptyState({
   onGenerate: () => void;
   onBatch: () => void;
 }) {
+  const t = useTranslations("invoicesPage");
   return (
     <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-16 text-center">
       <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-jade-50">
         <Receipt size={26} className="text-jade-800" />
       </div>
       <h2 className="mt-4 text-[17px] font-bold text-jade-950">
-        No invoices yet
+        {t("emptyTitle")}
       </h2>
       <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
-        Generate your first invoice for an active lease, or run a monthly batch
-        to invoice everyone at once.
+        {t("emptySubtitle")}
       </p>
       <p className="font-bangla mt-0.5 text-[12px] text-ink-soft/75">
-        আপনার প্রথম বিল তৈরি করুন
+        {t("emptyBanglaHint")}
       </p>
       <div className="mt-5 flex items-center justify-center gap-2">
         <button
@@ -619,7 +623,7 @@ function EmptyState({
           className="inline-flex h-9 items-center gap-1.5 rounded-[9px] border border-rule-soft bg-paper px-3.5 text-[13px] font-medium text-ink transition-colors hover:border-jade-700/30 hover:text-jade-900"
         >
           <Zap size={14} />
-          Monthly batch
+          {t("monthlyBatch")}
         </button>
         <button
           type="button"
@@ -627,7 +631,7 @@ function EmptyState({
           className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
         >
           <Plus size={14} />
-          Generate invoice
+          {t("generateInvoice")}
         </button>
       </div>
     </div>

@@ -22,6 +22,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 
 // ─────────────────────────────────────────────────────────────────
@@ -66,6 +67,7 @@ function formatPeriod(from: string, to: string): string {
 // ─────────────────────────────────────────────────────────────────
 
 export default function ReportsPage() {
+  const t = useTranslations("reportsPage");
   const now = useMemo(() => new Date(), []);
   const startOfYear = useMemo(() => new Date(now.getFullYear(), 0, 1), [now]);
 
@@ -126,13 +128,13 @@ export default function ReportsPage() {
         <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between print:hidden">
           <div>
             <p className="font-serif text-[13px] italic text-coral-600/85">
-              Financial overview
+              {t("eyebrow")}
             </p>
             <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
-              Reports
+              {t("title")}
             </h1>
             <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-              আয়, ব্যয় ও মুনাফার বিশ্লেষণ।
+              {t("subtitle")}
             </p>
           </div>
 
@@ -142,23 +144,23 @@ export default function ReportsPage() {
             className="inline-flex h-9 items-center gap-1.5 rounded-[9px] border border-rule-soft bg-paper px-3.5 text-[13px] font-medium text-ink transition-colors hover:border-jade-700/30 hover:text-jade-900"
           >
             <Printer size={14} />
-            Print
+            {t("print")}
           </button>
         </header>
 
         {/* Report quick-links */}
         <nav className="flex flex-wrap gap-2 print:hidden">
           <ReportLink href="/owner/dashboard/reports" active>
-            Financial
+            {t("navFinancial")}
           </ReportLink>
           <ReportLink href="/owner/dashboard/reports/rent-collection">
-            Rent collection
+            {t("navRentCollection")}
           </ReportLink>
           <ReportLink href="/owner/dashboard/reports/occupancy">
-            Occupancy
+            {t("navOccupancy")}
           </ReportLink>
           <ReportLink href="/owner/dashboard/reports/expenses">
-            Expenses
+            {t("navExpenses")}
           </ReportLink>
         </nav>
 
@@ -168,7 +170,7 @@ export default function ReportsPage() {
             <div className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-end">
               <div className="flex-1">
                 <label className="block text-[11.5px] font-semibold text-ink">
-                  From
+                  {t("from")}
                 </label>
                 <input
                   type="date"
@@ -180,7 +182,7 @@ export default function ReportsPage() {
               </div>
               <div className="flex-1">
                 <label className="block text-[11.5px] font-semibold text-ink">
-                  To
+                  {t("to")}
                 </label>
                 <input
                   type="date"
@@ -193,17 +195,20 @@ export default function ReportsPage() {
             </div>
 
             <div className="flex flex-wrap items-center gap-1.5">
-              <PresetButton onClick={() => applyPreset(1)} label="This month" />
+              <PresetButton
+                onClick={() => applyPreset(1)}
+                label={t("presetThisMonth")}
+              />
               <PresetButton
                 onClick={() => applyPreset(3)}
-                label="Last 3 months"
+                label={t("presetLast3")}
               />
               <PresetButton
                 onClick={() => applyPreset(6)}
-                label="Last 6 months"
+                label={t("presetLast6")}
               />
-              <PresetButton onClick={applyYTD} label="Year to date" />
-              <PresetButton onClick={applyLastYear} label="Last year" />
+              <PresetButton onClick={applyYTD} label={t("presetYtd")} />
+              <PresetButton onClick={applyLastYear} label={t("presetLastYear")} />
             </div>
           </div>
 
@@ -219,7 +224,7 @@ export default function ReportsPage() {
                 <span className="font-semibold text-ink">
                   {fmtNum(report.monthly.length)}
                 </span>{" "}
-                month{report.monthly.length === 1 ? "" : "s"} covered
+                {t("monthsCoveredSuffix", { count: report.monthly.length })}
               </span>
             </div>
           )}
@@ -231,12 +236,10 @@ export default function ReportsPage() {
         ) : isError ? (
           <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
             <h2 className="text-[15px] font-bold text-coral-600">
-              Couldn&apos;t load report
+              {t("errorTitle")}
             </h2>
             <p className="mt-1 text-[13px] text-coral-600/80">
-              {error instanceof Error
-                ? error.message
-                : "Please adjust the date range and try again."}
+              {error instanceof Error ? error.message : t("errorFallback")}
             </p>
           </div>
         ) : !report ? (
@@ -279,7 +282,7 @@ export default function ReportsPage() {
                     isProfit ? "text-paper/60" : "text-coral-600/85",
                   )}
                 >
-                  {isProfit ? "Net profit" : "Net loss"}
+                  {isProfit ? t("netProfit") : t("netLoss")}
                 </p>
                 <p
                   className={cn(
@@ -287,7 +290,7 @@ export default function ReportsPage() {
                     isProfit ? "text-paper/45" : "text-ink-soft/65",
                   )}
                 >
-                  {isProfit ? "নিট মুনাফা" : "নিট ক্ষতি"}
+                  {isProfit ? t("netProfitBn") : t("netLossBn")}
                 </p>
                 <p
                   className={cn(
@@ -303,25 +306,20 @@ export default function ReportsPage() {
                     isProfit ? "text-paper/70" : "text-ink-soft",
                   )}
                 >
-                  income{" "}
-                  <span
-                    className={cn(
-                      "font-semibold tabular-nums",
-                      isProfit ? "text-paper" : "text-ink",
-                    )}
-                  >
-                    {formatMoney(income)}
-                  </span>{" "}
-                  −{" "}
-                  <span
-                    className={cn(
-                      "font-semibold tabular-nums",
-                      isProfit ? "text-paper" : "text-ink",
-                    )}
-                  >
-                    {formatMoney(expense)}
-                  </span>{" "}
-                  expense
+                  {t.rich("incomeExpenseLine", {
+                    income: formatMoney(income),
+                    expense: formatMoney(expense),
+                    b: (chunks) => (
+                      <span
+                        className={cn(
+                          "font-semibold tabular-nums",
+                          isProfit ? "text-paper" : "text-ink",
+                        )}
+                      >
+                        {chunks}
+                      </span>
+                    ),
+                  })}
                 </p>
 
                 {income > 0 && (
@@ -337,7 +335,7 @@ export default function ReportsPage() {
                     <span className="tabular-nums">
                       {(expenseRatio * 100).toFixed(1)}%
                     </span>
-                    <span>of income spent on expenses</span>
+                    <span>{t("expenseRatio")}</span>
                   </div>
                 )}
               </div>
@@ -345,15 +343,15 @@ export default function ReportsPage() {
               {/* Supporting — income + expense */}
               <div className="grid grid-cols-1 gap-3">
                 <SummaryStat
-                  label="Total income"
-                  bn="মোট আয়"
+                  label={t("totalIncome")}
+                  bn={t("totalIncomeBn")}
                   value={formatMoney(income)}
                   Icon={TrendingUp}
                   tone="good"
                 />
                 <SummaryStat
-                  label="Total expense"
-                  bn="মোট ব্যয়"
+                  label={t("totalExpense")}
+                  bn={t("totalExpenseBn")}
                   value={formatMoney(expense)}
                   Icon={TrendingDown}
                   tone="warn"
@@ -366,20 +364,20 @@ export default function ReportsPage() {
               <div className="flex items-center justify-between border-b border-rule-soft px-5 py-4 sm:px-6">
                 <div>
                   <p className="font-serif text-[12.5px] italic text-coral-600/85">
-                    Monthly breakdown
+                    {t("monthlyBreakdown")}
                   </p>
                   <p className="font-bangla text-[11.5px] text-ink-soft/75">
-                    মাসিক বিশ্লেষণ
+                    {t("monthlyBreakdownBn")}
                   </p>
                 </div>
                 <div className="hidden items-center gap-3 text-[11px] text-ink-soft sm:flex">
                   <span className="inline-flex items-center gap-1.5">
                     <span className="h-2.5 w-2.5 rounded-sm bg-jade-700" />
-                    Income
+                    {t("income")}
                   </span>
                   <span className="inline-flex items-center gap-1.5">
                     <span className="h-2.5 w-2.5 rounded-sm bg-coral-500" />
-                    Expense
+                    {t("expense")}
                   </span>
                 </div>
               </div>
@@ -388,7 +386,7 @@ export default function ReportsPage() {
                 <div className="px-6 py-12 text-center">
                   <BarChart3 size={28} className="mx-auto text-ink-soft/40" />
                   <p className="mt-3 text-[13.5px] text-ink-soft">
-                    No data for this period.
+                    {t("noData")}
                   </p>
                 </div>
               ) : (
@@ -513,15 +511,24 @@ function MonthlyChart({ monthly }: { monthly: FinancialReportMonthly[] }) {
 }
 
 function MonthlyTable({ monthly }: { monthly: FinancialReportMonthly[] }) {
+  const t = useTranslations("reportsPage");
   return (
     <div className="border-t border-rule-soft">
       <table className="w-full text-[12.5px]">
         <thead className="bg-cream/40 text-[10.5px] uppercase tracking-[0.12em] text-ink-soft">
           <tr>
-            <th className="px-5 py-2 text-left font-semibold sm:px-6">Month</th>
-            <th className="px-3 py-2 text-right font-semibold">Income</th>
-            <th className="px-3 py-2 text-right font-semibold">Expense</th>
-            <th className="px-5 py-2 text-right font-semibold sm:px-6">Net</th>
+            <th className="px-5 py-2 text-left font-semibold sm:px-6">
+              {t("tableMonth")}
+            </th>
+            <th className="px-3 py-2 text-right font-semibold">
+              {t("tableIncome")}
+            </th>
+            <th className="px-3 py-2 text-right font-semibold">
+              {t("tableExpense")}
+            </th>
+            <th className="px-5 py-2 text-right font-semibold sm:px-6">
+              {t("tableNet")}
+            </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-rule-soft">
@@ -660,16 +667,17 @@ function ReportShell() {
 }
 
 function EmptyState() {
+  const t = useTranslations("reportsPage");
   return (
     <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-16 text-center">
       <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-jade-50">
         <BarChart3 size={26} className="text-jade-800" />
       </div>
       <h2 className="mt-4 text-[17px] font-bold text-jade-950">
-        Pick a date range
+        {t("emptyTitle")}
       </h2>
       <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
-        Choose a period above to see income, expenses, and net profit over time.
+        {t("emptySubtitle")}
       </p>
     </div>
   );

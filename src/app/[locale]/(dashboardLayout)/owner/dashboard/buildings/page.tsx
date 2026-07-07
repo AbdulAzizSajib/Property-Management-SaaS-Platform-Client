@@ -4,6 +4,7 @@ import { BuildingForm } from "@/src/components/dashboard/buildings/BuildingForm"
 import {
   typeBadgeStyles,
   typeLabel,
+  typeLabelBn,
   statusBadgeStyles,
 } from "@/src/components/dashboard/buildings/building-helpers";
 import {
@@ -33,9 +34,11 @@ import {
   User,
 } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
+import { useTranslations, useLocale } from "next-intl";
 import { useState } from "react";
 
 export default function BuildingsListPage() {
+  const t = useTranslations("buildingsPage");
   const { data: buildings, isLoading, isError, error } = useBuildings();
   const createMutation = useCreateBuilding();
 
@@ -69,10 +72,13 @@ export default function BuildingsListPage() {
         {/* Heading */}
         <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-[13px]  text-coral-600/85 ">Your real estate</p>
+            <p className="text-[13px]  text-coral-600/85 ">{t("eyebrow")}</p>
             <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
-              Buildings
+              {t("title")}
             </h1>
+            <p className="font-bangla mt-1 text-[13px] text-ink-soft">
+              {t("subtitle")}
+            </p>
           </div>
 
           <Dialog open={createOpen} onOpenChange={setCreateOpen}>
@@ -83,19 +89,19 @@ export default function BuildingsListPage() {
                   className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
                 >
                   <Plus size={14} />
-                  Add building
+                  {t("addBuilding")}
                 </button>
               }
             />
             <DialogContent className="sm:max-w-2xl">
               <DialogHeader>
                 <DialogTitle className="capitalize text-[17px] text-center rounded px-2 bg-coral-600 text-white  tracking-[-0.02em] py-0.5">
-                  Add new building
+                  {t("addNewBuilding")}
                 </DialogTitle>
               </DialogHeader>
               <BuildingForm
                 submitting={createMutation.isPending}
-                submitLabel="Create building"
+                submitLabel={t("createBuilding")}
                 onCancel={() => setCreateOpen(false)}
                 onSubmit={(payload) => {
                   createMutation.mutate(payload, {
@@ -111,17 +117,17 @@ export default function BuildingsListPage() {
           {/* Summary strip — replaces 3 rainbow stat tiles with a single quiet info row */}
           <section className="flex flex-wrap items-baseline gap-x-7 gap-y-2 rounded-[14px] border border-rule-soft bg-paper px-5 py-3">
             <SummaryStat
-              label="Buildings"
+              label={t("summaryBuildings")}
               value={fmtNum(buildings?.length ?? 0)}
               icon={Building2}
             />
             <SummaryStat
-              label="Floors"
+              label={t("summaryFloors")}
               value={fmtNum(totalFloors)}
               icon={Layers}
             />
             <SummaryStat
-              label="Units"
+              label={t("summaryUnits")}
               value={fmtNum(totalUnits)}
               icon={DoorOpen}
             />
@@ -138,13 +144,13 @@ export default function BuildingsListPage() {
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by building name, address, city, area…"
+              placeholder={t("searchPlaceholder")}
               className="h-9 px-5 py-3 w-full  rounded-md border border-rule-soft bg-paper pl-9 pr-3 text-[13.5px] text-ink placeholder:text-ink-soft/60 focus:border-jade-700 focus:outline-none focus:ring-2 focus:ring-jade-700/20"
             />
           </div>
           {query && (
             <div className="mt-2 text-[11.5px] text-ink-soft tabular-nums">
-              {filtered.length} {filtered.length === 1 ? "result" : "results"}
+              {t("resultCount", { count: filtered.length })}
             </div>
           )}
         </div>
@@ -155,8 +161,9 @@ export default function BuildingsListPage() {
           <Skeleton className="h-96 w-full rounded-[14px] bg-paper" />
         ) : isError ? (
           <ErrorBox
+            title={t("errorTitle")}
             message={
-              error instanceof Error ? error.message : "Please try again."
+              error instanceof Error ? error.message : t("errorFallback")
             }
           />
         ) : !buildings || buildings.length === 0 ? (
@@ -164,7 +171,7 @@ export default function BuildingsListPage() {
         ) : filtered.length === 0 ? (
           <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-12 text-center">
             <p className="text-[13.5px] text-ink-soft">
-              No buildings match &ldquo;{query}&rdquo;.
+              {t("noMatch", { query })}
             </p>
           </div>
         ) : (
@@ -195,6 +202,8 @@ function BuildingCard({
   isExpanded: boolean;
   onToggle: () => void;
 }) {
+  const t = useTranslations("buildingsPage");
+  const locale = useLocale();
   return (
     <article
       className={cn(
@@ -210,7 +219,9 @@ function BuildingCard({
             typeBadgeStyles[building.type],
           )}
         >
-          {typeLabel(building.type)}
+          {locale === "bn"
+            ? typeLabelBn(building.type)
+            : typeLabel(building.type)}
         </span>
 
         <span
@@ -219,7 +230,7 @@ function BuildingCard({
             statusBadgeStyles(building.isActive),
           )}
         >
-          {building.isActive ? "Active" : "Inactive"}
+          {building.isActive ? t("active") : t("inactive")}
         </span>
       </div>
 
@@ -241,17 +252,17 @@ function BuildingCard({
         <div className="grid grid-cols-3 gap-2 rounded-[10px] border border-rule-soft bg-cream/50 px-3 py-2">
           <CardStat
             icon={Layers}
-            label="Floors"
+            label={t("cardFloors")}
             value={`${building._count.floors}/${building.totalFloors}`}
           />
           <CardStat
             icon={DoorOpen}
-            label="Units"
+            label={t("cardUnits")}
             value={String(building._count.units)}
           />
           <CardStat
             icon={User}
-            label="Caretaker"
+            label={t("cardCaretaker")}
             value={building.caretaker ? building.caretaker.name : "—"}
             truncate
           />
@@ -265,11 +276,11 @@ function BuildingCard({
           >
             {isExpanded ? (
               <>
-                Hide details <ChevronUp size={12} />
+                {t("hideDetails")} <ChevronUp size={12} />
               </>
             ) : (
               <>
-                More details <ChevronDown size={12} />
+                {t("moreDetails")} <ChevronDown size={12} />
               </>
             )}
           </button>
@@ -278,7 +289,7 @@ function BuildingCard({
             href={`/owner/dashboard/buildings/${building.id}`}
             className="inline-flex items-center gap-1 rounded-[8px] bg-jade-900 px-3 py-1.5 text-[12px] font-semibold text-paper transition-colors hover:bg-jade-950"
           >
-            View
+            {t("view")}
             <ArrowRight size={12} />
           </Link>
         </div>
@@ -320,35 +331,36 @@ function CardStat({
 }
 
 function ExpandedPanel({ building }: { building: BuildingListItem }) {
+  const t = useTranslations("buildingsPage");
   return (
     <div className="space-y-4 border-t border-rule-soft bg-cream/40 px-4 py-4">
       <div>
-        <SectionLabel>About</SectionLabel>
+        <SectionLabel>{t("sectionAbout")}</SectionLabel>
         <p className="mt-1.5 text-[12.5px] text-ink">
           {building.description || (
-            <span className="text-ink-soft/60">No description added.</span>
+            <span className="text-ink-soft/60">{t("noDescription")}</span>
           )}
         </p>
 
         <dl className="mt-2.5 space-y-1.5 text-[12px]">
-          <KV label="City" value={building.city} />
-          {building.area && <KV label="Area" value={building.area} />}
-          <KV label="Total floors" value={String(building.totalFloors)} />
+          <KV label={t("kvCity")} value={building.city} />
+          {building.area && <KV label={t("kvArea")} value={building.area} />}
+          <KV label={t("kvTotalFloors")} value={String(building.totalFloors)} />
           <KV
-            label="Created"
+            label={t("kvCreated")}
             value={new Date(building.createdAt).toLocaleDateString()}
           />
         </dl>
       </div>
 
       <div>
-        <SectionLabel>Floors</SectionLabel>
+        <SectionLabel>{t("sectionFloors")}</SectionLabel>
         <FloorsMiniList buildingId={building.id} />
       </div>
 
       {building.caretaker && (
         <div>
-          <SectionLabel>Caretaker</SectionLabel>
+          <SectionLabel>{t("sectionCaretaker")}</SectionLabel>
           <div className="mt-1.5 rounded-[10px] border border-rule-soft bg-paper p-3 text-[12px]">
             <p className="font-semibold text-ink">{building.caretaker.name}</p>
             {building.caretaker.email && (
@@ -367,6 +379,7 @@ function ExpandedPanel({ building }: { building: BuildingListItem }) {
 }
 
 function FloorsMiniList({ buildingId }: { buildingId: string }) {
+  const t = useTranslations("buildingsPage");
   const { data: floors, isLoading } = useFloorsByBuilding(buildingId);
 
   if (isLoading) {
@@ -381,7 +394,7 @@ function FloorsMiniList({ buildingId }: { buildingId: string }) {
 
   if (!floors || floors.length === 0) {
     return (
-      <p className="mt-1.5 text-[12px] text-ink-soft/60">No floors added yet</p>
+      <p className="mt-1.5 text-[12px] text-ink-soft/60">{t("noFloorsYet")}</p>
     );
   }
 
@@ -401,13 +414,13 @@ function FloorsMiniList({ buildingId }: { buildingId: string }) {
             <span className="truncate text-ink">{f.name}</span>
           </div>
           <span className="text-[10.5px] tabular-nums text-ink-soft">
-            {f._count.units} {f._count.units === 1 ? "unit" : "units"}
+            {t("unitsSuffix", { count: f._count.units })}
           </span>
         </li>
       ))}
       {sorted.length > 6 && (
         <li className="px-2 text-[10.5px] text-ink-soft">
-          +{sorted.length - 6} more
+          {t("moreCount", { count: sorted.length - 6 })}
         </li>
       )}
     </ul>
@@ -454,16 +467,20 @@ function KV({ label, value }: { label: string; value: string }) {
 }
 
 function EmptyState({ onCreate }: { onCreate: () => void }) {
+  const t = useTranslations("buildingsPage");
   return (
     <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-16 text-center">
       <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-jade-50">
         <Building2 size={26} className="text-jade-800" />
       </div>
       <h2 className="mt-4 text-[17px] font-bold text-jade-950">
-        No buildings yet
+        {t("emptyTitle")}
       </h2>
       <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
-        Get started by adding your first property.
+        {t("emptySubtitle")}
+      </p>
+      <p className="font-bangla mt-0.5 text-[12px] text-ink-soft/75">
+        {t("emptyBanglaHint")}
       </p>
 
       <div className="mt-5">
@@ -473,19 +490,17 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
           className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
         >
           <Plus size={14} />
-          Add your first building
+          {t("addFirstBuilding")}
         </button>
       </div>
     </div>
   );
 }
 
-function ErrorBox({ message }: { message: string }) {
+function ErrorBox({ title, message }: { title: string; message: string }) {
   return (
     <div className="rounded-[14px] border border-coral-100 bg-coral-50/50 px-6 py-12 text-center">
-      <h2 className="text-[15px] font-bold text-coral-600">
-        Couldn&apos;t load buildings
-      </h2>
+      <h2 className="text-[15px] font-bold text-coral-600">{title}</h2>
       <p className="mt-1 text-[13px] text-coral-600/80">{message}</p>
     </div>
   );

@@ -6,6 +6,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardAction }
 import { Link } from "@/src/i18n/navigation";
 import { ArrowUpRight } from "lucide-react";
 import { useDashboardOverview } from "@/src/hooks/useDashboard";
+import { useTranslations, useLocale } from "next-intl";
+import { fmtTaka } from "@/src/lib/numerals";
 
 const statusStyles: Record<string, string> = {
     ACTIVE: "bg-emerald-50 text-emerald-700 border-emerald-200",
@@ -14,13 +16,6 @@ const statusStyles: Record<string, string> = {
     EXPIRED: "bg-slate-100 text-slate-600 border-slate-200",
     RENEWED: "bg-emerald-50 text-emerald-700 border-emerald-200",
 };
-
-const fmt = (n: number) =>
-    new Intl.NumberFormat("en-BD", {
-        style: "currency",
-        currency: "BDT",
-        maximumFractionDigits: 0,
-    }).format(n);
 
 function initialsOf(name: string): string {
     const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -31,20 +26,24 @@ function initialsOf(name: string): string {
 }
 
 export function RecentLeases() {
+    const t = useTranslations("recentLeases");
+    const isBn = useLocale() === "bn";
     const { data } = useDashboardOverview();
     const leases = data?.recentLeases ?? [];
+
+    const fmt = (n: number) => fmtTaka(n, { bn: isBn });
 
     return (
         <Card className="px-5">
             <CardHeader className="px-0">
-                <CardTitle>Recent leases</CardTitle>
-                <CardDescription>Newest tenant agreements across all buildings</CardDescription>
+                <CardTitle>{t("title")}</CardTitle>
+                <CardDescription>{t("subtitle")}</CardDescription>
                 <CardAction>
                     <Link
                         href="/owner/dashboard/leases"
                         className="inline-flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-700"
                     >
-                        View all <ArrowUpRight size={12} />
+                        {t("viewAll")} <ArrowUpRight size={12} />
                     </Link>
                 </CardAction>
             </CardHeader>
@@ -65,20 +64,25 @@ export function RecentLeases() {
                                     {lease.tenantName}
                                 </p>
                                 <p className="truncate text-xs text-slate-500">
-                                    Unit {lease.unitName} · {lease.buildingName}
+                                    {t("unitBuilding", {
+                                        unit: lease.unitName,
+                                        building: lease.buildingName,
+                                    })}
                                 </p>
                             </div>
                             <div className="hidden text-right sm:block">
                                 <p className="text-sm font-semibold text-slate-900 tabular-nums">
                                     {fmt(lease.monthlyRent)}
                                 </p>
-                                <p className="text-[11px] text-slate-500">/month</p>
+                                <p className="text-[11px] text-slate-500">{t("perMonth")}</p>
                             </div>
                             <Badge
                                 variant="outline"
                                 className={`${statusStyles[lease.status] ?? "bg-slate-100 text-slate-600 border-slate-200"} text-[10px]`}
                             >
-                                {lease.status}
+                                {t.has(`status.${lease.status}`)
+                                    ? t(`status.${lease.status}`)
+                                    : lease.status}
                             </Badge>
                         </li>
                     ))}

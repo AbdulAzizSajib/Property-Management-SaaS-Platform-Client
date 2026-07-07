@@ -4,17 +4,17 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardAction }
 import { Link } from "@/src/i18n/navigation";
 import { AlertCircle, ArrowUpRight, Clock } from "lucide-react";
 import { useDashboardOverview } from "@/src/hooks/useDashboard";
-
-const fmt = (n: number) =>
-    new Intl.NumberFormat("en-BD", {
-        style: "currency",
-        currency: "BDT",
-        maximumFractionDigits: 0,
-    }).format(n);
+import { useTranslations, useLocale } from "next-intl";
+import { fmtTaka, toBnDigits } from "@/src/lib/numerals";
 
 export function UpcomingDues() {
+    const t = useTranslations("upcomingDues");
+    const isBn = useLocale() === "bn";
     const { data } = useDashboardOverview();
     const dues = data?.upcomingDues ?? [];
+
+    const fmt = (n: number) => fmtTaka(n, { bn: isBn });
+    const num = (n: number) => (isBn ? toBnDigits(String(n)) : String(n));
 
     const overdueTotal = dues
         .filter((d) => d.overdue)
@@ -23,17 +23,21 @@ export function UpcomingDues() {
     return (
         <Card className="px-5">
             <CardHeader className="px-0">
-                <CardTitle>Upcoming & overdue invoices</CardTitle>
+                <CardTitle>{t("title")}</CardTitle>
                 <CardDescription>
-                    <span className="font-medium text-rose-600">{fmt(overdueTotal)}</span> overdue
-                    this week
+                    {t.rich("overdueThisWeek", {
+                        amount: fmt(overdueTotal),
+                        strong: (chunks) => (
+                            <span className="font-medium text-rose-600">{chunks}</span>
+                        ),
+                    })}
                 </CardDescription>
                 <CardAction>
                     <Link
                         href="/owner/dashboard/invoices"
                         className="inline-flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-700"
                     >
-                        Manage <ArrowUpRight size={12} />
+                        {t("manage")} <ArrowUpRight size={12} />
                     </Link>
                 </CardAction>
             </CardHeader>
@@ -77,8 +81,8 @@ export function UpcomingDues() {
                                         }`}
                                     >
                                         {isOverdue
-                                            ? `${Math.abs(due.dueInDays)}d overdue`
-                                            : `Due in ${due.dueInDays}d`}
+                                            ? t("daysOverdue", { days: num(Math.abs(due.dueInDays)) })
+                                            : t("dueInDays", { days: num(due.dueInDays) })}
                                     </p>
                                 </div>
                             </li>

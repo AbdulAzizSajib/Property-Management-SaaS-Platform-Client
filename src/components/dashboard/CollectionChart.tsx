@@ -6,12 +6,15 @@
 // Current month uses coral; prior months use jade. Subtle dashed target line.
 
 import { motion } from "framer-motion";
-import { fmtTaka } from "@/src/lib/numerals";
+import { fmtTaka, toBnDigits } from "@/src/lib/numerals";
 import { useDashboardOverview } from "@/src/hooks/useDashboard";
+import { useTranslations, useLocale } from "next-intl";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export function CollectionChart() {
+    const t = useTranslations("collectionChart");
+    const isBn = useLocale() === "bn";
     const { data: overview } = useDashboardOverview();
     const data = overview?.collectionTrend ?? [];
 
@@ -41,34 +44,36 @@ export function CollectionChart() {
             <div className="flex items-start justify-between gap-3">
                 <div>
                     <p className="font-serif text-[13px] italic text-coral-600/85">
-                        Last 12 months
+                        {t("last12Months")}
                     </p>
                     <h3 className="mt-0.5 text-[18px] font-bold tracking-[-0.015em] text-jade-950">
-                        Collection vs target
+                        {t("title")}
                     </h3>
                     <p className="font-bangla mt-0.5 text-[12.5px] text-ink-soft">
-                        কালেকশন ও টার্গেট
+                        {t("subtitle")}
                     </p>
                 </div>
                 <div className="text-right">
                     <p className="text-[11px] uppercase tracking-wider text-ink-soft font-semibold">
-                        Collection rate
+                        {t("collectionRate")}
                     </p>
                     <p className="mt-0.5 text-[22px] font-bold tracking-[-0.02em] text-jade-900 tabular-nums">
-                        {rate}%
+                        {isBn ? toBnDigits(rate) : rate}%
                     </p>
                     <p className="text-[12px] text-ink-soft tabular-nums">
-                        {fmtTaka(total, { compact: true })} of{" "}
-                        {fmtTaka(targetTotal, { compact: true })}
+                        {t("ofTotal", {
+                            collected: fmtTaka(total, { compact: true, bn: isBn }),
+                            target: fmtTaka(targetTotal, { compact: true, bn: isBn }),
+                        })}
                     </p>
                 </div>
             </div>
 
             {/* Legend */}
             <div className="mt-5 flex flex-wrap gap-4 text-[11.5px] text-ink-soft">
-                <Legend color="bg-jade-700">Collected</Legend>
-                <Legend color="bg-coral-600">This month</Legend>
-                <Legend dashed>Target</Legend>
+                <Legend color="bg-jade-700">{t("collected")}</Legend>
+                <Legend color="bg-coral-600">{t("thisMonth")}</Legend>
+                <Legend dashed>{t("target")}</Legend>
             </div>
 
             {/* Bars */}
@@ -110,15 +115,15 @@ export function CollectionChart() {
             {/* Footer hint */}
             <div className="mt-9 flex items-center justify-between border-t border-rule-soft pt-3.5 text-[12px] text-ink-soft">
                 <span>
-                    Best month:{" "}
+                    {t("bestMonth")}{" "}
                     <span className="font-semibold text-ink">
-                        {best.label} · {fmtTaka(best.collected, { compact: true })}
+                        {best.label} · {fmtTaka(best.collected, { compact: true, bn: isBn })}
                     </span>
                 </span>
                 <span>
-                    Avg gap to target:{" "}
+                    {t("avgGap")}{" "}
                     <span className="font-semibold text-ink tabular-nums">
-                        {fmtTaka(avgGap, { compact: true })}
+                        {fmtTaka(avgGap, { compact: true, bn: isBn })}
                     </span>
                 </span>
             </div>

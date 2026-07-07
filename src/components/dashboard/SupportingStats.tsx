@@ -8,55 +8,60 @@
 import { motion } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { useDashboardOverview } from "@/src/hooks/useDashboard";
+import { useTranslations, useLocale } from "next-intl";
+import { toBnDigits } from "@/src/lib/numerals";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 interface Stat {
     label: string;
-    bn: string;
     value: string;
     delta: { value: string; trend: "up" | "down"; good: boolean };
     context: string;
 }
 
 export function SupportingStats() {
+    const t = useTranslations("supportingStats");
+    const isBn = useLocale() === "bn";
     const { data } = useDashboardOverview();
     const s = data?.stats;
+
+    const num = (n: number) => (isBn ? toBnDigits(String(n)) : String(n));
 
     const noVacancy = (s?.vacant ?? 0) === 0;
     const stats: Stat[] = [
         {
-            label: "Buildings",
-            bn: "বিল্ডিং",
-            value: String(s?.buildings ?? 0),
+            label: t("buildings"),
+            value: num(s?.buildings ?? 0),
             delta: {
-                value: `${s?.buildingsNewThisQuarter ?? 0} new`,
+                value: t("newCount", { count: num(s?.buildingsNewThisQuarter ?? 0) }),
                 trend: "up",
                 good: true,
             },
-            context: "added this quarter",
+            context: t("addedThisQuarter"),
         },
         {
-            label: "Total units",
-            bn: "মোট ইউনিট",
-            value: String(s?.totalUnits ?? 0),
+            label: t("totalUnits"),
+            value: num(s?.totalUnits ?? 0),
             delta: {
-                value: `${s?.unitsNewThisMonth ?? 0}`,
+                value: num(s?.unitsNewThisMonth ?? 0),
                 trend: "up",
                 good: true,
             },
-            context: "added this month",
+            context: t("addedThisMonth"),
         },
         {
-            label: "Occupancy",
-            bn: "ভাড়া",
-            value: `${s?.occupancyRate ?? 0}%`,
+            label: t("occupancy"),
+            value: `${num(s?.occupancyRate ?? 0)}%`,
             delta: {
-                value: `${s?.vacant ?? 0} vacant`,
+                value: t("vacantCount", { count: num(s?.vacant ?? 0) }),
                 trend: noVacancy ? "up" : "down",
                 good: noVacancy,
             },
-            context: `${s?.occupied ?? 0} of ${s?.totalUnits ?? 0} occupied`,
+            context: t("occupiedOf", {
+                occupied: num(s?.occupied ?? 0),
+                total: num(s?.totalUnits ?? 0),
+            }),
         },
     ];
 
@@ -74,9 +79,6 @@ export function SupportingStats() {
                         <div className="min-w-0">
                             <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
                                 {s.label}
-                            </p>
-                            <p className="font-bangla text-[11px] text-ink-soft/65">
-                                {s.bn}
                             </p>
                         </div>
                         <DeltaChip {...s.delta} />

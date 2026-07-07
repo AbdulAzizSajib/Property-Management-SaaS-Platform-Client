@@ -30,6 +30,7 @@ import {
 } from "@/src/types/payment.types";
 import { ArrowUpRight, Plus, Search, Wallet, X } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { Suspense, useMemo, useState } from "react";
 
 const ALL = "__ALL__";
@@ -43,6 +44,7 @@ export default function PaymentsListPage() {
 }
 
 function PaymentsListInner() {
+  const t = useTranslations("paymentsPage");
   const [statusFilter, setStatusFilter] = useState<string>(ALL);
   const [methodFilter, setMethodFilter] = useState<string>(ALL);
   const [query, setQuery] = useState("");
@@ -87,13 +89,13 @@ function PaymentsListInner() {
         <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="font-serif text-[13px] italic text-coral-600/85">
-              Money in
+              {t("eyebrow")}
             </p>
             <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
-              Payments
+              {t("title")}
             </h1>
             <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-              সব রিসিভড পেমেন্ট।
+              {t("subtitle")}
             </p>
           </div>
 
@@ -103,7 +105,7 @@ function PaymentsListInner() {
             className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
           >
             <Plus size={14} />
-            Record payment
+            {t("recordPayment")}
           </button>
         </header>
 
@@ -126,37 +128,37 @@ function PaymentsListInner() {
             />
 
             <p className="relative font-serif text-[13px] italic text-paper/60">
-              Total collected
+              {t("heroLabel")}
             </p>
             <p className="font-bangla relative mt-0.5 text-[11.5px] text-paper/45">
-              মোট আদায়
+              {t("heroLabelBn")}
             </p>
             <p className="relative mt-3 text-[40px] font-bold leading-none tracking-[-0.025em] tabular-nums text-jade-300 sm:text-[46px]">
               {formatMoney(totalCollected)}
             </p>
             <p className="relative mt-3 text-[12.5px] text-paper/70">
-              across{" "}
+              {t("heroAcross")}{" "}
               <span className="font-semibold tabular-nums text-paper">
                 {fmtNum(payments?.length ?? 0)}
               </span>{" "}
-              payment{(payments?.length ?? 0) === 1 ? "" : "s"}
+              {t("heroPayments", { count: payments?.length ?? 0 })}
             </p>
           </div>
 
           {/* Supporting */}
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
             <MiniStat
-              label="Advances"
-              bn="অগ্রিম"
+              label={t("statAdvances")}
+              bn={t("statAdvancesBn")}
               value={fmtNum(advanceCount)}
-              sub="held against future"
+              sub={t("statAdvancesSub")}
               tone="good"
             />
             <MiniStat
-              label="Failed"
-              bn="ব্যর্থ"
+              label={t("statFailed")}
+              bn={t("statFailedBn")}
               value={fmtNum(failedCount)}
-              sub="need review"
+              sub={t("statFailedSub")}
               tone={failedCount > 0 ? "warn" : "neutral"}
             />
           </div>
@@ -174,7 +176,7 @@ function PaymentsListInner() {
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by receipt #, invoice, tenant, txn ID…"
+                placeholder={t("searchPlaceholder")}
                 className="h-9 w-full rounded-md border border-rule-soft bg-paper pl-9 pr-3 text-[13.5px] text-ink placeholder:text-ink-soft/60 focus:border-jade-700 focus:outline-none focus:ring-2 focus:ring-jade-700/20"
               />
             </div>
@@ -185,10 +187,10 @@ function PaymentsListInner() {
                 onValueChange={(v) => setStatusFilter(v ?? ALL)}
               >
                 <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
-                  <SelectValue placeholder="Status" />
+                  <SelectValue placeholder={t("statusPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={ALL}>All statuses</SelectItem>
+                  <SelectItem value={ALL}>{t("allStatuses")}</SelectItem>
                   {PAYMENT_STATUS_OPTIONS.map((opt) => (
                     <SelectItem key={opt.value} value={opt.value}>
                       {opt.label}
@@ -204,10 +206,10 @@ function PaymentsListInner() {
                 onValueChange={(v) => setMethodFilter(v ?? ALL)}
               >
                 <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
-                  <SelectValue placeholder="Method" />
+                  <SelectValue placeholder={t("methodPlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={ALL}>All methods</SelectItem>
+                  <SelectItem value={ALL}>{t("allMethods")}</SelectItem>
                   {PAYMENT_METHOD_OPTIONS.map((opt) => (
                     <SelectItem key={opt.value} value={opt.value}>
                       {opt.label}
@@ -224,15 +226,19 @@ function PaymentsListInner() {
                 <span className="font-semibold text-ink">
                   {fmtNum(filtered.length)}
                 </span>{" "}
-                {filtered.length === 1 ? "result" : "results"}
+                {t("resultCount", { count: filtered.length })}
                 {statusFilter !== ALL && (
                   <span className="ml-1.5 text-ink-soft/70">
-                    · {paymentStatusLabel(statusFilter as PaymentStatus)}
+                    {t("suffix", {
+                      label: paymentStatusLabel(statusFilter as PaymentStatus),
+                    })}
                   </span>
                 )}
                 {methodFilter !== ALL && (
                   <span className="ml-1.5 text-ink-soft/70">
-                    · {paymentMethodLabel(methodFilter as PaymentMethod)}
+                    {t("suffix", {
+                      label: paymentMethodLabel(methodFilter as PaymentMethod),
+                    })}
                   </span>
                 )}
               </span>
@@ -246,7 +252,7 @@ function PaymentsListInner() {
                   }}
                   className="inline-flex items-center gap-1 font-medium text-ink-soft transition-colors hover:text-coral-600"
                 >
-                  <X size={11} /> Clear filters
+                  <X size={11} /> {t("clearFilters")}
                 </button>
               )}
             </div>
@@ -259,19 +265,17 @@ function PaymentsListInner() {
         ) : isError ? (
           <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
             <h2 className="text-[15px] font-bold text-coral-600">
-              Couldn&apos;t load payments
+              {t("errorTitle")}
             </h2>
             <p className="mt-1 text-[13px] text-coral-600/80">
-              {error instanceof Error ? error.message : "Please try again."}
+              {error instanceof Error ? error.message : t("errorFallback")}
             </p>
           </div>
         ) : !payments || payments.length === 0 ? (
           <EmptyState onRecord={() => setRecordOpen(true)} />
         ) : filtered.length === 0 ? (
           <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-12 text-center">
-            <p className="text-[13.5px] text-ink-soft">
-              No payments match your filters.
-            </p>
+            <p className="text-[13.5px] text-ink-soft">{t("noMatch")}</p>
           </div>
         ) : (
           <div className="overflow-hidden rounded-[14px] border border-rule-soft bg-paper">
@@ -291,9 +295,10 @@ function PaymentsListInner() {
 }
 
 function PaymentRow({ payment }: { payment: PaymentListItem }) {
+  const t = useTranslations("paymentsPage");
   const due = Number(payment.invoice?.dueAmount ?? 0);
   const hasDue = Number.isFinite(due) && due > 0;
-  const purpose = paymentPurpose(payment);
+  const purpose = paymentPurpose(payment, t);
 
   return (
     <li>
@@ -333,7 +338,7 @@ function PaymentRow({ payment }: { payment: PaymentListItem }) {
             </span>
             {payment.isAdvance && (
               <span className="rounded-full border border-jade-100 bg-jade-50/60 px-2 py-px text-[10.5px] font-semibold text-jade-700">
-                Advance
+                {t("advance")}
               </span>
             )}
           </div>
@@ -345,7 +350,7 @@ function PaymentRow({ payment }: { payment: PaymentListItem }) {
             {purpose && (
               <>
                 {" · "}
-                <span>for {purpose}</span>
+                <span>{t("forPurpose", { purpose })}</span>
               </>
             )}
             {" · "}
@@ -380,12 +385,12 @@ function PaymentRow({ payment }: { payment: PaymentListItem }) {
             </p>
             {hasDue ? (
               <p className="mt-1 text-[11px] font-semibold tabular-nums text-coral-600">
-                {formatMoney(due)} still due
+                {t("stillDue", { amount: formatMoney(due) })}
               </p>
             ) : (
               payment.invoice?.status === "PAID" && (
                 <p className="mt-1 text-[11px] font-medium text-jade-700">
-                  Fully paid
+                  {t("fullyPaid")}
                 </p>
               )
             )}
@@ -419,25 +424,30 @@ function formatPaidDate(iso: string): string {
 }
 
 // Plain-language reason: "June 2026 rent", "May 2026 utility", etc.
-const INVOICE_TYPE_WORD: Record<string, string> = {
-  RENT: "rent",
-  DEPOSIT: "deposit",
-  PENALTY: "penalty",
-  UTILITY: "utility bill",
-  OTHER: "charges",
+const INVOICE_TYPE_WORD_KEY: Record<string, string> = {
+  RENT: "purposeRent",
+  DEPOSIT: "purposeDeposit",
+  PENALTY: "purposePenalty",
+  UTILITY: "purposeUtility",
+  OTHER: "purposeOther",
 };
 
-function paymentPurpose(payment: PaymentListItem): string | null {
+function paymentPurpose(
+  payment: PaymentListItem,
+  t: ReturnType<typeof useTranslations<"paymentsPage">>,
+): string | null {
   const inv = payment.invoice;
-  if (!inv) return payment.isAdvance ? "advance" : null;
+  if (!inv) return payment.isAdvance ? t("purposeAdvance") : null;
   const month = inv.billingMonth
     ? new Date(inv.billingMonth).toLocaleDateString("en-GB", {
         month: "long",
         year: "numeric",
       })
     : null;
-  const word = inv.type ? (INVOICE_TYPE_WORD[inv.type] ?? "charges") : null;
-  if (month && word) return `${month} ${word}`;
+  const word = inv.type
+    ? t(INVOICE_TYPE_WORD_KEY[inv.type] ?? "purposeOther")
+    : null;
+  if (month && word) return t("purposeMonthWord", { month, word });
   return month ?? word ?? null;
 }
 
@@ -493,20 +503,20 @@ function ListShell() {
 }
 
 function EmptyState({ onRecord }: { onRecord: () => void }) {
+  const t = useTranslations("paymentsPage");
   return (
     <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-16 text-center">
       <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-jade-50">
         <Wallet size={26} className="text-jade-800" />
       </div>
       <h2 className="mt-4 text-[17px] font-bold text-jade-950">
-        No payments yet
+        {t("emptyTitle")}
       </h2>
       <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
-        Record a payment against an outstanding invoice — bKash, Nagad, cash, or
-        bank transfer.
+        {t("emptySubtitle")}
       </p>
       <p className="font-bangla mt-0.5 text-[12px] text-ink-soft/75">
-        প্রথম পেমেন্ট রেকর্ড করুন
+        {t("emptyBanglaHint")}
       </p>
       <div className="mt-5 flex items-center justify-center">
         <button
@@ -515,7 +525,7 @@ function EmptyState({ onRecord }: { onRecord: () => void }) {
           className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
         >
           <Plus size={14} />
-          Record payment
+          {t("recordPayment")}
         </button>
       </div>
     </div>

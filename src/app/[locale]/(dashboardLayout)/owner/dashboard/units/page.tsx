@@ -9,7 +9,10 @@ import {
 import {
   formatMoney,
   statusLabel,
+  statusLabelBn,
   typeLabel,
+  typeLabelBn,
+  floorLabelBn,
   unitStatusAccent,
   unitStatusStyles,
   unitTypeStyles,
@@ -43,11 +46,15 @@ import {
 } from "@/src/types/unit.types";
 import { Bath, Bed, DoorOpen, Plus, Ruler, Search, X } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
+import { useTranslations, useLocale } from "next-intl";
 import { useState } from "react";
 
 const ALL = "__ALL__";
 
 export default function UnitsListPage() {
+  const t = useTranslations("unitsPage");
+  const locale = useLocale();
+  const isBn = locale === "bn";
   const [buildingId, setBuildingId] = useState<string>(ALL);
   const [status, setStatus] = useState<string>(ALL);
   const [type, setType] = useState<string>(ALL);
@@ -95,13 +102,13 @@ export default function UnitsListPage() {
         <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="font-serif text-[13px] italic text-coral-600/85">
-              Across your portfolio
+              {t("eyebrow")}
             </p>
             <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
-              Units
+              {t("title")}
             </h1>
             <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-              সব ফ্ল্যাট, দোকান ও অফিস।
+              {t("subtitle")}
             </p>
           </div>
 
@@ -113,21 +120,23 @@ export default function UnitsListPage() {
                   className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
                 >
                   <Plus size={14} />
-                  Add Unit
+                  {t("addUnit")}
                 </button>
               }
             />
             <DialogContent className="sm:max-w-2xl">
               <DialogHeader>
-                <DialogTitle className="text-jade-950">Add Unit</DialogTitle>
+                <DialogTitle className="text-jade-950">
+                  {t("addUnit")}
+                </DialogTitle>
                 <DialogDescription className="text-ink-soft">
-                  Add a new flat, shop, office or other rental unit.
+                  {t("addUnitDescription")}
                 </DialogDescription>
               </DialogHeader>
               <UnitForm
                 mode="create"
                 submitting={createMutation.isPending}
-                submitLabel="Add Unit"
+                submitLabel={t("addUnit")}
                 onCancel={() => setCreateOpen(false)}
                 onSubmit={(values) => {
                   const payload = buildCreatePayload(values);
@@ -152,7 +161,7 @@ export default function UnitsListPage() {
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by unit, building, floor…"
+                placeholder={t("searchPlaceholder")}
                 className="h-9 w-full rounded-md border border-rule-soft bg-paper pl-9 pr-3 text-[13.5px] text-ink placeholder:text-ink-soft/60 focus:border-jade-700 focus:outline-none focus:ring-2 focus:ring-jade-700/20"
               />
             </div>
@@ -162,15 +171,15 @@ export default function UnitsListPage() {
               onValueChange={(v) => setBuildingId(v ?? ALL)}
             >
               <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
-                <SelectValue placeholder="Building">
+                <SelectValue placeholder={t("buildingPlaceholder")}>
                   {(value) => {
-                    if (value === ALL) return "All buildings";
+                    if (value === ALL) return t("allBuildings");
                     return buildings?.find((b) => b.id === value)?.name ?? null;
                   }}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={ALL}>All buildings</SelectItem>
+                <SelectItem value={ALL}>{t("allBuildings")}</SelectItem>
                 {buildings?.map((b) => (
                   <SelectItem key={b.id} value={b.id}>
                     {b.name}
@@ -181,13 +190,13 @@ export default function UnitsListPage() {
 
             <Select value={status} onValueChange={(v) => setStatus(v ?? ALL)}>
               <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
-                <SelectValue placeholder="Status" />
+                <SelectValue placeholder={t("statusPlaceholder")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={ALL}>All statuses</SelectItem>
+                <SelectItem value={ALL}>{t("allStatuses")}</SelectItem>
                 {UNIT_STATUS_OPTIONS.map((opt) => (
                   <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
+                    {isBn ? statusLabelBn(opt.value) : opt.label}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -195,13 +204,13 @@ export default function UnitsListPage() {
 
             <Select value={type} onValueChange={(v) => setType(v ?? ALL)}>
               <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
-                <SelectValue placeholder="Type" />
+                <SelectValue placeholder={t("typePlaceholder")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={ALL}>All types</SelectItem>
+                <SelectItem value={ALL}>{t("allTypes")}</SelectItem>
                 {UNIT_TYPE_OPTIONS.map((opt) => (
                   <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
+                    {isBn ? typeLabelBn(opt.value) : opt.label}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -215,7 +224,7 @@ export default function UnitsListPage() {
                 <span className="font-semibold text-ink">
                   {fmtNum(filtered.length)}
                 </span>{" "}
-                {filtered.length === 1 ? "result" : "results"}
+                {t("resultCount", { count: filtered.length })}
                 {filtered.length > 0 && (
                   <>
                     {" "}
@@ -226,11 +235,11 @@ export default function UnitsListPage() {
                         vacantCount > 0 && "font-semibold text-coral-600",
                       )}
                     >
-                      {fmtNum(vacantCount)} vacant
+                      {t("vacantCount", { count: fmtNum(vacantCount) })}
                     </span>{" "}
                     ·{" "}
                     <span className="tabular-nums">
-                      {fmtNum(occupiedCount)} occupied
+                      {t("occupiedCount", { count: fmtNum(occupiedCount) })}
                     </span>
                   </>
                 )}
@@ -242,32 +251,52 @@ export default function UnitsListPage() {
                   <div className="flex flex-wrap items-center gap-1.5">
                     {query.trim() && (
                       <Chip
-                        label="Search"
+                        label={t("chipSearch")}
                         value={`"${query.trim()}"`}
+                        removeAriaLabel={t("removeFilter", {
+                          label: t("chipSearch"),
+                        })}
                         onRemove={() => setQuery("")}
                       />
                     )}
                     {buildingId !== ALL && (
                       <Chip
-                        label="Building"
+                        label={t("chipBuilding")}
                         value={
                           buildings?.find((b) => b.id === buildingId)?.name ??
                           buildingId
                         }
+                        removeAriaLabel={t("removeFilter", {
+                          label: t("chipBuilding"),
+                        })}
                         onRemove={() => setBuildingId(ALL)}
                       />
                     )}
                     {status !== ALL && (
                       <Chip
-                        label="Status"
-                        value={statusLabel(status as UnitStatus)}
+                        label={t("chipStatus")}
+                        value={
+                          isBn
+                            ? statusLabelBn(status as UnitStatus)
+                            : statusLabel(status as UnitStatus)
+                        }
+                        removeAriaLabel={t("removeFilter", {
+                          label: t("chipStatus"),
+                        })}
                         onRemove={() => setStatus(ALL)}
                       />
                     )}
                     {type !== ALL && (
                       <Chip
-                        label="Type"
-                        value={typeLabel(type as UnitType)}
+                        label={t("chipType")}
+                        value={
+                          isBn
+                            ? typeLabelBn(type as UnitType)
+                            : typeLabel(type as UnitType)
+                        }
+                        removeAriaLabel={t("removeFilter", {
+                          label: t("chipType"),
+                        })}
                         onRemove={() => setType(ALL)}
                       />
                     )}
@@ -277,7 +306,7 @@ export default function UnitsListPage() {
                     onClick={clearFilters}
                     className="ml-auto inline-flex items-center gap-1 text-[12px] font-medium text-ink-soft transition-colors hover:text-coral-600"
                   >
-                    Clear all
+                    {t("clearAll")}
                   </button>
                 </>
               )}
@@ -295,10 +324,10 @@ export default function UnitsListPage() {
         ) : isError ? (
           <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
             <h2 className="text-[15px] font-bold text-coral-600">
-              Couldn&apos;t load units
+              {t("errorTitle")}
             </h2>
             <p className="mt-1 text-[13px] text-coral-600/80">
-              {error instanceof Error ? error.message : "Please try again."}
+              {error instanceof Error ? error.message : t("errorFallback")}
             </p>
           </div>
         ) : filtered.length === 0 ? (
@@ -325,6 +354,8 @@ export default function UnitsListPage() {
 // ─────────────────────────────────────────────────────────────────
 
 function UnitCard({ unit }: { unit: UnitListItem }) {
+  const t = useTranslations("unitsPage");
+  const isBn = useLocale() === "bn";
   return (
     <Link
       href={`/owner/dashboard/units/${unit.id}`}
@@ -354,7 +385,7 @@ function UnitCard({ unit }: { unit: UnitListItem }) {
             unitStatusStyles[unit.status],
           )}
         >
-          {statusLabel(unit.status)}
+          {isBn ? statusLabelBn(unit.status) : statusLabel(unit.status)}
         </span>
       </div>
 
@@ -365,12 +396,14 @@ function UnitCard({ unit }: { unit: UnitListItem }) {
             unitTypeStyles[unit.type],
           )}
         >
-          {typeLabel(unit.type)}
+          {isBn ? typeLabelBn(unit.type) : typeLabel(unit.type)}
         </span>
         <span className="text-[11.5px] text-ink-soft">
-          {unit.floor.floorNumber === 0
-            ? "Ground floor"
-            : `Floor ${fmtNum(unit.floor.floorNumber)}`}
+          {isBn
+            ? floorLabelBn(unit.floor.floorNumber)
+            : unit.floor.floorNumber === 0
+              ? t("groundFloor")
+              : t("floorN", { n: fmtNum(unit.floor.floorNumber) })}
         </span>
       </div>
 
@@ -393,7 +426,7 @@ function UnitCard({ unit }: { unit: UnitListItem }) {
           {unit.sizeSqft !== null && (
             <span className="inline-flex items-center gap-1 tabular-nums">
               <Ruler size={11} className="text-ink-soft/60" />
-              {fmtNum(unit.sizeSqft)} sqft
+              {t("sqftSuffix", { value: fmtNum(unit.sizeSqft) })}
             </span>
           )}
         </div>
@@ -401,14 +434,16 @@ function UnitCard({ unit }: { unit: UnitListItem }) {
 
       <div className="mt-3 flex items-baseline justify-between border-t border-rule-soft pt-2.5">
         <p className="text-[16px] font-bold text-jade-950 tabular-nums">
-          {formatMoney(unit.baseRent)}
+          {formatMoney(unit.baseRent, { bn: isBn })}
           <span className="ml-1 text-[10.5px] font-medium text-ink-soft">
-            /mo
+            {t("perMonth")}
           </span>
         </p>
         {Number(unit.serviceCharge) > 0 && (
           <p className="text-[10.5px] text-ink-soft tabular-nums">
-            + {formatMoney(unit.serviceCharge)} svc
+            {t("svcSuffix", {
+              amount: formatMoney(unit.serviceCharge, { bn: isBn }),
+            })}
           </p>
         )}
       </div>
@@ -423,10 +458,12 @@ function UnitCard({ unit }: { unit: UnitListItem }) {
 function Chip({
   label,
   value,
+  removeAriaLabel,
   onRemove,
 }: {
   label: string;
   value: string;
+  removeAriaLabel: string;
   onRemove: () => void;
 }) {
   return (
@@ -436,7 +473,7 @@ function Chip({
       <button
         type="button"
         onClick={onRemove}
-        aria-label={`Remove ${label} filter`}
+        aria-label={removeAriaLabel}
         className="inline-flex size-4 items-center justify-center rounded-sm text-ink-soft transition-colors hover:bg-coral-50 hover:text-coral-600"
       >
         <X size={10} />
@@ -458,22 +495,21 @@ function EmptyState({
   onClearFilters: () => void;
   onCreate: () => void;
 }) {
+  const t = useTranslations("unitsPage");
   return (
     <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-16 text-center">
       <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-jade-50">
         <DoorOpen size={26} className="text-jade-800" />
       </div>
       <h2 className="mt-4 text-[17px] font-bold text-jade-950">
-        {hasFilters ? "No units match these filters" : "No units yet"}
+        {hasFilters ? t("emptyTitleFiltered") : t("emptyTitle")}
       </h2>
       <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
-        {hasFilters
-          ? "Try clearing some filters to see more results."
-          : "Add your first unit to start tracking rentals."}
+        {hasFilters ? t("emptySubtitleFiltered") : t("emptySubtitle")}
       </p>
       {!hasFilters && (
         <p className="font-bangla mt-0.5 text-[12px] text-ink-soft/75">
-          আপনার প্রথম ইউনিট যোগ করুন
+          {t("emptyBanglaHint")}
         </p>
       )}
       <div className="mt-5">
@@ -483,7 +519,7 @@ function EmptyState({
             onClick={onClearFilters}
             className="inline-flex h-9 items-center gap-1.5 rounded-[9px] border border-rule-soft bg-paper px-4 text-[13px] font-medium text-ink transition-colors hover:border-jade-700/30 hover:text-jade-900"
           >
-            <X size={13} /> Clear filters
+            <X size={13} /> {t("clearFilters")}
           </button>
         ) : (
           <button
@@ -491,7 +527,7 @@ function EmptyState({
             onClick={onCreate}
             className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
           >
-            <Plus size={14} /> Add your first unit
+            <Plus size={14} /> {t("addFirstUnit")}
           </button>
         )}
       </div>

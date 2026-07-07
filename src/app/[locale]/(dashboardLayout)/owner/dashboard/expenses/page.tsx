@@ -42,6 +42,7 @@ import {
     X,
 } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { Suspense, useMemo, useState } from "react";
 
 const ALL = "__ALL__";
@@ -55,6 +56,7 @@ export default function ExpensesListPage() {
 }
 
 function ExpensesListInner() {
+    const t = useTranslations("expensesPage");
     const [categoryFilter, setCategoryFilter] = useState<string>(ALL);
     const [buildingFilter, setBuildingFilter] = useState<string>(ALL);
     const [query, setQuery] = useState("");
@@ -119,13 +121,13 @@ function ExpensesListInner() {
                 <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                     <div>
                         <p className="font-serif text-[13px] italic text-coral-600/85">
-                            Money out
+                            {t("eyebrow")}
                         </p>
                         <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
-                            Expenses
+                            {t("title")}
                         </h1>
                         <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-                            সব খরচ ও পরিচালনা ব্যয়।
+                            {t("subtitle")}
                         </p>
                     </div>
 
@@ -135,7 +137,7 @@ function ExpensesListInner() {
                         className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
                     >
                         <Plus size={14} />
-                        Record expense
+                        {t("recordExpense")}
                     </button>
                 </header>
 
@@ -158,25 +160,27 @@ function ExpensesListInner() {
                         />
 
                         <p className="relative font-serif text-[13px] italic text-paper/60">
-                            Total spent
+                            {t("heroLabel")}
                         </p>
                         <p className="font-bangla relative mt-0.5 text-[11.5px] text-paper/45">
-                            মোট খরচ
+                            {t("heroLabelBn")}
                         </p>
                         <p className="relative mt-3 text-[40px] font-bold leading-none tracking-[-0.025em] tabular-nums text-coral-400 sm:text-[46px]">
                             {formatMoney(totalSpent)}
                         </p>
                         <p className="relative mt-3 text-[12.5px] text-paper/70">
-                            across{" "}
+                            {t("heroAcross")}{" "}
                             <span className="font-semibold tabular-nums text-paper">
                                 {fmtNum(expenses?.length ?? 0)}
                             </span>{" "}
-                            expense{(expenses?.length ?? 0) === 1 ? "" : "s"}
+                            {t("heroExpenses", { count: expenses?.length ?? 0 })}
                             {thisMonthSpent > 0 && (
                                 <>
                                     {" · "}
                                     <span className="text-jade-300">
-                                        {formatMoney(thisMonthSpent)} this month
+                                        {t("heroThisMonth", {
+                                            amount: formatMoney(thisMonthSpent),
+                                        })}
                                     </span>
                                 </>
                             )}
@@ -186,17 +190,17 @@ function ExpensesListInner() {
                     {/* Supporting */}
                     <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
                         <MiniStat
-                            label="This month"
-                            bn="এই মাসে"
+                            label={t("statThisMonth")}
+                            bn={t("statThisMonthBn")}
                             value={formatMoney(thisMonthSpent)}
-                            sub="spent so far"
+                            sub={t("statThisMonthSub")}
                             tone={thisMonthSpent > 0 ? "warn" : "neutral"}
                         />
                         <MiniStat
-                            label="Total entries"
-                            bn="মোট এন্ট্রি"
+                            label={t("statTotal")}
+                            bn={t("statTotalBn")}
                             value={fmtNum(expenses?.length ?? 0)}
-                            sub="logged expenses"
+                            sub={t("statTotalSub")}
                             tone="neutral"
                         />
                     </div>
@@ -214,7 +218,7 @@ function ExpensesListInner() {
                                 type="search"
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
-                                placeholder="Search by title, vendor, building, notes…"
+                                placeholder={t("searchPlaceholder")}
                                 className="h-9 w-full rounded-md border border-rule-soft bg-paper pl-9 pr-3 text-[13.5px] text-ink placeholder:text-ink-soft/60 focus:border-jade-700 focus:outline-none focus:ring-2 focus:ring-jade-700/20"
                             />
                         </div>
@@ -227,11 +231,11 @@ function ExpensesListInner() {
                                 }
                             >
                                 <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
-                                    <SelectValue placeholder="Category" />
+                                    <SelectValue placeholder={t("categoryPlaceholder")} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value={ALL}>
-                                        All categories
+                                        {t("allCategories")}
                                     </SelectItem>
                                     {EXPENSE_CATEGORY_OPTIONS.map((opt) => (
                                         <SelectItem
@@ -253,11 +257,11 @@ function ExpensesListInner() {
                                 }
                             >
                                 <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
-                                    <SelectValue placeholder="Building" />
+                                    <SelectValue placeholder={t("buildingPlaceholder")} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value={ALL}>
-                                        All buildings
+                                        {t("allBuildings")}
                                     </SelectItem>
                                     {(buildings ?? []).map((b) => (
                                         <SelectItem key={b.id} value={b.id}>
@@ -275,13 +279,14 @@ function ExpensesListInner() {
                                 <span className="font-semibold text-ink">
                                     {fmtNum(filtered.length)}
                                 </span>{" "}
-                                {filtered.length === 1 ? "result" : "results"}
+                                {t("resultCount", { count: filtered.length })}
                                 {categoryFilter !== ALL && (
                                     <span className="ml-1.5 text-ink-soft/70">
-                                        ·{" "}
-                                        {expenseCategoryLabel(
-                                            categoryFilter as ExpenseCategory,
-                                        )}
+                                        {t("suffix", {
+                                            label: expenseCategoryLabel(
+                                                categoryFilter as ExpenseCategory,
+                                            ),
+                                        })}
                                     </span>
                                 )}
                             </span>
@@ -295,7 +300,7 @@ function ExpensesListInner() {
                                     }}
                                     className="inline-flex items-center gap-1 font-medium text-ink-soft transition-colors hover:text-coral-600"
                                 >
-                                    <X size={11} /> Clear filters
+                                    <X size={11} /> {t("clearFilters")}
                                 </button>
                             )}
                         </div>
@@ -308,12 +313,12 @@ function ExpensesListInner() {
                 ) : isError ? (
                     <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
                         <h2 className="text-[15px] font-bold text-coral-600">
-                            Couldn&apos;t load expenses
+                            {t("errorTitle")}
                         </h2>
                         <p className="mt-1 text-[13px] text-coral-600/80">
                             {error instanceof Error
                                 ? error.message
-                                : "Please try again."}
+                                : t("errorFallback")}
                         </p>
                     </div>
                 ) : !expenses || expenses.length === 0 ? (
@@ -321,7 +326,7 @@ function ExpensesListInner() {
                 ) : filtered.length === 0 ? (
                     <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-12 text-center">
                         <p className="text-[13.5px] text-ink-soft">
-                            No expenses match your filters.
+                            {t("noMatch")}
                         </p>
                     </div>
                 ) : (
@@ -345,6 +350,7 @@ function ExpensesListInner() {
 }
 
 function ExpenseRow({ expense }: { expense: ExpenseListItem }) {
+    const t = useTranslations("expensesPage");
     return (
         <li>
             <Link
@@ -413,7 +419,7 @@ function ExpenseRow({ expense }: { expense: ExpenseListItem }) {
                 <div className="flex items-center gap-3 pl-2 sm:pl-0">
                     <div className="text-right">
                         <p className="text-[10px] font-semibold uppercase tracking-wider text-ink-soft">
-                            Amount
+                            {t("amount")}
                         </p>
                         <p className="text-[16px] font-bold tabular-nums text-coral-600">
                             {formatMoney(expense.amount)}
@@ -486,20 +492,20 @@ function ListShell() {
 }
 
 function EmptyState({ onRecord }: { onRecord: () => void }) {
+    const t = useTranslations("expensesPage");
     return (
         <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-16 text-center">
             <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-jade-50">
                 <Banknote size={26} className="text-jade-800" />
             </div>
             <h2 className="mt-4 text-[17px] font-bold text-jade-950">
-                No expenses yet
+                {t("emptyTitle")}
             </h2>
             <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
-                Track operational costs — utilities, repairs, salaries, fuel,
-                cleaning — to know where the money actually goes.
+                {t("emptySubtitle")}
             </p>
             <p className="font-bangla mt-0.5 text-[12px] text-ink-soft/75">
-                প্রথম খরচ যুক্ত করুন
+                {t("emptyBanglaHint")}
             </p>
             <div className="mt-5 flex items-center justify-center">
                 <button
@@ -508,7 +514,7 @@ function EmptyState({ onRecord }: { onRecord: () => void }) {
                     className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
                 >
                     <Plus size={14} />
-                    Record expense
+                    {t("recordExpense")}
                 </button>
             </div>
         </div>

@@ -30,11 +30,13 @@ import {
   X,
 } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 type StatusFilter = "ALL" | "ACTIVE" | "INACTIVE";
 
 export default function TenantsListPage() {
+  const t = useTranslations("tenantsPage");
   const { data: tenants, isLoading, isError, error } = useTenants();
   const createMutation = useCreateTenant();
 
@@ -76,13 +78,13 @@ export default function TenantsListPage() {
         <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="font-serif text-[13px] italic text-coral-600/85">
-              People in your portfolio
+              {t("eyebrow")}
             </p>
             <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
-              Tenants
+              {t("title")}
             </h1>
             <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-              সব ভাড়াটিয়ার তথ্য।
+              {t("subtitle")}
             </p>
           </div>
 
@@ -94,24 +96,23 @@ export default function TenantsListPage() {
                   className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
                 >
                   <Plus size={14} />
-                  Add tenant
+                  {t("addTenant")}
                 </button>
               }
             />
             <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="text-jade-950">
-                  Add new tenant
+                  {t("addNewTenant")}
                 </DialogTitle>
                 <DialogDescription className="text-ink-soft">
-                  Create a tenant record. Optionally create a portal login so
-                  they can pay rent online.
+                  {t("addNewTenantDescription")}
                 </DialogDescription>
               </DialogHeader>
               <TenantForm
                 mode="create"
                 submitting={createMutation.isPending}
-                submitLabel="Create tenant"
+                submitLabel={t("createTenant")}
                 onCancel={() => setCreateOpen(false)}
                 onSubmit={(values) => {
                   const formData = buildCreateTenantFormData(values);
@@ -126,20 +127,26 @@ export default function TenantsListPage() {
 
         {/* Summary strip — replaces 3 rainbow tiles */}
         <section className="flex flex-wrap items-baseline gap-x-7 gap-y-2 rounded-[14px] border border-rule-soft bg-paper px-5 py-3.5">
-          <SummaryStat label="Tenants" bn="মোট" value={fmtNum(totalCount)} />
           <SummaryStat
-            label="Active"
-            bn="সক্রিয়"
+            label={t("summaryTotal")}
+            bn={t("summaryTotalBn")}
+            value={fmtNum(totalCount)}
+          />
+          <SummaryStat
+            label={t("summaryActive")}
+            bn={t("summaryActiveBn")}
             value={fmtNum(activeCount)}
           />
           <SummaryStat
-            label="On a lease"
-            bn="লিজে আছে"
+            label={t("summaryOnLease")}
+            bn={t("summaryOnLeaseBn")}
             value={fmtNum(withLeaseCount)}
           />
           {totalCount > 0 && (
             <span className="ml-auto hidden text-[12px] text-ink-soft sm:inline tabular-nums">
-              {((withLeaseCount / totalCount) * 100).toFixed(0)}% leased
+              {t("leasedPercent", {
+                percent: ((withLeaseCount / totalCount) * 100).toFixed(0),
+              })}
             </span>
           )}
         </section>
@@ -156,7 +163,7 @@ export default function TenantsListPage() {
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by name, phone, email, occupation…"
+                placeholder={t("searchPlaceholder")}
                 className="h-9 w-full rounded-md border border-rule-soft bg-paper pl-9 pr-3 text-[13.5px] text-ink placeholder:text-ink-soft/60 focus:border-jade-700 focus:outline-none focus:ring-2 focus:ring-jade-700/20"
               />
             </div>
@@ -175,7 +182,11 @@ export default function TenantsListPage() {
                       : "text-ink-soft hover:bg-paper hover:text-jade-900",
                   )}
                 >
-                  {s === "ALL" ? "All" : s === "ACTIVE" ? "Active" : "Inactive"}
+                  {s === "ALL"
+                    ? t("filterAll")
+                    : s === "ACTIVE"
+                      ? t("filterActive")
+                      : t("filterInactive")}
                 </button>
               ))}
             </div>
@@ -188,11 +199,12 @@ export default function TenantsListPage() {
                 <span className="font-semibold text-ink">
                   {fmtNum(filtered.length)}
                 </span>{" "}
-                {filtered.length === 1 ? "result" : "results"}
+                {t("resultCount", { count: filtered.length })}
                 {statusFilter !== "ALL" && (
                   <span className="ml-1.5 text-ink-soft/70">
-                    · filtered to{" "}
-                    {statusFilter === "ACTIVE" ? "active" : "inactive"}
+                    {statusFilter === "ACTIVE"
+                      ? t("filteredToActive")
+                      : t("filteredToInactive")}
                   </span>
                 )}
               </span>
@@ -202,7 +214,7 @@ export default function TenantsListPage() {
                   onClick={clearFilters}
                   className="inline-flex items-center gap-1 font-medium text-ink-soft transition-colors hover:text-coral-600"
                 >
-                  <X size={11} /> Clear
+                  <X size={11} /> {t("clear")}
                 </button>
               )}
             </div>
@@ -219,25 +231,23 @@ export default function TenantsListPage() {
         ) : isError ? (
           <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
             <h2 className="text-[15px] font-bold text-coral-600">
-              Couldn&apos;t load tenants
+              {t("errorTitle")}
             </h2>
             <p className="mt-1 text-[13px] text-coral-600/80">
-              {error instanceof Error ? error.message : "Please try again."}
+              {error instanceof Error ? error.message : t("errorFallback")}
             </p>
           </div>
         ) : !tenants || tenants.length === 0 ? (
           <EmptyState onCreate={() => setCreateOpen(true)} />
         ) : filtered.length === 0 ? (
           <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-12 text-center">
-            <p className="text-[13.5px] text-ink-soft">
-              No tenants match your filters.
-            </p>
+            <p className="text-[13.5px] text-ink-soft">{t("noMatch")}</p>
             <button
               type="button"
               onClick={clearFilters}
               className="mt-3 inline-flex items-center gap-1 text-[12.5px] font-semibold text-jade-900 hover:text-coral-600 transition-colors"
             >
-              <X size={12} /> Clear filters
+              <X size={12} /> {t("clearFilters")}
             </button>
           </div>
         ) : (
@@ -262,6 +272,7 @@ export default function TenantsListPage() {
 // ─────────────────────────────────────────────────────────────────
 
 function TenantCard({ tenant }: { tenant: TenantListItem }) {
+  const t = useTranslations("tenantsPage");
   const initials = tenant.name
     .split(" ")
     .filter(Boolean)
@@ -318,7 +329,7 @@ function TenantCard({ tenant }: { tenant: TenantListItem }) {
                 statusBadge,
               )}
             >
-              {tenant.isActive ? "Active" : "Inactive"}
+              {tenant.isActive ? t("active") : t("inactive")}
             </span>
           </div>
           {tenant.occupation && (
@@ -351,17 +362,16 @@ function TenantCard({ tenant }: { tenant: TenantListItem }) {
       <div className="mt-3 flex items-center justify-between border-t border-rule-soft pt-2.5">
         <span className="inline-flex items-center gap-1 text-[11.5px] text-ink-soft tabular-nums">
           <FileText size={11} className="text-ink-soft/60" />
-          {fmtNum(tenant.leases.length)}{" "}
-          {tenant.leases.length === 1 ? "lease" : "leases"}
+          {t("leaseCount", { count: tenant.leases.length })}
         </span>
         {activeLease ? (
           <span className="inline-flex items-center gap-1 rounded-md border border-jade-100 bg-jade-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-jade-800">
             <span className="size-1 rounded-full bg-jade-700" />
-            On lease
+            {t("onLease")}
           </span>
         ) : tenant.isActive ? (
           <span className="inline-flex items-center gap-1 rounded-md border border-coral-100 bg-coral-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-coral-600">
-            No lease
+            {t("noLease")}
           </span>
         ) : (
           <span className="text-[11px] text-ink-soft/60">—</span>
@@ -401,19 +411,20 @@ function SummaryStat({
 }
 
 function EmptyState({ onCreate }: { onCreate: () => void }) {
+  const t = useTranslations("tenantsPage");
   return (
     <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-16 text-center">
       <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-jade-50">
         <Users size={26} className="text-jade-800" />
       </div>
       <h2 className="mt-4 text-[17px] font-bold text-jade-950">
-        No tenants yet
+        {t("emptyTitle")}
       </h2>
       <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
-        Add your first tenant to start tracking leases and rent collection.
+        {t("emptySubtitle")}
       </p>
       <p className="font-bangla mt-0.5 text-[12px] text-ink-soft/75">
-        আপনার প্রথম ভাড়াটিয়া যোগ করুন
+        {t("emptyBanglaHint")}
       </p>
       <div className="mt-5">
         <button
@@ -422,7 +433,7 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
           className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
         >
           <Plus size={14} />
-          Add your first tenant
+          {t("addFirstTenant")}
         </button>
       </div>
     </div>

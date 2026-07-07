@@ -44,10 +44,12 @@ import {
   User,
 } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
 export default function LeaseDetailPage() {
+  const t = useTranslations("leaseDetailPage");
   const params = useParams<{ id: string }>();
   const leaseId = params.id;
 
@@ -79,14 +81,14 @@ export default function LeaseDetailPage() {
             className="mb-4 inline-flex items-center gap-1 text-[12.5px] font-medium text-ink-soft hover:text-jade-900"
           >
             <ArrowLeft size={12} />
-            Back to leases
+            {t("backToLeases")}
           </Link>
           <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
             <h2 className="text-[15px] font-bold text-coral-600">
-              Couldn&apos;t load lease
+              {t("errorTitle")}
             </h2>
             <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-600/80">
-              {error instanceof Error ? error.message : "Lease not found."}
+              {error instanceof Error ? error.message : t("errorFallback")}
             </p>
           </div>
         </div>
@@ -123,7 +125,7 @@ export default function LeaseDetailPage() {
           className="inline-flex items-center gap-1 text-[12.5px] font-medium text-ink-soft transition-colors hover:text-jade-900"
         >
           <ArrowLeft size={12} />
-          All leases
+          {t("allLeases")}
         </Link>
 
         {/* Hero */}
@@ -141,7 +143,7 @@ export default function LeaseDetailPage() {
               </span>
               <div className="min-w-0">
                 <p className="font-mono text-[11px] uppercase tracking-wider text-ink-soft/65">
-                  Lease #{lease.id.slice(-8).toUpperCase()}
+                  {t("leaseNumber", { code: lease.id.slice(-8).toUpperCase() })}
                 </p>
                 <div className="mt-1 flex flex-wrap items-center gap-2">
                   <h1 className="truncate text-[26px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[28px]">
@@ -164,7 +166,7 @@ export default function LeaseDetailPage() {
                   </span>
                   <span className="inline-flex items-center gap-1">
                     <DoorOpen size={11} className="text-ink-soft/60" />
-                    Unit {lease.unit.name}
+                    {t("unitPrefix", { name: lease.unit.name })}
                   </span>
                   <span className="inline-flex items-center gap-1 tabular-nums">
                     <Calendar size={11} className="text-ink-soft/60" />
@@ -172,7 +174,7 @@ export default function LeaseDetailPage() {
                     {" – "}
                     {lease.endDate
                       ? new Date(lease.endDate).toLocaleDateString()
-                      : "Open-ended"}
+                      : t("openEnded")}
                   </span>
                 </div>
               </div>
@@ -185,7 +187,7 @@ export default function LeaseDetailPage() {
                 className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-[8px] border border-coral-100 bg-coral-50 px-3 text-[12.5px] font-semibold text-coral-600 transition-colors hover:bg-coral-100"
               >
                 <LogOut size={12} />
-                Terminate
+                {t("terminate")}
               </button>
             )}
           </div>
@@ -202,31 +204,33 @@ export default function LeaseDetailPage() {
         {/* Money KPIs — outstanding gets visual priority when > 0 */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <MoneyTile
-            label="Monthly rent"
-            bn="মাসিক ভাড়া"
+            label={t("tileMonthlyRent")}
+            bn={t("tileMonthlyRentBn")}
             value={formatMoney(lease.monthlyRent)}
-            sub="base rent"
+            sub={t("tileMonthlyRentSub")}
           />
           <MoneyTile
-            label="Total monthly"
-            bn="মোট মাসিক"
+            label={t("tileTotalMonthly")}
+            bn={t("tileTotalMonthlyBn")}
             value={formatMoney(totalMonthly)}
-            sub="rent + service"
+            sub={t("tileTotalMonthlySub")}
           />
           <MoneyTile
-            label="Security deposit"
-            bn="জামানত"
+            label={t("tileDeposit")}
+            bn={t("tileDepositBn")}
             value={formatMoney(lease.securityDeposit)}
-            sub="held"
+            sub={t("tileDepositSub")}
           />
           <MoneyTile
-            label="Outstanding"
-            bn="বকেয়া"
+            label={t("tileOutstanding")}
+            bn={t("tileOutstandingBn")}
             value={formatMoney(dueTotal)}
             sub={
               paidTotal > 0
-                ? `${formatMoney(paidTotal)} collected`
-                : "nothing collected yet"
+                ? t("tileOutstandingSubCollected", {
+                    amount: formatMoney(paidTotal),
+                  })
+                : t("tileOutstandingSubNone")
             }
             tone={dueTotal > 0 ? "warn" : "good"}
           />
@@ -237,8 +241,8 @@ export default function LeaseDetailPage() {
           {/* Tenant */}
           <LinkCard
             href={`/owner/dashboard/tenants/${lease.tenant.id}`}
-            eyebrow="Primary contact"
-            title="Tenant"
+            eyebrow={t("primaryContact")}
+            title={t("tenant")}
           >
             <p className="text-[14px] font-bold text-jade-950">
               {lease.tenant.name}
@@ -266,30 +270,33 @@ export default function LeaseDetailPage() {
           {/* Unit */}
           <LinkCard
             href={`/owner/dashboard/units/${lease.unit.id}`}
-            eyebrow="Property"
-            title="Unit"
+            eyebrow={t("property")}
+            title={t("unit")}
           >
             <p className="text-[14px] font-bold text-jade-950">
-              {lease.unit.building.name} · Unit {lease.unit.name}
+              {lease.unit.building.name} ·{" "}
+              {t("unitPrefix", { name: lease.unit.name })}
             </p>
             <ul className="mt-2.5 space-y-1.5 text-[12px] text-ink-soft">
               <li>
                 {lease.unit.floor.floorNumber === 0
-                  ? "Ground floor"
-                  : `Floor ${fmtNum(lease.unit.floor.floorNumber)}`}{" "}
+                  ? t("groundFloor")
+                  : t("floorN", { n: fmtNum(lease.unit.floor.floorNumber) })}{" "}
                 · {lease.unit.floor.name}
               </li>
               <li className="tabular-nums">
-                {lease.unit.bedrooms !== null
-                  ? fmtNum(lease.unit.bedrooms)
-                  : "—"}{" "}
-                bed ·{" "}
-                {lease.unit.bathrooms !== null
-                  ? fmtNum(lease.unit.bathrooms)
-                  : "—"}{" "}
-                bath
+                {t("bedBath", {
+                  bed:
+                    lease.unit.bedrooms !== null
+                      ? fmtNum(lease.unit.bedrooms)
+                      : "—",
+                  bath:
+                    lease.unit.bathrooms !== null
+                      ? fmtNum(lease.unit.bathrooms)
+                      : "—",
+                })}
                 {lease.unit.sizeSqft != null &&
-                  ` · ${fmtNum(lease.unit.sizeSqft)} sqft`}
+                  t("sqftSuffix", { value: fmtNum(lease.unit.sizeSqft) })}
               </li>
               <li className="truncate text-ink-soft/70">
                 {lease.unit.building.address}
@@ -300,43 +307,43 @@ export default function LeaseDetailPage() {
           {/* Key dates */}
           <div className="rounded-[14px] border border-rule-soft bg-paper p-5">
             <p className="font-serif text-[13px] italic text-coral-600/85">
-              Lease term &amp; rent schedule
+              {t("leaseTermSchedule")}
             </p>
             <h3 className="mt-0.5 text-[16px] font-bold tracking-[-0.015em] text-jade-950">
-              Key dates
+              {t("keyDates")}
             </h3>
 
             <ul className="mt-4 space-y-3">
               <DateRow
                 icon={Calendar}
-                label="Start"
+                label={t("dateStart")}
                 value={new Date(lease.startDate).toLocaleDateString()}
               />
               <DateRow
                 icon={Calendar}
-                label="End"
+                label={t("dateEnd")}
                 value={
                   lease.endDate
                     ? new Date(lease.endDate).toLocaleDateString()
-                    : "Open-ended"
+                    : t("openEnded")
                 }
               />
               <DateRow
                 icon={Calendar}
-                label="Move-in"
+                label={t("dateMoveIn")}
                 value={new Date(lease.moveInDate).toLocaleDateString()}
               />
               {lease.moveOutDate && (
                 <DateRow
                   icon={CalendarOff}
-                  label="Move-out"
+                  label={t("dateMoveOut")}
                   value={new Date(lease.moveOutDate).toLocaleDateString()}
                 />
               )}
               <DateRow
                 icon={Receipt}
-                label="Rent due"
-                value={`Day ${fmtNum(lease.rentDueDay)} of each month`}
+                label={t("dateRentDue")}
+                value={t("rentDueValue", { day: fmtNum(lease.rentDueDay) })}
               />
             </ul>
           </div>
@@ -347,13 +354,13 @@ export default function LeaseDetailPage() {
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="font-serif text-[13px] italic text-coral-600/85">
-                How rent is billed
+                {t("howRentBilled")}
               </p>
               <h3 className="mt-0.5 text-[16px] font-bold tracking-[-0.015em] text-jade-950">
-                Billing breakdown
+                {t("billingBreakdown")}
               </h3>
               <p className="font-bangla mt-0.5 text-[11.5px] text-ink-soft/70">
-                · বিলিং বিভাজন
+                {t("billingBreakdownBn")}
               </p>
             </div>
           </div>
@@ -362,18 +369,18 @@ export default function LeaseDetailPage() {
             <table className="w-full text-[13px]">
               <tbody className="divide-y divide-rule-soft bg-cream/30">
                 <BreakdownRow
-                  label="Base rent"
+                  label={t("baseRent")}
                   value={formatMoney(lease.monthlyRent)}
                 />
                 <BreakdownRow
-                  label="Service charge"
+                  label={t("serviceCharge")}
                   value={formatMoney(lease.serviceCharge)}
                 />
               </tbody>
               <tfoot className="bg-paper">
                 <tr className="border-t border-rule-soft">
                   <td className="px-3.5 py-2.5 text-[12.5px] font-bold text-ink">
-                    Monthly invoice total
+                    {t("monthlyInvoiceTotal")}
                   </td>
                   <td className="px-3.5 py-2.5 text-right text-[15px] font-bold text-jade-950 tabular-nums">
                     {formatMoney(totalMonthly)}
@@ -384,7 +391,7 @@ export default function LeaseDetailPage() {
           </div>
 
           <p className="mt-3 text-[11.5px] text-ink-soft">
-            Tenants pay one fixed price per month — rent plus service charge.
+            {t("billingNote")}
           </p>
         </div>
 
@@ -404,15 +411,15 @@ export default function LeaseDetailPage() {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="font-serif text-[13px] italic text-coral-600/85">
-                  Billing
+                  {t("billing")}
                 </p>
                 <h3 className="mt-0.5 text-[16px] font-bold tracking-[-0.015em] text-jade-950">
-                  Invoices
+                  {t("invoices")}
                 </h3>
                 <p className="mt-1 text-[12px] text-ink-soft">
                   {lease.invoices.length === 0
-                    ? "No invoices yet"
-                    : `${fmtNum(lease.invoices.length)} invoice${lease.invoices.length === 1 ? "" : "s"} generated`}
+                    ? t("noInvoicesYet")
+                    : t("invoicesGenerated", { count: lease.invoices.length })}
                 </p>
               </div>
               {lease.invoices.length > 0 && (
@@ -420,7 +427,7 @@ export default function LeaseDetailPage() {
                   href={`/owner/dashboard/invoices?leaseId=${lease.id}`}
                   className="inline-flex items-center gap-1 text-[12.5px] font-medium text-jade-900 transition-colors hover:text-coral-600"
                 >
-                  View all
+                  {t("viewAll")}
                   <ArrowUpRight size={12} />
                 </Link>
               )}
@@ -428,7 +435,7 @@ export default function LeaseDetailPage() {
 
             <div className="mt-4">
               {lease.invoices.length === 0 ? (
-                <EmptyBlock icon={Receipt} label="No invoices yet" />
+                <EmptyBlock icon={Receipt} label={t("noInvoicesYet")} />
               ) : (
                 <ul className="divide-y divide-rule-soft">
                   {lease.invoices.map((inv) => (
@@ -441,8 +448,10 @@ export default function LeaseDetailPage() {
                           {inv.invoiceNumber}
                         </p>
                         <p className="text-[11px] text-ink-soft tabular-nums">
-                          Due {new Date(inv.dueDate).toLocaleDateString()} ·{" "}
-                          {inv.type}
+                          {t("invoiceDue", {
+                            date: new Date(inv.dueDate).toLocaleDateString(),
+                            type: inv.type,
+                          })}
                         </p>
                       </div>
                       <div className="flex items-center gap-2.5">
@@ -470,22 +479,25 @@ export default function LeaseDetailPage() {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="font-serif text-[13px] italic text-coral-600/85">
-                  Money received
+                  {t("moneyReceived")}
                 </p>
                 <h3 className="mt-0.5 text-[16px] font-bold tracking-[-0.015em] text-jade-950">
-                  Payments
+                  {t("payments")}
                 </h3>
                 <p className="mt-1 text-[12px] text-ink-soft">
                   {lease.payments.length === 0
-                    ? "No payments recorded"
-                    : `${formatMoney(paidTotal)} across ${fmtNum(lease.payments.length)} payment${lease.payments.length === 1 ? "" : "s"}`}
+                    ? t("noPaymentsRecorded")
+                    : t("paymentsSummary", {
+                        amount: formatMoney(paidTotal),
+                        count: lease.payments.length,
+                      })}
                 </p>
               </div>
             </div>
 
             <div className="mt-4">
               {lease.payments.length === 0 ? (
-                <EmptyBlock icon={CreditCard} label="No payments recorded" />
+                <EmptyBlock icon={CreditCard} label={t("noPaymentsRecorded")} />
               ) : (
                 <ul className="divide-y divide-rule-soft">
                   {lease.payments.map((p) => (
@@ -531,13 +543,17 @@ export default function LeaseDetailPage() {
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle className="text-jade-950">
-                Terminate this lease?
+                {t("terminateTitle")}
               </AlertDialogTitle>
               <AlertDialogDescription className="text-ink-soft">
-                This will mark the lease as{" "}
-                <strong className="text-ink">TERMINATED</strong> and the unit as{" "}
-                <strong className="text-ink">VACANT</strong>. The action cannot
-                be undone.
+                {t.rich("terminateDescription", {
+                  t: (chunks) => (
+                    <strong className="text-ink">{chunks}</strong>
+                  ),
+                  v: (chunks) => (
+                    <strong className="text-ink">{chunks}</strong>
+                  ),
+                })}
               </AlertDialogDescription>
             </AlertDialogHeader>
 
@@ -545,8 +561,10 @@ export default function LeaseDetailPage() {
               <div className="flex items-start gap-2 rounded-[10px] border border-coral-100 bg-coral-50/70 px-3 py-2 text-[12.5px] text-coral-600">
                 <AlertTriangle size={13} className="mt-0.5 shrink-0" />
                 <span>
-                  This lease has <strong>{formatMoney(dueTotal)}</strong>{" "}
-                  outstanding. Settle invoices before terminating if possible.
+                  {t.rich("terminateWarning", {
+                    amount: formatMoney(dueTotal),
+                    b: (chunks) => <strong>{chunks}</strong>,
+                  })}
                 </span>
               </div>
             )}
@@ -557,7 +575,7 @@ export default function LeaseDetailPage() {
                   htmlFor="term-moveout"
                   className="text-[12.5px] font-semibold text-ink"
                 >
-                  Move-out date
+                  {t("moveOutDate")}
                   <span className="ml-1 text-coral-600" aria-label="required">
                     *
                   </span>
@@ -576,14 +594,14 @@ export default function LeaseDetailPage() {
                   htmlFor="term-notes"
                   className="text-[12.5px] font-semibold text-ink"
                 >
-                  Notes
+                  {t("notes")}
                 </Label>
                 <Textarea
                   id="term-notes"
                   rows={2}
                   value={terminateNotes}
                   onChange={(e) => setTerminateNotes(e.target.value)}
-                  placeholder="Reason or other context…"
+                  placeholder={t("notesPlaceholder")}
                   className="resize-none border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20"
                 />
               </div>
@@ -591,7 +609,7 @@ export default function LeaseDetailPage() {
 
             <AlertDialogFooter>
               <AlertDialogCancel disabled={terminateMutation.isPending}>
-                Cancel
+                {t("cancel")}
               </AlertDialogCancel>
               <AlertDialogAction
                 disabled={terminateMutation.isPending || !moveOutDate}
@@ -617,10 +635,10 @@ export default function LeaseDetailPage() {
                 {terminateMutation.isPending ? (
                   <>
                     <Loader2 size={14} className="animate-spin" />
-                    Terminating…
+                    {t("terminating")}
                   </>
                 ) : (
-                  "Terminate lease"
+                  t("terminateLease")
                 )}
               </AlertDialogAction>
             </AlertDialogFooter>

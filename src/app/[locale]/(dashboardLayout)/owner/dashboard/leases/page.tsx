@@ -38,11 +38,13 @@ import {
   X,
 } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 type StatusFilter = "ALL" | LeaseStatus;
 
 export default function LeasesListPage() {
+  const t = useTranslations("leasesPage");
   const { data: leases, isLoading, isError, error } = useLeases();
   const createMutation = useCreateLease();
 
@@ -91,13 +93,13 @@ export default function LeasesListPage() {
         <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="font-serif text-[13px] italic text-coral-600/85">
-              Tenant agreements
+              {t("eyebrow")}
             </p>
             <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
-              Leases
+              {t("title")}
             </h1>
             <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-              লিজ ও ভাড়াটিয়া চুক্তি।
+              {t("subtitle")}
             </p>
           </div>
 
@@ -109,24 +111,22 @@ export default function LeasesListPage() {
                   className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
                 >
                   <Plus size={14} />
-                  New lease
+                  {t("newLease")}
                 </button>
               }
             />
             <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="text-jade-950">
-                  Create new lease
+                  {t("createNewLease")}
                 </DialogTitle>
                 <DialogDescription className="text-ink-soft">
-                  Connect a tenant to a vacant unit. The unit will become
-                  occupied and the first invoice will be generated
-                  automatically.
+                  {t("createNewLeaseDescription")}
                 </DialogDescription>
               </DialogHeader>
               <LeaseForm
                 submitting={createMutation.isPending}
-                submitLabel="Create lease"
+                submitLabel={t("createLease")}
                 onCancel={() => setCreateOpen(false)}
                 onSubmit={(payload) => {
                   createMutation.mutate(payload, {
@@ -156,22 +156,22 @@ export default function LeasesListPage() {
               }}
             />
             <p className="relative font-serif text-[13px] italic text-paper/60">
-              Monthly rent from active leases
+              {t("heroLabel")}
             </p>
             <p className="font-bangla relative mt-0.5 text-[11.5px] text-paper/45">
-              সক্রিয় লিজ থেকে মাসিক ভাড়া
+              {t("heroLabelBn")}
             </p>
             <p className="relative mt-3 text-[40px] font-bold leading-none tracking-[-0.025em] tabular-nums sm:text-[46px]">
               {totalMonthly > 0 ? formatMoney(totalMonthly) : "—"}
             </p>
             <p className="relative mt-3 text-[12.5px] text-paper/70">
-              from{" "}
+              {t("heroFrom")}{" "}
               <span className="font-semibold text-paper tabular-nums">
                 {fmtNum(activeCount)}
               </span>{" "}
-              active {activeCount === 1 ? "lease" : "leases"} ·{" "}
-              <span className="tabular-nums">{fmtNum(totalCount)}</span> on
-              record
+              {t("heroActiveLeases", { count: activeCount })} ·{" "}
+              <span className="tabular-nums">{fmtNum(totalCount)}</span>{" "}
+              {t("heroOnRecord")}
             </p>
 
             {pendingCount > 0 && (
@@ -181,10 +181,7 @@ export default function LeasesListPage() {
                   <span className="relative h-1.5 w-1.5 rounded-full bg-coral-400" />
                 </span>
                 <span className="tabular-nums">{fmtNum(pendingCount)}</span>
-                <span>
-                  pending {pendingCount === 1 ? "lease" : "leases"} awaiting
-                  action
-                </span>
+                <span>{t("pendingAwaiting", { count: pendingCount })}</span>
               </div>
             )}
           </div>
@@ -192,18 +189,20 @@ export default function LeasesListPage() {
           {/* Supporting context */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
             <SmallStat
-              label="Active"
-              bn="সক্রিয়"
+              label={t("statActive")}
+              bn={t("statActiveBn")}
               value={fmtNum(activeCount)}
-              sub="generating rent"
+              sub={t("statActiveSub")}
               tone="jade"
             />
             <SmallStat
-              label="Pending"
-              bn="অপেক্ষমান"
+              label={t("statPending")}
+              bn={t("statPendingBn")}
               value={fmtNum(pendingCount)}
               sub={
-                pendingCount === 0 ? "nothing waiting" : "needs your attention"
+                pendingCount === 0
+                  ? t("statPendingNone")
+                  : t("statPendingSome")
               }
               tone={pendingCount > 0 ? "coral" : "neutral"}
             />
@@ -222,7 +221,7 @@ export default function LeasesListPage() {
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by tenant, unit, building…"
+                placeholder={t("searchPlaceholder")}
                 className="h-9 w-full rounded-md border border-rule-soft bg-paper pl-9 pr-3 text-[13.5px] text-ink placeholder:text-ink-soft/60 focus:border-jade-700 focus:outline-none focus:ring-2 focus:ring-jade-700/20"
               />
             </div>
@@ -258,10 +257,10 @@ export default function LeasesListPage() {
                 <span className="font-semibold text-ink">
                   {fmtNum(filtered.length)}
                 </span>{" "}
-                {filtered.length === 1 ? "result" : "results"}
+                {t("resultCount", { count: filtered.length })}
                 {statusFilter !== "ALL" && (
                   <span className="ml-1.5 text-ink-soft/70">
-                    · {leaseStatusLabel(statusFilter)} only
+                    {t("onlySuffix", { label: leaseStatusLabel(statusFilter) })}
                   </span>
                 )}
               </span>
@@ -271,7 +270,7 @@ export default function LeasesListPage() {
                   onClick={clearFilters}
                   className="inline-flex items-center gap-1 font-medium text-ink-soft transition-colors hover:text-coral-600"
                 >
-                  <X size={11} /> Clear
+                  <X size={11} /> {t("clear")}
                 </button>
               )}
             </div>
@@ -288,25 +287,23 @@ export default function LeasesListPage() {
         ) : isError ? (
           <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
             <h2 className="text-[15px] font-bold text-coral-600">
-              Couldn&apos;t load leases
+              {t("errorTitle")}
             </h2>
             <p className="mt-1 text-[13px] text-coral-600/80">
-              {error instanceof Error ? error.message : "Please try again."}
+              {error instanceof Error ? error.message : t("errorFallback")}
             </p>
           </div>
         ) : !leases || leases.length === 0 ? (
           <EmptyState onCreate={() => setCreateOpen(true)} />
         ) : filtered.length === 0 ? (
           <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-12 text-center">
-            <p className="text-[13.5px] text-ink-soft">
-              No leases match your filters.
-            </p>
+            <p className="text-[13.5px] text-ink-soft">{t("noMatch")}</p>
             <button
               type="button"
               onClick={clearFilters}
               className="mt-3 inline-flex items-center gap-1 text-[12.5px] font-semibold text-jade-900 hover:text-coral-600 transition-colors"
             >
-              <X size={12} /> Clear filters
+              <X size={12} /> {t("clearFilters")}
             </button>
           </div>
         ) : (
@@ -326,6 +323,7 @@ export default function LeasesListPage() {
 // ─────────────────────────────────────────────────────────────────
 
 function LeaseCard({ lease }: { lease: LeaseListItem }) {
+  const t = useTranslations("leasesPage");
   const total = Number(lease.monthlyRent) + Number(lease.serviceCharge);
 
   const initials = lease.tenant.name
@@ -392,7 +390,7 @@ function LeaseCard({ lease }: { lease: LeaseListItem }) {
         </span>
         <span className="inline-flex items-center gap-1">
           <DoorOpen size={11} className="text-ink-soft/60" />
-          Unit {lease.unit.name}
+          {t("unitPrefix", { name: lease.unit.name })}
         </span>
         <span className="inline-flex items-center gap-1 tabular-nums">
           <Calendar size={11} className="text-ink-soft/60" />
@@ -400,7 +398,7 @@ function LeaseCard({ lease }: { lease: LeaseListItem }) {
           {" – "}
           {lease.endDate
             ? new Date(lease.endDate).toLocaleDateString()
-            : "Open-ended"}
+            : t("openEnded")}
         </span>
       </div>
 
@@ -410,19 +408,22 @@ function LeaseCard({ lease }: { lease: LeaseListItem }) {
           <p className="text-[18px] font-bold text-jade-950 tabular-nums">
             {formatMoney(total)}
             <span className="ml-1 text-[10.5px] font-medium text-ink-soft">
-              /mo
+              {t("perMonth")}
             </span>
           </p>
           <p className="mt-0.5 text-[10.5px] text-ink-soft tabular-nums">
-            {formatMoney(lease.monthlyRent)} rent
+            {t("rentSuffix", { amount: formatMoney(lease.monthlyRent) })}
             {Number(lease.serviceCharge) > 0 && (
-              <> + {formatMoney(lease.serviceCharge)} svc</>
+              <>
+                {" "}
+                {t("svcSuffix", { amount: formatMoney(lease.serviceCharge) })}
+              </>
             )}
           </p>
         </div>
         <span className="inline-flex items-center gap-1 rounded-md bg-cream px-2 py-1 text-[11px] font-medium text-ink-soft">
           <Calendar size={10} />
-          Due day{" "}
+          {t("dueDay")}{" "}
           <span className="font-bold text-ink tabular-nums">
             {lease.rentDueDay}
           </span>
@@ -478,23 +479,24 @@ function SmallStat({
 }
 
 function EmptyState({ onCreate }: { onCreate: () => void }) {
+  const t = useTranslations("leasesPage");
   return (
     <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-16 text-center">
       <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-jade-50">
         <FileText size={26} className="text-jade-800" />
       </div>
       <h2 className="mt-4 text-[17px] font-bold text-jade-950">
-        No leases yet
+        {t("emptyTitle")}
       </h2>
       <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
-        Create your first lease to start tracking rent and tenant agreements.
+        {t("emptySubtitle")}
       </p>
       <p className="font-bangla mt-0.5 text-[12px] text-ink-soft/75">
-        আপনার প্রথম লিজ তৈরি করুন
+        {t("emptyBanglaHint")}
       </p>
       <div className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-md border border-rule-soft bg-cream/60 px-2.5 py-1 text-[11.5px] text-ink-soft">
         <User size={11} />
-        Requires an active tenant + vacant unit
+        {t("emptyRequires")}
       </div>
       <div className="mt-5">
         <button
@@ -503,7 +505,7 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
           className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
         >
           <Plus size={14} />
-          Create your first lease
+          {t("emptyCreateFirst")}
         </button>
       </div>
     </div>

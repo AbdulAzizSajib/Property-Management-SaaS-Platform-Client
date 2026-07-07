@@ -3,10 +3,13 @@
 import { motion } from "framer-motion";
 import { Download, Plus, ChevronDown } from "lucide-react";
 import { useCurrentUser } from "@/src/hooks/useAuthActions";
+import { useTranslations, useFormatter } from "next-intl";
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export function PageHeader({ name }: { name: string }) {
-  const today = new Date().toLocaleDateString("en-GB", {
+  const t = useTranslations("Dashboard");
+  const format = useFormatter();
+  const today = format.dateTime(new Date(), {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -21,14 +24,14 @@ export function PageHeader({ name }: { name: string }) {
       className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
     >
       <div>
-        <p className="mb-1 font-serif text-[14px] italic text-coral-600/90">
-          {today}
-        </p>
+        <p className="mb-1  text-[14px] text-coral-600/90">{today}</p>
         <h1 className="text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[32px]">
-          Welcome back, {me?.name}
+          {t("welcomeBack", { name: me?.name ?? "" })}
+          {/* Welcome back, {me?.name} */}
         </h1>
         <p className="mt-1 font-bangla text-[14px] text-ink-soft">
-          What's happening today, at a glance.
+          {/* What's happening today, at a glance. */}
+          {t("glance")}
         </p>
       </div>
 
@@ -38,7 +41,8 @@ export function PageHeader({ name }: { name: string }) {
           className="inline-flex items-center gap-2 rounded-[9px] border border-rule-soft bg-paper px-3.5 py-2 text-[13px] font-medium text-ink-soft transition-colors hover:border-jade-700/30 hover:text-jade-900"
         >
           <Download size={14} />
-          Export
+          {/* Export */}
+          {t("export")}
         </button>
 
         {/* QuickActions demoted: a single split-button menu instead of a rainbow grid */}
@@ -48,7 +52,8 @@ export function PageHeader({ name }: { name: string }) {
             className="inline-flex items-center gap-2 rounded-l-[9px] bg-jade-900 px-4 py-2 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
           >
             <Plus size={14} />
-            Add new
+            {/* Add new */}
+            {t("addNew")}
           </button>
           <button
             type="button"

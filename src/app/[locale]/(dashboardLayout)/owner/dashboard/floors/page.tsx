@@ -16,6 +16,7 @@ import { fmtNum } from "@/src/lib/numerals";
 import { Building2, Layers } from "lucide-react";
 import { Link, useRouter } from "@/src/i18n/navigation";
 import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Suspense, useEffect, useMemo } from "react";
 
 export default function FloorsPage() {
@@ -27,6 +28,7 @@ export default function FloorsPage() {
 }
 
 function FloorsPageInner() {
+    const t = useTranslations("floorsPage");
     const router = useRouter();
     const searchParams = useSearchParams();
     const buildingIdParam = searchParams.get("buildingId") ?? "";
@@ -63,13 +65,13 @@ function FloorsPageInner() {
                 <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                     <div>
                         <p className="font-serif text-[13px] italic text-coral-600/85">
-                            Building structure
+                            {t("eyebrow")}
                         </p>
                         <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
-                            Floors
+                            {t("title")}
                         </h1>
                         <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-                            তলা ও কাঠামো পরিচালনা।
+                            {t("subtitle")}
                         </p>
                     </div>
 
@@ -77,7 +79,7 @@ function FloorsPageInner() {
                     {hasBuildings && (
                         <div className="flex items-center gap-2.5">
                             <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
-                                Building
+                                {t("buildingLabel")}
                             </span>
                             <div className="w-full min-w-[240px] sm:w-72">
                                 <Select
@@ -89,8 +91,8 @@ function FloorsPageInner() {
                                         <SelectValue
                                             placeholder={
                                                 isLoading
-                                                    ? "Loading…"
-                                                    : "Select a building"
+                                                    ? t("loading")
+                                                    : t("selectBuilding")
                                             }
                                         >
                                             {(value) =>
@@ -125,12 +127,12 @@ function FloorsPageInner() {
                 ) : isError ? (
                     <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
                         <h2 className="text-[15px] font-bold text-coral-600">
-                            Couldn&apos;t load buildings
+                            {t("errorTitle")}
                         </h2>
                         <p className="mt-1 text-[13px] text-coral-600/80">
                             {error instanceof Error
                                 ? error.message
-                                : "Please try again."}
+                                : t("errorFallback")}
                         </p>
                     </div>
                 ) : !hasBuildings ? (
@@ -147,7 +149,7 @@ function FloorsPageInner() {
                                 </span>
                                 <div className="min-w-0">
                                     <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
-                                        Showing floors in
+                                        {t("showingFloorsIn")}
                                     </p>
                                     <Link
                                         href={`/owner/dashboard/buildings/${selected.id}`}
@@ -161,7 +163,7 @@ function FloorsPageInner() {
                                 <span className="font-semibold text-ink">
                                     {fmtNum(selected.totalFloors)}
                                 </span>{" "}
-                                planned
+                                {t("planned")}
                             </span>
                         </div>
 
@@ -177,26 +179,27 @@ function FloorsPageInner() {
 }
 
 function EmptyBuildings() {
+    const t = useTranslations("floorsPage");
     return (
         <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-16 text-center">
             <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-jade-50">
                 <Building2 size={26} className="text-jade-800" />
             </div>
             <h2 className="mt-4 text-[17px] font-bold text-jade-950">
-                No buildings yet
+                {t("emptyTitle")}
             </h2>
             <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
-                You need at least one building before you can add floors.
+                {t("emptySubtitle")}
             </p>
             <p className="font-bangla mt-0.5 text-[12px] text-ink-soft/75">
-                প্রথমে একটি বিল্ডিং যোগ করুন
+                {t("emptyBanglaHint")}
             </p>
             <div className="mt-5">
                 <Link
                     href="/owner/dashboard/buildings"
                     className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
                 >
-                    Go to buildings
+                    {t("goToBuildings")}
                 </Link>
             </div>
         </div>
@@ -204,17 +207,17 @@ function EmptyBuildings() {
 }
 
 function NoSelection() {
+    const t = useTranslations("floorsPage");
     return (
         <div className="rounded-[14px] border border-dashed border-rule-soft bg-paper px-6 py-16 text-center">
             <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-cream">
                 <Layers size={26} className="text-ink-soft" />
             </div>
             <h2 className="mt-4 text-[17px] font-bold text-jade-950">
-                Select a building
+                {t("noSelectionTitle")}
             </h2>
             <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
-                Pick a building from the dropdown above to view and manage its
-                floors.
+                {t("noSelectionSubtitle")}
             </p>
         </div>
     );

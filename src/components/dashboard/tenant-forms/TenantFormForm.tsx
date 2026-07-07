@@ -13,6 +13,7 @@ import type {
     UpdateTenantFormPayload,
 } from "@/src/types/tenantForm.types";
 import { Loader2, Plus, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
 export interface FamilyMemberRow {
@@ -163,6 +164,7 @@ export function TenantFormForm({
     onSubmit,
     onCancel,
 }: TenantFormFormProps) {
+    const tr = useTranslations("tenantFormForm");
     const [values, setValues] = useState<TenantFormValues>({
         ...emptyForm,
         ...defaultValues,
@@ -245,12 +247,12 @@ export function TenantFormForm({
             {/* Tenant link (create only) — building first, then tenant */}
             {mode === "create" && (
                 <div className="space-y-3">
-                    <SectionTitle>Tenant</SectionTitle>
+                    <SectionTitle>{tr("sectionTenant")}</SectionTitle>
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         {/* Step 1: pick a building */}
                         <div className="space-y-1.5">
                             <Label htmlFor="tf-building">
-                                Building (ভবন){" "}
+                                {tr("building")}{" "}
                                 <span className="text-rose-500">*</span>
                             </Label>
                             <select
@@ -264,7 +266,7 @@ export function TenantFormForm({
                                 }}
                                 className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 focus:border-jade-700 focus:outline-none focus:ring-2 focus:ring-jade-700/20"
                             >
-                                <option value="">All buildings…</option>
+                                <option value="">{tr("allBuildings")}</option>
                                 {(buildings ?? []).map((b) => (
                                     <option key={b.id} value={b.id}>
                                         {b.name}
@@ -272,14 +274,14 @@ export function TenantFormForm({
                                 ))}
                             </select>
                             <p className="text-[11px] text-slate-500">
-                                Filters the tenant list below.
+                                {tr("buildingHint")}
                             </p>
                         </div>
 
                         {/* Step 2: pick a tenant (narrowed by building) */}
                         <div className="space-y-1.5">
                             <Label htmlFor="tf-tenant">
-                                Linked tenant{" "}
+                                {tr("linkedTenant")}{" "}
                                 <span className="text-rose-500">*</span>
                             </Label>
                             <select
@@ -293,8 +295,8 @@ export function TenantFormForm({
                             >
                                 <option value="" disabled>
                                     {filteredTenants.length === 0
-                                        ? "No tenants in this building"
-                                        : "Select a tenant…"}
+                                        ? tr("noTenantsInBuilding")
+                                        : tr("selectTenant")}
                                 </option>
                                 {filteredTenants.map((t) => (
                                     <option key={t.id} value={t.id}>
@@ -303,7 +305,7 @@ export function TenantFormForm({
                                 ))}
                             </select>
                             <p className="text-[11px] text-slate-500">
-                                Each tenant can have only one form.
+                                {tr("linkedTenantHint")}
                             </p>
                         </div>
                     </div>
@@ -312,10 +314,10 @@ export function TenantFormForm({
 
             {/* Police form header + property address */}
             <div className="space-y-3">
-                <SectionTitle>Police form &amp; property address</SectionTitle>
+                <SectionTitle>{tr("sectionPolice")}</SectionTitle>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div className="space-y-1.5">
-                        <Label htmlFor="tf-division">Division (বিভাগ)</Label>
+                        <Label htmlFor="tf-division">{tr("division")}</Label>
                         <Input
                             id="tf-division"
                             value={values.division}
@@ -324,7 +326,7 @@ export function TenantFormForm({
                         />
                     </div>
                     <div className="space-y-1.5">
-                        <Label htmlFor="tf-thana">Thana (থানা)</Label>
+                        <Label htmlFor="tf-thana">{tr("thana")}</Label>
                         <Input
                             id="tf-thana"
                             value={values.thana}
@@ -333,7 +335,7 @@ export function TenantFormForm({
                         />
                     </div>
                     <div className="space-y-1.5">
-                        <Label htmlFor="tf-flat">Flat / Floor (ফ্ল্যাট/তলা)</Label>
+                        <Label htmlFor="tf-flat">{tr("flatFloor")}</Label>
                         <Input
                             id="tf-flat"
                             value={values.flatFloor}
@@ -342,9 +344,7 @@ export function TenantFormForm({
                         />
                     </div>
                     <div className="space-y-1.5">
-                        <Label htmlFor="tf-house">
-                            House / Holding (বাড়ি/হোল্ডিং)
-                        </Label>
+                        <Label htmlFor="tf-house">{tr("house")}</Label>
                         <Input
                             id="tf-house"
                             value={values.houseNo}
@@ -353,7 +353,7 @@ export function TenantFormForm({
                         />
                     </div>
                     <div className="space-y-1.5">
-                        <Label htmlFor="tf-road">Road (রাস্তা)</Label>
+                        <Label htmlFor="tf-road">{tr("road")}</Label>
                         <Input
                             id="tf-road"
                             value={values.roadNo}
@@ -362,7 +362,7 @@ export function TenantFormForm({
                         />
                     </div>
                     <div className="space-y-1.5">
-                        <Label htmlFor="tf-area">Area (এলাকা)</Label>
+                        <Label htmlFor="tf-area">{tr("area")}</Label>
                         <Input
                             id="tf-area"
                             value={values.areaName}
@@ -371,7 +371,7 @@ export function TenantFormForm({
                         />
                     </div>
                     <div className="space-y-1.5">
-                        <Label htmlFor="tf-postcode">Post code (পোস্ট কোড)</Label>
+                        <Label htmlFor="tf-postcode">{tr("postCode")}</Label>
                         <Input
                             id="tf-postcode"
                             value={values.postCode}
@@ -384,11 +384,12 @@ export function TenantFormForm({
 
             {/* Personal info */}
             <div className="space-y-3">
-                <SectionTitle>Personal information</SectionTitle>
+                <SectionTitle>{tr("sectionPersonal")}</SectionTitle>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div className="space-y-1.5 sm:col-span-2">
                         <Label htmlFor="tf-name">
-                            Full name <span className="text-rose-500">*</span>
+                            {tr("fullName")}{" "}
+                            <span className="text-rose-500">*</span>
                         </Label>
                         <Input
                             id="tf-name"
@@ -401,7 +402,7 @@ export function TenantFormForm({
 
                     <div className="space-y-1.5">
                         <Label htmlFor="tf-father">
-                            Father&apos;s name{" "}
+                            {tr("fatherName")}{" "}
                             <span className="text-rose-500">*</span>
                         </Label>
                         <Input
@@ -414,7 +415,7 @@ export function TenantFormForm({
                     </div>
 
                     <div className="space-y-1.5">
-                        <Label htmlFor="tf-mother">Mother&apos;s name</Label>
+                        <Label htmlFor="tf-mother">{tr("motherName")}</Label>
                         <Input
                             id="tf-mother"
                             value={values.motherName}
@@ -424,7 +425,7 @@ export function TenantFormForm({
                     </div>
 
                     <div className="space-y-1.5">
-                        <Label htmlFor="tf-dob">Date of birth</Label>
+                        <Label htmlFor="tf-dob">{tr("dateOfBirth")}</Label>
                         <Input
                             id="tf-dob"
                             type="date"
@@ -434,7 +435,9 @@ export function TenantFormForm({
                     </div>
 
                     <div className="space-y-1.5">
-                        <Label htmlFor="tf-marital">Marital status</Label>
+                        <Label htmlFor="tf-marital">
+                            {tr("maritalStatus")}
+                        </Label>
                         <Input
                             id="tf-marital"
                             value={values.maritalStatus}
@@ -446,7 +449,7 @@ export function TenantFormForm({
                     </div>
 
                     <div className="space-y-1.5">
-                        <Label htmlFor="tf-religion">Religion</Label>
+                        <Label htmlFor="tf-religion">{tr("religion")}</Label>
                         <Input
                             id="tf-religion"
                             value={values.religion}
@@ -456,9 +459,7 @@ export function TenantFormForm({
                     </div>
 
                     <div className="space-y-1.5">
-                        <Label htmlFor="tf-edu">
-                            Educational qualification
-                        </Label>
+                        <Label htmlFor="tf-edu">{tr("education")}</Label>
                         <Input
                             id="tf-edu"
                             value={values.educationalQualification}
@@ -474,7 +475,7 @@ export function TenantFormForm({
 
                     <div className="space-y-1.5 sm:col-span-2">
                         <Label htmlFor="tf-occupation">
-                            Occupation &amp; work address
+                            {tr("occupation")}
                         </Label>
                         <Textarea
                             id="tf-occupation"
@@ -488,7 +489,9 @@ export function TenantFormForm({
                     </div>
 
                     <div className="space-y-1.5 sm:col-span-2">
-                        <Label htmlFor="tf-address">Permanent address</Label>
+                        <Label htmlFor="tf-address">
+                            {tr("permanentAddress")}
+                        </Label>
                         <Textarea
                             id="tf-address"
                             rows={2}
@@ -504,10 +507,10 @@ export function TenantFormForm({
 
             {/* Contact & IDs */}
             <div className="space-y-3">
-                <SectionTitle>Contact &amp; identification</SectionTitle>
+                <SectionTitle>{tr("sectionContact")}</SectionTitle>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div className="space-y-1.5">
-                        <Label htmlFor="tf-phone">Phone</Label>
+                        <Label htmlFor="tf-phone">{tr("phone")}</Label>
                         <Input
                             id="tf-phone"
                             type="tel"
@@ -517,7 +520,7 @@ export function TenantFormForm({
                         />
                     </div>
                     <div className="space-y-1.5">
-                        <Label htmlFor="tf-email">Email</Label>
+                        <Label htmlFor="tf-email">{tr("email")}</Label>
                         <Input
                             id="tf-email"
                             type="email"
@@ -527,7 +530,7 @@ export function TenantFormForm({
                         />
                     </div>
                     <div className="space-y-1.5">
-                        <Label htmlFor="tf-nid">NID number</Label>
+                        <Label htmlFor="tf-nid">{tr("nidNumber")}</Label>
                         <Input
                             id="tf-nid"
                             value={values.nidNumber}
@@ -536,7 +539,9 @@ export function TenantFormForm({
                         />
                     </div>
                     <div className="space-y-1.5">
-                        <Label htmlFor="tf-passport">Passport number</Label>
+                        <Label htmlFor="tf-passport">
+                            {tr("passportNumber")}
+                        </Label>
                         <Input
                             id="tf-passport"
                             value={values.passportNumber}
@@ -552,15 +557,13 @@ export function TenantFormForm({
             {/* Family / mess members */}
             <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                    <SectionTitle>
-                        Family / mess members (পরিবার/মেসের সদস্য)
-                    </SectionTitle>
+                    <SectionTitle>{tr("sectionFamily")}</SectionTitle>
                     <button
                         type="button"
                         onClick={addFamilyRow}
                         className="inline-flex items-center gap-1 rounded-md border border-slate-200 px-2 py-1 text-[11.5px] font-semibold text-slate-700 hover:bg-slate-50"
                     >
-                        <Plus size={11} /> Add row
+                        <Plus size={11} /> {tr("addRow")}
                     </button>
                 </div>
                 <div className="space-y-2">
@@ -570,15 +573,15 @@ export function TenantFormForm({
                             className="grid grid-cols-1 gap-2 rounded-md border border-slate-200 p-2 sm:grid-cols-[1.4fr_0.8fr_1fr_1fr_auto]"
                         >
                             <Input
-                                aria-label={`Member ${i + 1} name`}
+                                aria-label={tr("memberNameAria", { n: i + 1 })}
                                 value={row.name}
                                 onChange={(e) =>
                                     setFamily(i, "name", e.target.value)
                                 }
-                                placeholder="Name"
+                                placeholder={tr("memberName")}
                             />
                             <Input
-                                aria-label={`Member ${i + 1} age`}
+                                aria-label={tr("memberAgeAria", { n: i + 1 })}
                                 type="date"
                                 value={row.age}
                                 onChange={(e) =>
@@ -586,15 +589,17 @@ export function TenantFormForm({
                                 }
                             />
                             <Input
-                                aria-label={`Member ${i + 1} occupation`}
+                                aria-label={tr("memberOccupationAria", {
+                                    n: i + 1,
+                                })}
                                 value={row.occupation}
                                 onChange={(e) =>
                                     setFamily(i, "occupation", e.target.value)
                                 }
-                                placeholder="Occupation"
+                                placeholder={tr("memberOccupation")}
                             />
                             <Input
-                                aria-label={`Member ${i + 1} mobile`}
+                                aria-label={tr("memberMobileAria", { n: i + 1 })}
                                 value={row.contactNumber}
                                 onChange={(e) =>
                                     setFamily(
@@ -603,13 +608,13 @@ export function TenantFormForm({
                                         e.target.value,
                                     )
                                 }
-                                placeholder="Mobile"
+                                placeholder={tr("memberMobile")}
                             />
                             <button
                                 type="button"
                                 onClick={() => removeFamilyRow(i)}
                                 className="inline-flex items-center justify-center rounded-md border border-slate-200 px-2 text-slate-500 hover:bg-rose-50 hover:text-rose-600"
-                                aria-label={`Remove member ${i + 1}`}
+                                aria-label={tr("removeMemberAria", { n: i + 1 })}
                             >
                                 <X size={14} />
                             </button>
@@ -617,16 +622,16 @@ export function TenantFormForm({
                     ))}
                 </div>
                 <p className="text-[11px] text-slate-500">
-                    Age uses date of birth. Leave a row blank to skip it.
+                    {tr("familyHint")}
                 </p>
             </div>
 
             {/* Emergency contact */}
             <div className="space-y-3">
-                <SectionTitle>Emergency contact</SectionTitle>
+                <SectionTitle>{tr("sectionEmergency")}</SectionTitle>
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="space-y-1.5">
-                            <Label htmlFor="tf-em-name">Name</Label>
+                            <Label htmlFor="tf-em-name">{tr("name")}</Label>
                             <Input
                                 id="tf-em-name"
                                 value={values.emName}
@@ -635,7 +640,7 @@ export function TenantFormForm({
                             />
                         </div>
                         <div className="space-y-1.5">
-                            <Label htmlFor="tf-em-phone">Phone</Label>
+                            <Label htmlFor="tf-em-phone">{tr("phone")}</Label>
                             <Input
                                 id="tf-em-phone"
                                 type="tel"
@@ -645,7 +650,9 @@ export function TenantFormForm({
                             />
                         </div>
                         <div className="space-y-1.5">
-                            <Label htmlFor="tf-em-rel">Relationship</Label>
+                            <Label htmlFor="tf-em-rel">
+                                {tr("relationship")}
+                            </Label>
                             <Input
                                 id="tf-em-rel"
                                 value={values.emRelationship}
@@ -656,7 +663,7 @@ export function TenantFormForm({
                             />
                         </div>
                         <div className="space-y-1.5">
-                            <Label htmlFor="tf-em-addr">Address</Label>
+                            <Label htmlFor="tf-em-addr">{tr("address")}</Label>
                             <Input
                                 id="tf-em-addr"
                                 value={values.emAddress}
@@ -671,10 +678,10 @@ export function TenantFormForm({
 
             {/* Maid */}
             <div className="space-y-3">
-                <SectionTitle>Maid / house help (গৃহকর্মী)</SectionTitle>
+                <SectionTitle>{tr("sectionMaid")}</SectionTitle>
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="space-y-1.5">
-                            <Label htmlFor="tf-maid-name">Name</Label>
+                            <Label htmlFor="tf-maid-name">{tr("name")}</Label>
                             <Input
                                 id="tf-maid-name"
                                 value={values.maidName}
@@ -685,7 +692,9 @@ export function TenantFormForm({
                             />
                         </div>
                         <div className="space-y-1.5">
-                            <Label htmlFor="tf-maid-nid">NID number</Label>
+                            <Label htmlFor="tf-maid-nid">
+                                {tr("nidNumber")}
+                            </Label>
                             <Input
                                 id="tf-maid-nid"
                                 value={values.maidNid}
@@ -695,7 +704,7 @@ export function TenantFormForm({
                         </div>
                         <div className="space-y-1.5">
                             <Label htmlFor="tf-maid-contact">
-                                Mobile number
+                                {tr("mobileNumber")}
                             </Label>
                             <Input
                                 id="tf-maid-contact"
@@ -709,7 +718,7 @@ export function TenantFormForm({
                         </div>
                         <div className="space-y-1.5">
                             <Label htmlFor="tf-maid-addr">
-                                Permanent address
+                                {tr("permanentAddress")}
                             </Label>
                             <Input
                                 id="tf-maid-addr"
@@ -725,10 +734,10 @@ export function TenantFormForm({
 
             {/* Driver */}
             <div className="space-y-3">
-                <SectionTitle>Driver (ড্রাইভার)</SectionTitle>
+                <SectionTitle>{tr("sectionDriver")}</SectionTitle>
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="space-y-1.5">
-                            <Label htmlFor="tf-driver-name">Name</Label>
+                            <Label htmlFor="tf-driver-name">{tr("name")}</Label>
                             <Input
                                 id="tf-driver-name"
                                 value={values.driverName}
@@ -739,7 +748,9 @@ export function TenantFormForm({
                             />
                         </div>
                         <div className="space-y-1.5">
-                            <Label htmlFor="tf-driver-nid">NID number</Label>
+                            <Label htmlFor="tf-driver-nid">
+                                {tr("nidNumber")}
+                            </Label>
                             <Input
                                 id="tf-driver-nid"
                                 value={values.driverNid}
@@ -751,7 +762,7 @@ export function TenantFormForm({
                         </div>
                         <div className="space-y-1.5">
                             <Label htmlFor="tf-driver-contact">
-                                Mobile number
+                                {tr("mobileNumber")}
                             </Label>
                             <Input
                                 id="tf-driver-contact"
@@ -765,7 +776,7 @@ export function TenantFormForm({
                         </div>
                         <div className="space-y-1.5">
                             <Label htmlFor="tf-driver-addr">
-                                Permanent address
+                                {tr("permanentAddress")}
                             </Label>
                             <Input
                                 id="tf-driver-addr"
@@ -781,11 +792,11 @@ export function TenantFormForm({
 
             {/* House owners */}
             <div className="space-y-3">
-                <SectionTitle>House owners</SectionTitle>
+                <SectionTitle>{tr("sectionOwners")}</SectionTitle>
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div className="space-y-1.5">
                             <Label htmlFor="tf-present-name">
-                                Present owner name
+                                {tr("presentOwnerName")}
                             </Label>
                             <Input
                                 id="tf-present-name"
@@ -798,7 +809,7 @@ export function TenantFormForm({
                         </div>
                         <div className="space-y-1.5">
                             <Label htmlFor="tf-present-contact">
-                                Present owner contact
+                                {tr("presentOwnerContact")}
                             </Label>
                             <Input
                                 id="tf-present-contact"
@@ -811,7 +822,7 @@ export function TenantFormForm({
                         </div>
                         <div className="space-y-1.5 sm:col-span-2">
                             <Label htmlFor="tf-present-addr">
-                                Present owner address
+                                {tr("presentOwnerAddress")}
                             </Label>
                             <Input
                                 id="tf-present-addr"
@@ -824,7 +835,7 @@ export function TenantFormForm({
                         </div>
                         <div className="space-y-1.5">
                             <Label htmlFor="tf-prev-name">
-                                Previous owner name
+                                {tr("previousOwnerName")}
                             </Label>
                             <Input
                                 id="tf-prev-name"
@@ -837,7 +848,7 @@ export function TenantFormForm({
                         </div>
                         <div className="space-y-1.5">
                             <Label htmlFor="tf-prev-contact">
-                                Previous owner contact
+                                {tr("previousOwnerContact")}
                             </Label>
                             <Input
                                 id="tf-prev-contact"
@@ -850,7 +861,7 @@ export function TenantFormForm({
                         </div>
                         <div className="space-y-1.5 sm:col-span-2">
                             <Label htmlFor="tf-prev-addr">
-                                Previous owner address
+                                {tr("previousOwnerAddress")}
                             </Label>
                             <Input
                                 id="tf-prev-addr"
@@ -866,10 +877,10 @@ export function TenantFormForm({
 
             {/* Moving details */}
             <div className="space-y-3">
-                <SectionTitle>Moving details</SectionTitle>
+                <SectionTitle>{tr("sectionMoving")}</SectionTitle>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div className="space-y-1.5">
-                        <Label htmlFor="tf-rentdate">Rent date</Label>
+                        <Label htmlFor="tf-rentdate">{tr("rentDate")}</Label>
                         <Input
                             id="tf-rentdate"
                             type="date"
@@ -878,7 +889,9 @@ export function TenantFormForm({
                         />
                     </div>
                     <div className="space-y-1.5 sm:col-span-2">
-                        <Label htmlFor="tf-reason">Reason for moving</Label>
+                        <Label htmlFor="tf-reason">
+                            {tr("reasonForMoving")}
+                        </Label>
                         <Textarea
                             id="tf-reason"
                             rows={2}
@@ -904,10 +917,10 @@ export function TenantFormForm({
                     />
                     <div className="space-y-0.5">
                         <p className="text-sm font-medium text-slate-800">
-                            Submitted to police
+                            {tr("submittedToPolice")}
                         </p>
                         <p className="font-bangla text-xs text-slate-500">
-                            পুলিশে জমা দেওয়া হয়েছে কিনা।
+                            {tr("submittedToPoliceBn")}
                         </p>
                     </div>
                 </label>
@@ -921,14 +934,14 @@ export function TenantFormForm({
                         onClick={onCancel}
                         disabled={submitting}
                     >
-                        Cancel
+                        {tr("cancel")}
                     </Button>
                 )}
                 <Button type="submit" disabled={submitting}>
                     {submitting ? (
                         <>
                             <Loader2 size={14} className="animate-spin" />
-                            Saving...
+                            {tr("saving")}
                         </>
                     ) : (
                         submitLabel

@@ -52,10 +52,12 @@ import {
   UserX,
 } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
 export default function TenantDetailPage() {
+  const t = useTranslations("tenantDetailPage");
   const params = useParams<{ id: string }>();
   const tenantId = params.id;
 
@@ -87,14 +89,14 @@ export default function TenantDetailPage() {
             className="mb-4 inline-flex items-center gap-1 text-[12.5px] font-medium text-ink-soft hover:text-jade-900"
           >
             <ArrowLeft size={12} />
-            Back to tenants
+            {t("backToTenants")}
           </Link>
           <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
             <h2 className="text-[15px] font-bold text-coral-600">
-              Couldn&apos;t load tenant
+              {t("errorTitle")}
             </h2>
             <p className="mx-auto mt-1 max-w-sm text-[13px] text-coral-600/80">
-              {error instanceof Error ? error.message : "Tenant not found."}
+              {error instanceof Error ? error.message : t("errorFallback")}
             </p>
           </div>
         </div>
@@ -125,7 +127,7 @@ export default function TenantDetailPage() {
           className="inline-flex items-center gap-1 text-[12.5px] font-medium text-ink-soft transition-colors hover:text-jade-900"
         >
           <ArrowLeft size={12} />
-          All tenants
+          {t("allTenants")}
         </Link>
 
         {/* Hero — identity + money summary inline */}
@@ -167,12 +169,12 @@ export default function TenantDetailPage() {
                         : "bg-cream text-ink-soft border-rule-soft",
                     )}
                   >
-                    {tenant.isActive ? "Active" : "Inactive"}
+                    {tenant.isActive ? t("active") : t("inactive")}
                   </span>
                   {tenant.user && (
                     <span className="inline-flex items-center gap-1 rounded-md border border-jade-100 bg-jade-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-jade-800">
                       <ShieldCheck size={10} />
-                      Portal
+                      {t("portal")}
                     </span>
                   )}
                 </div>
@@ -200,7 +202,9 @@ export default function TenantDetailPage() {
                   )}
                   <span className="inline-flex items-center gap-1">
                     <Calendar size={11} className="text-ink-soft/60" />
-                    Joined {new Date(tenant.createdAt).toLocaleDateString()}
+                    {t("joined", {
+                      date: new Date(tenant.createdAt).toLocaleDateString(),
+                    })}
                   </span>
                 </div>
               </div>
@@ -213,7 +217,7 @@ export default function TenantDetailPage() {
                 className="inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-rule-soft bg-paper px-3 text-[12.5px] font-medium text-ink transition-colors hover:border-jade-700/30 hover:text-jade-900"
               >
                 <Pencil size={12} />
-                Edit
+                {t("edit")}
               </button>
               {tenant.isActive && (
                 <button
@@ -222,7 +226,7 @@ export default function TenantDetailPage() {
                   className="inline-flex h-8 items-center gap-1.5 rounded-[8px] border border-coral-100 bg-coral-50 px-3 text-[12.5px] font-semibold text-coral-600 transition-colors hover:bg-coral-100"
                 >
                   <Power size={12} />
-                  Deactivate
+                  {t("deactivate")}
                 </button>
               )}
             </div>
@@ -231,29 +235,31 @@ export default function TenantDetailPage() {
           {/* Money summary bar — replaces 4 redundant SmallStats */}
           <div className="grid grid-cols-3 divide-x divide-rule-soft border-t border-rule-soft bg-cream/40">
             <MoneyCell
-              label="Active leases"
-              bn="সক্রিয় লিজ"
+              label={t("cellActiveLeases")}
+              bn={t("cellActiveLeasesBn")}
               value={fmtNum(activeLeases.length)}
-              sub={`of ${fmtNum(tenant.leases.length)} total`}
+              sub={t("cellActiveLeasesSub", {
+                total: fmtNum(tenant.leases.length),
+              })}
               highlight={activeLeases.length > 0}
             />
             <MoneyCell
-              label="Monthly rent"
-              bn="মাসিক ভাড়া"
+              label={t("cellMonthlyRent")}
+              bn={t("cellMonthlyRentBn")}
               value={monthlyTotal > 0 ? formatMoney(monthlyTotal) : "—"}
-              sub={monthlyTotal > 0 ? "from active leases" : "no active rent"}
+              sub={
+                monthlyTotal > 0
+                  ? t("cellMonthlyRentSubActive")
+                  : t("cellMonthlyRentSubNone")
+              }
               highlight={monthlyTotal > 0}
               primary
             />
             <MoneyCell
-              label="Lease history"
-              bn="ইতিহাস"
+              label={t("cellHistory")}
+              bn={t("cellHistoryBn")}
               value={fmtNum(tenant.leases.length)}
-              sub={
-                tenant.leases.length === 1
-                  ? "lease on record"
-                  : "leases on record"
-              }
+              sub={t("cellHistorySub", { count: tenant.leases.length })}
             />
           </div>
         </div>
@@ -264,32 +270,35 @@ export default function TenantDetailPage() {
           <div className="rounded-[14px] border border-rule-soft bg-paper p-5">
             <div>
               <p className="font-serif text-[13px] italic text-coral-600/85">
-                About the tenant
+                {t("aboutTenant")}
               </p>
               <h3 className="mt-0.5 text-[16px] font-bold tracking-[-0.015em] text-jade-950">
-                Personal info
+                {t("personalInfo")}
               </h3>
             </div>
 
             <ul className="mt-4 space-y-3.5">
               <InfoRow
                 icon={IdCard}
-                label="NID number"
-                bn="এনআইডি"
+                label={t("nidNumber")}
+                bn={t("nidNumberBn")}
                 value={tenant.nidNumber}
+                placeholder={t("notProvided")}
                 mono
               />
               <InfoRow
                 icon={Briefcase}
-                label="Occupation"
-                bn="পেশা"
+                label={t("occupation")}
+                bn={t("occupationBn")}
                 value={tenant.occupation}
+                placeholder={t("notProvided")}
               />
               <InfoRow
                 icon={MapPin}
-                label="Permanent address"
-                bn="স্থায়ী ঠিকানা"
+                label={t("permanentAddress")}
+                bn={t("permanentAddressBn")}
                 value={tenant.permanentAddress}
+                placeholder={t("notProvided")}
                 multiline
               />
             </ul>
@@ -297,10 +306,10 @@ export default function TenantDetailPage() {
             {/* Emergency contact subsection */}
             <div className="mt-5 border-t border-rule-soft pt-4">
               <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
-                Emergency contact
+                {t("emergencyContact")}
               </p>
               <p className="font-bangla text-[10.5px] text-ink-soft/70">
-                জরুরী যোগাযোগ
+                {t("emergencyContactBn")}
               </p>
 
               {tenant.emergencyContact || tenant.emergencyName ? (
@@ -323,7 +332,7 @@ export default function TenantDetailPage() {
               ) : (
                 <div className="mt-2.5 inline-flex items-center gap-1.5 rounded-md border border-coral-100 bg-coral-50/60 px-2 py-1 text-[11.5px] text-coral-600">
                   <AlertTriangle size={11} />
-                  No emergency contact on file
+                  {t("noEmergencyContact")}
                 </div>
               )}
             </div>
@@ -332,13 +341,13 @@ export default function TenantDetailPage() {
           {/* Portal access */}
           <div className="rounded-[14px] border border-rule-soft bg-paper p-5">
             <p className="font-serif text-[13px] italic text-coral-600/85">
-              Self-service login
+              {t("selfServiceLogin")}
             </p>
             <h3 className="mt-0.5 text-[16px] font-bold tracking-[-0.015em] text-jade-950">
-              Portal access
+              {t("portalAccess")}
             </h3>
             <p className="mt-1 text-[12px] text-ink-soft">
-              Whether this tenant can sign in to pay rent and view invoices.
+              {t("portalAccessDescription")}
             </p>
 
             {tenant.user ? (
@@ -373,8 +382,8 @@ export default function TenantDetailPage() {
                     )}
                   >
                     {tenant.user.emailVerified
-                      ? "Email verified"
-                      : "Email unverified"}
+                      ? t("emailVerified")
+                      : t("emailUnverified")}
                   </span>
                   <span
                     className={cn(
@@ -385,8 +394,8 @@ export default function TenantDetailPage() {
                     )}
                   >
                     {tenant.user.isActive
-                      ? "Account active"
-                      : "Account inactive"}
+                      ? t("accountActive")
+                      : t("accountInactive")}
                   </span>
                 </div>
               </div>
@@ -394,13 +403,13 @@ export default function TenantDetailPage() {
               <div className="mt-4 rounded-[10px] border border-dashed border-rule-soft px-4 py-6 text-center">
                 <UserX className="mx-auto text-ink-soft/40" size={22} />
                 <p className="mt-2 text-[13px] text-ink-soft">
-                  No portal login created
+                  {t("noPortalLogin")}
                 </p>
                 <p className="font-bangla mt-0.5 text-[11px] text-ink-soft/65">
-                  পোর্টাল লগইন নেই
+                  {t("noPortalLoginBn")}
                 </p>
                 <p className="mx-auto mt-2 max-w-[220px] text-[11.5px] text-ink-soft/75">
-                  Tenant cannot sign in to view invoices or pay rent online.
+                  {t("noPortalLoginHint")}
                 </p>
               </div>
             )}
@@ -412,15 +421,15 @@ export default function TenantDetailPage() {
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="font-serif text-[13px] italic text-coral-600/85">
-                Rental agreements
+                {t("rentalAgreements")}
               </p>
               <h3 className="mt-0.5 text-[16px] font-bold tracking-[-0.015em] text-jade-950">
-                Lease history
+                {t("leaseHistory")}
               </h3>
               <p className="mt-1 text-[12px] text-ink-soft">
                 {tenant.leases.length === 0
-                  ? "No leases on record"
-                  : `${fmtNum(tenant.leases.length)} lease${tenant.leases.length === 1 ? "" : "s"} on record`}
+                  ? t("noLeasesOnRecord")
+                  : t("leasesOnRecord", { count: tenant.leases.length })}
               </p>
             </div>
             {tenant.leases.length > 0 && (
@@ -428,7 +437,7 @@ export default function TenantDetailPage() {
                 href={`/owner/dashboard/leases?tenantId=${tenant.id}`}
                 className="text-[12.5px] font-medium text-jade-900 hover:text-coral-600 transition-colors"
               >
-                View all →
+                {t("viewAll")}
               </Link>
             )}
           </div>
@@ -438,10 +447,10 @@ export default function TenantDetailPage() {
               <div className="rounded-[10px] border border-dashed border-rule-soft px-4 py-8 text-center">
                 <FileText className="mx-auto text-ink-soft/40" size={24} />
                 <p className="mt-2 text-[13px] text-ink-soft">
-                  This tenant has no lease history.
+                  {t("noLeaseHistory")}
                 </p>
                 <p className="font-bangla mt-0.5 text-[11.5px] text-ink-soft/70">
-                  কোনো লিজ নেই
+                  {t("noLeaseHistoryBn")}
                 </p>
               </div>
             ) : (
@@ -453,7 +462,9 @@ export default function TenantDetailPage() {
                   >
                     <div className="min-w-0">
                       <p className="truncate text-[13.5px] font-semibold text-ink">
-                        Lease #{lease.id.slice(-6).toUpperCase()}
+                        {t("leaseNumber", {
+                          code: lease.id.slice(-6).toUpperCase(),
+                        })}
                       </p>
                       <p className="text-[11.5px] text-ink-soft tabular-nums">
                         {new Date(lease.startDate).toLocaleDateString()} –{" "}
@@ -484,15 +495,17 @@ export default function TenantDetailPage() {
         <Dialog open={editOpen} onOpenChange={setEditOpen}>
           <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle className="text-jade-950">Edit tenant</DialogTitle>
+              <DialogTitle className="text-jade-950">
+                {t("editTenant")}
+              </DialogTitle>
               <DialogDescription className="text-ink-soft">
-                Update details for {tenant.name}.
+                {t("editTenantDescription", { name: tenant.name })}
               </DialogDescription>
             </DialogHeader>
             <TenantForm
               mode="edit"
               submitting={updateMutation.isPending}
-              submitLabel="Save changes"
+              submitLabel={t("saveChanges")}
               defaultValues={{
                 name: tenant.name,
                 phone: tenant.phone,
@@ -576,30 +589,31 @@ export default function TenantDetailPage() {
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle className="text-jade-950">
-                Deactivate this tenant?
+                {t("deactivateTitle")}
               </AlertDialogTitle>
               <AlertDialogDescription className="text-ink-soft">
-                <strong className="text-ink">{tenant.name}</strong> will be
-                marked as inactive. Their lease history and invoices remain
-                intact, but they won&apos;t appear in new lease pickers.
+                {t.rich("deactivateDescription", {
+                  name: tenant.name,
+                  b: (chunks) => (
+                    <strong className="text-ink">{chunks}</strong>
+                  ),
+                })}
               </AlertDialogDescription>
               {activeLeases.length > 0 && (
                 <div className="mt-3 flex items-start gap-2 rounded-[10px] border border-coral-100 bg-coral-50/70 px-3 py-2 text-[12.5px] text-coral-600">
                   <AlertTriangle size={13} className="mt-0.5 shrink-0" />
                   <span>
-                    This tenant has{" "}
-                    <strong>
-                      {fmtNum(activeLeases.length)} active lease
-                      {activeLeases.length === 1 ? "" : "s"}
-                    </strong>
-                    . You may want to terminate those first.
+                    {t.rich("deactivateWarning", {
+                      count: activeLeases.length,
+                      b: (chunks) => <strong>{chunks}</strong>,
+                    })}
                   </span>
                 </div>
               )}
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel disabled={deactivateMutation.isPending}>
-                Cancel
+                {t("cancel")}
               </AlertDialogCancel>
               <AlertDialogAction
                 disabled={deactivateMutation.isPending}
@@ -613,10 +627,10 @@ export default function TenantDetailPage() {
                 {deactivateMutation.isPending ? (
                   <>
                     <Loader2 size={14} className="animate-spin" />
-                    Deactivating…
+                    {t("deactivating")}
                   </>
                 ) : (
-                  "Deactivate tenant"
+                  t("deactivateTenant")
                 )}
               </AlertDialogAction>
             </AlertDialogFooter>
@@ -671,6 +685,7 @@ function InfoRow({
   label,
   bn,
   value,
+  placeholder,
   multiline,
   mono,
 }: {
@@ -678,6 +693,7 @@ function InfoRow({
   label: string;
   bn: string;
   value: string | null;
+  placeholder: string;
   multiline?: boolean;
   mono?: boolean;
 }) {
@@ -701,7 +717,7 @@ function InfoRow({
             mono && "font-mono tabular-nums",
           )}
         >
-          {value || "Not provided"}
+          {value || placeholder}
         </p>
       </div>
     </li>
