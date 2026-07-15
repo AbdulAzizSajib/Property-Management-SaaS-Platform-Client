@@ -267,7 +267,10 @@ export async function proxy (request : NextRequest) {
 
 export const config = {
     matcher : [
-
-        '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.well-known).*)',
+        // Run on everything EXCEPT: API routes, Next internals, and any request
+        // for a file with an extension (e.g. /assets/logo.png). The trailing
+        // `(?!.*\\.).*` guard skips static files in /public so next-intl doesn't
+        // redirect them to a locale-prefixed path (which 404s the asset).
+        '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.well-known|.*\\..*).*)',
     ]
 }

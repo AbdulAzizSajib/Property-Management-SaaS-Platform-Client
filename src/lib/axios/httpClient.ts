@@ -11,35 +11,25 @@ if(!API_BASE_URL) {
     throw new Error('API_BASE_URL is not defined in environment variables');
 }
 
-function throwServerError(error: unknown): never {
-    if (axios.isAxiosError(error)) {
-        const msg = error.response?.data?.message;
-        throw new Error(typeof msg === "string" ? msg : error.message);
-    }
-    throw error;
-}
-
 async function tryRefreshToken(
     accessToken: string,
     refreshToken: string
-): Promise<boolean>
+): Promise<void>
 {
     if(!(await isTokenExpiringSoon(accessToken))) {
-        return true;
+        return;
     }
 
     const requestHeader = await headers();
 
     if (requestHeader.get("x-token-refreshed") === "1") {
-        return true; // already refreshed earlier in this request lifecycle
+        return; // avoid multiple refresh attempts in the same request lifecycle
     }
 
     try {
-        const ok = await getNewTokensWithRefreshToken(refreshToken);
-        return ok;
+        await getNewTokensWithRefreshToken(refreshToken);
     } catch (error : any) {
         console.error("Error refreshing token in http client:", error);
-        return false;
     }
 }
 
@@ -55,7 +45,7 @@ const axiosInstance = async () => {
     const cookieHeader = cookieStore
                                 .getAll()
                                 .map((cookie) => `${cookie.name}=${cookie.value}`)
-                                .join("; ");    
+                                .join("; ");
     // eg Cookie: "accessToken=abc123; refreshToken=def456"
 
     const instance = axios.create({
@@ -73,11 +63,13 @@ const axiosInstance = async () => {
 export interface ApiRequestOptions {
     params?: Record<string, unknown>;
     headers?: Record<string, string>;
+    /** HTTP method for multipart uploads. Defaults to POST. */
+    method?: "POST" | "PUT" | "PATCH";
 }
 
 const httpGet = async <TData>(endpoint: string, options?: ApiRequestOptions) : Promise<ApiResponse<TData>> => {
-    try {     
-        const instance = await axiosInstance();   
+    try {
+        const instance = await axiosInstance();
         const response = await instance.get<ApiResponse<TData>>(endpoint, {
             params: options?.params,
             headers: options?.headers,
@@ -85,7 +77,7 @@ const httpGet = async <TData>(endpoint: string, options?: ApiRequestOptions) : P
         return response.data;
     } catch (error) {
         console.error(`GET request to ${endpoint} failed:`, error);
-        throwServerError(error);
+        throw error;
     }
 }
 
@@ -99,7 +91,7 @@ const httpPost = async <TData>(endpoint: string, data: unknown, options?: ApiReq
         return response.data;
     } catch (error) {
         console.error(`POST request to ${endpoint} failed:`, error);
-        throwServerError(error);
+        throw error;
     }
 }
 
@@ -113,7 +105,7 @@ const httpPut = async <TData>(endpoint: string, data: unknown, options?: ApiRequ
         return response.data;
     } catch (error) {
         console.error(`PUT request to ${endpoint} failed:`, error);
-        throwServerError(error);
+        throw error;
     }
 }
 
@@ -128,7 +120,7 @@ const httpPatch = async <TData>(endpoint: string, data: unknown, options?: ApiRe
     }
     catch (error) {
         console.error(`PATCH request to ${endpoint} failed:`, error);
-        throwServerError(error);
+        throw error;
     }
 }
 
@@ -139,7 +131,10 @@ const httpPatch = async <TData>(endpoint: string, data: unknown, options?: ApiRe
 const httpUpload = async <TData>(endpoint: string, formData: FormData, options?: ApiRequestOptions) : Promise<ApiResponse<TData>> => {
     try {
         const instance = await axiosInstance();
-        const response = await instance.post<ApiResponse<TData>>(endpoint, formData, {
+        const response = await instance.request<ApiResponse<TData>>({
+            url: endpoint,
+            method: options?.method ?? "POST",
+            data: formData,
             params: options?.params,
             // Drop the JSON Content-Type so axios sets multipart/form-data; boundary=…
             headers: {
@@ -150,7 +145,7 @@ const httpUpload = async <TData>(endpoint: string, formData: FormData, options?:
         return response.data;
     } catch (error) {
         console.error(`UPLOAD request to ${endpoint} failed:`, error);
-        throwServerError(error);
+        throw error;
     }
 }
 
@@ -164,7 +159,7 @@ const httpDelete =  async <TData>(endpoint: string, options?: ApiRequestOptions)
         return response.data;
     } catch (error) {
         console.error(`DELETE request to ${endpoint} failed:`, error);
-        throwServerError(error);
+        throw error;
     }
 }
 

@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/src/components/ui/sheet";
-import { httpClient } from "@/src/lib/axios/browserHttpClient";
+import { logout } from "@/src/services/authActions.services";
 import { cn } from "@/src/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -67,7 +67,7 @@ export function AdminTopbar({
     if (loggingOut) return;
     setLoggingOut(true);
     try {
-      await httpClient.post("/auth/logout", {});
+      await logout();
       queryClient.clear();
       toast.success("Logged out");
       router.replace("/login");

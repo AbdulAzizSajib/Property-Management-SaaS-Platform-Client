@@ -5,7 +5,12 @@ import {
     isValidRedirectForRole,
 } from "@/src/lib/authUtils";
 import { setTokenInCookies } from "@/src/lib/tokenUtils";
-import type { AuthData, LoginPayload } from "@/src/types/auth";
+import type {
+    AuthData,
+    LoginActionResult,
+    LoginPayload,
+    VerifyEmailActionResult,
+} from "@/src/types/auth";
 import { cookies } from "next/headers";
 
 const BASE_API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -13,10 +18,6 @@ const BASE_API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 if(!BASE_API_URL){
     throw new Error("NEXT_PUBLIC_API_BASE_URL is not defined");
 }
-
-export type LoginActionResult =
-    | { ok: true; destination: string }
-    | { ok: false; code?: string; message: string };
 
 /**
  * Server-action login. Cross-site setup: the backend lives on a different
@@ -82,10 +83,6 @@ export async function loginAction(
         return { ok: false, message: "Sign in failed. Please try again." };
     }
 }
-
-export type VerifyEmailActionResult =
-    | { ok: true; destination: string }
-    | { ok: false; message: string };
 
 /**
  * Server-action email verification. Same cross-site cookie problem as

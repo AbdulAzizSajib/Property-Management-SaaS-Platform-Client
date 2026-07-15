@@ -369,6 +369,8 @@
     "cellHistorySub": "{count, plural, one {lease on record} other {leases on record}}",
     "aboutTenant": "About the tenant",
     "personalInfo": "Personal info",
+    "assignedLocation": "Assigned to",
+    "assignedLocationBn": "নির্ধারিত",
     "nidNumber": "NID number",
     "nidNumberBn": "এনআইডি",
     "occupation": "Occupation",

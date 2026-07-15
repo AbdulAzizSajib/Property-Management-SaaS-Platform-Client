@@ -8,12 +8,14 @@ import {
   resendVerificationOtp,
   resetPassword,
   verifyEmail,
-  type ChangePasswordPayload,
-  type ForgetPasswordPayload,
-  type ResendVerificationOtpPayload,
-  type ResetPasswordPayload,
-  type VerifyEmailPayload,
 } from "@/src/services/authActions.services";
+import type {
+  ChangePasswordPayload,
+  ForgetPasswordPayload,
+  ResendVerificationOtpPayload,
+  ResetPasswordPayload,
+  VerifyEmailPayload,
+} from "@/src/types/auth";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 

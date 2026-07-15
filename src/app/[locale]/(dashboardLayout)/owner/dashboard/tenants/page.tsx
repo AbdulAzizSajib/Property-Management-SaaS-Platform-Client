@@ -21,6 +21,7 @@ import { cn } from "@/src/lib/utils";
 import type { TenantListItem } from "@/src/types/tenant.types";
 import {
   Briefcase,
+  Building2,
   FileText,
   Mail,
   Phone,
@@ -142,10 +143,10 @@ export default function TenantsListPage() {
             bn={t("summaryOnLeaseBn")}
             value={fmtNum(withLeaseCount)}
           />
-          {totalCount > 0 && (
+          {activeCount > 0 && (
             <span className="ml-auto hidden text-[12px] text-ink-soft sm:inline tabular-nums">
               {t("leasedPercent", {
-                percent: ((withLeaseCount / totalCount) * 100).toFixed(0),
+                percent: ((withLeaseCount / activeCount) * 100).toFixed(0),
               })}
             </span>
           )}
@@ -354,6 +355,16 @@ function TenantCard({ tenant }: { tenant: TenantListItem }) {
           <p className="flex items-center gap-1.5 truncate">
             <Mail size={11} className="shrink-0 text-ink-soft/60" />
             <span className="truncate">{tenant.email}</span>
+          </p>
+        )}
+        {tenant.building && (
+          <p className="flex items-center gap-1.5 truncate">
+            <Building2 size={11} className="shrink-0 text-ink-soft/60" />
+            <span className="truncate">
+              {[tenant.building.name, tenant.floor?.name, tenant.unit?.name]
+                .filter(Boolean)
+                .join(" · ")}
+            </span>
           </p>
         )}
       </div>

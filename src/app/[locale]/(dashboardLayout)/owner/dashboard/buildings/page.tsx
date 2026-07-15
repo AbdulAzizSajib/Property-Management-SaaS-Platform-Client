@@ -39,6 +39,8 @@ import { useState } from "react";
 
 export default function BuildingsListPage() {
   const t = useTranslations("buildingsPage");
+  const locale = useLocale();
+  const bn = locale === "bn";
   const { data: buildings, isLoading, isError, error } = useBuildings();
   const createMutation = useCreateBuilding();
 
@@ -118,17 +120,17 @@ export default function BuildingsListPage() {
           <section className="flex flex-wrap items-baseline gap-x-7 gap-y-2 rounded-[14px] border border-rule-soft bg-paper px-5 py-3">
             <SummaryStat
               label={t("summaryBuildings")}
-              value={fmtNum(buildings?.length ?? 0)}
+              value={fmtNum(buildings?.length ?? 0, bn)}
               icon={Building2}
             />
             <SummaryStat
               label={t("summaryFloors")}
-              value={fmtNum(totalFloors)}
+              value={fmtNum(totalFloors, bn)}
               icon={Layers}
             />
             <SummaryStat
               label={t("summaryUnits")}
-              value={fmtNum(totalUnits)}
+              value={fmtNum(totalUnits, bn)}
               icon={DoorOpen}
             />
           </section>
@@ -204,6 +206,7 @@ function BuildingCard({
 }) {
   const t = useTranslations("buildingsPage");
   const locale = useLocale();
+  const bn = locale === "bn";
   return (
     <article
       className={cn(
@@ -253,12 +256,12 @@ function BuildingCard({
           <CardStat
             icon={Layers}
             label={t("cardFloors")}
-            value={`${building._count.floors}/${building.totalFloors}`}
+            value={`${fmtNum(building._count.floors, bn)}/${fmtNum(building.totalFloors, bn)}`}
           />
           <CardStat
             icon={DoorOpen}
             label={t("cardUnits")}
-            value={String(building._count.units)}
+            value={fmtNum(building._count.units, bn)}
           />
           <CardStat
             icon={User}
@@ -332,6 +335,8 @@ function CardStat({
 
 function ExpandedPanel({ building }: { building: BuildingListItem }) {
   const t = useTranslations("buildingsPage");
+  const locale = useLocale();
+  const bn = locale === "bn";
   return (
     <div className="space-y-4 border-t border-rule-soft bg-cream/40 px-4 py-4">
       <div>
@@ -345,10 +350,12 @@ function ExpandedPanel({ building }: { building: BuildingListItem }) {
         <dl className="mt-2.5 space-y-1.5 text-[12px]">
           <KV label={t("kvCity")} value={building.city} />
           {building.area && <KV label={t("kvArea")} value={building.area} />}
-          <KV label={t("kvTotalFloors")} value={String(building.totalFloors)} />
+          <KV label={t("kvTotalFloors")} value={fmtNum(building.totalFloors, bn)} />
           <KV
             label={t("kvCreated")}
-            value={new Date(building.createdAt).toLocaleDateString()}
+            value={new Date(building.createdAt).toLocaleDateString(
+              bn ? "bn-BD" : undefined,
+            )}
           />
         </dl>
       </div>
@@ -380,6 +387,8 @@ function ExpandedPanel({ building }: { building: BuildingListItem }) {
 
 function FloorsMiniList({ buildingId }: { buildingId: string }) {
   const t = useTranslations("buildingsPage");
+  const locale = useLocale();
+  const bn = locale === "bn";
   const { data: floors, isLoading } = useFloorsByBuilding(buildingId);
 
   if (isLoading) {
@@ -409,7 +418,7 @@ function FloorsMiniList({ buildingId }: { buildingId: string }) {
         >
           <div className="flex min-w-0 items-center gap-2">
             <span className="flex size-5 shrink-0 items-center justify-center rounded bg-jade-50 text-[10.5px] font-bold text-jade-800">
-              {f.floorNumber === 0 ? "G" : f.floorNumber}
+              {f.floorNumber === 0 ? "G" : fmtNum(f.floorNumber, bn)}
             </span>
             <span className="truncate text-ink">{f.name}</span>
           </div>

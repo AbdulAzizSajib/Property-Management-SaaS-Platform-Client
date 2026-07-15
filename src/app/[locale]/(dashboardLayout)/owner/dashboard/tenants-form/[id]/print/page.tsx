@@ -8,6 +8,7 @@ import { useTenantForm } from "@/src/hooks/useTenantForms";
 import { ArrowLeft, Printer } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
 import { useParams } from "next/navigation";
+import Image from "next/image";
 
 const D = "................................................";
 
@@ -109,7 +110,17 @@ export default function TenantFormPrintPage() {
           </div>
 
           <div className="flex-1 text-center">
-            <h1 className="text-[17px] font-bold">ঢাকা মেট্রোপলিটন পুলিশ</h1>
+            <div className="flex items-center justify-center gap-2">
+              <Image
+                src="/assets/dhaka-metropolitan-police.png"
+                alt="ঢাকা মেট্রোপলিটন পুলিশের লোগো"
+                width={40}
+                height={40}
+                priority
+                className="h-14 w-auto"
+              />
+              <h1 className="text-[17px] font-bold">ঢাকা মেট্রোপলিটন পুলিশ</h1>
+            </div>
             <div className="mx-auto mt-2 w-[220px] space-y-1 text-left">
               <Field label="বিভাগ" value={form.division} />
               <Field label="থানা" value={form.thana} />

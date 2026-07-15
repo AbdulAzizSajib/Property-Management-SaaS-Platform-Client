@@ -1,4 +1,6 @@
-import { httpClient } from "@/src/lib/axios/browserHttpClient";
+"use server";
+
+import { httpClient } from "@/src/lib/axios/httpClient";
 import type {
     AssignCaretakerPayload,
     Building,

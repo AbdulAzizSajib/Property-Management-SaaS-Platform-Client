@@ -4,7 +4,17 @@ import { Button } from "@/src/components/ui/button";
 import { Checkbox } from "@/src/components/ui/checkbox";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/src/components/ui/select";
 import { Textarea } from "@/src/components/ui/textarea";
+import { useBuildings } from "@/src/hooks/useBuildings";
+import { useFloorsByBuilding } from "@/src/hooks/useFloors";
+import { useUnits } from "@/src/hooks/useUnits";
 import { Loader2, Upload, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -17,6 +27,10 @@ export interface TenantFormValues {
     emergencyContact: string;
     emergencyName: string;
     permanentAddress: string;
+    // Assigned location — buildingId is required, floor/unit optional.
+    buildingId: string;
+    floorId: string;
+    unitId: string;
     photoUrl: string;
     // Create-only: uploaded photo file (sent as multipart `photo`).
     photoFile: File | null;
@@ -34,6 +48,9 @@ const emptyForm: TenantFormValues = {
     emergencyContact: "",
     emergencyName: "",
     permanentAddress: "",
+    buildingId: "",
+    floorId: "",
+    unitId: "",
     photoUrl: "",
     photoFile: null,
     createLoginAccount: false,
@@ -43,6 +60,10 @@ const emptyForm: TenantFormValues = {
 interface TenantFormProps {
     mode: "create" | "edit";
     defaultValues?: Partial<TenantFormValues>;
+    // Edit mode: the tenant's current floor/unit names, used as a display
+    // fallback since an occupied unit won't appear in the vacant-only lists.
+    currentFloorName?: string | null;
+    currentUnitName?: string | null;
     submitting: boolean;
     submitLabel: string;
     onSubmit: (values: TenantFormValues) => void;
@@ -52,6 +73,8 @@ interface TenantFormProps {
 export function TenantForm({
     mode,
     defaultValues,
+    currentFloorName,
+    currentUnitName,
     submitting,
     submitLabel,
     onSubmit,
@@ -75,6 +98,30 @@ export function TenantForm({
         value: TenantFormValues[K],
     ) {
         setValues((v) => ({ ...v, [key]: value }));
+    }
+
+    // ── Location cascade: Building → Floor → Unit ──────────────────────
+    const { data: buildings } = useBuildings();
+    const { data: floors } = useFloorsByBuilding(values.buildingId || undefined);
+    // Vacant units in the chosen building (and floor, if picked). Falls back to
+    // all vacant units in the building until a floor is selected.
+    const { data: units } = useUnits(
+        values.buildingId
+            ? {
+                  buildingId: values.buildingId,
+                  ...(values.floorId ? { floorId: values.floorId } : {}),
+                  status: "VACANT",
+              }
+            : undefined,
+    );
+
+    // Changing the building invalidates the floor/unit picked under the old one.
+    function handleBuildingChange(id: string) {
+        setValues((v) => ({ ...v, buildingId: id, floorId: "", unitId: "" }));
+    }
+    // Changing the floor invalidates the unit picked under the old one.
+    function handleFloorChange(id: string) {
+        setValues((v) => ({ ...v, floorId: id, unitId: "" }));
     }
 
     function handleSubmit(ev: React.FormEvent) {
@@ -222,6 +269,153 @@ export function TenantForm({
                 </div>
             </div>
 
+            {/* Location — which building/floor/unit this tenant belongs to */}
+            <div className="space-y-3">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    Location
+                </h3>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    <div className="space-y-1.5">
+                        <Label htmlFor="t-building">
+                            Building <span className="text-rose-500">*</span>
+                        </Label>
+                        <Select
+                            value={values.buildingId}
+                            onValueChange={(v) => handleBuildingChange(v ?? "")}
+                        >
+                            <SelectTrigger id="t-building" className="w-full">
+                                <SelectValue placeholder="Select building">
+                                    {(value) =>
+                                        (buildings ?? []).find(
+                                            (b) => b.id === value,
+                                        )?.name ?? null
+                                    }
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                {(buildings ?? []).length === 0 ? (
+                                    <div className="px-2 py-2 text-[12px] text-slate-500">
+                                        No buildings
+                                    </div>
+                                ) : (
+                                    (buildings ?? []).map((b) => (
+                                        <SelectItem key={b.id} value={b.id}>
+                                            {b.name}
+                                        </SelectItem>
+                                    ))
+                                )}
+                            </SelectContent>
+                        </Select>
+                        {/* Native required-field guard: keeps the form from
+                            submitting without a building even though the visible
+                            control is a custom Select. */}
+                        <input
+                            tabIndex={-1}
+                            aria-hidden
+                            className="sr-only"
+                            required
+                            value={values.buildingId}
+                            onChange={() => {}}
+                        />
+                    </div>
+
+                    <div className="space-y-1.5">
+                        <Label htmlFor="t-floor">
+                            Floor{" "}
+                            <span className="text-[11px] font-normal text-slate-400">
+                                (optional)
+                            </span>
+                        </Label>
+                        <Select
+                            value={values.floorId}
+                            onValueChange={(v) => handleFloorChange(v ?? "")}
+                            disabled={!values.buildingId}
+                        >
+                            <SelectTrigger id="t-floor" className="w-full">
+                                <SelectValue
+                                    placeholder={
+                                        values.buildingId
+                                            ? "Select floor"
+                                            : "Select a building first"
+                                    }
+                                >
+                                    {(value) =>
+                                        (floors ?? []).find(
+                                            (f) => f.id === value,
+                                        )?.name ??
+                                        currentFloorName ??
+                                        null
+                                    }
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                {(floors ?? []).length === 0 ? (
+                                    <div className="px-2 py-2 text-[12px] text-slate-500">
+                                        No floors
+                                    </div>
+                                ) : (
+                                    (floors ?? []).map((f) => (
+                                        <SelectItem key={f.id} value={f.id}>
+                                            {f.name}
+                                        </SelectItem>
+                                    ))
+                                )}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div className="space-y-1.5">
+                        <Label htmlFor="t-unit">
+                            Unit{" "}
+                            <span className="text-[11px] font-normal text-slate-400">
+                                (optional)
+                            </span>
+                        </Label>
+                        <Select
+                            value={values.unitId}
+                            onValueChange={(v) => set("unitId", v ?? "")}
+                            disabled={!values.buildingId}
+                        >
+                            <SelectTrigger id="t-unit" className="w-full">
+                                <SelectValue
+                                    placeholder={
+                                        values.buildingId
+                                            ? "Select vacant unit"
+                                            : "Select a building first"
+                                    }
+                                >
+                                    {(value) =>
+                                        (units ?? []).find(
+                                            (u) => u.id === value,
+                                        )?.name ??
+                                        currentUnitName ??
+                                        null
+                                    }
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                {(units ?? []).length === 0 ? (
+                                    <div className="px-2 py-2 text-[12px] text-slate-500">
+                                        No vacant units
+                                    </div>
+                                ) : (
+                                    (units ?? []).map((u) => (
+                                        <SelectItem key={u.id} value={u.id}>
+                                            {u.name}
+                                        </SelectItem>
+                                    ))
+                                )}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+                <p className="text-[11.5px] text-slate-500">
+                    Building tells us where this tenant belongs. Floor and unit are
+                    optional — the actual unit is confirmed when you create their
+                    lease.
+                </p>
+            </div>
+
             {/* Emergency contact */}
             <div className="space-y-3">
                 <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
@@ -359,6 +553,9 @@ export function buildCreateTenantFormData(values: TenantFormValues): FormData {
         ...(values.permanentAddress.trim() && {
             permanentAddress: values.permanentAddress.trim(),
         }),
+        buildingId: values.buildingId,
+        ...(values.floorId && { floorId: values.floorId }),
+        ...(values.unitId && { unitId: values.unitId }),
         createLoginAccount: values.createLoginAccount,
         ...(values.createLoginAccount && { password: values.password }),
     };

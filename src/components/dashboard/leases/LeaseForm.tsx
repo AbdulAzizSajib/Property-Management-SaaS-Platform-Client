@@ -95,14 +95,12 @@ export function LeaseForm({
     return buildingId ? list.filter((u) => u.building.id === buildingId) : list;
   }, [allUnits, buildingId]);
 
-  // Active tenants who hold a lease in the selected building. A tenant is tied
-  // to a building only through their leases' unit, so we derive it from there.
+  // Active tenants assigned to the selected building. A tenant carries a direct
+  // buildingId (set when the tenant is created), so we filter on that.
   const activeTenants = useMemo(() => {
     const active = (tenants ?? []).filter((t) => t.isActive);
     if (!buildingId) return active;
-    return active.filter((t) =>
-      t.leases.some((l) => l.unit?.building?.id === buildingId),
-    );
+    return active.filter((t) => t.buildingId === buildingId);
   }, [tenants, buildingId]);
 
   const selectedUnit = units.find((u) => u.id === values.unitId);

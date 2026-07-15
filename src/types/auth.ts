@@ -94,3 +94,42 @@ export type ApiErrorBody = {
         };
     };
 };
+
+// ──────────────────────────────────────────────────────────────────────
+// Auth server-action result / payload types.
+// Kept here (not in the "use server" service files) because a "use server"
+// module may only export async functions — type/interface exports are not
+// allowed there.
+// ──────────────────────────────────────────────────────────────────────
+
+export type LoginActionResult =
+    | { ok: true; destination: string }
+    | { ok: false; code?: string; message: string };
+
+export type VerifyEmailActionResult =
+    | { ok: true; destination: string }
+    | { ok: false; message: string };
+
+export interface ChangePasswordPayload {
+    currentPassword: string;
+    newPassword: string;
+}
+
+export interface VerifyEmailPayload {
+    email: string;
+    otp: string;
+}
+
+export interface ResendVerificationOtpPayload {
+    email: string;
+}
+
+export interface ForgetPasswordPayload {
+    email: string;
+}
+
+export interface ResetPasswordPayload {
+    email: string;
+    otp: string;
+    newPassword: string;
+}

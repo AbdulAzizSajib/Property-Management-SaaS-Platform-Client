@@ -38,6 +38,7 @@ import {
   AlertTriangle,
   ArrowLeft,
   Briefcase,
+  Building2,
   Calendar,
   FileText,
   IdCard,
@@ -279,6 +280,23 @@ export default function TenantDetailPage() {
 
             <ul className="mt-4 space-y-3.5">
               <InfoRow
+                icon={Building2}
+                label={t("assignedLocation")}
+                bn={t("assignedLocationBn")}
+                value={
+                  tenant.building
+                    ? [
+                        tenant.building.name,
+                        tenant.floor?.name,
+                        tenant.unit?.name,
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")
+                    : null
+                }
+                placeholder={t("notProvided")}
+              />
+              <InfoRow
                 icon={IdCard}
                 label={t("nidNumber")}
                 bn={t("nidNumberBn")}
@@ -506,6 +524,8 @@ export default function TenantDetailPage() {
               mode="edit"
               submitting={updateMutation.isPending}
               submitLabel={t("saveChanges")}
+              currentFloorName={tenant.floor?.name ?? null}
+              currentUnitName={tenant.unit?.name ?? null}
               defaultValues={{
                 name: tenant.name,
                 phone: tenant.phone,
@@ -515,6 +535,9 @@ export default function TenantDetailPage() {
                 emergencyContact: tenant.emergencyContact ?? "",
                 emergencyName: tenant.emergencyName ?? "",
                 permanentAddress: tenant.permanentAddress ?? "",
+                buildingId: tenant.buildingId ?? "",
+                floorId: tenant.floorId ?? "",
+                unitId: tenant.unitId ?? "",
                 photoUrl: tenant.photoUrl ?? "",
                 createLoginAccount: false,
                 password: "",
@@ -562,6 +585,23 @@ export default function TenantDetailPage() {
                   values.permanentAddress,
                   tenant.permanentAddress,
                 );
+
+                // Assigned location. buildingId is required, so only send it when
+                // it actually changed to a non-empty value. floor/unit can be
+                // cleared (null) — an empty string means "no floor/unit".
+                if (
+                  values.buildingId &&
+                  values.buildingId !== tenant.buildingId
+                ) {
+                  payload.buildingId = values.buildingId;
+                }
+                if (values.floorId !== (tenant.floorId ?? "")) {
+                  payload.floorId =
+                    values.floorId === "" ? null : values.floorId;
+                }
+                if (values.unitId !== (tenant.unitId ?? "")) {
+                  payload.unitId = values.unitId === "" ? null : values.unitId;
+                }
 
                 // Nothing to send: no field changed and no new photo picked.
                 if (

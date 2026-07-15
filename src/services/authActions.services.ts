@@ -1,35 +1,20 @@
 // src/services/authActions.services.ts
 //
-// Browser-side auth ops that don't fit the server-action shape in
-// auth.services.ts. These run after page load — change-password is for
-// authenticated users; verify / forget / reset are public flows.
+// Server-action auth ops. change-password is for authenticated users; verify /
+// forget / reset are public flows. These run on the server (like every other
+// *.services.ts), so httpClient reads the httpOnly cookies via next/headers.
 
-import { httpClient } from "@/src/lib/axios/browserHttpClient";
-import type { CurrentUser } from "@/src/types/auth";
+"use server";
 
-export interface ChangePasswordPayload {
-    currentPassword: string;
-    newPassword: string;
-}
-
-export interface VerifyEmailPayload {
-    email: string;
-    otp: string;
-}
-
-export interface ResendVerificationOtpPayload {
-    email: string;
-}
-
-export interface ForgetPasswordPayload {
-    email: string;
-}
-
-export interface ResetPasswordPayload {
-    email: string;
-    otp: string;
-    newPassword: string;
-}
+import { httpClient } from "@/src/lib/axios/httpClient";
+import type {
+    ChangePasswordPayload,
+    CurrentUser,
+    ForgetPasswordPayload,
+    ResendVerificationOtpPayload,
+    ResetPasswordPayload,
+    VerifyEmailPayload,
+} from "@/src/types/auth";
 
 /** GET /auth/me — the currently authenticated user's profile. */
 export const getMe = async () => httpClient.get<CurrentUser>("/auth/me");
@@ -61,13 +46,3 @@ export const resetPassword = async (payload: ResetPasswordPayload) =>
 
 /** POST /auth/logout — clears server-side session cookies. */
 export const logout = async () => httpClient.post("/auth/logout", {});
-
-/**
- * Returns the absolute URL the browser should navigate to in order to start
- * the Google OAuth flow. The backend handles the redirect.
- */
-export const getGoogleOAuthStartUrl = (): string => {
-    const base = process.env.NEXT_PUBLIC_API_BASE_URL;
-    if (!base) throw new Error("NEXT_PUBLIC_API_BASE_URL is not defined");
-    return `${base}/auth/login/google`;
-};
