@@ -1,6 +1,6 @@
 import QueryProviders from "@/src/providers/QueryProvider";
 import type { Metadata } from "next";
-import { Geist, Hind_Siliguri, Instrument_Serif, JetBrains_Mono, Plus_Jakarta_Sans, Poppins } from "next/font/google";
+import {  Hind_Siliguri,  Noto_Sans_Bengali , Poppins } from "next/font/google";
 import localFont from "next/font/local";
 import type { ReactNode } from "react";
 import { ToastContainer } from "react-toastify";
@@ -11,47 +11,39 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/src/i18n/routing";
 
-const jakarta = Plus_Jakarta_Sans({
-    variable: "--font-jakarta",
-    subsets: ["latin"],
-    weight: ["400", "500", "600", "700", "800"],
-});
+
 
 const poppins = Poppins({
     variable: "--font-poppins",
     subsets: ["latin"],
     weight: ["400", "500", "600", "700", "800"],
 });
-
-const geist = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
-    weight: ["400", "500", "600", "700"],
+const NotoSansBengali = Noto_Sans_Bengali({
+    variable: "--font-NotoSansBengali",
+    subsets: ["bengali", "latin"],
+    weight: ["400", "500", "600", "700", "800"],
 });
 
+
 const hind = Hind_Siliguri({
-    variable: "--font-hind",
+    variable: "--font-bangla",
     subsets: ["bengali", "latin"],
     weight: ["400", "500", "600", "700"],
 });
 
-const jetbrains = JetBrains_Mono({
-    variable: "--font-jetbrains",
-    subsets: ["latin"],
-    weight: ["400", "500"],
-});
 
-const instrument = Instrument_Serif({
-    variable: "--font-instrument",
-    subsets: ["latin"],
-    weight: ["400"],
-    style: ["normal", "italic"],
-});
+
 
 // Local brand font — used only for the "Bariyan" wordmark in the navbar.
 const rubita = localFont({
     src: "../../font/RubitaSmile.ttf",
     variable: "--font-rubita",
+    display: "swap",
+});
+
+const Shadhinata = localFont({
+    src: "../../font/Shadhinata.ttf",
+    variable: "--font-shadhinata",
     display: "swap",
 });
 
@@ -83,7 +75,7 @@ export default async function LocaleLayout({
     return (
         <html
             lang={locale} suppressHydrationWarning
-            className={`${jakarta.variable} ${poppins.variable} ${geist.variable} ${hind.variable} ${jetbrains.variable} ${instrument.variable} ${rubita.variable}`}
+            className={` ${poppins.variable} ${hind.variable} ${rubita.variable} ${NotoSansBengali.variable}  ${Shadhinata.variable}  ${locale === "bn" ? "locale-bn" : "locale-en"}`}
         >
             <body>
                 <NextIntlClientProvider>

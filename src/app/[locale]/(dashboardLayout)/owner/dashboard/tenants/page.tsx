@@ -78,7 +78,7 @@ export default function TenantsListPage() {
         {/* Heading */}
         <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="font-serif text-[13px] italic text-coral-600/85">
+            <p className="font-serif text-[13px]  text-coral-600/85">
               {t("eyebrow")}
             </p>
             <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
@@ -127,20 +127,20 @@ export default function TenantsListPage() {
         </header>
 
         {/* Summary strip — replaces 3 rainbow tiles */}
-        <section className="flex flex-wrap items-baseline gap-x-7 gap-y-2 rounded-[14px] border border-rule-soft bg-paper px-5 py-3.5">
+        <section className="flex flex-wrap items-baseline gap-x-7 gap-y-2 rounded-[14px] border border-rule-soft bg-paper px-5 py-3">
           <SummaryStat
             label={t("summaryTotal")}
-            bn={t("summaryTotalBn")}
+         
             value={fmtNum(totalCount)}
           />
           <SummaryStat
             label={t("summaryActive")}
-            bn={t("summaryActiveBn")}
+           
             value={fmtNum(activeCount)}
           />
           <SummaryStat
             label={t("summaryOnLease")}
-            bn={t("summaryOnLeaseBn")}
+          
             value={fmtNum(withLeaseCount)}
           />
           {activeCount > 0 && (
@@ -153,7 +153,7 @@ export default function TenantsListPage() {
         </section>
 
         {/* Toolbar */}
-        <div className="rounded-[14px] border border-rule-soft bg-paper p-4">
+        <div className="">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="relative flex-1">
               <Search
@@ -398,24 +398,22 @@ function TenantCard({ tenant }: { tenant: TenantListItem }) {
 
 function SummaryStat({
   label,
-  bn,
+
   value,
 }: {
   label: string;
-  bn: string;
+
   value: string;
 }) {
   return (
-    <div className="flex items-center gap-2.5">
+    <div className="flex items-start gap-2.5">
       <Users size={15} className="text-ink-soft/70" />
-      <div className="flex items-baseline gap-1.5">
-        <span className="text-[20px] font-bold tracking-[-0.02em] text-jade-950 tabular-nums leading-none">
+      <div className="flex items-center gap-1.5">
+        <span className="text-[16px] font-bold tracking-[-0.02em] text-jade-950 tabular-nums leading-none">
           {value}
         </span>
         <span className="text-[12px] text-ink-soft">{label}</span>
-        <span className="font-bangla text-[10.5px] text-ink-soft/65">
-          · {bn}
-        </span>
+        
       </div>
     </div>
   );

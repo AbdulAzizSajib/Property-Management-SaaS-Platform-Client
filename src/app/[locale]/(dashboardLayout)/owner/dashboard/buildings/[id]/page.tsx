@@ -212,25 +212,23 @@ export default function BuildingDetailPage() {
                     <StatTile
                         icon={Layers}
                         label="Total floors"
-                        bn="মোট তলা"
                         value={building.totalFloors}
                     />
                     <StatTile
                         icon={Layers}
                         label="Floors added"
-                        bn="যোগ করা"
                         value={building.floors.length}
                     />
                     <StatTile
                         icon={DoorOpen}
                         label="Units"
-                        bn="ইউনিট"
+                      
                         value={building.units.length}
                     />
                     <StatTile
                         icon={User}
                         label="Managers"
-                        bn="ম্যানেজার"
+                      
                         value={building.managers.length}
                     />
                 </div>
@@ -243,7 +241,7 @@ export default function BuildingDetailPage() {
                     />
 
                     <div className="rounded-[14px] border border-rule-soft bg-paper p-5">
-                        <p className="font-serif text-[13px] italic text-coral-600/85">
+                        <p className="font-serif text-[13px]  text-coral-600/85">
                             On-site contact
                         </p>
                         <h3 className="mt-0.5 text-[16px] font-bold tracking-[-0.015em] text-jade-950">
@@ -285,9 +283,6 @@ export default function BuildingDetailPage() {
                                 />
                                 <p className="mt-2 text-[13px] text-ink-soft">
                                     No caretaker assigned
-                                </p>
-                                <p className="font-bangla mt-0.5 text-[11.5px] text-ink-soft/70">
-                                    কেয়ারটেকার যোগ করুন
                                 </p>
                             </div>
                         )}
@@ -387,12 +382,12 @@ export default function BuildingDetailPage() {
 function StatTile({
     icon: Icon,
     label,
-    bn,
+   
     value,
 }: {
     icon: React.ComponentType<{ size?: number; className?: string }>;
     label: string;
-    bn: string;
+   
     value: number;
 }) {
     return (
@@ -401,9 +396,6 @@ function StatTile({
                 <div className="min-w-0">
                     <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
                         {label}
-                    </p>
-                    <p className="font-bangla text-[10.5px] text-ink-soft/70">
-                        {bn}
                     </p>
                 </div>
                 <Icon size={14} className="text-ink-soft/60 shrink-0" />

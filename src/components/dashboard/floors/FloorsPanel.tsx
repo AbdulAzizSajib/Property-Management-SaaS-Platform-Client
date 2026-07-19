@@ -75,9 +75,9 @@ export function FloorsPanel({ buildingId, totalFloors }: FloorsPanelProps) {
     return (
         <div className="rounded-[14px] border border-rule-soft bg-paper p-5 lg:col-span-2">
             {/* Header */}
-            <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                    <p className="font-serif text-[13px] italic text-coral-600/85">
+            <div className="flex items-start justify-between gap-3 ">
+                <div className="min-w-0  flex-1">
+                    <p className="font-serif text-[13px]  text-coral-600/85">
                         Building structure
                     </p>
                     <h3 className="mt-0.5 text-[16px] font-bold tracking-[-0.015em] text-jade-950">
@@ -85,8 +85,8 @@ export function FloorsPanel({ buildingId, totalFloors }: FloorsPanelProps) {
                     </h3>
 
                     {/* Progress sentence + bar — replaces the bare "5 of 8" text */}
-                    <div className="mt-2.5">
-                        <div className="flex items-baseline justify-between text-[12px]">
+                    <div className="mt-2.5  ">
+                        <div className="flex items-center justify-between  text-[12px]">
                             <span className="text-ink-soft">
                                 <span className="font-semibold text-ink tabular-nums">
                                     {fmtNum(added)}
@@ -103,7 +103,7 @@ export function FloorsPanel({ buildingId, totalFloors }: FloorsPanelProps) {
                                 </span>
                             )}
                         </div>
-                        <div className="mt-1.5 h-1 w-full max-w-[220px] overflow-hidden rounded-full bg-cream">
+                        <div className="mt-1.5 h-1 w-full max-w-55 overflow-hidden rounded-full bg-cream">
                             <div
                                 className="h-full rounded-full bg-jade-700 transition-[width] duration-500"
                                 style={{ width: `${pct}%` }}
@@ -148,9 +148,7 @@ export function FloorsPanel({ buildingId, totalFloors }: FloorsPanelProps) {
                         <p className="mt-2 text-[13px] text-ink-soft">
                             No floors yet
                         </p>
-                        <p className="font-bangla mt-0.5 text-[11.5px] text-ink-soft/70">
-                            কোনো তলা যোগ করা হয়নি
-                        </p>
+                      
                         <button
                             type="button"
                             onClick={() => setCreateOpen(true)}

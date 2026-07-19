@@ -137,17 +137,10 @@ export default function UnitDetailPage() {
                     <span className="font-semibold text-ink">{unit.name}</span>
                 </nav>
 
-                {/* Hero — info on the left, the money number as visual anchor on the right */}
-                <div
-                    className="overflow-hidden rounded-[18px] border border-rule-soft bg-paper"
-                    style={{
-                        boxShadow:
-                            "0 1px 0 rgba(255,255,255,0.6) inset, 0 14px 36px -22px rgba(10,46,34,0.22)",
-                    }}
-                >
-                    <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr]">
+              
+                    <div className=" flex itmes-center justify-between gap-4 ">
                         {/* LEFT — identity */}
-                        <div className="px-5 py-5 sm:px-6 sm:py-6">
+                        <div className="px-5 flex-1 border rounded-[14px] bg-paper py-5 sm:px-6 sm:py-6">
                             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                                 <div className="min-w-0">
                                     <div className="flex flex-wrap items-center gap-2">
@@ -222,7 +215,7 @@ export default function UnitDetailPage() {
 
                         {/* RIGHT — the money panel (jade-950, like dashboard HeroKpi) */}
                         <div
-                            className="relative overflow-hidden bg-jade-950 px-5 py-5 text-paper sm:px-6 sm:py-6"
+                            className="relative w-1/3 overflow-hidden rounded-md bg-jade-800 px-5 py-5 text-paper sm:px-6 sm:py-6"
                             aria-label="Monthly rent summary"
                         >
                             <div
@@ -234,25 +227,23 @@ export default function UnitDetailPage() {
                                 }}
                             />
 
-                            <p className="relative font-serif text-[13px] italic text-paper/60">
+                            <p className="relative font-serif text-[13px]  text-white">
                                 Total monthly rent
                             </p>
-                            <p className="font-bangla relative mt-0.5 text-[11.5px] text-paper/45">
-                                মাসিক মোট ভাড়া
-                            </p>
+                         
                             <p className="relative mt-3 text-[36px] font-bold leading-none tracking-[-0.025em] tabular-nums sm:text-[40px]">
                                 {formatMoney(totalMonthly)}
                             </p>
 
                             <div className="relative mt-4 grid grid-cols-2 gap-3 border-t border-paper/10 pt-4 text-[12px]">
                                 <div>
-                                    <p className="text-paper/55">Base rent</p>
+                                    <p className="">Base rent</p>
                                     <p className="mt-0.5 font-semibold tabular-nums">
                                         {formatMoney(unit.baseRent)}
                                     </p>
                                 </div>
                                 <div>
-                                    <p className="text-paper/55">Service charge</p>
+                                    <p className="">Service charge</p>
                                     <p className="mt-0.5 font-semibold tabular-nums">
                                         {Number(unit.serviceCharge) > 0
                                             ? formatMoney(unit.serviceCharge)
@@ -274,7 +265,7 @@ export default function UnitDetailPage() {
                             </div>
                         </div>
                     </div>
-                </div>
+               
 
                 {/* Specs + Leases */}
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
@@ -363,9 +354,7 @@ export default function UnitDetailPage() {
                                     <p className="mt-2 text-[13px] text-ink-soft">
                                         No lease history
                                     </p>
-                                    <p className="font-bangla mt-0.5 text-[11.5px] text-ink-soft/70">
-                                        কোনো লিজ নেই
-                                    </p>
+                                   
                                     {unit.status === "VACANT" && (
                                         <Link
                                             href={`/owner/dashboard/leases?unitId=${unit.id}`}

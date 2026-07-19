@@ -74,11 +74,13 @@ export default function BuildingsListPage() {
         {/* Heading */}
         <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-[13px]  text-coral-600/85 ">{t("eyebrow")}</p>
+            <p className="text-[13px] font-semibold text-coral-600/85 ">
+              {t("eyebrow")}
+            </p>
             <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
               {t("title")}
             </h1>
-            <p className="font-bangla mt-1 text-[13px] text-ink-soft">
+            <p className="mt-1 text-[13px] text-ink-soft">
               {t("subtitle")}
             </p>
           </div>
@@ -97,7 +99,7 @@ export default function BuildingsListPage() {
             />
             <DialogContent className="sm:max-w-2xl">
               <DialogHeader>
-                <DialogTitle className="capitalize text-[17px] text-center rounded px-2 bg-coral-600 text-white  tracking-[-0.02em] py-0.5">
+                <DialogTitle className="capitalize text-[17px] px-2 py-0.5">
                   {t("addNewBuilding")}
                 </DialogTitle>
               </DialogHeader>
@@ -117,7 +119,7 @@ export default function BuildingsListPage() {
 
         <div className="flex items-center justify-between">
           {/* Summary strip — replaces 3 rainbow stat tiles with a single quiet info row */}
-          <section className="flex flex-wrap items-baseline gap-x-7 gap-y-2 rounded-[14px] border border-rule-soft bg-paper px-5 py-3">
+          <section className="flex flex-wrap items-baseline gap-x-7 gap-y-2 rounded-md border border-rule-soft bg-paper px-5 py-3">
             <SummaryStat
               label={t("summaryBuildings")}
               value={fmtNum(buildings?.length ?? 0, bn)}
@@ -136,7 +138,7 @@ export default function BuildingsListPage() {
           </section>
 
           {/* Toolbar */}
-          {/* <div className="rounded-[14px] border border-rule-soft bg-paper px-5 py-3"> */}
+       
           <div className="relative">
             <Search
               size={15}
@@ -147,7 +149,7 @@ export default function BuildingsListPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={t("searchPlaceholder")}
-              className="h-9 px-5 py-3 w-full  rounded-md border border-rule-soft bg-paper pl-9 pr-3 text-[13.5px] text-ink placeholder:text-ink-soft/60 focus:border-jade-700 focus:outline-none focus:ring-2 focus:ring-jade-700/20"
+              className="h-9 px-5 py-4 w-96  rounded-md border border-rule-soft bg-paper pl-9 pr-3 text-[14px] text-ink placeholder:text-ink-soft/60 focus:border-jade-700 focus:outline-none focus:r1 focus:ring-jade-700/20"
             />
           </div>
           {query && (
@@ -156,7 +158,7 @@ export default function BuildingsListPage() {
             </div>
           )}
         </div>
-        {/* </div> */}
+       
 
         {/* Content */}
         {isLoading ? (
@@ -350,7 +352,10 @@ function ExpandedPanel({ building }: { building: BuildingListItem }) {
         <dl className="mt-2.5 space-y-1.5 text-[12px]">
           <KV label={t("kvCity")} value={building.city} />
           {building.area && <KV label={t("kvArea")} value={building.area} />}
-          <KV label={t("kvTotalFloors")} value={fmtNum(building.totalFloors, bn)} />
+          <KV
+            label={t("kvTotalFloors")}
+            value={fmtNum(building.totalFloors, bn)}
+          />
           <KV
             label={t("kvCreated")}
             value={new Date(building.createdAt).toLocaleDateString(
@@ -449,7 +454,7 @@ function SummaryStat({
     <div className="flex items-center gap-2.5">
       <Icon size={15} className="text-ink-soft/70" />
       <div className="flex items-baseline gap-1.5">
-        <span className="text-[20px] font-bold tracking-[-0.02em] text-jade-950 tabular-nums leading-none">
+        <span className="text-[16px] font-semibold tracking-[-0.02em] text-jade-950 tabular-nums leading-none">
           {value}
         </span>
         <span className="text-[12px] text-ink-soft">{label}</span>
@@ -479,17 +484,12 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
   const t = useTranslations("buildingsPage");
   return (
     <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-16 text-center">
-      <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-jade-50">
-        <Building2 size={26} className="text-jade-800" />
-      </div>
-      <h2 className="mt-4 text-[17px] font-bold text-jade-950">
+      <h2 className="mt-4 text-[17px] font-bold text-jade-950 flex items-center justify-center gap-2">
+         <Building2 size={26} className="text-jade-800" />
         {t("emptyTitle")}
       </h2>
       <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
         {t("emptySubtitle")}
-      </p>
-      <p className="font-bangla mt-0.5 text-[12px] text-ink-soft/75">
-        {t("emptyBanglaHint")}
       </p>
 
       <div className="mt-5">

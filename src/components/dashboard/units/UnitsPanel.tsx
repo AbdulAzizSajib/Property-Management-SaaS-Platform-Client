@@ -47,7 +47,7 @@ export function UnitsPanel({ buildingId }: UnitsPanelProps) {
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="font-serif text-[13px] italic text-coral-600/85">
+          <p className="font-serif text-[13px]  text-coral-600/85">
             Units in this building
           </p>
           <h3 className="mt-0.5 text-[16px] font-bold tracking-[-0.015em] text-jade-950">
@@ -88,11 +88,11 @@ export function UnitsPanel({ buildingId }: UnitsPanelProps) {
       </div>
 
       {/* Body */}
-      <div className="mt-4">
+      <div className="mt-4 ">
         {isLoading ? (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {[1, 2, 3, 4].map((i) => (
-              <Skeleton key={i} className="h-[136px] rounded-[12px] bg-cream" />
+              <Skeleton key={i} className="h-34 rounded-[12px] bg-cream" />
             ))}
           </div>
         ) : isError ? (
@@ -103,9 +103,7 @@ export function UnitsPanel({ buildingId }: UnitsPanelProps) {
           <div className="rounded-[10px] border border-dashed border-rule-soft px-4 py-8 text-center">
             <DoorOpen className="mx-auto text-ink-soft/40" size={24} />
             <p className="mt-2 text-[13px] text-ink-soft">No units yet</p>
-            <p className="font-bangla mt-0.5 text-[11.5px] text-ink-soft/70">
-              কোনো ইউনিট নেই
-            </p>
+            
             <button
               type="button"
               onClick={() => setCreateOpen(true)}
@@ -120,13 +118,13 @@ export function UnitsPanel({ buildingId }: UnitsPanelProps) {
               <li key={u.id}>
                 <Link
                   href={`/owner/dashboard/units/${u.id}`}
-                  className="group relative block overflow-hidden rounded-[12px] border border-rule-soft bg-paper p-3.5 transition-all hover:-translate-y-0.5 hover:border-jade-700/20 hover:shadow-[0_8px_24px_-12px_rgba(10,46,34,0.15)]"
+                  className="group relative block overflow-hidden border border-rule-soft bg-paper p-3.5 transition-all hover:-translate-y-0.5 hover:border-jade-700/20 hover:shadow-[0_8px_24px_-12px_rgba(10,46,34,0.15)]"
                 >
                   {/* Status accent strip — coral for VACANT, etc. Pulls the eye to actionable units. */}
                   <span
                     aria-hidden
                     className={cn(
-                      "absolute inset-y-0 left-0 w-[3px]",
+                      "absolute inset-y-0 left-0 w-0.75",
                       unitStatusAccent[u.status],
                     )}
                   />

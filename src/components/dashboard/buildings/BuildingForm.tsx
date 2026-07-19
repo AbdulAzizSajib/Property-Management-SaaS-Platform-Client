@@ -102,14 +102,19 @@ export function BuildingForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* ── Identity ─────────────────────────────────────────────── */}
-      <Section icon={Building2} title="Building" subtitle="ভবন">
+      <Section icon={Building2} title="Building">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Building name" htmlFor="name" required className="sm:col-span-2">
+          <Field
+            label="Building name"
+            htmlFor="name"
+            required
+            className="sm:col-span-2"
+          >
             <Input
               id="name"
               value={values.name}
               onChange={(e) => set("name", e.target.value)}
-              placeholder="Lalmatia Block A"
+              placeholder="e.g. Skyline Residence"
               required
               className={fieldClass}
             />
@@ -183,9 +188,14 @@ export function BuildingForm({
       </Section>
 
       {/* ── Location ─────────────────────────────────────────────── */}
-      <Section icon={MapPin} title="Location" subtitle="ঠিকানা">
+      <Section icon={MapPin} title="Location">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Address" htmlFor="address" required className="sm:col-span-2">
+          <Field
+            label="Address"
+            htmlFor="address"
+            required
+            className="sm:col-span-2"
+          >
             <Input
               id="address"
               value={values.address}
@@ -220,11 +230,11 @@ export function BuildingForm({
       </Section>
 
       {/* ── Details ──────────────────────────────────────────────── */}
-      <Section icon={Layers} title="Details" subtitle="বিবরণ">
+      <Section icon={Layers} title="Details">
         <Field
           label="Description"
           htmlFor="description"
-          hint="A short note shown on the building card."
+          // hint="A short note shown on the building card."
         >
           <Textarea
             id="description"
@@ -261,7 +271,7 @@ function Section({
     <section className="space-y-3">
       <div className="flex items-center gap-2">
         <span className="flex h-6 w-6 items-center justify-center rounded-[7px] bg-jade-900/8 text-jade-900">
-          <Icon size={13} />
+          <Icon size={15} />
         </span>
         <h3 className="text-[12px] font-semibold uppercase tracking-[0.08em] text-ink">
           {title}
