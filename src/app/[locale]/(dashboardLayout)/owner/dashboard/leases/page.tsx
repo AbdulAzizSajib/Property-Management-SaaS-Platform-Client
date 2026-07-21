@@ -92,15 +92,12 @@ export default function LeasesListPage() {
         {/* Heading */}
         <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="font-serif text-[13px] italic text-coral-600/85">
+            <p className="font-serif text-[13px]  text-coral-600/85">
               {t("eyebrow")}
             </p>
             <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
               {t("title")}
             </h1>
-            <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-              {t("subtitle")}
-            </p>
           </div>
 
           <Dialog open={createOpen} onOpenChange={setCreateOpen}>
@@ -141,7 +138,7 @@ export default function LeasesListPage() {
         {/* Money hero — promotes monthly cash flow to the primary KPI */}
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.4fr_1fr]">
           <div
-            className="relative overflow-hidden rounded-[18px] bg-jade-950 px-5 py-5 text-paper sm:px-6 sm:py-6"
+            className="relative overflow-hidden rounded-[18px] bg-jade-900 px-5 py-5 text-white sm:px-6 sm:py-6"
             style={{
               boxShadow:
                 "0 1px 0 rgba(255,255,255,0.06) inset, 0 18px 40px -22px rgba(10,46,34,0.5)",
@@ -155,13 +152,11 @@ export default function LeasesListPage() {
                   "radial-gradient(circle, rgba(255,123,87,0.35), transparent 65%)",
               }}
             />
-            <p className="relative font-serif text-[13px] italic text-paper/60">
+            <p className="relative font-serif text-[13px]  text-white">
               {t("heroLabel")}
             </p>
-            <p className="font-bangla relative mt-0.5 text-[11.5px] text-paper/45">
-              {t("heroLabelBn")}
-            </p>
-            <p className="relative mt-3 text-[40px] font-bold leading-none tracking-[-0.025em] tabular-nums sm:text-[46px]">
+           
+            <p className="relative mt-3 text-[40px] font-bold leading-none tracking-tight tabular-nums sm:text-[46px]">
               {totalMonthly > 0 ? formatMoney(totalMonthly) : "—"}
             </p>
             <p className="relative mt-3 text-[12.5px] text-paper/70">
@@ -190,14 +185,14 @@ export default function LeasesListPage() {
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
             <SmallStat
               label={t("statActive")}
-              bn={t("statActiveBn")}
+             
               value={fmtNum(activeCount)}
               sub={t("statActiveSub")}
               tone="jade"
             />
             <SmallStat
               label={t("statPending")}
-              bn={t("statPendingBn")}
+            
               value={fmtNum(pendingCount)}
               sub={
                 pendingCount === 0
@@ -210,7 +205,7 @@ export default function LeasesListPage() {
         </div>
 
         {/* Filters */}
-        <div className="rounded-[14px] border border-rule-soft bg-paper p-4">
+        {/* <div className="rounded-[14px] border border-rule-soft bg-paper p-4"> */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="relative flex-1">
               <Search
@@ -275,13 +270,13 @@ export default function LeasesListPage() {
               )}
             </div>
           )}
-        </div>
+        {/* </div> */}
 
         {/* Content */}
         {isLoading ? (
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {[1, 2, 3, 4].map((i) => (
-              <Skeleton key={i} className="h-[180px] rounded-[12px] bg-paper" />
+              <Skeleton key={i} className="h-45 rounded-[12px] bg-paper" />
             ))}
           </div>
         ) : isError ? (
@@ -439,13 +434,13 @@ function LeaseCard({ lease }: { lease: LeaseListItem }) {
 
 function SmallStat({
   label,
-  bn,
+  
   value,
   sub,
   tone,
 }: {
   label: string;
-  bn: string;
+  
   value: string;
   sub: string;
   tone: "jade" | "coral" | "neutral";
@@ -463,11 +458,11 @@ function SmallStat({
         <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
           {label}
         </p>
-        <p className="font-bangla text-[10.5px] text-ink-soft/65">{bn}</p>
+   
       </div>
       <p
         className={cn(
-          "mt-1.5 text-[26px] font-bold leading-none tracking-[-0.025em] tabular-nums",
+          "mt-1.5 text-[26px] font-bold leading-none tracking-tight tabular-nums",
           valueTone,
         )}
       >
@@ -491,13 +486,8 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
       <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
         {t("emptySubtitle")}
       </p>
-      <p className="font-bangla mt-0.5 text-[12px] text-ink-soft/75">
-        {t("emptyBanglaHint")}
-      </p>
-      <div className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-md border border-rule-soft bg-cream/60 px-2.5 py-1 text-[11.5px] text-ink-soft">
-        <User size={11} />
-        {t("emptyRequires")}
-      </div>
+     
+      
       <div className="mt-5">
         <button
           type="button"

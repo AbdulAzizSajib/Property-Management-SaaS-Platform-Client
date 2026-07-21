@@ -191,22 +191,21 @@
   "leasesPage": {
     "eyebrow": "Tenant agreements",
     "title": "Leases",
-    "subtitle": "লিজ ও ভাড়াটিয়া চুক্তি।",
+   
     "newLease": "New lease",
     "createNewLease": "Create new lease",
     "createNewLeaseDescription": "Connect a tenant to a vacant unit. The unit will become occupied and the first invoice will be generated automatically.",
     "createLease": "Create lease",
     "heroLabel": "Monthly rent from active leases",
-    "heroLabelBn": "সক্রিয় লিজ থেকে মাসিক ভাড়া",
     "heroFrom": "from",
     "heroActiveLeases": "{count, plural, one {active lease} other {active leases}}",
     "heroOnRecord": "on record",
     "pendingAwaiting": "{count, plural, one {pending lease awaiting action} other {pending leases awaiting action}}",
     "statActive": "Active",
-    "statActiveBn": "সক্রিয়",
+  
     "statActiveSub": "generating rent",
     "statPending": "Pending",
-    "statPendingBn": "অপেক্ষমান",
+   
     "statPendingNone": "nothing waiting",
     "statPendingSome": "needs your attention",
     "searchPlaceholder": "Search by tenant, unit, building…",
@@ -225,8 +224,7 @@
     "dueDay": "Due day",
     "emptyTitle": "No leases yet",
     "emptySubtitle": "Create your first lease to start tracking rent and tenant agreements.",
-    "emptyBanglaHint": "আপনার প্রথম লিজ তৈরি করুন",
-    "emptyRequires": "Requires an active tenant + vacant unit",
+  
     "emptyCreateFirst": "Create your first lease"
   },
   "invoicesPage": {
