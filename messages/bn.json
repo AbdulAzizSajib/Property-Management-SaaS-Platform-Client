@@ -194,22 +194,22 @@
   "leasesPage": {
     "eyebrow": "ভাড়াটিয়া চুক্তি",
     "title": "লিজ",
-    "subtitle": "লিজ ও ভাড়াটিয়া চুক্তি।",
+   
     "newLease": "নতুন লিজ",
     "createNewLease": "নতুন লিজ তৈরি করুন",
     "createNewLeaseDescription": "একটি ভাড়াটিয়াকে খালি ইউনিটের সাথে যুক্ত করুন। ইউনিটটি ভাড়া হয়ে যাবে এবং প্রথম বিল স্বয়ংক্রিয়ভাবে তৈরি হবে।",
     "createLease": "লিজ তৈরি করুন",
     "heroLabel": "সক্রিয় লিজ থেকে মাসিক ভাড়া",
-    "heroLabelBn": "সক্রিয় লিজ থেকে মাসিক ভাড়া",
+  
     "heroFrom": "থেকে",
     "heroActiveLeases": "{count} টি সক্রিয় লিজ",
     "heroOnRecord": "রেকর্ডে",
     "pendingAwaiting": "{count} টি লিজ অপেক্ষমান, ব্যবস্থা প্রয়োজন",
     "statActive": "সক্রিয়",
-    "statActiveBn": "সক্রিয়",
+    
     "statActiveSub": "ভাড়া তৈরি করছে",
     "statPending": "অপেক্ষমান",
-    "statPendingBn": "অপেক্ষমান",
+    
     "statPendingNone": "কিছু অপেক্ষমান নেই",
     "statPendingSome": "আপনার মনোযোগ প্রয়োজন",
     "searchPlaceholder": "ভাড়াটিয়া, ইউনিট, বিল্ডিং দিয়ে খুঁজুন…",
@@ -228,8 +228,7 @@
     "dueDay": "নির্ধারিত দিন",
     "emptyTitle": "এখনো কোনো লিজ নেই",
     "emptySubtitle": "ভাড়া ও ভাড়াটিয়া চুক্তি ট্র্যাক করা শুরু করতে আপনার প্রথম লিজ তৈরি করুন।",
-    "emptyBanglaHint": "আপনার প্রথম লিজ তৈরি করুন",
-    "emptyRequires": "একজন সক্রিয় ভাড়াটিয়া + খালি ইউনিট প্রয়োজন",
+   
     "emptyCreateFirst": "আপনার প্রথম লিজ তৈরি করুন"
   },
   "invoicesPage": {

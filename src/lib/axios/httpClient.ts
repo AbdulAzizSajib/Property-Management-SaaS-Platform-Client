@@ -60,6 +60,35 @@ const axiosInstance = async () => {
     return instance;
 }
 
+const getApiErrorMessage = (error: unknown): string => {
+
+    if (axios.isAxiosError(error)) {
+
+        const data = error.response?.data;
+
+        if (
+            data &&
+            typeof data === "object" &&
+            "message" in data &&
+            typeof data.message === "string"
+        ) {
+            return data.message;
+        }
+
+        if (typeof data === "string") {
+            return data;
+        }
+
+        return error.message;
+    }
+
+    if (error instanceof Error) {
+        return error.message;
+    }
+
+    return "Something went wrong";
+};
+
 export interface ApiRequestOptions {
     params?: Record<string, unknown>;
     headers?: Record<string, string>;
@@ -89,10 +118,22 @@ const httpPost = async <TData>(endpoint: string, data: unknown, options?: ApiReq
             headers: options?.headers,
         });
         return response.data;
-    } catch (error) {
-        console.error(`POST request to ${endpoint} failed:`, error);
-        throw error;
-    }
+    } 
+    // catch (error) {
+    //     console.error(`POST request to ${endpoint} failed:`, error);
+    //     throw error;
+    // }
+    catch (error: unknown) {
+
+    const message = getApiErrorMessage(error);
+
+    console.error(
+        `POST request to ${endpoint} failed:`,
+        message
+    );
+
+    throw new Error(message);
+}
 }
 
 const httpPut = async <TData>(endpoint: string, data: unknown, options?: ApiRequestOptions) : Promise<ApiResponse<TData>> => {
