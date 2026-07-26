@@ -432,9 +432,6 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
       <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
         {t("emptySubtitle")}
       </p>
-      <p className="font-bangla mt-0.5 text-[12px] text-ink-soft/75">
-        {t("emptyBanglaHint")}
-      </p>
       <div className="mt-5">
         <button
           type="button"

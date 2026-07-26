@@ -18,7 +18,6 @@ import {
 } from "@/src/components/ui/select";
 import { useBuildings } from "@/src/hooks/useBuildings";
 import { useTenants } from "@/src/hooks/useTenants";
-import { useUnits } from "@/src/hooks/useUnits";
 import { type CreateLeasePayload } from "@/src/types/lease.types";
 import { Info, Sparkles } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -52,8 +51,6 @@ const emptyForm: LeaseFormValues = {
 interface LeaseFormProps {
   submitting: boolean;
   submitLabel: string;
-  fixedUnitId?: string;
-  fixedTenantId?: string;
   onSubmit: (payload: CreateLeasePayload) => void;
   onCancel?: () => void;
 }
@@ -61,16 +58,10 @@ interface LeaseFormProps {
 export function LeaseForm({
   submitting,
   submitLabel,
-  fixedUnitId,
-  fixedTenantId,
   onSubmit,
   onCancel,
 }: LeaseFormProps) {
-  const [values, setValues] = useState<LeaseFormValues>({
-    ...emptyForm,
-    ...(fixedUnitId && { unitId: fixedUnitId }),
-    ...(fixedTenantId && { tenantId: fixedTenantId }),
-  });
+  const [values, setValues] = useState<LeaseFormValues>(emptyForm);
 
   // Track which money fields were auto-filled from unit defaults
   // so we can show a subtle indicator and reset them if the user
@@ -80,20 +71,15 @@ export function LeaseForm({
     service: boolean;
   }>({ rent: false, service: false });
 
-  // Building filter — pick a building first, then tenants and units narrow to it.
+  // Building filter — pick a building first, then tenants narrow to it. Each
+  // tenant already carries their assigned unit (set at tenant-creation time),
+  // so there's no separate unit picker — selecting a tenant resolves the unit.
   const [buildingId, setBuildingId] = useState("");
 
   const { data: buildings } = useBuildings();
-  const { data: allUnits } = useUnits({ status: "VACANT" });
   const { data: tenants } = useTenants();
 
   const buildingList = useMemo(() => buildings ?? [], [buildings]);
-
-  // Vacant units in the selected building (all vacant units until one is picked).
-  const units = useMemo(() => {
-    const list = allUnits ?? [];
-    return buildingId ? list.filter((u) => u.building.id === buildingId) : list;
-  }, [allUnits, buildingId]);
 
   // Active tenants assigned to the selected building. A tenant carries a direct
   // buildingId (set when the tenant is created), so we filter on that.
@@ -103,10 +89,10 @@ export function LeaseForm({
     return active.filter((t) => t.buildingId === buildingId);
   }, [tenants, buildingId]);
 
-  const selectedUnit = units.find((u) => u.id === values.unitId);
   const selectedTenant = activeTenants.find((t) => t.id === values.tenantId);
+  const selectedUnit = selectedTenant?.unit ?? null;
 
-  // Switching building invalidates any tenant/unit picked under the old one.
+  // Switching building invalidates any tenant picked under the old one.
   function handleBuildingChange(id: string) {
     setBuildingId(id);
     setValues((v) => ({ ...v, tenantId: "", unitId: "" }));
@@ -120,8 +106,9 @@ export function LeaseForm({
     setValues((v) => ({ ...v, [key]: value }));
   }
 
-  function handleUnitChange(unitId: string) {
-    const unit = units.find((u) => u.id === unitId);
+  function handleTenantChange(tenantId: string) {
+    const tenant = activeTenants.find((t) => t.id === tenantId);
+    const unit = tenant?.unit ?? null;
 
     setValues((v) => {
       // Replace rent/service if they were either blank OR previously auto-filled
@@ -130,7 +117,8 @@ export function LeaseForm({
 
       return {
         ...v,
-        unitId,
+        tenantId,
+        unitId: unit?.id ?? "",
         monthlyRent:
           shouldReplaceRent && unit ? String(unit.baseRent) : v.monthlyRent,
         serviceCharge:
@@ -166,6 +154,8 @@ export function LeaseForm({
 
   function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
+
+    if (!values.unitId) return;
 
     const payload: CreateLeasePayload = {
       tenantId: values.tenantId,
@@ -222,103 +212,66 @@ export function LeaseForm({
           </Select>
         </Field>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Tenant" htmlFor="l-tenant" required>
-            <Select
-              value={values.tenantId}
-              onValueChange={(v) => set("tenantId", v ?? "")}
-              disabled={!!fixedTenantId || !buildingId}
-            >
-              <SelectTrigger id="l-tenant" className={`w-full ${fieldClass}`}>
-                <SelectValue
-                  placeholder={
-                    buildingId ? "Select tenant" : "Select a building first"
-                  }
-                >
-                  {(value) => {
-                    const t = activeTenants.find((x) => x.id === value);
-                    return t ? `${t.name} · ${t.phone}` : null;
-                  }}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {activeTenants.length === 0 ? (
-                  <div className="px-2 py-2 text-[12px] text-ink-soft">
-                    No active tenants in this building
-                  </div>
-                ) : (
-                  activeTenants.map((t) => (
-                    <SelectItem key={t.id} value={t.id}>
-                      <span className="inline-flex items-center gap-2">
-                        <span className="inline-flex size-5 items-center justify-center rounded-full bg-jade-50 text-[9.5px] font-bold text-jade-800">
-                          {t.name
-                            .split(" ")
-                            .filter(Boolean)
-                            .map((p) => p[0])
-                            .slice(0, 2)
-                            .join("")
-                            .toUpperCase()}
-                        </span>
-                        <span>
-                          {t.name}
-                          <span className="ml-1.5 text-ink-soft tabular-nums">
-                            · {t.phone}
-                          </span>
+        <Field label="Tenant" htmlFor="l-tenant" required>
+          <Select
+            value={values.tenantId}
+            onValueChange={(v) => handleTenantChange(v ?? "")}
+            disabled={!buildingId}
+          >
+            <SelectTrigger id="l-tenant" className={`w-full ${fieldClass}`}>
+              <SelectValue
+                placeholder={
+                  buildingId ? "Select tenant" : "Select a building first"
+                }
+              >
+                {(value) => {
+                  const t = activeTenants.find((x) => x.id === value);
+                  return t ? `${t.name} · ${t.phone}` : null;
+                }}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {activeTenants.length === 0 ? (
+                <div className="px-2 py-2 text-[12px] text-ink-soft">
+                  No active tenants in this building
+                </div>
+              ) : (
+                activeTenants.map((t) => (
+                  <SelectItem key={t.id} value={t.id}>
+                    <span className="inline-flex items-center gap-2">
+                      <span className="inline-flex size-5 items-center justify-center rounded-full bg-jade-50 text-[9.5px] font-bold text-jade-800">
+                        {t.name
+                          .split(" ")
+                          .filter(Boolean)
+                          .map((p) => p[0])
+                          .slice(0, 2)
+                          .join("")
+                          .toUpperCase()}
+                      </span>
+                      <span>
+                        {t.name}
+                        <span className="ml-1.5 text-ink-soft tabular-nums">
+                          · {t.phone}
+                          {!t.unit && " · no unit assigned"}
                         </span>
                       </span>
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
-          </Field>
+                    </span>
+                  </SelectItem>
+                ))
+              )}
+            </SelectContent>
+          </Select>
+        </Field>
 
-          <Field label="Unit" htmlFor="l-unit" required>
-            <Select
-              value={values.unitId}
-              onValueChange={(v) => handleUnitChange(v ?? "")}
-              disabled={!!fixedUnitId || !buildingId}
-            >
-              <SelectTrigger id="l-unit" className={`w-full ${fieldClass}`}>
-                <SelectValue
-                  placeholder={
-                    buildingId
-                      ? "Select vacant unit"
-                      : "Select a building first"
-                  }
-                >
-                  {(value) => {
-                    const u = units.find((x) => x.id === value);
-                    return u ? `${u.building.name} · ${u.name}` : null;
-                  }}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {units.length === 0 ? (
-                  <div className="px-2 py-2 text-[12px] text-ink-soft">
-                    No vacant units in this building
-                  </div>
-                ) : (
-                  units.map((u) => (
-                    <SelectItem key={u.id} value={u.id}>
-                      {u.building.name} {u.floor.name} {u.name}
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
-          </Field>
-        </div>
-
-        {/* Selected unit summary — replaces the bare numeric hint */}
-        {selectedUnit && (
+        {/* Selected tenant's assigned unit — replaces the bare numeric hint */}
+        {selectedTenant && selectedUnit && (
           <div className="flex items-center justify-between gap-3 rounded-[10px] border border-jade-100 bg-jade-50/60 px-3 py-2 text-[12px]">
             <div className="flex items-center gap-2">
               <Sparkles size={12} className="text-jade-700" />
               <span className="text-ink">
                 Defaults from{" "}
                 <span className="font-semibold text-jade-900">
-                  {selectedUnit.building.name} · {selectedUnit.name}
+                  {selectedUnit.floor.name} · {selectedUnit.name}
                 </span>
               </span>
             </div>
@@ -336,6 +289,16 @@ export function LeaseForm({
                   </span>
                 </>
               )}
+            </span>
+          </div>
+        )}
+
+        {selectedTenant && !selectedUnit && (
+          <div className="flex items-center gap-2 rounded-[10px] border border-coral-200 bg-coral-50/60 px-3 py-2 text-[12px] text-coral-800">
+            <Info size={12} />
+            <span>
+              {selectedTenant.name} has no unit assigned yet. Assign a unit to
+              this tenant before creating a lease.
             </span>
           </div>
         )}
@@ -486,7 +449,7 @@ export function LeaseForm({
             Creating this lease will mark{" "}
             {selectedUnit ? (
               <span className="font-semibold">
-                {selectedUnit.building.name} · {selectedUnit.name}
+                {selectedUnit.floor.name} · {selectedUnit.name}
               </span>
             ) : (
               <span>the selected unit</span>

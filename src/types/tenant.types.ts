@@ -22,6 +22,9 @@ export interface TenantFloorSummary {
 export interface TenantUnitSummary {
     id: string;
     name: string;
+    baseRent: string;
+    serviceCharge: string;
+    floor: TenantFloorSummary;
 }
 
 export interface Tenant {
