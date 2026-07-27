@@ -1,6 +1,6 @@
 "use client";
 
-// src/app/owner/dashboard/payments/[id]/page.tsx
+// src/app/owner/dashboard/collection/[id]/page.tsx
 
 import {
     paymentMethodLabel,
@@ -52,11 +52,11 @@ export default function PaymentDetailPage() {
             <div className="min-h-screen bg-cream">
                 <div className="mx-auto max-w-[1080px] p-4 sm:p-6 lg:p-8">
                     <Link
-                        href="/owner/dashboard/payments"
+                        href="/owner/dashboard/collection"
                         className="mb-4 inline-flex items-center gap-1 text-[12.5px] font-medium text-ink-soft hover:text-jade-900"
                     >
                         <ArrowLeft size={12} />
-                        Back to payments
+                        Back to collection
                     </Link>
                     <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
                         <h2 className="text-[15px] font-bold text-coral-600">
@@ -89,11 +89,11 @@ export default function PaymentDetailPage() {
                 {/* Toolbar */}
                 <div className="flex items-center justify-between print:hidden">
                     <Link
-                        href="/owner/dashboard/payments"
+                        href="/owner/dashboard/collection"
                         className="inline-flex items-center gap-1 text-[12.5px] font-medium text-ink-soft transition-colors hover:text-jade-900"
                     >
                         <ArrowLeft size={12} />
-                        All payments
+                        All collection
                     </Link>
                     <button
                         type="button"

@@ -53,7 +53,7 @@ export function CollectionPulse() {
       label: t("paidThisMonth"),
       tenants: p?.paidThisMonth.tenants ?? 0,
       amount: p?.paidThisMonth.amount ?? 0,
-      href: "/owner/dashboard/payments",
+      href: "/owner/dashboard/collection",
       icon: CheckCheck,
     },
   ];

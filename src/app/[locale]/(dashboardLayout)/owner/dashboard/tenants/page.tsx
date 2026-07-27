@@ -128,19 +128,10 @@ export default function TenantsListPage() {
 
         {/* Summary strip — replaces 3 rainbow tiles */}
         <section className="flex flex-wrap items-baseline gap-x-7 gap-y-2 rounded-[14px] border border-rule-soft bg-paper px-5 py-3">
-          <SummaryStat
-            label={t("summaryTotal")}
-         
-            value={fmtNum(totalCount)}
-          />
-          <SummaryStat
-            label={t("summaryActive")}
-           
-            value={fmtNum(activeCount)}
-          />
+          <SummaryStat label={t("summaryTotal")} value={fmtNum(totalCount)} />
+          <SummaryStat label={t("summaryActive")} value={fmtNum(activeCount)} />
           <SummaryStat
             label={t("summaryOnLease")}
-          
             value={fmtNum(withLeaseCount)}
           />
           {activeCount > 0 && (
@@ -274,7 +265,7 @@ export default function TenantsListPage() {
 
 function TenantCard({ tenant }: { tenant: TenantListItem }) {
   const t = useTranslations("tenantsPage");
-  const initials = tenant.name
+  const initials = (tenant.name ?? "")
     .split(" ")
     .filter(Boolean)
     .map((p) => p[0])
@@ -294,12 +285,12 @@ function TenantCard({ tenant }: { tenant: TenantListItem }) {
   return (
     <Link
       href={`/owner/dashboard/tenants/${tenant.id}`}
-      className="group relative block overflow-hidden rounded-[12px] border border-rule-soft bg-paper p-4 transition-all hover:-translate-y-0.5 hover:border-jade-700/20 hover:shadow-[0_8px_24px_-12px_rgba(10,46,34,0.15)]"
+      className="group relative block overflow-hidden  border border-rule-soft bg-paper p-4 transition-all hover:-translate-y-0.5 hover:border-jade-700/20 hover:shadow-[0_8px_24px_-12px_rgba(10,46,34,0.15)]"
     >
       {/* Accent strip */}
       <span
         aria-hidden
-        className={cn("absolute inset-y-0 left-0 w-[3px]", accent)}
+        className={cn("absolute inset-y-0 left-0 w-0.75", accent)}
       />
 
       <div className="flex items-start gap-3">
@@ -413,7 +404,6 @@ function SummaryStat({
           {value}
         </span>
         <span className="text-[12px] text-ink-soft">{label}</span>
-        
       </div>
     </div>
   );

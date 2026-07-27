@@ -3,9 +3,9 @@
 import { invoiceKeys } from "@/src/hooks/useInvoices";
 import { leaseKeys } from "@/src/hooks/useLeases";
 import {
-    getPaymentById,
-    getPayments,
-    recordPayment,
+    getCollectionById,
+    getCollections,
+    recordCollection,
 } from "@/src/services/payment.services";
 import type {
     PaymentFilters,
@@ -26,7 +26,7 @@ export function usePayments(filters?: PaymentFilters) {
     return useQuery({
         queryKey: paymentKeys.list(filters),
         queryFn: async () => {
-            const res = await getPayments(filters);
+            const res = await getCollections(filters);
             return res.data;
         },
     });
@@ -37,7 +37,7 @@ export function usePayment(id: string | undefined) {
         queryKey: id ? paymentKeys.detail(id) : ["payments", "detail", "_none"],
         queryFn: async () => {
             if (!id) throw new Error("Payment id is required");
-            const res = await getPaymentById(id);
+            const res = await getCollectionById(id);
             return res.data;
         },
         enabled: !!id,
@@ -49,7 +49,7 @@ export function useRecordPayment() {
 
     return useMutation({
         mutationFn: async (payload: RecordPaymentPayload) => {
-            const res = await recordPayment(payload);
+            const res = await recordCollection(payload);
             return res.data;
         },
         onSuccess: (data) => {

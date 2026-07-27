@@ -49,7 +49,7 @@ import { Link } from "@/src/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Suspense, useMemo, useState } from "react";
 
-const ALL = "__ALL__";
+const ALL = "All";
 
 export default function InvoicesListPage() {
   return (
@@ -118,7 +118,7 @@ function InvoicesListInner() {
         {/* Heading */}
         <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="font-serif text-[13px] italic text-coral-600/85">
+            <p className="font-serif text-[13px]  text-coral-600/85">
               {t("eyebrow")}
             </p>
             <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
@@ -173,7 +173,7 @@ function InvoicesListInner() {
             className={cn(
               "relative overflow-hidden rounded-[18px] px-5 py-5 sm:px-6 sm:py-6",
               totalDue > 0
-                ? "bg-jade-950 text-paper"
+                ? "bg-jade-900 text-paper"
                 : "border border-rule-soft bg-paper",
             )}
             style={
@@ -198,7 +198,7 @@ function InvoicesListInner() {
 
             <p
               className={cn(
-                "relative font-serif text-[13px] italic",
+                "relative font-serif text-[13px] ",
                 totalDue > 0 ? "text-paper/60" : "text-coral-600/85",
               )}
             >
@@ -209,9 +209,7 @@ function InvoicesListInner() {
                 "font-bangla relative mt-0.5 text-[11.5px]",
                 totalDue > 0 ? "text-paper/45" : "text-ink-soft/65",
               )}
-            >
-              {t("heroLabelBn")}
-            </p>
+            ></p>
             <p
               className={cn(
                 "relative mt-3 text-[40px] font-bold leading-none tracking-[-0.025em] tabular-nums sm:text-[46px]",
@@ -268,14 +266,12 @@ function InvoicesListInner() {
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
             <MiniStat
               label={t("statCollected")}
-              bn={t("statCollectedBn")}
               value={formatMoney(totalPaid)}
               sub={t("statCollectedSub")}
               tone="good"
             />
             <MiniStat
               label={t("statTotal")}
-              bn={t("statTotalBn")}
               value={fmtNum(invoices?.length ?? 0)}
               sub={t("statTotalSub")}
               tone="neutral"
@@ -387,7 +383,7 @@ function InvoicesListInner() {
         {isLoading ? (
           <ListShell />
         ) : isError ? (
-          <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
+          <div className=" border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
             <h2 className="text-[15px] font-bold text-coral-600">
               {t("errorTitle")}
             </h2>
@@ -401,7 +397,7 @@ function InvoicesListInner() {
             onBatch={() => setBatchOpen(true)}
           />
         ) : filtered.length === 0 ? (
-          <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-12 text-center">
+          <div className=" border border-rule-soft bg-paper px-6 py-12 text-center">
             <p className="text-[13.5px] text-ink-soft">{t("noMatch")}</p>
           </div>
         ) : (
@@ -415,7 +411,7 @@ function InvoicesListInner() {
         )}
 
         {/* Dialogs */}
-        <GenerateInvoiceDialog
+        <GenerateInvoiceDialog 
           open={generateOpen}
           onOpenChange={setGenerateOpen}
         />
@@ -545,13 +541,13 @@ function tenantInitials(name: string): string {
 
 function MiniStat({
   label,
-  bn,
+
   value,
   sub,
   tone,
 }: {
   label: string;
-  bn: string;
+
   value: string;
   sub: string;
   tone: "good" | "warn" | "neutral";
@@ -569,11 +565,10 @@ function MiniStat({
         <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
           {label}
         </p>
-        <p className="font-bangla text-[10.5px] text-ink-soft/65">{bn}</p>
       </div>
       <p
         className={cn(
-          "mt-1.5 text-[20px] font-bold leading-none tracking-[-0.025em] tabular-nums",
+          "mt-1.5 text-[20px] font-bold leading-none tracking-tight tabular-nums",
           valueTone,
         )}
       >
@@ -603,7 +598,7 @@ function EmptyState({
 }) {
   const t = useTranslations("invoicesPage");
   return (
-    <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-16 text-center">
+    <div className=" border border-rule-soft bg-paper px-6 py-16 text-center">
       <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-jade-50">
         <Receipt size={26} className="text-jade-800" />
       </div>

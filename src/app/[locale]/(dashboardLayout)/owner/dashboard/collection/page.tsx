@@ -1,6 +1,6 @@
 "use client";
 
-// src/app/owner/dashboard/payments/page.tsx
+// src/app/owner/dashboard/collection/page.tsx
 
 import { RecordPaymentDialog } from "@/src/components/dashboard/payments/RecordPaymentDialog";
 import {
@@ -33,7 +33,7 @@ import { Link } from "@/src/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Suspense, useMemo, useState } from "react";
 
-const ALL = "__ALL__";
+const ALL = "All";
 
 export default function PaymentsListPage() {
   return (
@@ -44,7 +44,7 @@ export default function PaymentsListPage() {
 }
 
 function PaymentsListInner() {
-  const t = useTranslations("paymentsPage");
+  const t = useTranslations("collectionPage");
   const [statusFilter, setStatusFilter] = useState<string>(ALL);
   const [methodFilter, setMethodFilter] = useState<string>(ALL);
   const [query, setQuery] = useState("");
@@ -295,7 +295,7 @@ function PaymentsListInner() {
 }
 
 function PaymentRow({ payment }: { payment: PaymentListItem }) {
-  const t = useTranslations("paymentsPage");
+  const t = useTranslations("collectionPage");
   const due = Number(payment.invoice?.dueAmount ?? 0);
   const hasDue = Number.isFinite(due) && due > 0;
   const purpose = paymentPurpose(payment, t);
@@ -303,7 +303,7 @@ function PaymentRow({ payment }: { payment: PaymentListItem }) {
   return (
     <li>
       <Link
-        href={`/owner/dashboard/payments/${payment.id}`}
+        href={`/owner/dashboard/collection/${payment.id}`}
         className="group relative flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-cream/60 sm:gap-4 sm:px-5 sm:py-4"
       >
         <span
@@ -434,7 +434,7 @@ const INVOICE_TYPE_WORD_KEY: Record<string, string> = {
 
 function paymentPurpose(
   payment: PaymentListItem,
-  t: ReturnType<typeof useTranslations<"paymentsPage">>,
+  t: ReturnType<typeof useTranslations<"collectionPage">>,
 ): string | null {
   const inv = payment.invoice;
   if (!inv) return payment.isAdvance ? t("purposeAdvance") : null;
@@ -503,7 +503,7 @@ function ListShell() {
 }
 
 function EmptyState({ onRecord }: { onRecord: () => void }) {
-  const t = useTranslations("paymentsPage");
+  const t = useTranslations("collectionPage");
   return (
     <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-16 text-center">
       <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-jade-50">

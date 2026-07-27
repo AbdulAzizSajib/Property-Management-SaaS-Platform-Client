@@ -191,7 +191,7 @@
   "leasesPage": {
     "eyebrow": "Tenant agreements",
     "title": "Leases",
-   
+
     "newLease": "New lease",
     "createNewLease": "Create new lease",
     "createNewLeaseDescription": "Connect a tenant to a vacant unit. The unit will become occupied and the first invoice will be generated automatically.",
@@ -202,10 +202,10 @@
     "heroOnRecord": "on record",
     "pendingAwaiting": "{count, plural, one {pending lease awaiting action} other {pending leases awaiting action}}",
     "statActive": "Active",
-  
+
     "statActiveSub": "generating rent",
     "statPending": "Pending",
-   
+
     "statPendingNone": "nothing waiting",
     "statPendingSome": "needs your attention",
     "searchPlaceholder": "Search by tenant, unit, building…",
@@ -224,28 +224,27 @@
     "dueDay": "Due day",
     "emptyTitle": "No leases yet",
     "emptySubtitle": "Create your first lease to start tracking rent and tenant agreements.",
-  
+
     "emptyCreateFirst": "Create your first lease"
   },
   "invoicesPage": {
     "eyebrow": "Billing & collections",
     "title": "Invoices",
-    "subtitle": "সব বিল ও বকেয়া।",
+    "subtitle": "All bills and dues",
     "monthlyBatch": "Monthly batch",
     "generate": "Generate",
     "singleInvoice": "Single invoice",
     "heroLabel": "Outstanding balance",
-    "heroLabelBn": "অপরিশোধিত বকেয়া",
     "heroAllClear": "All clear",
     "heroAcross": "across",
     "heroInvoices": "{count, plural, one {invoice} other {invoices}}",
     "heroCollected": "{amount} collected",
     "overdueCount": "{count, plural, one {invoice overdue} other {invoices overdue}}",
     "statCollected": "Collected",
-    "statCollectedBn": "পরিশোধিত",
+
     "statCollectedSub": "paid to date",
     "statTotal": "Total invoices",
-    "statTotalBn": "মোট বিল",
+
     "statTotalSub": "all statuses",
     "searchPlaceholder": "Search by invoice #, tenant, unit, building…",
     "buildingPlaceholder": "Building",
@@ -267,15 +266,15 @@
     "emptyBanglaHint": "আপনার প্রথম বিল তৈরি করুন",
     "generateInvoice": "Generate invoice"
   },
-  "paymentsPage": {
+  "collectionPage": {
     "eyebrow": "Money in",
-    "title": "Payments",
-    "subtitle": "সব রিসিভড পেমেন্ট।",
-    "recordPayment": "Record payment",
+    "title": "Collection",
+    "subtitle": "সব প্রাপ্ত কালেকশন।",
+    "recordPayment": "Record collection",
     "heroLabel": "Total collected",
     "heroLabelBn": "মোট আদায়",
     "heroAcross": "across",
-    "heroPayments": "{count, plural, one {payment} other {payments}}",
+    "heroPayments": "{count, plural, one {collection} other {collections}}",
     "statAdvances": "Advances",
     "statAdvancesBn": "অগ্রিম",
     "statAdvancesSub": "held against future",
@@ -290,9 +289,9 @@
     "resultCount": "{count, plural, one {result} other {results}}",
     "suffix": "· {label}",
     "clearFilters": "Clear filters",
-    "errorTitle": "Couldn't load payments",
+    "errorTitle": "Couldn't load collections",
     "errorFallback": "Please try again.",
-    "noMatch": "No payments match your filters.",
+    "noMatch": "No collections match your filters.",
     "advance": "Advance",
     "forPurpose": "for {purpose}",
     "stillDue": "{amount} still due",
@@ -304,9 +303,9 @@
     "purposeUtility": "utility bill",
     "purposeOther": "charges",
     "purposeMonthWord": "{month} {word}",
-    "emptyTitle": "No payments yet",
-    "emptySubtitle": "Record a payment against an outstanding invoice — bKash, Nagad, cash, or bank transfer.",
-    "emptyBanglaHint": "প্রথম পেমেন্ট রেকর্ড করুন"
+    "emptyTitle": "No collections yet",
+    "emptySubtitle": "Record a collection against an outstanding invoice — bKash, Nagad, cash, or bank transfer.",
+    "emptyBanglaHint": "প্রথম কালেকশন রেকর্ড করুন"
   },
   "expensesPage": {
     "eyebrow": "Money out",

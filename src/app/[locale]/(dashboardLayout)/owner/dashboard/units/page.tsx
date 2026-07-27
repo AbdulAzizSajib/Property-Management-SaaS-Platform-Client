@@ -49,7 +49,7 @@ import { Link } from "@/src/i18n/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { useState } from "react";
 
-const ALL = "__ALL__";
+const ALL = "All";
 
 export default function UnitsListPage() {
   const t = useTranslations("unitsPage");

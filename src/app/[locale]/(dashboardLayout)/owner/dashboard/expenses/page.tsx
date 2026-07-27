@@ -45,7 +45,7 @@ import { Link } from "@/src/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Suspense, useMemo, useState } from "react";
 
-const ALL = "__ALL__";
+const ALL = "All";
 
 export default function ExpensesListPage() {
     return (

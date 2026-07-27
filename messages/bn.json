@@ -194,22 +194,22 @@
   "leasesPage": {
     "eyebrow": "ভাড়াটিয়া চুক্তি",
     "title": "লিজ",
-   
+
     "newLease": "নতুন লিজ",
     "createNewLease": "নতুন লিজ তৈরি করুন",
     "createNewLeaseDescription": "একটি ভাড়াটিয়াকে খালি ইউনিটের সাথে যুক্ত করুন। ইউনিটটি ভাড়া হয়ে যাবে এবং প্রথম বিল স্বয়ংক্রিয়ভাবে তৈরি হবে।",
     "createLease": "লিজ তৈরি করুন",
     "heroLabel": "সক্রিয় লিজ থেকে মাসিক ভাড়া",
-  
+
     "heroFrom": "থেকে",
     "heroActiveLeases": "{count} টি সক্রিয় লিজ",
     "heroOnRecord": "রেকর্ডে",
     "pendingAwaiting": "{count} টি লিজ অপেক্ষমান, ব্যবস্থা প্রয়োজন",
     "statActive": "সক্রিয়",
-    
+
     "statActiveSub": "ভাড়া তৈরি করছে",
     "statPending": "অপেক্ষমান",
-    
+
     "statPendingNone": "কিছু অপেক্ষমান নেই",
     "statPendingSome": "আপনার মনোযোগ প্রয়োজন",
     "searchPlaceholder": "ভাড়াটিয়া, ইউনিট, বিল্ডিং দিয়ে খুঁজুন…",
@@ -228,7 +228,7 @@
     "dueDay": "নির্ধারিত দিন",
     "emptyTitle": "এখনো কোনো লিজ নেই",
     "emptySubtitle": "ভাড়া ও ভাড়াটিয়া চুক্তি ট্র্যাক করা শুরু করতে আপনার প্রথম লিজ তৈরি করুন।",
-   
+
     "emptyCreateFirst": "আপনার প্রথম লিজ তৈরি করুন"
   },
   "invoicesPage": {
@@ -239,17 +239,16 @@
     "generate": "তৈরি করুন",
     "singleInvoice": "একক বিল",
     "heroLabel": "অপরিশোধিত বকেয়া",
-    "heroLabelBn": "অপরিশোধিত বকেয়া",
     "heroAllClear": "সব পরিশোধিত",
     "heroAcross": "মোট",
     "heroInvoices": "{count} টি বিল",
     "heroCollected": "{amount} আদায় হয়েছে",
     "overdueCount": "{count} টি বিল মেয়াদোত্তীর্ণ",
     "statCollected": "পরিশোধিত",
-    "statCollectedBn": "পরিশোধিত",
+
     "statCollectedSub": "এ পর্যন্ত পরিশোধিত",
     "statTotal": "মোট বিল",
-    "statTotalBn": "মোট বিল",
+
     "statTotalSub": "সব অবস্থা",
     "searchPlaceholder": "বিল #, ভাড়াটিয়া, ইউনিট, বিল্ডিং দিয়ে খুঁজুন…",
     "buildingPlaceholder": "বিল্ডিং",
@@ -271,15 +270,15 @@
     "emptyBanglaHint": "আপনার প্রথম বিল তৈরি করুন",
     "generateInvoice": "বিল তৈরি করুন"
   },
-  "paymentsPage": {
+  "collectionPage": {
     "eyebrow": "আয়",
-    "title": "পেমেন্ট",
-    "subtitle": "সব রিসিভড পেমেন্ট।",
-    "recordPayment": "পেমেন্ট রেকর্ড করুন",
+    "title": "আদায়",
+    "subtitle": "সব প্রাপ্ত আদায়।",
+    "recordPayment": "আদায় রেকর্ড করুন",
     "heroLabel": "মোট আদায়",
     "heroLabelBn": "মোট আদায়",
     "heroAcross": "মোট",
-    "heroPayments": "{count} টি পেমেন্ট",
+    "heroPayments": "{count} টি আদায়",
     "statAdvances": "অগ্রিম",
     "statAdvancesBn": "অগ্রিম",
     "statAdvancesSub": "ভবিষ্যতের জন্য রাখা",
@@ -294,9 +293,9 @@
     "resultCount": "টি ফলাফল",
     "suffix": "· {label}",
     "clearFilters": "ফিল্টার মুছুন",
-    "errorTitle": "পেমেন্ট লোড করা যায়নি",
+    "errorTitle": "আদায় লোড করা যায়নি",
     "errorFallback": "আবার চেষ্টা করুন।",
-    "noMatch": "এই ফিল্টারের সাথে কোনো পেমেন্ট মেলেনি।",
+    "noMatch": "এই ফিল্টারের সাথে কোনো আদায় মেলেনি।",
     "advance": "অগ্রিম",
     "forPurpose": "{purpose} এর জন্য",
     "stillDue": "{amount} এখনো বকেয়া",
@@ -308,9 +307,9 @@
     "purposeUtility": "ইউটিলিটি বিল",
     "purposeOther": "অন্যান্য চার্জ",
     "purposeMonthWord": "{month} {word}",
-    "emptyTitle": "এখনো কোনো পেমেন্ট নেই",
-    "emptySubtitle": "একটি অপরিশোধিত বিলের বিপরীতে পেমেন্ট রেকর্ড করুন — বিকাশ, নগদ, ক্যাশ বা ব্যাংক ট্রান্সফার।",
-    "emptyBanglaHint": "প্রথম পেমেন্ট রেকর্ড করুন"
+    "emptyTitle": "এখনো কোনো আদায় নেই",
+    "emptySubtitle": "একটি অপরিশোধিত বিলের বিপরীতে আদায় রেকর্ড করুন — বিকাশ, নগদ, ক্যাশ বা ব্যাংক ট্রান্সফার।",
+    "emptyBanglaHint": "প্রথম আদায় রেকর্ড করুন"
   },
   "expensesPage": {
     "eyebrow": "ব্যয়",

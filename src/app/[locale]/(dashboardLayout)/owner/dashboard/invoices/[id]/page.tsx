@@ -479,7 +479,7 @@ export default function InvoiceDetailPage() {
                                 </p>
                                 {hasDue && (
                                     <Link
-                                        href={`/owner/dashboard/payments?invoiceId=${inv.id}&record=1`}
+                                        href={`/owner/dashboard/collection?invoiceId=${inv.id}&record=1`}
                                         className="mt-3 inline-flex items-center gap-1 text-[12.5px] font-semibold text-jade-900 transition-colors hover:text-coral-600"
                                     >
                                         Record a payment →

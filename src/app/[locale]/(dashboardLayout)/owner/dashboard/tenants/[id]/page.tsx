@@ -105,7 +105,7 @@ export default function TenantDetailPage() {
     );
   }
 
-  const initials = tenant.name
+  const initials = (tenant.name ?? "")
     .split(" ")
     .filter(Boolean)
     .map((p) => p[0])
@@ -372,7 +372,7 @@ export default function TenantDetailPage() {
               <div className="mt-4 rounded-[10px] border border-rule-soft bg-cream/60 p-3">
                 <div className="flex items-center gap-2">
                   <span className="inline-flex size-8 items-center justify-center rounded-full bg-jade-50 text-[11.5px] font-bold text-jade-800">
-                    {tenant.user.name
+                    {(tenant.user.name ?? "")
                       .split(" ")
                       .filter(Boolean)
                       .map((p) => p[0])

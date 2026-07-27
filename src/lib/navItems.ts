@@ -126,8 +126,8 @@ export const ownerNavItems: NavSection[] = [
         icon: "Receipt",
       },
       {
-        title: "Payments",
-        href: "/owner/dashboard/payments",
+        title: "Collection",
+        href: "/owner/dashboard/collection",
         icon: "CreditCard",
       },
       {
