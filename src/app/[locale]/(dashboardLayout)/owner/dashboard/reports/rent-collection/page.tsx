@@ -45,9 +45,6 @@ export default function RentCollectionReportPage() {
           <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
             Rent collection
           </h1>
-          <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-            ভাড়াটিয়াভেদে বিল, পেমেন্ট ও বকেয়া
-          </p>
         </header>
 
         {/* Date range */}

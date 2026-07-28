@@ -278,9 +278,6 @@ export function GenerateInvoiceDialog({
               <p className="text-[12.5px] font-semibold text-coral-600">
                 Carry previous due into this bill?
               </p>
-              <p className="font-bangla mt-0.5 text-[11px] text-ink-soft/80">
-                যে বকেয়া যোগ করতে চান বেছে নিন — না করলে শুধু এই মাসের ভাড়া।
-              </p>
               <ul className="mt-2 space-y-1.5">
                 {carryCandidates.map((c) => {
                   const checked = carryIds.includes(c.id);
@@ -341,12 +338,7 @@ export function GenerateInvoiceDialog({
                     <span>+ {formatMoney(selectedDue)}</span>
                   </div>
                   <div className="mt-1.5 flex items-baseline justify-between border-t border-jade-100 pt-1.5 text-[13.5px] font-bold tabular-nums text-jade-950">
-                    <span>
-                      Total payable
-                      <span className="font-bangla ml-1.5 text-[10.5px] font-normal text-ink-soft">
-                        সর্বমোট
-                      </span>
-                    </span>
+                    <span>Total payable</span>
                     <span>{formatMoney(previewTotal + selectedDue)}</span>
                   </div>
                 </>

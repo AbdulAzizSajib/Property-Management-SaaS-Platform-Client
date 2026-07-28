@@ -140,9 +140,6 @@ function ComplaintsListInner() {
             <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
               Complaints
             </h1>
-            <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-              অভিযোগ ও মেরামতের অনুরোধ।
-            </p>
           </div>
 
           <button
@@ -191,14 +188,6 @@ function ComplaintsListInner() {
               )}
             >
               Needs attention
-            </p>
-            <p
-              className={cn(
-                "font-bangla relative mt-0.5 text-[11.5px]",
-                hasUnresolved ? "text-paper/45" : "text-ink-soft/65",
-              )}
-            >
-              মনোযোগ প্রয়োজন
             </p>
             <p
               className={cn(
@@ -257,14 +246,12 @@ function ComplaintsListInner() {
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
             <MiniStat
               label="Resolved"
-              bn="সমাধান হয়েছে"
               value={fmtNum(resolvedCount)}
               sub="resolved or closed"
               tone="good"
             />
             <MiniStat
               label="Total"
-              bn="মোট"
               value={fmtNum(complaints?.length ?? 0)}
               sub="all statuses"
               tone="neutral"
@@ -528,13 +515,11 @@ function ComplaintRow({ complaint }: { complaint: ComplaintListItem }) {
 
 function MiniStat({
   label,
-  bn,
   value,
   sub,
   tone,
 }: {
   label: string;
-  bn: string;
   value: string;
   sub: string;
   tone: "good" | "warn" | "neutral";
@@ -552,7 +537,6 @@ function MiniStat({
         <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
           {label}
         </p>
-        <p className="font-bangla text-[10.5px] text-ink-soft/65">{bn}</p>
       </div>
       <p
         className={cn(
@@ -589,9 +573,6 @@ function EmptyState({ onFile }: { onFile: () => void }) {
       <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
         Log maintenance issues, hazards, or tenant complaints so they can be
         tracked, assigned, and resolved.
-      </p>
-      <p className="font-bangla mt-0.5 text-[12px] text-ink-soft/75">
-        প্রথম অভিযোগ যুক্ত করুন
       </p>
       <div className="mt-5 flex items-center justify-center">
         <button

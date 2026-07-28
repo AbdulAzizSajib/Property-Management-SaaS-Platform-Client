@@ -70,9 +70,6 @@ export function RentIncreasesPanel({
                     <h3 className="text-[14.5px] font-bold text-jade-950">
                         Rent increases
                     </h3>
-                    <p className="font-bangla text-[11px] text-ink-soft">
-                        ভাড়া বৃদ্ধির ইতিহাস
-                    </p>
                 </div>
                 <Button
                     size="sm"

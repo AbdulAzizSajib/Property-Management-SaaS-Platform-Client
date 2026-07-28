@@ -70,9 +70,6 @@ export function ChangePasswordDialog({ open, onOpenChange }: Props) {
                         <h2 className="text-[18px] font-bold tracking-[-0.01em] text-jade-950">
                             Change password
                         </h2>
-                        <p className="font-bangla mt-0.5 text-[12px] text-ink-soft">
-                            পাসওয়ার্ড পরিবর্তন করুন
-                        </p>
                     </div>
 
                     <div className="space-y-3 px-5 py-5">

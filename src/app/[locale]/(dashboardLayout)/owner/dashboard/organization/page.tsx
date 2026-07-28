@@ -144,9 +144,6 @@ export default function OrganizationPage() {
                         <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
                             Organization
                         </h1>
-                        <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-                            প্রতিষ্ঠানের তথ্য — বিল ও যোগাযোগে এই তথ্যই ব্যবহার হবে।
-                        </p>
                     </div>
                 </header>
 
@@ -231,9 +228,6 @@ export default function OrganizationPage() {
                                 <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
                                     Current plan
                                 </p>
-                                <p className="font-bangla text-[10.5px] text-ink-soft/65">
-                                    বর্তমান প্ল্যান
-                                </p>
                                 <p className="mt-1 text-[15px] font-bold text-jade-950">
                                     {org.subscription.plan.replace("_", " ")}
                                 </p>
@@ -253,9 +247,6 @@ export default function OrganizationPage() {
                     <div className="border-b border-rule-soft px-5 py-4 sm:px-6">
                         <p className="font-serif text-[12.5px] italic text-coral-600/85">
                             Company details
-                        </p>
-                        <p className="font-bangla text-[11.5px] text-ink-soft/75">
-                            ইনভয়েস ও ভাড়াটিয়ার যোগাযোগে এই তথ্য দেখানো হবে।
                         </p>
                     </div>
 

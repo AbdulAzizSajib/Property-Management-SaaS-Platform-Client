@@ -120,13 +120,13 @@ function ExpensesListInner() {
                 {/* Heading */}
                 <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                     <div>
-                        <p className="font-serif text-[13px] italic text-coral-600/85">
+                        <p className="font-serif text-[13px]  text-coral-600/85">
                             {t("eyebrow")}
                         </p>
                         <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
                             {t("title")}
                         </h1>
-                        <p className="font-bangla mt-1 text-[13px] text-ink-soft">
+                        <p className="mt-1 text-[13px] text-ink-soft">
                             {t("subtitle")}
                         </p>
                     </div>
@@ -159,12 +159,10 @@ function ExpensesListInner() {
                             }}
                         />
 
-                        <p className="relative font-serif text-[13px] italic text-paper/60">
+                        <p className="relative font-serif text-[13px]  text-paper/60">
                             {t("heroLabel")}
                         </p>
-                        <p className="font-bangla relative mt-0.5 text-[11.5px] text-paper/45">
-                            {t("heroLabelBn")}
-                        </p>
+                      
                         <p className="relative mt-3 text-[40px] font-bold leading-none tracking-[-0.025em] tabular-nums text-coral-400 sm:text-[46px]">
                             {formatMoney(totalSpent)}
                         </p>
@@ -191,14 +189,14 @@ function ExpensesListInner() {
                     <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
                         <MiniStat
                             label={t("statThisMonth")}
-                            bn={t("statThisMonthBn")}
+                            
                             value={formatMoney(thisMonthSpent)}
                             sub={t("statThisMonthSub")}
                             tone={thisMonthSpent > 0 ? "warn" : "neutral"}
                         />
                         <MiniStat
                             label={t("statTotal")}
-                            bn={t("statTotalBn")}
+                          
                             value={fmtNum(expenses?.length ?? 0)}
                             sub={t("statTotalSub")}
                             tone="neutral"
@@ -437,13 +435,13 @@ function ExpenseRow({ expense }: { expense: ExpenseListItem }) {
 
 function MiniStat({
     label,
-    bn,
+   
     value,
     sub,
     tone,
 }: {
     label: string;
-    bn: string;
+   
     value: string;
     sub: string;
     tone: "good" | "warn" | "neutral";
@@ -461,9 +459,7 @@ function MiniStat({
                 <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
                     {label}
                 </p>
-                <p className="font-bangla text-[10.5px] text-ink-soft/65">
-                    {bn}
-                </p>
+               
             </div>
             <p
                 className={cn(
@@ -504,9 +500,7 @@ function EmptyState({ onRecord }: { onRecord: () => void }) {
             <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
                 {t("emptySubtitle")}
             </p>
-            <p className="font-bangla mt-0.5 text-[12px] text-ink-soft/75">
-                {t("emptyBanglaHint")}
-            </p>
+           
             <div className="mt-5 flex items-center justify-center">
                 <button
                     type="button"

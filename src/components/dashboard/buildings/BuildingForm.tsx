@@ -135,9 +135,6 @@ export function BuildingForm({
                     return (
                       <span className="inline-flex items-center gap-2">
                         <span>{opt.label}</span>
-                        <span className="font-bangla text-[11.5px] text-ink-soft">
-                          · {opt.labelBn}
-                        </span>
                       </span>
                     );
                   }}
@@ -148,9 +145,6 @@ export function BuildingForm({
                   <SelectItem key={opt.value} value={opt.value}>
                     <span className="inline-flex items-center gap-2">
                       <span>{opt.label}</span>
-                      <span className="font-bangla text-[11.5px] text-ink-soft">
-                        · {opt.labelBn}
-                      </span>
                     </span>
                   </SelectItem>
                 ))}
@@ -259,12 +253,10 @@ export function BuildingForm({
 function Section({
   icon: Icon,
   title,
-  subtitle,
   children,
 }: {
   icon: React.ComponentType<{ size?: number; className?: string }>;
   title: string;
-  subtitle?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -276,11 +268,6 @@ function Section({
         <h3 className="text-[12px] font-semibold uppercase tracking-[0.08em] text-ink">
           {title}
         </h3>
-        {subtitle && (
-          <span className="font-bangla text-[12px] text-ink-soft">
-            · {subtitle}
-          </span>
-        )}
       </div>
       {children}
     </section>

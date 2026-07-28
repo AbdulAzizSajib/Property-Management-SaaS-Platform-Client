@@ -24,13 +24,9 @@ function formatTimestamp(iso: string): string {
 
 interface Props {
   title?: string;
-  bnTitle?: string;
 }
 
-export function ActivityLogList({
-  title = "Activity log",
-  bnTitle = "অডিট ট্রেইল",
-}: Props) {
+export function ActivityLogList({ title = "Activity log" }: Props) {
   const [entityType, setEntityType] = useState("");
   const [action, setAction] = useState("");
 
@@ -55,9 +51,6 @@ export function ActivityLogList({
           <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
             {title}
           </h1>
-          <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-            {bnTitle}
-          </p>
         </header>
 
         {/* Filters */}

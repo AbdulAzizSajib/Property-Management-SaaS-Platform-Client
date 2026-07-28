@@ -182,7 +182,7 @@ export function LeaseForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       {/* Parties */}
-      <FormSection title="Parties" bn="পক্ষসমূহ">
+      <FormSection title="Parties">
         <Field label="Building" htmlFor="l-building" required>
           <Select
             value={buildingId}
@@ -305,7 +305,7 @@ export function LeaseForm({
       </FormSection>
 
       {/* Term */}
-      <FormSection title="Term" bn="মেয়াদ">
+      <FormSection title="Term">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Field label="Start date" htmlFor="l-start" required>
             <Input
@@ -349,7 +349,7 @@ export function LeaseForm({
       </FormSection>
 
       {/* Pricing */}
-      <FormSection title="Pricing" bn="ভাড়া">
+      <FormSection title="Pricing">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Field
             label="Monthly rent"
@@ -431,9 +431,6 @@ export function LeaseForm({
           <div className="flex items-center gap-2">
             <Sparkles size={13} className="text-jade-700" />
             <span className="text-[12.5px] text-ink">First invoice total</span>
-            <span className="font-bangla text-[10.5px] text-ink-soft/65">
-              · প্রথম ইনভয়েস
-            </span>
           </div>
           <span className="text-[15px] font-bold text-jade-950 tabular-nums">
             ৳ {liveMonthlyTotal.toLocaleString()}
@@ -464,10 +461,6 @@ export function LeaseForm({
             )}{" "}
             and generate the first month&apos;s invoice automatically.
           </p>
-          <p className="font-bangla mt-1 text-[11.5px] text-ink-soft">
-            ইউনিট &quot;ভাড়া&quot; হিসেবে চিহ্নিত হবে ও প্রথম মাসের ইনভয়েস
-            তৈরি হবে।
-          </p>
         </div>
       </div>
 
@@ -490,11 +483,9 @@ export function LeaseForm({
  */
 function FormSection({
   title,
-  bn,
   children,
 }: {
   title: string;
-  bn: string;
   children: React.ReactNode;
 }) {
   return (
@@ -503,9 +494,6 @@ function FormSection({
         <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-soft">
           {title}
         </h3>
-        <span className="font-bangla text-[10.5px] text-ink-soft/65">
-          · {bn}
-        </span>
       </div>
       {children}
     </section>

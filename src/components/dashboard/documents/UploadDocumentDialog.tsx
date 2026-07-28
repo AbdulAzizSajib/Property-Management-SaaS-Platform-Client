@@ -260,9 +260,6 @@ export function UploadDocumentDialog({
                         <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
                             Link to (optional)
                         </p>
-                        <p className="font-bangla text-[11px] text-ink-soft/65">
-                            সংযুক্ত করুন (ঐচ্ছিক)
-                        </p>
 
                         <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
                             <Field label="Tenant" htmlFor="d-tenant">

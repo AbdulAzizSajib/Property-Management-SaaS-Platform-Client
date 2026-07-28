@@ -29,7 +29,7 @@ export function PageHeader({ name }: { name: string }) {
           {t("welcomeBack", { name: me?.name ?? "" })}
           {/* Welcome back, {me?.name} */}
         </h1>
-        <p className="mt-1 font-bangla text-[14px] text-ink-soft">
+        <p className="mt-1 text-[14px] text-ink-soft">
           {/* What's happening today, at a glance. */}
           {t("glance")}
         </p>

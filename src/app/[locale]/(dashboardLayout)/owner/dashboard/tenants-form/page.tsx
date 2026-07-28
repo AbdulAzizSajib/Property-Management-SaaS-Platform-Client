@@ -104,7 +104,7 @@ export default function TenantFormsPage() {
                         <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
                             {t("title")}
                         </h1>
-                        <p className="font-bangla mt-1 text-[13px] text-ink-soft">
+                        <p className="mt-1 text-[13px] text-ink-soft">
                             {t("subtitle")}
                         </p>
                     </div>
@@ -152,17 +152,14 @@ export default function TenantFormsPage() {
                 <section className="flex flex-wrap items-baseline gap-x-7 gap-y-2 rounded-[14px] border border-rule-soft bg-paper px-5 py-3.5">
                     <SummaryStat
                         label={t("summaryForms")}
-                        bn={t("summaryFormsBn")}
                         value={fmtNum(totalCount)}
                     />
                     <SummaryStat
                         label={t("summarySubmitted")}
-                        bn={t("summarySubmittedBn")}
                         value={fmtNum(submittedCount)}
                     />
                     <SummaryStat
                         label={t("summaryPending")}
-                        bn={t("summaryPendingBn")}
                         value={fmtNum(pendingCount)}
                     />
                     {totalCount > 0 && (
@@ -551,11 +548,9 @@ function FormCard({
 
 function SummaryStat({
     label,
-    bn,
     value,
 }: {
     label: string;
-    bn: string;
     value: string;
 }) {
     return (
@@ -566,9 +561,6 @@ function SummaryStat({
                     {value}
                 </span>
                 <span className="text-[12px] text-ink-soft">{label}</span>
-                <span className="font-bangla text-[10.5px] text-ink-soft/65">
-                    · {bn}
-                </span>
             </div>
         </div>
     );
@@ -586,9 +578,6 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
             </h2>
             <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
                 {t("emptySubtitle")}
-            </p>
-            <p className="font-bangla mt-0.5 text-[12px] text-ink-soft/75">
-                {t("emptyBanglaHint")}
             </p>
             <div className="mt-5">
                 <button

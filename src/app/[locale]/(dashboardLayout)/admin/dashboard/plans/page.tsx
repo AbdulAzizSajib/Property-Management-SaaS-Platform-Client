@@ -70,9 +70,6 @@ export default function AdminPlansPage() {
             <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
               Plans
             </h1>
-            <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-              দাম, সীমা ও ফিচার সম্পাদনা করুন।
-            </p>
           </div>
         </header>
 

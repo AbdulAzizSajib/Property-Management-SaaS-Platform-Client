@@ -162,9 +162,6 @@ export default function PaymentDetailPage() {
                             <p className="font-serif text-[13px] italic text-coral-600/85">
                                 Amount {isPaid ? "received" : "recorded"}
                             </p>
-                            <p className="font-bangla mt-0.5 text-[11.5px] text-ink-soft/70">
-                                {isPaid ? "প্রাপ্ত পরিমাণ" : "রেকর্ডকৃত পরিমাণ"}
-                            </p>
 
                             <div className="mt-3 flex items-center gap-3">
                                 <p
@@ -203,7 +200,7 @@ export default function PaymentDetailPage() {
                         </div>
 
                         <div className="grid grid-cols-2 divide-x divide-rule-soft border-t border-rule-soft sm:grid-cols-1 sm:divide-x-0 sm:divide-y sm:border-l sm:border-t-0">
-                            <MetaBlock label="Method" bn="মাধ্যম">
+                            <MetaBlock label="Method">
                                 <span
                                     className={cn(
                                         "inline-block rounded-md border px-2 py-0.5 text-[12px] font-semibold",
@@ -214,13 +211,13 @@ export default function PaymentDetailPage() {
                                 </span>
                             </MetaBlock>
                             {p.transactionId ? (
-                                <MetaBlock label="Transaction" bn="লেনদেন">
+                                <MetaBlock label="Transaction">
                                     <span className="font-mono text-[12.5px] font-semibold text-jade-950">
                                         {p.transactionId}
                                     </span>
                                 </MetaBlock>
                             ) : (
-                                <MetaBlock label="Recorded" bn="রেকর্ড">
+                                <MetaBlock label="Recorded">
                                     <span className="text-[12.5px] font-semibold text-jade-950 tabular-nums">
                                         {new Date(
                                             p.createdAt,
@@ -234,7 +231,7 @@ export default function PaymentDetailPage() {
                     {/* From + Applied to */}
                     <div className="grid grid-cols-1 border-b border-rule-soft sm:grid-cols-2 sm:divide-x sm:divide-rule-soft">
                         <PartyBlock
-                            eyebrow="From · প্রেরক"
+                            eyebrow="From"
                             href={`/owner/dashboard/tenants/${p.tenant.id}`}
                             heading={p.tenant.name}
                         >
@@ -273,7 +270,7 @@ export default function PaymentDetailPage() {
 
                         {p.invoice ? (
                             <PartyBlock
-                                eyebrow="Applied to · জমা যেখানে"
+                                eyebrow="Applied to"
                                 href={`/owner/dashboard/invoices/${p.invoice.id}`}
                                 heading={p.invoice.invoiceNumber}
                                 headingMono
@@ -314,7 +311,7 @@ export default function PaymentDetailPage() {
                             </PartyBlock>
                         ) : (
                             <PartyBlock
-                                eyebrow="Applied to · জমা যেখানে"
+                                eyebrow="Applied to"
                                 heading="Unallocated"
                                 headingMono={false}
                             >
@@ -418,9 +415,6 @@ export default function PaymentDetailPage() {
                             <p className="font-serif italic text-coral-600/85">
                                 Thank you for your payment.
                             </p>
-                            <p className="font-bangla mt-0.5 text-ink-soft/70">
-                                আপনার পেমেন্টের জন্য ধন্যবাদ।
-                            </p>
                         </div>
                     )}
                 </div>
@@ -475,11 +469,9 @@ export default function PaymentDetailPage() {
 
 function MetaBlock({
     label,
-    bn,
     children,
 }: {
     label: string;
-    bn: string;
     children: React.ReactNode;
 }) {
     return (
@@ -487,9 +479,6 @@ function MetaBlock({
             <div className="flex items-baseline justify-between gap-2 sm:justify-start sm:gap-1.5">
                 <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
                     {label}
-                </p>
-                <p className="font-bangla text-[10.5px] text-ink-soft/65">
-                    {bn}
                 </p>
             </div>
             <div className="mt-1">{children}</div>

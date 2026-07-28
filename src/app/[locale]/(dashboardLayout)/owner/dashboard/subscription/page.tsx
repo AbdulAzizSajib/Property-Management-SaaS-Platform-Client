@@ -174,9 +174,6 @@ export default function SubscriptionPage() {
             <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
               Subscription
             </h1>
-            <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-              আপনার বর্তমান প্ল্যান, ব্যবহারের সীমা ও উপলব্ধ আপগ্রেড।
-            </p>
           </div>
           {/* Cancel / reactivate */}
           {sub.status === "CANCELLED" || sub.status === "EXPIRED" ? (
@@ -234,9 +231,6 @@ export default function SubscriptionPage() {
                 </span>
                 . Your plan activates once an admin verifies the payment.
               </p>
-              <p className="font-bangla mt-0.5 text-[11.5px] text-coral-600/70">
-                অ্যাডমিন যাচাই করার পর আপনার প্ল্যান চালু হবে।
-              </p>
             </div>
           </div>
         )}
@@ -283,28 +277,24 @@ export default function SubscriptionPage() {
               <UsageStat
                 icon={Building}
                 label="Buildings"
-                bn="বিল্ডিং"
                 used={usage?.buildings}
                 limit={sub.buildingLimit}
               />
               <UsageStat
                 icon={Layers}
                 label="Floors"
-                bn="ফ্লোর"
                 used={usage?.floors}
                 limit={sub.floorLimit}
               />
               <UsageStat
                 icon={DoorOpen}
                 label="Units"
-                bn="ইউনিট"
                 used={usage?.units}
                 limit={sub.unitLimit}
               />
               <UsageStat
                 icon={Users}
                 label="Tenants"
-                bn="ভাড়াটিয়া"
                 used={usage?.tenants}
                 limit={sub.tenantLimit}
               />
@@ -356,9 +346,6 @@ export default function SubscriptionPage() {
             <div>
               <p className="font-serif text-[12.5px] italic text-coral-600/85">
                 Change your plan
-              </p>
-              <p className="font-bangla text-[11.5px] text-ink-soft/75 mt-0.5">
-                আপনার প্ল্যান পরিবর্তন করুন
               </p>
               <p className="mt-1 text-[12.5px] text-ink-soft">
                 Switching takes effect immediately. Limits and pricing update at
@@ -436,13 +423,11 @@ function planBlockedReason(
 function UsageStat({
   icon: Icon,
   label,
-  bn,
   used,
   limit,
 }: {
   icon: React.ComponentType<{ size?: number; className?: string }>;
   label: string;
-  bn: string;
   used?: number;
   limit: number;
 }) {
@@ -456,7 +441,6 @@ function UsageStat({
           <Icon size={11} className="text-ink-soft/70" />
           {label}
         </div>
-        <p className="font-bangla text-[10px] text-ink-soft/65">{bn}</p>
       </div>
       <p className="mt-1 text-[16px] font-bold text-jade-950 tabular-nums">
         {used ?? 0}{" "}

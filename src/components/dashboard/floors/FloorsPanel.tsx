@@ -244,11 +244,6 @@ function FloorRow({
                 </p>
                 <p className="text-[11px] text-ink-soft">
                     Floor #{fmtNum(floor.floorNumber)}
-                    {isGround && (
-                        <span className="font-bangla ml-1.5 text-ink-soft/75">
-                            · নিচতলা
-                        </span>
-                    )}
                 </p>
             </div>
 

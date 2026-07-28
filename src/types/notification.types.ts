@@ -32,5 +32,11 @@ export interface AppNotification {
 
 export interface NotificationFilters {
     status?: NotificationStatus;
+    type?: string;
+    channel?: string;
+    searchTerm?: string;
+    page?: number;
     limit?: number;
+    sortBy?: string;
+    sortOrder?: "asc" | "desc";
 }

@@ -205,25 +205,21 @@ export default function LeaseDetailPage() {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <MoneyTile
             label={t("tileMonthlyRent")}
-            bn={t("tileMonthlyRentBn")}
             value={formatMoney(lease.monthlyRent)}
             sub={t("tileMonthlyRentSub")}
           />
           <MoneyTile
             label={t("tileTotalMonthly")}
-            bn={t("tileTotalMonthlyBn")}
             value={formatMoney(totalMonthly)}
             sub={t("tileTotalMonthlySub")}
           />
           <MoneyTile
             label={t("tileDeposit")}
-            bn={t("tileDepositBn")}
             value={formatMoney(lease.securityDeposit)}
             sub={t("tileDepositSub")}
           />
           <MoneyTile
             label={t("tileOutstanding")}
-            bn={t("tileOutstandingBn")}
             value={formatMoney(dueTotal)}
             sub={
               paidTotal > 0
@@ -359,9 +355,6 @@ export default function LeaseDetailPage() {
               <h3 className="mt-0.5 text-[16px] font-bold tracking-[-0.015em] text-jade-950">
                 {t("billingBreakdown")}
               </h3>
-              <p className="font-bangla mt-0.5 text-[11.5px] text-ink-soft/70">
-                {t("billingBreakdownBn")}
-              </p>
             </div>
           </div>
 
@@ -655,13 +648,11 @@ export default function LeaseDetailPage() {
 
 function MoneyTile({
   label,
-  bn,
   value,
   sub,
   tone = "neutral",
 }: {
   label: string;
-  bn: string;
   value: string;
   sub: string;
   tone?: "neutral" | "warn" | "good";
@@ -683,14 +674,6 @@ function MoneyTile({
           )}
         >
           {label}
-        </p>
-        <p
-          className={cn(
-            "font-bangla text-[10.5px]",
-            warn ? "text-coral-600/85" : "text-ink-soft/65",
-          )}
-        >
-          {bn}
         </p>
       </div>
       <p

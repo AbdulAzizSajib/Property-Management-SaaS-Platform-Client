@@ -126,9 +126,6 @@ export function GenerateMonthlyBatchDialog({
                 lease will get one invoice for the month. Leases that already
                 have an invoice for that month are skipped — safe to re-run.
               </p>
-              <p className="font-bangla mt-1 text-[11.5px] text-ink-soft">
-                প্রতিটি সক্রিয় লিজের জন্য একটি করে বিল তৈরি হবে।
-              </p>
             </div>
           </div>
 
@@ -196,9 +193,6 @@ export function GenerateMonthlyBatchDialog({
                 Each tenant&apos;s outstanding due is rolled into their new
                 invoice (older invoices marked carried forward). Uncheck to bill
                 only this month&apos;s rent.
-              </span>
-              <span className="font-bangla mt-0.5 block text-[11px] text-ink-soft/75">
-                আগের বকেয়া নতুন বিলের সাথে যোগ হবে।
               </span>
             </span>
           </label>

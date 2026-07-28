@@ -133,7 +133,7 @@ export default function ReportsPage() {
             <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
               {t("title")}
             </h1>
-            <p className="font-bangla mt-1 text-[13px] text-ink-soft">
+            <p className="mt-1 text-[13px] text-ink-soft">
               {t("subtitle")}
             </p>
           </div>
@@ -286,14 +286,6 @@ export default function ReportsPage() {
                 </p>
                 <p
                   className={cn(
-                    "font-bangla relative mt-0.5 text-[11.5px]",
-                    isProfit ? "text-paper/45" : "text-ink-soft/65",
-                  )}
-                >
-                  {isProfit ? t("netProfitBn") : t("netLossBn")}
-                </p>
-                <p
-                  className={cn(
                     "relative mt-3 text-[40px] font-bold leading-none tracking-[-0.025em] tabular-nums sm:text-[46px]",
                     isProfit ? "text-jade-300" : "text-coral-600",
                   )}
@@ -344,14 +336,12 @@ export default function ReportsPage() {
               <div className="grid grid-cols-1 gap-3">
                 <SummaryStat
                   label={t("totalIncome")}
-                  bn={t("totalIncomeBn")}
                   value={formatMoney(income)}
                   Icon={TrendingUp}
                   tone="good"
                 />
                 <SummaryStat
                   label={t("totalExpense")}
-                  bn={t("totalExpenseBn")}
                   value={formatMoney(expense)}
                   Icon={TrendingDown}
                   tone="warn"
@@ -365,9 +355,6 @@ export default function ReportsPage() {
                 <div>
                   <p className="font-serif text-[12.5px] italic text-coral-600/85">
                     {t("monthlyBreakdown")}
-                  </p>
-                  <p className="font-bangla text-[11.5px] text-ink-soft/75">
-                    {t("monthlyBreakdownBn")}
                   </p>
                 </div>
                 <div className="hidden items-center gap-3 text-[11px] text-ink-soft sm:flex">
@@ -588,13 +575,11 @@ function MonthlyTable({ monthly }: { monthly: FinancialReportMonthly[] }) {
 
 function SummaryStat({
   label,
-  bn,
   value,
   tone,
   Icon,
 }: {
   label: string;
-  bn: string;
   value: string;
   tone: "good" | "warn";
   Icon: typeof TrendingUp;
@@ -610,7 +595,6 @@ function SummaryStat({
           <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
             {label}
           </p>
-          <p className="font-bangla text-[10.5px] text-ink-soft/65">{bn}</p>
         </div>
         <span
           className={cn(

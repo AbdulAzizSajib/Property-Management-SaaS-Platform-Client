@@ -68,9 +68,6 @@ export function NotificationsBell() {
                         <p className="text-[13px] font-semibold text-jade-950">
                             Notifications
                         </p>
-                        <p className="font-bangla text-[10.5px] text-ink-soft/75">
-                            নোটিফিকেশন
-                        </p>
                     </div>
                     {unreadCount > 0 && (
                         <button
@@ -100,9 +97,6 @@ export function NotificationsBell() {
                         <div className="px-3 py-10 text-center">
                             <p className="text-[12.5px] font-semibold text-ink">
                                 You&apos;re all caught up
-                            </p>
-                            <p className="font-bangla text-[10.5px] text-ink-soft/75">
-                                কোনো নতুন নোটিফিকেশন নেই
                             </p>
                         </div>
                     ) : (

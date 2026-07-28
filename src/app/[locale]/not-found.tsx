@@ -100,11 +100,6 @@ export default function NotFound() {
           Page not found
         </h1>
 
-        {/* Bangla sub */}
-        <p className="font-bangla mt-1.5 text-[16px] text-jade-800">
-          এই পৃষ্ঠাটি খুঁজে পাওয়া যাচ্ছে না
-        </p>
-
         {/* Body */}
         <p className="mx-auto mt-4 max-w-sm text-[14px] leading-[1.6] text-ink-soft">
           The link may be broken, or the page may have moved. Let&apos;s get you

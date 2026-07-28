@@ -282,7 +282,6 @@ export default function UnitDetailPage() {
                             <SpecRow
                                 icon={Bed}
                                 label="Bedrooms"
-                                bn="শোবার ঘর"
                                 value={
                                     unit.bedrooms !== null
                                         ? fmtNum(unit.bedrooms)
@@ -292,7 +291,6 @@ export default function UnitDetailPage() {
                             <SpecRow
                                 icon={Bath}
                                 label="Bathrooms"
-                                bn="বাথরুম"
                                 value={
                                     unit.bathrooms !== null
                                         ? fmtNum(unit.bathrooms)
@@ -302,7 +300,6 @@ export default function UnitDetailPage() {
                             <SpecRow
                                 icon={Ruler}
                                 label="Size"
-                                bn="আয়তন"
                                 value={
                                     unit.sizeSqft !== null
                                         ? `${fmtNum(unit.sizeSqft)} sqft`
@@ -312,7 +309,6 @@ export default function UnitDetailPage() {
                             <SpecRow
                                 icon={DoorOpen}
                                 label="Type"
-                                bn="ধরন"
                                 value={typeLabel(unit.type)}
                             />
                         </ul>
@@ -546,12 +542,10 @@ export default function UnitDetailPage() {
 function SpecRow({
     icon: Icon,
     label,
-    bn,
     value,
 }: {
     icon: React.ComponentType<{ size?: number; className?: string }>;
     label: string;
-    bn: string;
     value: string;
 }) {
     return (
@@ -560,9 +554,6 @@ function SpecRow({
                 <Icon size={14} className="text-ink-soft/60" />
                 <span>
                     <span className="block text-[13px] text-ink">{label}</span>
-                    <span className="font-bangla block text-[10.5px] text-ink-soft/70 leading-tight">
-                        {bn}
-                    </span>
                 </span>
             </span>
             <span className="text-[13.5px] font-semibold text-jade-950 tabular-nums">

@@ -113,9 +113,6 @@ export function RequestPaymentDialog({
                                 {info?.bkashNumber ?? "…"}
                             </span>
                         </div>
-                        <p className="font-bangla mt-1 text-[11px] text-ink-soft/80">
-                            উপরের নম্বরে Send Money করুন, তারপর নিচে TrxID দিন।
-                        </p>
                     </div>
 
                     {/* Step 2 — submit proof */}

@@ -82,7 +82,7 @@ export function FloorForm({
                     required
                     hint={
                         isGround
-                            ? "0 = ground floor (নিচতলা)"
+                            ? "0 = ground floor"
                             : "Use 0 for ground floor"
                     }
                 >

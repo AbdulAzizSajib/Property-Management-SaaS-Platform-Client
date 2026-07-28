@@ -27,7 +27,6 @@ interface UsersTableProps {
   roles?: UserRole[];
   /** Heading override. */
   title?: string;
-  bnTitle?: string;
   /** Slot for the page-level "Add" button. */
   headerAction?: React.ReactNode;
 }
@@ -35,7 +34,6 @@ interface UsersTableProps {
 export function UsersTable({
   roles,
   title = "Users",
-  bnTitle,
   headerAction,
 }: UsersTableProps) {
   const [search, setSearch] = useState("");
@@ -71,11 +69,6 @@ export function UsersTable({
             <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
               {title}
             </h1>
-            {bnTitle && (
-              <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-                {bnTitle}
-              </p>
-            )}
           </div>
           {headerAction}
         </header>

@@ -150,9 +150,6 @@ export function RentAgreementPanel({ leaseId }: { leaseId: string }) {
                 <p className="mt-1.5 text-[13px] font-semibold text-jade-950">
                     No agreement yet
                 </p>
-                <p className="font-bangla text-[11px] text-ink-soft/75">
-                    এই লিজের কোনো এগ্রিমেন্ট নেই
-                </p>
                 <Button
                     size="sm"
                     onClick={() => setDrafting(true)}
@@ -201,7 +198,6 @@ export function RentAgreementPanel({ leaseId }: { leaseId: string }) {
             <div className="grid grid-cols-1 gap-2 border-t border-rule-soft p-3 sm:grid-cols-2">
                 <SignatureRow
                     role="Owner"
-                    bn="মালিক"
                     signed={ownerSigned}
                     signedAt={data.ownerSignedAt}
                     onSign={() => {
@@ -211,7 +207,6 @@ export function RentAgreementPanel({ leaseId }: { leaseId: string }) {
                 />
                 <SignatureRow
                     role="Tenant"
-                    bn="ভাড়াটিয়া"
                     signed={tenantSigned}
                     signedAt={data.tenantSignedAt}
                     onSign={() => {
@@ -276,13 +271,11 @@ export function RentAgreementPanel({ leaseId }: { leaseId: string }) {
 
 function SignatureRow({
     role,
-    bn,
     signed,
     signedAt,
     onSign,
 }: {
     role: string;
-    bn: string;
     signed: boolean;
     signedAt: string | null;
     onSign: () => void;
@@ -291,10 +284,7 @@ function SignatureRow({
         <div className="flex items-center justify-between rounded-md border border-rule-soft bg-paper px-3 py-2">
             <div>
                 <p className="text-[12px] font-semibold text-ink">
-                    {role}{" "}
-                    <span className="font-bangla text-[10px] text-ink-soft/70">
-                        ({bn})
-                    </span>
+                    {role}
                 </p>
                 {signed && signedAt ? (
                     <p className="inline-flex items-center gap-1 text-[10.5px] text-jade-700">

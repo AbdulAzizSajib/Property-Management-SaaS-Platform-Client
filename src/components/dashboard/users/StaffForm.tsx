@@ -62,9 +62,6 @@ export function StaffForm({ submitting, onSubmit, onCancel }: StaffFormProps) {
                 <h2 className="text-[18px] font-bold tracking-[-0.01em] text-jade-950">
                     Add staff member
                 </h2>
-                <p className="font-bangla mt-0.5 text-[12px] text-ink-soft">
-                    নতুন ম্যানেজার বা কেয়ারটেকার যোগ করুন
-                </p>
             </div>
 
             <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">

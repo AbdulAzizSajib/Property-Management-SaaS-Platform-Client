@@ -11,13 +11,12 @@ export type BuildingType =
 export const BUILDING_TYPE_OPTIONS: {
   value: BuildingType;
   label: string;
-  labelBn: string;
 }[] = [
-  { value: "RESIDENTIAL", label: "Residential", labelBn: "আবাসিক" },
-  { value: "COMMERCIAL", label: "Commercial", labelBn: "বাণিজ্যিক" },
-  { value: "MIXED", label: "Mixed", labelBn: "মিশ্র" },
-  { value: "HOSTEL", label: "Hostel", labelBn: "হোস্টেল" },
-  { value: "MESS", label: "Mess", labelBn: "মেস" },
+  { value: "RESIDENTIAL", label: "Residential" },
+  { value: "COMMERCIAL", label: "Commercial" },
+  { value: "MIXED", label: "Mixed" },
+  { value: "HOSTEL", label: "Hostel" },
+  { value: "MESS", label: "Mess" },
 ];
 
 export interface CaretakerSummary {

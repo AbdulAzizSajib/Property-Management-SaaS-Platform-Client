@@ -195,9 +195,6 @@ export default function InvoiceDetailPage() {
                             <p className="font-serif text-[13px] italic text-coral-600/85">
                                 Amount due
                             </p>
-                            <p className="font-bangla text-[11.5px] text-ink-soft/70 mt-0.5">
-                                পরিশোধযোগ্য পরিমাণ
-                            </p>
                             <p
                                 className={cn(
                                     "mt-3 text-[40px] font-bold leading-none tracking-[-0.025em] tabular-nums sm:text-[44px]",
@@ -229,14 +226,12 @@ export default function InvoiceDetailPage() {
                         <div className="grid grid-cols-3 divide-x divide-rule-soft border-t border-rule-soft sm:grid-cols-1 sm:divide-x-0 sm:divide-y sm:border-l sm:border-t-0">
                             <DateBlock
                                 label="Issued"
-                                bn="ইস্যু"
                                 value={new Date(
                                     inv.issueDate,
                                 ).toLocaleDateString()}
                             />
                             <DateBlock
                                 label="Due"
-                                bn="শেষ দিন"
                                 value={new Date(
                                     inv.dueDate,
                                 ).toLocaleDateString()}
@@ -244,7 +239,6 @@ export default function InvoiceDetailPage() {
                             />
                             <DateBlock
                                 label="Billing"
-                                bn="মাস"
                                 value={formatBillingMonth(inv.billingMonth)}
                             />
                         </div>
@@ -266,16 +260,13 @@ export default function InvoiceDetailPage() {
                                 ({formatBillingMonth(inv.carriedForwardTo.billingMonth)})
                                 — nothing is owed here.
                             </span>
-                            <span className="font-bangla text-ink-soft/75">
-                                · এই বকেয়া পরের বিলে যোগ হয়েছে।
-                            </span>
                         </div>
                     )}
 
                     {/* Bill to + Property */}
                     <div className="grid grid-cols-1 border-b border-rule-soft sm:grid-cols-2 sm:divide-x sm:divide-rule-soft">
                         <PartyBlock
-                            eyebrow="Bill to · বিল প্রাপক"
+                            eyebrow="Bill to"
                             href={`/owner/dashboard/tenants/${inv.tenant.id}`}
                             heading={inv.tenant.name}
                         >
@@ -313,7 +304,7 @@ export default function InvoiceDetailPage() {
                         </PartyBlock>
 
                         <PartyBlock
-                            eyebrow="Property · সম্পত্তি"
+                            eyebrow="Property"
                             href={`/owner/dashboard/units/${inv.unit.id}`}
                             heading={`${inv.unit.building.name} · Unit ${inv.unit.name}`}
                         >
@@ -374,12 +365,10 @@ export default function InvoiceDetailPage() {
                                 <tbody className="divide-y divide-rule-soft bg-paper">
                                     <ChargeRow
                                         label="Base rent"
-                                        bn="মূল ভাড়া"
                                         value={inv.rentAmount}
                                     />
                                     <ChargeRow
                                         label="Service charge"
-                                        bn="সার্ভিস চার্জ"
                                         value={inv.serviceCharge}
                                     />
                                     {inv.lineItems
@@ -574,12 +563,10 @@ export default function InvoiceDetailPage() {
 
 function DateBlock({
     label,
-    bn,
     value,
     emphasis,
 }: {
     label: string;
-    bn: string;
     value: string;
     emphasis?: boolean;
 }) {
@@ -588,9 +575,6 @@ function DateBlock({
             <div className="flex items-baseline justify-between gap-2 sm:justify-start sm:gap-1.5">
                 <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
                     {label}
-                </p>
-                <p className="font-bangla text-[10.5px] text-ink-soft/65">
-                    {bn}
                 </p>
             </div>
             <p
@@ -676,9 +660,6 @@ function PreviousDueRow({
                 ) : (
                     <span className="text-ink">{label}</span>
                 )}
-                <span className="font-bangla ml-1.5 text-[11px] text-ink-soft/70">
-                    · পূর্ববর্তী বকেয়া
-                </span>
             </td>
             <td className="px-4 py-2.5 text-right tabular-nums font-semibold text-coral-600">
                 {formatMoney(value)}
@@ -689,12 +670,10 @@ function PreviousDueRow({
 
 function ChargeRow({
     label,
-    bn,
     value,
     warn,
 }: {
     label: string;
-    bn: string;
     value: string;
     warn?: boolean;
 }) {
@@ -702,9 +681,6 @@ function ChargeRow({
         <tr>
             <td className="px-4 py-2.5">
                 <span className="text-ink">{label}</span>
-                <span className="font-bangla ml-1.5 text-[11px] text-ink-soft/70">
-                    · {bn}
-                </span>
             </td>
             <td
                 className={cn(

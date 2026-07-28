@@ -237,7 +237,6 @@ export default function TenantDetailPage() {
           <div className="grid grid-cols-3 divide-x divide-rule-soft border-t border-rule-soft bg-cream/40">
             <MoneyCell
               label={t("cellActiveLeases")}
-              bn={t("cellActiveLeasesBn")}
               value={fmtNum(activeLeases.length)}
               sub={t("cellActiveLeasesSub", {
                 total: fmtNum(tenant.leases.length),
@@ -246,7 +245,6 @@ export default function TenantDetailPage() {
             />
             <MoneyCell
               label={t("cellMonthlyRent")}
-              bn={t("cellMonthlyRentBn")}
               value={monthlyTotal > 0 ? formatMoney(monthlyTotal) : "—"}
               sub={
                 monthlyTotal > 0
@@ -258,7 +256,6 @@ export default function TenantDetailPage() {
             />
             <MoneyCell
               label={t("cellHistory")}
-              bn={t("cellHistoryBn")}
               value={fmtNum(tenant.leases.length)}
               sub={t("cellHistorySub", { count: tenant.leases.length })}
             />
@@ -282,7 +279,6 @@ export default function TenantDetailPage() {
               <InfoRow
                 icon={Building2}
                 label={t("assignedLocation")}
-                bn={t("assignedLocationBn")}
                 value={
                   tenant.building
                     ? [
@@ -299,7 +295,6 @@ export default function TenantDetailPage() {
               <InfoRow
                 icon={IdCard}
                 label={t("nidNumber")}
-                bn={t("nidNumberBn")}
                 value={tenant.nidNumber}
                 placeholder={t("notProvided")}
                 mono
@@ -307,14 +302,12 @@ export default function TenantDetailPage() {
               <InfoRow
                 icon={Briefcase}
                 label={t("occupation")}
-                bn={t("occupationBn")}
                 value={tenant.occupation}
                 placeholder={t("notProvided")}
               />
               <InfoRow
                 icon={MapPin}
                 label={t("permanentAddress")}
-                bn={t("permanentAddressBn")}
                 value={tenant.permanentAddress}
                 placeholder={t("notProvided")}
                 multiline
@@ -325,9 +318,6 @@ export default function TenantDetailPage() {
             <div className="mt-5 border-t border-rule-soft pt-4">
               <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
                 {t("emergencyContact")}
-              </p>
-              <p className="font-bangla text-[10.5px] text-ink-soft/70">
-                {t("emergencyContactBn")}
               </p>
 
               {tenant.emergencyContact || tenant.emergencyName ? (
@@ -423,9 +413,6 @@ export default function TenantDetailPage() {
                 <p className="mt-2 text-[13px] text-ink-soft">
                   {t("noPortalLogin")}
                 </p>
-                <p className="font-bangla mt-0.5 text-[11px] text-ink-soft/65">
-                  {t("noPortalLoginBn")}
-                </p>
                 <p className="mx-auto mt-2 max-w-[220px] text-[11.5px] text-ink-soft/75">
                   {t("noPortalLoginHint")}
                 </p>
@@ -466,9 +453,6 @@ export default function TenantDetailPage() {
                 <FileText className="mx-auto text-ink-soft/40" size={24} />
                 <p className="mt-2 text-[13px] text-ink-soft">
                   {t("noLeaseHistory")}
-                </p>
-                <p className="font-bangla mt-0.5 text-[11.5px] text-ink-soft/70">
-                  {t("noLeaseHistoryBn")}
                 </p>
               </div>
             ) : (
@@ -687,14 +671,12 @@ export default function TenantDetailPage() {
 
 function MoneyCell({
   label,
-  bn,
   value,
   sub,
   highlight,
   primary,
 }: {
   label: string;
-  bn: string;
   value: string;
   sub: string;
   highlight?: boolean;
@@ -705,7 +687,6 @@ function MoneyCell({
       <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
         {label}
       </p>
-      <p className="font-bangla text-[10.5px] text-ink-soft/70">{bn}</p>
       <p
         className={cn(
           "mt-1 font-bold tracking-[-0.025em] tabular-nums leading-none",
@@ -723,7 +704,6 @@ function MoneyCell({
 function InfoRow({
   icon: Icon,
   label,
-  bn,
   value,
   placeholder,
   multiline,
@@ -731,7 +711,6 @@ function InfoRow({
 }: {
   icon: React.ComponentType<{ size?: number; className?: string }>;
   label: string;
-  bn: string;
   value: string | null;
   placeholder: string;
   multiline?: boolean;
@@ -744,10 +723,7 @@ function InfoRow({
       </span>
       <div className="min-w-0 flex-1">
         <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
-          {label}{" "}
-          <span className="font-bangla font-normal normal-case text-ink-soft/65 tracking-normal">
-            · {bn}
-          </span>
+          {label}
         </p>
         <p
           className={cn(

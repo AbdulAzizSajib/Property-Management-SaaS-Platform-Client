@@ -60,9 +60,6 @@ export default function AdminSubscriptionsPage() {
           <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
             All subscriptions
           </h1>
-          <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-            প্রতিটি প্রতিষ্ঠানের সাবস্ক্রিপশন স্ট্যাটাস
-          </p>
         </header>
 
         {isLoading ? (

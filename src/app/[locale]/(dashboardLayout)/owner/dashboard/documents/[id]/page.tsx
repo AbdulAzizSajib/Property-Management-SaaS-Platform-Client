@@ -139,9 +139,6 @@ export default function DocumentDetailPage() {
                     <p className="font-serif text-[13px] italic text-coral-600/85">
                         Document
                     </p>
-                    <p className="font-bangla mt-0.5 text-[11.5px] text-ink-soft/65">
-                        কাগজপত্র
-                    </p>
 
                     <div className="mt-3 flex items-start gap-4">
                         <span
@@ -220,16 +217,12 @@ export default function DocumentDetailPage() {
                         <p className="font-serif text-[12.5px] italic text-coral-600/85">
                             Details
                         </p>
-                        <p className="font-bangla text-[11.5px] text-ink-soft/75">
-                            বিস্তারিত
-                        </p>
                     </div>
 
                     <dl className="divide-y divide-rule-soft">
                         <DetailRow
                             icon={<Tag size={13} />}
                             label="Type"
-                            bn="ধরন"
                         >
                             <span
                                 className={cn(
@@ -243,7 +236,6 @@ export default function DocumentDetailPage() {
                         <DetailRow
                             icon={<FileType size={13} />}
                             label="File"
-                            bn="ফাইল"
                         >
                             <span className="font-mono text-[12.5px] text-ink-soft">
                                 {d.mimeType}
@@ -252,7 +244,6 @@ export default function DocumentDetailPage() {
                         <DetailRow
                             icon={<HardDrive size={13} />}
                             label="Size"
-                            bn="আকার"
                         >
                             <span className="tabular-nums text-ink">
                                 {formatFileSize(d.fileSize)}
@@ -262,7 +253,6 @@ export default function DocumentDetailPage() {
                             <DetailRow
                                 icon={<UserCircle size={13} />}
                                 label="Tenant"
-                                bn="ভাড়াটিয়া"
                             >
                                 <Link
                                     href={`/owner/dashboard/tenants/${d.tenant.id}`}
@@ -276,7 +266,6 @@ export default function DocumentDetailPage() {
                             <DetailRow
                                 icon={<Building size={13} />}
                                 label="Building"
-                                bn="বিল্ডিং"
                             >
                                 <Link
                                     href={`/owner/dashboard/buildings/${d.building.id}`}
@@ -290,7 +279,6 @@ export default function DocumentDetailPage() {
                             <DetailRow
                                 icon={<Tag size={13} />}
                                 label="Lease"
-                                bn="ভাড়ার চুক্তি"
                             >
                                 <Link
                                     href={`/owner/dashboard/leases/${d.leaseId}`}
@@ -303,7 +291,6 @@ export default function DocumentDetailPage() {
                         <DetailRow
                             icon={<UploadCloud size={13} />}
                             label="Uploaded by"
-                            bn="আপলোডকারী"
                         >
                             <span className="inline-flex items-center gap-1.5">
                                 <span className="text-ink">
@@ -319,7 +306,6 @@ export default function DocumentDetailPage() {
                         <DetailRow
                             icon={<Calendar size={13} />}
                             label="Uploaded"
-                            bn="আপলোডের তারিখ"
                         >
                             <span className="tabular-nums text-ink">
                                 {formatDocumentDate(d.createdAt)}
@@ -401,12 +387,10 @@ export default function DocumentDetailPage() {
 function DetailRow({
     icon,
     label,
-    bn,
     children,
 }: {
     icon: React.ReactNode;
     label: string;
-    bn: string;
     children: React.ReactNode;
 }) {
     return (
@@ -414,9 +398,6 @@ function DetailRow({
             <dt className="flex items-center gap-2 text-[12px] text-ink-soft">
                 <span className="text-ink-soft/60">{icon}</span>
                 <span className="font-semibold text-ink">{label}</span>
-                <span className="font-bangla text-[11px] text-ink-soft/65">
-                    · {bn}
-                </span>
             </dt>
             <dd className="text-[13px]">{children}</dd>
         </div>

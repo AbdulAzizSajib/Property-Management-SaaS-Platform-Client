@@ -41,9 +41,6 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
         <div className="flex flex-col leading-tight">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className="w-28" src="/logoB.png" alt="Bariyan" />
-          <span className="font-bangla text-[10.5px] text-ink-soft">
-            অ্যাডমিন কনসোল
-          </span>
         </div>
       </div>
 
@@ -132,9 +129,6 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
                   Live
                 </span>
               </div>
-              <p className="font-bangla text-[10.5px] text-ink-soft/85">
-                সিস্টেম স্বাস্থ্য
-              </p>
             </div>
             <Link
               href="/admin/dashboard/support"

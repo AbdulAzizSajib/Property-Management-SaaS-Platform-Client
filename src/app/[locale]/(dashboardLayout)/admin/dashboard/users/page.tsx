@@ -9,9 +9,6 @@ import { UsersTable } from "@/src/components/dashboard/users/UsersTable";
 
 export default function AdminUsersPage() {
     return (
-        <UsersTable
-            title="All users"
-            bnTitle="সব ব্যবহারকারী পরিচালনা করুন"
-        />
+        <UsersTable title="All users" />
     );
 }

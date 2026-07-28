@@ -10,12 +10,18 @@ function buildNotificationQuery(filters?: NotificationFilters): string {
     if (!filters) return "";
     const params = new URLSearchParams();
     if (filters.status) params.set("status", filters.status);
+    if (filters.type) params.set("type", filters.type);
+    if (filters.channel) params.set("channel", filters.channel);
+    if (filters.searchTerm) params.set("searchTerm", filters.searchTerm);
+    if (filters.page) params.set("page", String(filters.page));
     if (filters.limit) params.set("limit", String(filters.limit));
+    if (filters.sortBy) params.set("sortBy", filters.sortBy);
+    if (filters.sortOrder) params.set("sortOrder", filters.sortOrder);
     const q = params.toString();
     return q ? `?${q}` : "";
 }
 
-/** GET /notifications — notifications for the logged-in user (default limit 50). */
+/** GET /notifications — paginated notifications for the logged-in user (default limit 10). */
 export const getMyNotifications = async (filters?: NotificationFilters) =>
     httpClient.get<AppNotification[]>(
         `/notifications${buildNotificationQuery(filters)}`,

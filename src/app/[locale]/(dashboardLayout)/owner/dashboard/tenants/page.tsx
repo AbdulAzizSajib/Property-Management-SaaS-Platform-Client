@@ -84,7 +84,7 @@ export default function TenantsListPage() {
             <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
               {t("title")}
             </h1>
-            <p className="font-bangla mt-1 text-[13px] text-ink-soft">
+            <p className="mt-1 text-[13px] text-ink-soft">
               {t("subtitle")}
             </p>
           </div>

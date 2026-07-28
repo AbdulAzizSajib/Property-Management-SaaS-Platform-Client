@@ -124,7 +124,7 @@ function InvoicesListInner() {
             <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
               {t("title")}
             </h1>
-            <p className="font-bangla mt-1 text-[13px] text-ink-soft">
+            <p className="mt-1 text-[13px] text-ink-soft">
               {t("subtitle")}
             </p>
           </div>
@@ -204,12 +204,6 @@ function InvoicesListInner() {
             >
               {t("heroLabel")}
             </p>
-            <p
-              className={cn(
-                "font-bangla relative mt-0.5 text-[11.5px]",
-                totalDue > 0 ? "text-paper/45" : "text-ink-soft/65",
-              )}
-            ></p>
             <p
               className={cn(
                 "relative mt-3 text-[40px] font-bold leading-none tracking-[-0.025em] tabular-nums sm:text-[46px]",
@@ -607,9 +601,6 @@ function EmptyState({
       </h2>
       <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
         {t("emptySubtitle")}
-      </p>
-      <p className="font-bangla mt-0.5 text-[12px] text-ink-soft/75">
-        {t("emptyBanglaHint")}
       </p>
       <div className="mt-5 flex items-center justify-center gap-2">
         <button

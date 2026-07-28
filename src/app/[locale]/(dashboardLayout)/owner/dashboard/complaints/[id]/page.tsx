@@ -176,16 +176,6 @@ export default function ComplaintDetailPage() {
                     >
                         Complaint
                     </p>
-                    <p
-                        className={cn(
-                            "font-bangla relative mt-0.5 text-[11.5px]",
-                            isResolved
-                                ? "text-ink-soft/65"
-                                : "text-paper/45",
-                        )}
-                    >
-                        অভিযোগ
-                    </p>
                     <h1
                         className={cn(
                             "relative mt-2 text-[22px] font-bold tracking-[-0.02em] sm:text-[26px]",
@@ -265,9 +255,6 @@ export default function ComplaintDetailPage() {
                             <p className="text-[12.5px] font-semibold text-ink">
                                 Resolution note
                             </p>
-                            <p className="font-bangla text-[11px] text-ink-soft/65">
-                                · সমাধানের নোট
-                            </p>
                         </div>
                         <p className="mt-2 whitespace-pre-wrap text-[13px] text-ink-soft">
                             {c.resolutionNote}
@@ -286,16 +273,12 @@ export default function ComplaintDetailPage() {
                         <p className="font-serif text-[12.5px] italic text-coral-600/85">
                             Details
                         </p>
-                        <p className="font-bangla text-[11.5px] text-ink-soft/75">
-                            বিস্তারিত
-                        </p>
                     </div>
 
                     <dl className="divide-y divide-rule-soft">
                         <DetailRow
                             icon={<Tag size={13} />}
                             label="Category"
-                            bn="বিভাগ"
                         >
                             <span
                                 className={cn(
@@ -309,7 +292,6 @@ export default function ComplaintDetailPage() {
                         <DetailRow
                             icon={<MessageSquareWarning size={13} />}
                             label="Priority"
-                            bn="অগ্রাধিকার"
                         >
                             <span
                                 className={cn(
@@ -324,7 +306,6 @@ export default function ComplaintDetailPage() {
                             <DetailRow
                                 icon={<Building size={13} />}
                                 label="Building"
-                                bn="বিল্ডিং"
                             >
                                 <Link
                                     href={`/owner/dashboard/buildings/${c.building.id}`}
@@ -338,7 +319,6 @@ export default function ComplaintDetailPage() {
                             <DetailRow
                                 icon={<DoorOpen size={13} />}
                                 label="Unit"
-                                bn="ইউনিট"
                             >
                                 <Link
                                     href={`/owner/dashboard/units/${c.unit.id}`}
@@ -352,7 +332,6 @@ export default function ComplaintDetailPage() {
                             <DetailRow
                                 icon={<UserCircle size={13} />}
                                 label="Tenant"
-                                bn="ভাড়াটিয়া"
                             >
                                 <Link
                                     href={`/owner/dashboard/tenants/${c.tenant.id}`}
@@ -365,7 +344,6 @@ export default function ComplaintDetailPage() {
                         <DetailRow
                             icon={<UserCheck size={13} />}
                             label="Assigned to"
-                            bn="দায়িত্বপ্রাপ্ত"
                         >
                             {c.assignedTo ? (
                                 <span className="inline-flex items-center gap-1.5">
@@ -392,7 +370,6 @@ export default function ComplaintDetailPage() {
                             <DetailRow
                                 icon={<UserCircle size={13} />}
                                 label="Filed by"
-                                bn="ফাইল করেছেন"
                             >
                                 <span className="inline-flex items-center gap-1.5">
                                     <span className="text-ink">
@@ -409,7 +386,6 @@ export default function ComplaintDetailPage() {
                         <DetailRow
                             icon={<Calendar size={13} />}
                             label="Filed"
-                            bn="ফাইলের তারিখ"
                         >
                             <span className="tabular-nums text-ink">
                                 {formatComplaintDate(c.createdAt)}
@@ -499,12 +475,10 @@ export default function ComplaintDetailPage() {
 function DetailRow({
     icon,
     label,
-    bn,
     children,
 }: {
     icon: React.ReactNode;
     label: string;
-    bn: string;
     children: React.ReactNode;
 }) {
     return (
@@ -512,9 +486,6 @@ function DetailRow({
             <dt className="flex items-center gap-2 text-[12px] text-ink-soft">
                 <span className="text-ink-soft/60">{icon}</span>
                 <span className="font-semibold text-ink">{label}</span>
-                <span className="font-bangla text-[11px] text-ink-soft/65">
-                    · {bn}
-                </span>
             </dt>
             <dd className="text-[13px]">{children}</dd>
         </div>

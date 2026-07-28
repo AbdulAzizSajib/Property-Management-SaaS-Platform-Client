@@ -206,21 +206,15 @@ export function PlanConfigForm({
                 <h2 className="text-[18px] font-bold tracking-[-0.01em] text-jade-950">
                     {mode === "create" ? "Create plan" : `Edit ${planLabel}`}
                 </h2>
-                <p className="font-bangla mt-0.5 text-[12px] text-ink-soft">
-                    {mode === "create"
-                        ? "নতুন প্ল্যান তৈরি করুন"
-                        : "প্ল্যান আপডেট করুন"}
-                </p>
             </div>
 
             {/* Body */}
             <div className="flex-1 space-y-5 overflow-y-auto px-5 py-5">
                 {/* Identity */}
-                <Section title="Identity" bn="পরিচয়">
+                <Section title="Identity">
                     <FieldGrid>
                         <Field
                             label="Plan key"
-                            bn="প্ল্যান কী"
                             required
                             hint={
                                 mode === "edit"
@@ -253,7 +247,6 @@ export function PlanConfigForm({
 
                         <Field
                             label="Display name"
-                            bn="প্রদর্শন নাম"
                             required
                             error={errors.displayName}
                         >
@@ -269,7 +262,6 @@ export function PlanConfigForm({
 
                     <Field
                         label="Description"
-                        bn="বিবরণ"
                         required
                         error={errors.description}
                     >
@@ -285,11 +277,10 @@ export function PlanConfigForm({
                 </Section>
 
                 {/* Pricing */}
-                <Section title="Pricing & trial" bn="মূল্য ও ট্রায়াল">
+                <Section title="Pricing & trial">
                     <FieldGrid>
                         <Field
                             label="Price / month (BDT)"
-                            bn="মাসিক মূল্য"
                             required
                             error={errors.priceMonthly}
                         >
@@ -305,7 +296,6 @@ export function PlanConfigForm({
                         </Field>
                         <Field
                             label="Trial days"
-                            bn="ট্রায়াল দিন"
                             hint="Leave blank for no trial"
                             error={errors.trialDays}
                         >
@@ -323,11 +313,10 @@ export function PlanConfigForm({
                 </Section>
 
                 {/* Limits */}
-                <Section title="Limits" bn="সীমা">
+                <Section title="Limits">
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                         <Field
                             label="Buildings"
-                            bn="বিল্ডিং"
                             required
                             error={errors.buildingLimit}
                         >
@@ -342,7 +331,6 @@ export function PlanConfigForm({
                         </Field>
                         <Field
                             label="Floors"
-                            bn="তলা"
                             required
                             error={errors.floorLimit}
                         >
@@ -357,7 +345,6 @@ export function PlanConfigForm({
                         </Field>
                         <Field
                             label="Units"
-                            bn="ইউনিট"
                             required
                             error={errors.unitLimit}
                         >
@@ -372,7 +359,6 @@ export function PlanConfigForm({
                         </Field>
                         <Field
                             label="Tenants"
-                            bn="ভাড়াটিয়া"
                             required
                             error={errors.tenantLimit}
                         >
@@ -389,35 +375,30 @@ export function PlanConfigForm({
                 </Section>
 
                 {/* Capabilities */}
-                <Section title="Capabilities" bn="ফিচার সক্ষমতা">
+                <Section title="Capabilities">
                     <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                         <ToggleRow
                             label="SMS notifications"
-                            bn="এসএমএস নোটিফিকেশন"
                             checked={form.smsEnabled}
                             onChange={(v) => set("smsEnabled", v)}
                         />
                         <ToggleRow
                             label="Custom branding"
-                            bn="কাস্টম ব্র্যান্ডিং"
                             checked={form.customBranding}
                             onChange={(v) => set("customBranding", v)}
                         />
                         <ToggleRow
                             label="Multiple admins"
-                            bn="একাধিক অ্যাডমিন"
                             checked={form.multiAdmin}
                             onChange={(v) => set("multiAdmin", v)}
                         />
                         <ToggleRow
                             label="Mark as popular"
-                            bn="জনপ্রিয় হিসাবে চিহ্নিত করুন"
                             checked={form.isPopular}
                             onChange={(v) => set("isPopular", v)}
                         />
                         <ToggleRow
                             label="Active (visible publicly)"
-                            bn="সক্রিয় (পাবলিক)"
                             checked={form.isActive}
                             onChange={(v) => set("isActive", v)}
                         />
@@ -427,7 +408,6 @@ export function PlanConfigForm({
                 {/* Features list */}
                 <Section
                     title="Feature bullets"
-                    bn="ফিচার তালিকা"
                     description="Shown line-by-line on the pricing card."
                 >
                     <div className="flex gap-2">
@@ -515,12 +495,10 @@ export function PlanConfigForm({
 
 function Section({
     title,
-    bn,
     description,
     children,
 }: {
     title: string;
-    bn: string;
     description?: string;
     children: React.ReactNode;
 }) {
@@ -530,9 +508,6 @@ function Section({
                 <h3 className="text-[12.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
                     {title}
                 </h3>
-                <p className="font-bangla text-[10.5px] text-ink-soft/70">
-                    {bn}
-                </p>
                 {description && (
                     <p className="mt-0.5 text-[11.5px] text-ink-soft">
                         {description}
@@ -567,14 +542,12 @@ function FieldGrid({
 
 function Field({
     label,
-    bn,
     required,
     hint,
     error,
     children,
 }: {
     label: string;
-    bn?: string;
     required?: boolean;
     hint?: string;
     error?: string;
@@ -589,11 +562,6 @@ function Field({
                         <span className="ml-0.5 text-coral-600">*</span>
                     )}
                 </span>
-                {bn && (
-                    <span className="font-bangla text-[10.5px] text-ink-soft/70">
-                        {bn}
-                    </span>
-                )}
             </div>
             {children}
             {error ? (
@@ -609,12 +577,10 @@ function Field({
 
 function ToggleRow({
     label,
-    bn,
     checked,
     onChange,
 }: {
     label: string;
-    bn: string;
     checked: boolean;
     onChange: (next: boolean) => void;
 }) {
@@ -634,9 +600,6 @@ function ToggleRow({
             />
             <div className="min-w-0">
                 <p className="text-[12.5px] font-semibold text-ink">{label}</p>
-                <p className="font-bangla text-[10.5px] text-ink-soft/75">
-                    {bn}
-                </p>
             </div>
         </label>
     );

@@ -919,9 +919,6 @@ export function TenantFormForm({
                         <p className="text-sm font-medium text-slate-800">
                             {tr("submittedToPolice")}
                         </p>
-                        <p className="font-bangla text-xs text-slate-500">
-                            {tr("submittedToPoliceBn")}
-                        </p>
                     </div>
                 </label>
             </div>

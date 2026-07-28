@@ -45,9 +45,6 @@ export default function ExpenseReportPage() {
           <h1 className="mt-0.5 text-[28px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[30px]">
             Expenses by category
           </h1>
-          <p className="font-bangla mt-1 text-[13px] text-ink-soft">
-            ক্যাটাগরি অনুসারে ব্যয়ের বিশ্লেষণ
-          </p>
         </header>
 
         <div className="grid grid-cols-1 gap-3 rounded-[14px] border border-rule-soft bg-paper p-3 sm:grid-cols-2">

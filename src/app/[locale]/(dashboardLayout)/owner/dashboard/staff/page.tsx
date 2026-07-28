@@ -25,7 +25,6 @@ export default function OwnerStaffPage() {
             <UsersTable
                 roles={["MANAGER", "CARETAKER"]}
                 title="Staff"
-                bnTitle="ম্যানেজার ও কেয়ারটেকার পরিচালনা করুন"
                 headerAction={
                     <Button
                         onClick={() => setOpen(true)}

@@ -49,7 +49,7 @@ export function CollectionChart() {
                     <h3 className="mt-0.5 text-[18px] font-bold tracking-[-0.015em] text-jade-950">
                         {t("title")}
                     </h3>
-                    <p className="font-bangla mt-0.5 text-[12.5px] text-ink-soft">
+                    <p className="mt-0.5 text-[12.5px] text-ink-soft">
                         {t("subtitle")}
                     </p>
                 </div>

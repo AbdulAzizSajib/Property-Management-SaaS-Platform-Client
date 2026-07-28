@@ -59,9 +59,6 @@ function ResetPasswordForm() {
                 <h1 className="mt-3 text-[22px] font-bold tracking-[-0.01em] text-jade-950">
                     Reset your password
                 </h1>
-                <p className="font-bangla mt-1 text-[12px] text-ink-soft">
-                    ইমেইলে পাঠানো OTP দিয়ে নতুন পাসওয়ার্ড সেট করুন
-                </p>
 
                 <form onSubmit={submit} className="mt-5 space-y-3">
                     <Field label="Email">
