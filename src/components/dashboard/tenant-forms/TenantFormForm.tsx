@@ -6,13 +6,15 @@ import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
 import { Textarea } from "@/src/components/ui/textarea";
 import { useBuildings } from "@/src/hooks/useBuildings";
+import { useFloorsByBuilding } from "@/src/hooks/useFloors";
 import { useUnits } from "@/src/hooks/useUnits";
 import type { TenantListItem } from "@/src/types/tenant.types";
 import type {
     CreateTenantFormPayload,
+    TenantFormTenant,
     UpdateTenantFormPayload,
 } from "@/src/types/tenantForm.types";
-import { Loader2, Plus, X } from "lucide-react";
+import { Loader2, Plus, User, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 
@@ -143,6 +145,8 @@ interface TenantFormFormProps {
     defaultValues?: Partial<TenantFormValues>;
     /** Tenants to pick from — only needed in create mode. */
     tenants?: TenantListItem[];
+    /** Edit mode: the tenant already linked to this form, for photo/location display. */
+    linkedTenant?: TenantFormTenant | null;
     submitting: boolean;
     submitLabel: string;
     onSubmit: (values: TenantFormValues) => void;
@@ -155,10 +159,51 @@ const SectionTitle = ({ children }: { children: React.ReactNode }) => (
     </h3>
 );
 
+/**
+ * Read-only photo preview for a linked tenant. This form has no photo field
+ * of its own — the tenant's photo (uploaded on their tenant profile) is
+ * mirrored here so the person can be visually confirmed.
+ */
+function TenantPhotoPreview({
+    photoUrl,
+    name,
+}: {
+    photoUrl: string | null;
+    name: string | null;
+}) {
+    const initials = (name ?? "")
+        .split(" ")
+        .filter(Boolean)
+        .map((p) => p[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase();
+
+    return (
+        <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-md border border-slate-200 bg-white">
+            {photoUrl ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                    src={photoUrl}
+                    alt={name ? `${name}'s photo` : "Tenant photo"}
+                    className="size-full object-cover"
+                />
+            ) : name ? (
+                <span className="text-[15px] font-bold text-slate-400">
+                    {initials}
+                </span>
+            ) : (
+                <User size={20} className="text-slate-300" />
+            )}
+        </div>
+    );
+}
+
 export function TenantFormForm({
     mode,
     defaultValues,
     tenants,
+    linkedTenant,
     submitting,
     submitLabel,
     onSubmit,
@@ -170,31 +215,44 @@ export function TenantFormForm({
         ...defaultValues,
     });
 
-    // Two-step tenant picker (create mode): pick a building first, then the
-    // tenant dropdown is narrowed to just the tenants leasing a unit in it.
+    // Three-step tenant picker (create mode): Building → Floor → Unit narrows
+    // the tenant dropdown down to whoever is assigned to that unit (falling
+    // back to the whole building/floor when a step is left unset).
     const [buildingId, setBuildingId] = useState("");
+    const [floorId, setFloorId] = useState("");
+    const [unitId, setUnitId] = useState("");
     const { data: buildings } = useBuildings();
+    const { data: floors } = useFloorsByBuilding(buildingId || undefined);
     // Server-side filter to the chosen building; skipped until one is picked.
     const { data: buildingUnits } = useUnits(
-        buildingId ? { buildingId } : undefined,
+        buildingId
+            ? { buildingId, ...(floorId && { floorId }) }
+            : undefined,
     );
 
-    // tenantIds that hold a lease in the selected building's units.
+    // tenantIds that hold a lease in the selected building/floor/unit's units.
     const buildingTenantIds = useMemo(() => {
         if (!buildingId) return null; // null = "no building chosen yet"
         const ids = new Set<string>();
-        (buildingUnits ?? []).forEach((u) =>
-            u.leases.forEach((l) => ids.add(l.tenantId)),
-        );
+        (buildingUnits ?? [])
+            .filter((u) => !unitId || u.id === unitId)
+            .forEach((u) => u.leases.forEach((l) => ids.add(l.tenantId)));
         return ids;
-    }, [buildingId, buildingUnits]);
+    }, [buildingId, buildingUnits, unitId]);
 
-    // The tenants shown in the dropdown, after the building filter.
+    // The tenants shown in the dropdown, after the building/floor/unit filter.
     const filteredTenants = useMemo(() => {
         const all = tenants ?? [];
         if (!buildingTenantIds) return all;
         return all.filter((t) => buildingTenantIds.has(t.id));
     }, [tenants, buildingTenantIds]);
+
+    // The full tenant record for whoever is currently picked (create mode) —
+    // used to show a photo preview next to the dropdown.
+    const selectedTenant = useMemo(
+        () => (tenants ?? []).find((t) => t.id === values.tenantId) ?? null,
+        [tenants, values.tenantId],
+    );
 
     useEffect(() => {
         if (defaultValues) {
@@ -244,11 +302,11 @@ export function TenantFormForm({
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Tenant link (create only) — building first, then tenant */}
+            {/* Tenant link (create only) — building → floor → unit → tenant */}
             {mode === "create" && (
                 <div className="space-y-3">
                     <SectionTitle>{tr("sectionTenant")}</SectionTitle>
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                         {/* Step 1: pick a building */}
                         <div className="space-y-1.5">
                             <Label htmlFor="tf-building">
@@ -260,8 +318,10 @@ export function TenantFormForm({
                                 value={buildingId}
                                 onChange={(e) => {
                                     setBuildingId(e.target.value);
-                                    // Clear a tenant that no longer belongs to
-                                    // the newly selected building.
+                                    // Clear the narrower steps + the tenant —
+                                    // none of them still apply.
+                                    setFloorId("");
+                                    setUnitId("");
                                     set("tenantId", "");
                                 }}
                                 className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 focus:border-jade-700 focus:outline-none focus:ring-2 focus:ring-jade-700/20"
@@ -278,7 +338,74 @@ export function TenantFormForm({
                             </p>
                         </div>
 
-                        {/* Step 2: pick a tenant (narrowed by building) */}
+                        {/* Step 2: pick a floor (narrowed by building) */}
+                        <div className="space-y-1.5">
+                            <Label htmlFor="tf-floor">
+                                {tr("floor")}{" "}
+                                <span className="text-[11px] font-normal text-slate-400">
+                                    ({tr("optional")})
+                                </span>
+                            </Label>
+                            <select
+                                id="tf-floor"
+                                value={floorId}
+                                onChange={(e) => {
+                                    setFloorId(e.target.value);
+                                    setUnitId("");
+                                    set("tenantId", "");
+                                }}
+                                disabled={!buildingId}
+                                className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 focus:border-jade-700 focus:outline-none focus:ring-2 focus:ring-jade-700/20 disabled:bg-slate-50 disabled:text-slate-400"
+                            >
+                                <option value="">
+                                    {buildingId
+                                        ? tr("allFloors")
+                                        : tr("selectBuildingFirst")}
+                                </option>
+                                {(floors ?? []).map((f) => (
+                                    <option key={f.id} value={f.id}>
+                                        {f.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {/* Step 3: pick a unit (narrowed by building + floor) */}
+                        <div className="space-y-1.5">
+                            <Label htmlFor="tf-unit">
+                                {tr("unit")}{" "}
+                                <span className="text-[11px] font-normal text-slate-400">
+                                    ({tr("optional")})
+                                </span>
+                            </Label>
+                            <select
+                                id="tf-unit"
+                                value={unitId}
+                                onChange={(e) => {
+                                    setUnitId(e.target.value);
+                                    set("tenantId", "");
+                                }}
+                                disabled={!buildingId}
+                                className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 focus:border-jade-700 focus:outline-none focus:ring-2 focus:ring-jade-700/20 disabled:bg-slate-50 disabled:text-slate-400"
+                            >
+                                <option value="">
+                                    {buildingId
+                                        ? tr("allUnits")
+                                        : tr("selectBuildingFirst")}
+                                </option>
+                                {(buildingUnits ?? [])
+                                    .filter((u) => !floorId || u.floorId === floorId)
+                                    .map((u) => (
+                                        <option key={u.id} value={u.id}>
+                                            {u.name}
+                                        </option>
+                                    ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    {/* Step 4: pick a tenant (narrowed by building/floor/unit) + photo preview */}
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_auto]">
                         <div className="space-y-1.5">
                             <Label htmlFor="tf-tenant">
                                 {tr("linkedTenant")}{" "}
@@ -306,6 +433,38 @@ export function TenantFormForm({
                             </select>
                             <p className="text-[11px] text-slate-500">
                                 {tr("linkedTenantHint")}
+                            </p>
+                        </div>
+
+                        <TenantPhotoPreview
+                            photoUrl={selectedTenant?.photoUrl ?? null}
+                            name={selectedTenant?.name ?? null}
+                        />
+                    </div>
+                </div>
+            )}
+
+            {/* Linked tenant (edit only) — read-only photo + location context */}
+            {mode === "edit" && linkedTenant && (
+                <div className="space-y-3">
+                    <SectionTitle>{tr("sectionTenant")}</SectionTitle>
+                    <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+                        <TenantPhotoPreview
+                            photoUrl={linkedTenant.photoUrl}
+                            name={linkedTenant.name}
+                        />
+                        <div className="min-w-0">
+                            <p className="truncate text-[13.5px] font-semibold text-slate-800">
+                                {linkedTenant.name}
+                            </p>
+                            <p className="truncate text-[12px] text-slate-500">
+                                {linkedTenant.phone}
+                                {linkedTenant.building &&
+                                    ` · ${linkedTenant.building.name}`}
+                                {linkedTenant.floor &&
+                                    ` · ${linkedTenant.floor.name}`}
+                                {linkedTenant.unit &&
+                                    ` · ${linkedTenant.unit.name}`}
                             </p>
                         </div>
                     </div>

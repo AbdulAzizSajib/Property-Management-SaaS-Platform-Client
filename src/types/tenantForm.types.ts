@@ -38,6 +38,10 @@ export interface TenantFormTenant {
     id: string;
     name: string;
     phone: string;
+    photoUrl: string | null;
+    building: { id: string; name: string } | null;
+    floor: { id: string; name: string } | null;
+    unit: { id: string; name: string } | null;
 }
 
 export interface TenantForm {

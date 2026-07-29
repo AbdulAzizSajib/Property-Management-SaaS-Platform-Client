@@ -23,6 +23,8 @@ import {
 } from "@/src/components/ui/select";
 import { Skeleton } from "@/src/components/ui/skeleton";
 import { useBuildings } from "@/src/hooks/useBuildings";
+import { useFloorsByBuilding } from "@/src/hooks/useFloors";
+import { useUnits } from "@/src/hooks/useUnits";
 import { useExpenses } from "@/src/hooks/useExpenses";
 import { fmtNum } from "@/src/lib/numerals";
 import { cn } from "@/src/lib/utils";
@@ -59,6 +61,8 @@ function ExpensesListInner() {
     const t = useTranslations("expensesPage");
     const [categoryFilter, setCategoryFilter] = useState<string>(ALL);
     const [buildingFilter, setBuildingFilter] = useState<string>(ALL);
+    const [floorFilter, setFloorFilter] = useState<string>(ALL);
+    const [unitFilter, setUnitFilter] = useState<string>(ALL);
     const [query, setQuery] = useState("");
     const [recordOpen, setRecordOpen] = useState(false);
 
@@ -67,6 +71,7 @@ function ExpensesListInner() {
             category: categoryFilter as ExpenseCategory,
         }),
         ...(buildingFilter !== ALL && { buildingId: buildingFilter }),
+        ...(unitFilter !== ALL && { unitId: unitFilter }),
     };
 
     const {
@@ -76,6 +81,28 @@ function ExpensesListInner() {
         error,
     } = useExpenses(filters);
     const { data: buildings } = useBuildings();
+    const { data: floors } = useFloorsByBuilding(
+        buildingFilter !== ALL ? buildingFilter : undefined,
+    );
+    const { data: units } = useUnits(
+        buildingFilter !== ALL
+            ? {
+                  buildingId: buildingFilter,
+                  ...(floorFilter !== ALL && { floorId: floorFilter }),
+              }
+            : undefined,
+    );
+
+    function handleBuildingFilterChange(id: string) {
+        setBuildingFilter(id);
+        setFloorFilter(ALL);
+        setUnitFilter(ALL);
+    }
+
+    function handleFloorFilterChange(id: string) {
+        setFloorFilter(id);
+        setUnitFilter(ALL);
+    }
 
     const filtered = useMemo(
         () =>
@@ -112,6 +139,8 @@ function ExpensesListInner() {
     const hasActiveFilters =
         categoryFilter !== ALL ||
         buildingFilter !== ALL ||
+        floorFilter !== ALL ||
+        unitFilter !== ALL ||
         query.trim() !== "";
 
     return (
@@ -251,7 +280,7 @@ function ExpensesListInner() {
                             <Select
                                 value={buildingFilter}
                                 onValueChange={(v) =>
-                                    setBuildingFilter(v ?? ALL)
+                                    handleBuildingFilterChange(v ?? ALL)
                                 }
                             >
                                 <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
@@ -264,6 +293,54 @@ function ExpensesListInner() {
                                     {(buildings ?? []).map((b) => (
                                         <SelectItem key={b.id} value={b.id}>
                                             {b.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="w-full sm:w-40">
+                            <Select
+                                value={floorFilter}
+                                onValueChange={(v) =>
+                                    handleFloorFilterChange(v ?? ALL)
+                                }
+                                disabled={buildingFilter === ALL}
+                            >
+                                <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
+                                    <SelectValue placeholder="All floors" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value={ALL}>
+                                        All floors
+                                    </SelectItem>
+                                    {(floors ?? []).map((f) => (
+                                        <SelectItem key={f.id} value={f.id}>
+                                            {f.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="w-full sm:w-40">
+                            <Select
+                                value={unitFilter}
+                                onValueChange={(v) =>
+                                    setUnitFilter(v ?? ALL)
+                                }
+                                disabled={buildingFilter === ALL}
+                            >
+                                <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
+                                    <SelectValue placeholder="All units" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value={ALL}>
+                                        All units
+                                    </SelectItem>
+                                    {(units ?? []).map((u) => (
+                                        <SelectItem key={u.id} value={u.id}>
+                                            {u.name}
                                         </SelectItem>
                                     ))}
                                 </SelectContent>
@@ -295,6 +372,8 @@ function ExpensesListInner() {
                                         setQuery("");
                                         setCategoryFilter(ALL);
                                         setBuildingFilter(ALL);
+                                        setFloorFilter(ALL);
+                                        setUnitFilter(ALL);
                                     }}
                                     className="inline-flex items-center gap-1 font-medium text-ink-soft transition-colors hover:text-coral-600"
                                 >

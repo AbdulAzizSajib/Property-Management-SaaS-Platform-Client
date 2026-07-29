@@ -103,10 +103,21 @@ export default function TenantFormPrintPage() {
       <div className="mx-auto w-[794px] max-w-full border border-black bg-white p-6 text-[12px] leading-relaxed text-black print:w-full print:border-0 print:p-0">
         {/* Header */}
         <div className="flex items-start justify-between gap-3">
-          <div className="w-[150px] shrink-0 border border-black p-2 text-center text-[10px] leading-tight">
-            ভাড়াটিয়ার এক কপি
-            <br />
-            পাসপোর্ট সাইজ ছবি
+          <div className="flex w-[150px] h-[180px] shrink-0 items-center justify-center overflow-hidden border border-black p-2 text-center text-[10px] leading-tight">
+            {form.tenant?.photoUrl ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={form.tenant.photoUrl}
+                alt={form.name}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <span>
+                ভাড়াটিয়ার এক কপি
+                <br />
+                পাসপোর্ট সাইজ ছবি
+              </span>
+            )}
           </div>
 
           <div className="flex-1 text-center">

@@ -8,6 +8,10 @@ import {
     fieldClass,
 } from "@/src/components/dashboard/forms/form-primitives";
 import {
+    BuildingFloorUnitSelect,
+    type BuildingFloorUnitValue,
+} from "@/src/components/dashboard/forms/BuildingFloorUnitSelect";
+import {
     Dialog,
     DialogContent,
     DialogDescription,
@@ -23,9 +27,7 @@ import {
     SelectValue,
 } from "@/src/components/ui/select";
 import { Textarea } from "@/src/components/ui/textarea";
-import { useBuildings } from "@/src/hooks/useBuildings";
 import { useCreateComplaint } from "@/src/hooks/useComplaints";
-import { useUnits } from "@/src/hooks/useUnits";
 import {
     COMPLAINT_CATEGORY_OPTIONS,
     COMPLAINT_PRIORITY_OPTIONS,
@@ -34,8 +36,11 @@ import {
 } from "@/src/types/complaint.types";
 import { useEffect, useState } from "react";
 
-const NO_BUILDING = "__NONE__";
-const NO_UNIT = "__NONE__";
+const EMPTY_LOCATION: BuildingFloorUnitValue = {
+    buildingId: "",
+    floorId: "",
+    unitId: "",
+};
 
 interface CreateComplaintDialogProps {
     open: boolean;
@@ -50,19 +55,13 @@ export function CreateComplaintDialog({
     defaultBuildingId,
     defaultUnitId,
 }: CreateComplaintDialogProps) {
-    const { data: buildings } = useBuildings();
     const mutation = useCreateComplaint();
 
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [category, setCategory] = useState<ComplaintCategory>("PLUMBING");
     const [priority, setPriority] = useState<ComplaintPriority>("MEDIUM");
-    const [buildingId, setBuildingId] = useState<string>(NO_BUILDING);
-    const [unitId, setUnitId] = useState<string>(NO_UNIT);
-
-    const { data: unitsInBuilding } = useUnits(
-        buildingId !== NO_BUILDING ? { buildingId } : undefined,
-    );
+    const [location, setLocation] = useState<BuildingFloorUnitValue>(EMPTY_LOCATION);
 
     useEffect(() => {
         if (!open) return;
@@ -70,16 +69,12 @@ export function CreateComplaintDialog({
         setDescription("");
         setCategory("PLUMBING");
         setPriority("MEDIUM");
-        setBuildingId(defaultBuildingId ?? NO_BUILDING);
-        setUnitId(defaultUnitId ?? NO_UNIT);
+        setLocation({
+            buildingId: defaultBuildingId ?? "",
+            floorId: "",
+            unitId: defaultUnitId ?? "",
+        });
     }, [open, defaultBuildingId, defaultUnitId]);
-
-    // Clear unit when building changes
-    useEffect(() => {
-        if (buildingId === NO_BUILDING) {
-            setUnitId(NO_UNIT);
-        }
-    }, [buildingId]);
 
     function handleSubmit(ev: React.FormEvent) {
         ev.preventDefault();
@@ -89,8 +84,8 @@ export function CreateComplaintDialog({
             description: description.trim(),
             category,
             priority,
-            ...(buildingId !== NO_BUILDING && { buildingId }),
-            ...(unitId !== NO_UNIT && { unitId }),
+            ...(location.buildingId && { buildingId: location.buildingId }),
+            ...(location.unitId && { unitId: location.unitId }),
         };
 
         mutation.mutate(payload, {
@@ -198,67 +193,19 @@ export function CreateComplaintDialog({
                         </Field>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
-                        <Field label="Building" htmlFor="c-building">
-                            <Select
-                                value={buildingId}
-                                onValueChange={(v) =>
-                                    setBuildingId(v ?? NO_BUILDING)
-                                }
-                            >
-                                <SelectTrigger
-                                    id="c-building"
-                                    className={`w-full ${fieldClass}`}
-                                >
-                                    <SelectValue placeholder="No building" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value={NO_BUILDING}>
-                                        <span className="text-ink-soft">
-                                            None
-                                        </span>
-                                    </SelectItem>
-                                    {(buildings ?? []).map((b) => (
-                                        <SelectItem key={b.id} value={b.id}>
-                                            {b.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </Field>
-
-                        <Field label="Unit" htmlFor="c-unit">
-                            <Select
-                                value={unitId}
-                                onValueChange={(v) => setUnitId(v ?? NO_UNIT)}
-                                disabled={buildingId === NO_BUILDING}
-                            >
-                                <SelectTrigger
-                                    id="c-unit"
-                                    className={`w-full ${fieldClass}`}
-                                >
-                                    <SelectValue
-                                        placeholder={
-                                            buildingId === NO_BUILDING
-                                                ? "Pick a building first"
-                                                : "No unit"
-                                        }
-                                    />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value={NO_UNIT}>
-                                        <span className="text-ink-soft">
-                                            None
-                                        </span>
-                                    </SelectItem>
-                                    {(unitsInBuilding ?? []).map((u) => (
-                                        <SelectItem key={u.id} value={u.id}>
-                                            Unit {u.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </Field>
+                    <div className="space-y-1.5">
+                        <p className="text-[12.5px] font-semibold text-ink">
+                            Building / floor / unit
+                        </p>
+                        <BuildingFloorUnitSelect
+                            value={location}
+                            onChange={setLocation}
+                            idPrefix="c"
+                        />
+                        <p className="text-[11.5px] text-ink-soft/85">
+                            Where the issue is — all optional. Floor only
+                            narrows the unit list.
+                        </p>
                     </div>
 
                     <FormActions

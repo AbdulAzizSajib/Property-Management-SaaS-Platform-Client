@@ -14,6 +14,7 @@ function buildExpenseQuery(filters?: ExpenseFilters): string {
     if (!filters) return "";
     const params = new URLSearchParams();
     if (filters.buildingId) params.set("buildingId", filters.buildingId);
+    if (filters.unitId) params.set("unitId", filters.unitId);
     if (filters.category) params.set("category", filters.category);
     if (filters.from) params.set("from", filters.from);
     if (filters.to) params.set("to", filters.to);

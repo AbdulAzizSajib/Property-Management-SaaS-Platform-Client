@@ -426,6 +426,7 @@ function EditForm({
         <TenantFormForm
             mode="edit"
             defaultValues={defaults}
+            linkedTenant={form.tenant}
             submitting={updateMutation.isPending}
             submitLabel={t("saveChanges")}
             onCancel={onDone}
@@ -467,10 +468,19 @@ function FormCard({
             />
 
             <div className="flex items-start gap-3">
-                <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-jade-50 ring-1 ring-jade-100">
-                    <span className="text-[13px] font-bold text-jade-800">
-                        {initials}
-                    </span>
+                <span className="inline-flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-jade-50 ring-1 ring-jade-100">
+                    {form.tenant?.photoUrl ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img
+                            src={form.tenant.photoUrl}
+                            alt={form.name}
+                            className="size-full object-cover"
+                        />
+                    ) : (
+                        <span className="text-[13px] font-bold text-jade-800">
+                            {initials}
+                        </span>
+                    )}
                 </span>
 
                 <div className="min-w-0 flex-1">

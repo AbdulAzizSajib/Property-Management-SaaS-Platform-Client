@@ -88,6 +88,7 @@ export type UpdateExpensePayload = Partial<CreateExpensePayload>;
 
 export interface ExpenseFilters {
     buildingId?: string;
+    unitId?: string;
     category?: ExpenseCategory;
     /** ISO date string — inclusive lower bound on expenseDate. */
     from?: string;

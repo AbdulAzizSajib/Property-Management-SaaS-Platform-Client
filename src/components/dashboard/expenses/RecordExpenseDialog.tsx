@@ -10,6 +10,10 @@ import {
     FormActions,
     fieldClass,
 } from "@/src/components/dashboard/forms/form-primitives";
+import {
+    BuildingFloorUnitSelect,
+    type BuildingFloorUnitValue,
+} from "@/src/components/dashboard/forms/BuildingFloorUnitSelect";
 import { toDateInputValue } from "@/src/components/dashboard/expenses/expenseStyles";
 import {
     Dialog,
@@ -27,7 +31,6 @@ import {
     SelectValue,
 } from "@/src/components/ui/select";
 import { Textarea } from "@/src/components/ui/textarea";
-import { useBuildings } from "@/src/hooks/useBuildings";
 import {
     useCreateExpense,
     useUpdateExpense,
@@ -43,7 +46,11 @@ import {
 } from "@/src/types/payment.types";
 import { useEffect, useState } from "react";
 
-const NO_BUILDING = "__NONE__";
+const EMPTY_LOCATION: BuildingFloorUnitValue = {
+    buildingId: "",
+    floorId: "",
+    unitId: "",
+};
 
 interface RecordExpenseDialogProps {
     open: boolean;
@@ -58,7 +65,6 @@ export function RecordExpenseDialog({
     expense,
 }: RecordExpenseDialogProps) {
     const isEdit = !!expense;
-    const { data: buildings } = useBuildings();
 
     const createMutation = useCreateExpense();
     const updateMutation = useUpdateExpense(expense?.id ?? "");
@@ -70,7 +76,7 @@ export function RecordExpenseDialog({
     const [paidTo, setPaidTo] = useState("");
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("CASH");
     const [notes, setNotes] = useState("");
-    const [buildingId, setBuildingId] = useState<string>(NO_BUILDING);
+    const [location, setLocation] = useState<BuildingFloorUnitValue>(EMPTY_LOCATION);
 
     // Reset / hydrate when the dialog opens
     useEffect(() => {
@@ -84,7 +90,13 @@ export function RecordExpenseDialog({
             setPaidTo(expense.paidTo ?? "");
             setPaymentMethod(expense.paymentMethod);
             setNotes(expense.notes ?? "");
-            setBuildingId(expense.buildingId ?? NO_BUILDING);
+            setLocation({
+                buildingId: expense.buildingId ?? "",
+                // The floor isn't stored on Expense — it's only used here to
+                // narrow the unit list, so there's nothing to hydrate it from.
+                floorId: "",
+                unitId: expense.unitId ?? "",
+            });
         } else {
             setTitle("");
             setCategory("ELECTRICITY");
@@ -93,7 +105,7 @@ export function RecordExpenseDialog({
             setPaidTo("");
             setPaymentMethod("CASH");
             setNotes("");
-            setBuildingId(NO_BUILDING);
+            setLocation(EMPTY_LOCATION);
         }
     }, [open, expense]);
 
@@ -112,7 +124,8 @@ export function RecordExpenseDialog({
             paymentMethod,
             ...(paidTo.trim() && { paidTo: paidTo.trim() }),
             ...(notes.trim() && { notes: notes.trim() }),
-            ...(buildingId !== NO_BUILDING && { buildingId }),
+            buildingId: location.buildingId || undefined,
+            unitId: location.unitId || undefined,
         };
 
         if (isEdit) {
@@ -256,37 +269,20 @@ export function RecordExpenseDialog({
                         />
                     </Field>
 
-                    <Field
-                        label="Building"
-                        htmlFor="e-building"
-                        hint="Tie this expense to a specific building · optional"
-                    >
-                        <Select
-                            value={buildingId}
-                            onValueChange={(v) =>
-                                setBuildingId(v ?? NO_BUILDING)
-                            }
-                        >
-                            <SelectTrigger
-                                id="e-building"
-                                className={`w-full ${fieldClass}`}
-                            >
-                                <SelectValue placeholder="No building" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value={NO_BUILDING}>
-                                    <span className="text-ink-soft">
-                                        Organization-wide
-                                    </span>
-                                </SelectItem>
-                                {(buildings ?? []).map((b) => (
-                                    <SelectItem key={b.id} value={b.id}>
-                                        {b.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </Field>
+                    <div className="space-y-1.5">
+                        <p className="text-[12.5px] font-semibold text-ink">
+                            Building / floor / unit
+                        </p>
+                        <BuildingFloorUnitSelect
+                            value={location}
+                            onChange={setLocation}
+                            idPrefix="e"
+                        />
+                        <p className="text-[11.5px] text-ink-soft/85">
+                            Tie this expense to a specific building or unit ·
+                            all optional. Floor only narrows the unit list.
+                        </p>
+                    </div>
 
                     <Field label="Notes" htmlFor="e-notes">
                         <Textarea
