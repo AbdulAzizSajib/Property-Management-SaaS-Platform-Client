@@ -304,6 +304,7 @@ export default function BuildingDetailPage() {
                             </DialogDescription>
                         </DialogHeader>
                         <BuildingForm
+                            isEdit
                             submitting={updateMutation.isPending}
                             submitLabel="Save changes"
                             defaultValues={{
@@ -313,6 +314,7 @@ export default function BuildingDetailPage() {
                                 city: building.city,
                                 area: building.area ?? "",
                                 totalFloors: building.totalFloors,
+                                hasGroundFloor: building.hasGroundFloor,
                                 description: building.description ?? "",
                             }}
                             onCancel={() => setEditOpen(false)}

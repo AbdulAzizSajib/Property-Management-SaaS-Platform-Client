@@ -119,12 +119,12 @@ export function OwnerSidebar({ onNavigate }: { onNavigate?: () => void }) {
           </p>
         </div>
         <span className="rounded-md bg-jade-50 px-1.5 py-0.5 text-[10.5px] font-semibold text-jade-800 tabular-nums">
-          {buildingsUsed} {buildingsUsed === 1 ? "bldg" : "bldgs"}
+          {buildingsUsed} {buildingsUsed === 1 ? "building" : "buildings"}
         </span>
       </Link>
 
       {/* Nav */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 [scrollbar-width:thin] [scrollbar-color:var(--color-rule)_transparent]">
+      <nav className="flex-1 overflow-y-auto px-3 py-4 scrollbar-thin [scrollbar-color:var(--color-rule)_transparent]">
         {sections.map((section, idx) => (
           <div key={idx} className="mb-5 last:mb-0">
             {section.title && (
@@ -150,7 +150,9 @@ export function OwnerSidebar({ onNavigate }: { onNavigate?: () => void }) {
                           ? "bg-jade-50 text-jade-950"
                           : "text-ink-soft hover:bg-cream hover:text-jade-900",
                       )}
+                      
                     >
+                      
                       {/* Active accent bar — the brand signature */}
                       {isActive && (
                         <span

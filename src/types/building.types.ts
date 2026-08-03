@@ -41,6 +41,7 @@ export interface Building {
   city: string;
   area: string | null;
   totalFloors: number;
+  hasGroundFloor: boolean;
   description: string | null;
   isActive: boolean;
   createdAt: string;

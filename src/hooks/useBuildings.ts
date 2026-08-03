@@ -1,5 +1,6 @@
 "use client";
 
+import { floorKeys } from "@/src/hooks/useFloors";
 import {
     assignCaretaker,
     createBuilding,
@@ -76,6 +77,10 @@ export function useUpdateBuilding(id: string) {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: buildingKeys.detail(id) });
             queryClient.invalidateQueries({ queryKey: buildingKeys.list() });
+            // Editing totalFloors/hasGroundFloor can add/remove Floor rows.
+            queryClient.invalidateQueries({
+                queryKey: floorKeys.listByBuilding(id),
+            });
             toast.success("Building updated");
         },
         onError: (error: unknown) => {

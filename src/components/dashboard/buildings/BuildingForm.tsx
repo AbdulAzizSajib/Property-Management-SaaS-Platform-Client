@@ -48,6 +48,8 @@ export const emptyBuildingForm: BuildingFormValues = {
 
 interface BuildingFormProps {
   defaultValues?: Partial<BuildingFormValues>;
+  /** Edit mode changes the "Total floors" hint — floors sync automatically. */
+  isEdit?: boolean;
   submitting: boolean;
   submitLabel: string;
   onSubmit: (payload: CreateBuildingPayload) => void;
@@ -56,6 +58,7 @@ interface BuildingFormProps {
 
 export function BuildingForm({
   defaultValues,
+  isEdit,
   submitting,
   submitLabel,
   onSubmit,
@@ -152,7 +155,16 @@ export function BuildingForm({
             </Select>
           </Field>
 
-          <Field label="Total floors" htmlFor="totalFloors" required>
+          <Field
+            label="Total floors"
+            htmlFor="totalFloors"
+            required
+            hint={
+              isEdit
+                ? "Raising this adds new empty floors; lowering it removes the highest floors (blocked if they still have units)."
+                : undefined
+            }
+          >
             <Input
               id="totalFloors"
               type="number"

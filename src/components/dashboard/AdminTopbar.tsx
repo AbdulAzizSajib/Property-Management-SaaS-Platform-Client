@@ -23,7 +23,7 @@ import {
   Search,
   User,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/src/i18n/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { AdminSidebar } from "./AdminSidebar";

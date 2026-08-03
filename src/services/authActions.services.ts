@@ -7,6 +7,7 @@
 "use server";
 
 import { httpClient } from "@/src/lib/axios/httpClient";
+import { clearAuthCookies } from "@/src/lib/cookieUtils";
 import type {
     ChangePasswordPayload,
     CurrentUser,
@@ -44,5 +45,16 @@ export const forgetPassword = async (payload: ForgetPasswordPayload) =>
 export const resetPassword = async (payload: ResetPasswordPayload) =>
     httpClient.post<{ success: true }>("/auth/reset-password", payload);
 
-/** POST /auth/logout — clears server-side session cookies. */
-export const logout = async () => httpClient.post("/auth/logout", {});
+/**
+ * POST /auth/logout — tells the backend to end the session, then clears the
+ * Next.js-domain auth cookies ourselves. The backend's Set-Cookie headers
+ * only clear cookies on its own origin (this is a server-to-server axios
+ * call, not a browser request), so the middleware would otherwise keep
+ * treating the browser as authenticated and bounce it straight back to the
+ * dashboard whenever it lands on /login.
+ */
+export const logout = async () => {
+    const res = await httpClient.post("/auth/logout", {});
+    await clearAuthCookies();
+    return res;
+};
