@@ -1,6 +1,7 @@
 "use client";
 
 import LogoMark from "@/src/components/LogoMark";
+import Reveal from "@/src/components/Reveal";
 import SectionHead from "@/src/components/SectionHead";
 import { useState } from "react";
 
@@ -136,7 +137,7 @@ export default function ProductDeepDive() {
                     })}
                 </div>
 
-                <div className="max-w-[1100px] mx-auto bg-paper rounded-2xl p-2 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.4)]">
+                <Reveal y={40} className="max-w-[1100px] mx-auto bg-paper rounded-2xl p-2 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.4)]">
                     <div className="flex items-center gap-1.5 px-3 py-2">
                         <span className="w-[9px] h-[9px] rounded-full bg-[#f9beb2]" />
                         <span className="w-[9px] h-[9px] rounded-full bg-[#fadea2]" />
@@ -272,7 +273,7 @@ export default function ProductDeepDive() {
                             </div>
                         </main>
                     </div>
-                </div>
+                </Reveal>
             </div>
         </section>
     );

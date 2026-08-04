@@ -1,5 +1,6 @@
 "use client";
 
+import { RevealGroup, RevealItem } from "@/src/components/Reveal";
 import SectionHead from "@/src/components/SectionHead";
 import { useState } from "react";
 
@@ -59,39 +60,40 @@ export function FaqSection() {
                     }
                 />
 
-                <div className="max-w-[820px] mx-auto">
+                <RevealGroup className="max-w-[820px] mx-auto">
                     {faqs.map((faq, i) => {
                         const open = openIndex === i;
                         return (
-                            <button
-                                key={faq.q}
-                                type="button"
-                                onClick={() => setOpenIndex(open ? null : i)}
-                                className="w-full text-left border-b border-rule dark:border-white/15 py-6 cursor-pointer"
-                            >
-                                <div className="flex justify-between items-center gap-6">
-                                    <h3 className="text-[17px] font-semibold text-jade-950 dark:text-jade-50 tracking-[-0.01em]">
-                                        {faq.q}
-                                    </h3>
-                                    <span
-                                        className={`w-7 h-7 shrink-0 rounded-full flex items-center justify-center font-bold text-base transition ${
-                                            open
-                                                ? "bg-coral-600 text-paper rotate-45"
-                                                : "bg-cream-2 dark:bg-night-2 text-jade-900 dark:text-jade-50"
-                                        }`}
-                                    >
-                                        +
-                                    </span>
-                                </div>
-                                {open && (
-                                    <div className="mt-3.5 max-w-[680px] text-[15px] leading-[1.65] text-ink-soft dark:text-mist-soft">
-                                        {faq.a}
+                            <RevealItem key={faq.q}>
+                                <button
+                                    type="button"
+                                    onClick={() => setOpenIndex(open ? null : i)}
+                                    className="w-full text-left border-b border-rule dark:border-white/15 py-6 cursor-pointer"
+                                >
+                                    <div className="flex justify-between items-center gap-6">
+                                        <h3 className="text-[17px] font-semibold text-jade-950 dark:text-jade-50 tracking-[-0.01em]">
+                                            {faq.q}
+                                        </h3>
+                                        <span
+                                            className={`w-7 h-7 shrink-0 rounded-full flex items-center justify-center font-bold text-base transition ${
+                                                open
+                                                    ? "bg-coral-600 text-paper rotate-45"
+                                                    : "bg-cream-2 dark:bg-night-2 text-jade-900 dark:text-jade-50"
+                                            }`}
+                                        >
+                                            +
+                                        </span>
                                     </div>
-                                )}
-                            </button>
+                                    {open && (
+                                        <div className="mt-3.5 max-w-[680px] text-[15px] leading-[1.65] text-ink-soft dark:text-mist-soft">
+                                            {faq.a}
+                                        </div>
+                                    )}
+                                </button>
+                            </RevealItem>
                         );
                     })}
-                </div>
+                </RevealGroup>
             </div>
         </section>
     );

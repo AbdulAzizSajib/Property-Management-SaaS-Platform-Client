@@ -1,3 +1,6 @@
+"use client";
+
+import { RevealGroup, RevealItem } from "@/src/components/Reveal";
 import SectionHead from "@/src/components/SectionHead";
 
 type Feature = { text: string; check: boolean };
@@ -85,11 +88,11 @@ export default function Pricing() {
                     description="Pay monthly in taka. Cancel anytime. All plans include a 30-day free trial and Bangla-speaking support."
                 />
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-[1100px] mx-auto">
+                <RevealGroup className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-[1100px] mx-auto">
                     {plans.map((plan) => (
                         <PlanCard key={plan.name} plan={plan} />
                     ))}
-                </div>
+                </RevealGroup>
 
                 <p className="text-center mt-10 text-[13px] text-ink-soft dark:text-mist-soft">
                     All prices in BDT, inclusive of VAT. <b className="text-jade-900 dark:text-jade-50">Transaction fees</b>{" "}
@@ -103,7 +106,7 @@ export default function Pricing() {
 function PlanCard({ plan }: { plan: Plan }) {
     if (plan.featured) {
         return (
-            <div className="relative rounded-[18px] p-9 flex flex-col bg-jade-950 text-paper border border-jade-800 lg:scale-[1.03] shadow-[0_24px_48px_-16px_rgba(10,46,34,0.4)]">
+            <RevealItem className="relative rounded-[18px] p-9 flex flex-col bg-jade-950 text-paper border border-jade-800 lg:scale-[1.03] shadow-[0_24px_48px_-16px_rgba(10,46,34,0.4)]">
                 <span className="absolute -top-3.5 left-8 bg-coral-600 text-paper text-[11px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
                     ★ Most popular
                 </span>
@@ -124,11 +127,11 @@ function PlanCard({ plan }: { plan: Plan }) {
                 >
                     {plan.cta}
                 </button>
-            </div>
+            </RevealItem>
         );
     }
     return (
-        <div className="rounded-[18px] p-9 bg-paper dark:bg-night-2 border border-rule-soft dark:border-white/10 flex flex-col">
+        <RevealItem className="rounded-[18px] p-9 bg-paper dark:bg-night-2 border border-rule-soft dark:border-white/10 flex flex-col">
             <div className="text-sm font-bold uppercase tracking-[0.12em] text-jade-800 dark:text-jade-300 mb-3">
                 {plan.name}
             </div>
@@ -146,7 +149,7 @@ function PlanCard({ plan }: { plan: Plan }) {
             >
                 {plan.cta}
             </button>
-        </div>
+        </RevealItem>
     );
 }
 

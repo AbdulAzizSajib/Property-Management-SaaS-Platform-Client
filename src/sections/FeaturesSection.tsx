@@ -1,3 +1,6 @@
+"use client";
+
+import { RevealGroup, RevealItem } from "@/src/components/Reveal";
 import SectionHead from "@/src/components/SectionHead";
 import {
     Banknote,
@@ -47,9 +50,9 @@ export default function FeaturesSection() {
                     description="From a single flat in Mirpur to a 30-storey tower in Bashundhara, Bariyan adapts to how you already work."
                 />
 
-                <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 auto-rows-[minmax(220px,auto)] gap-4">
+                <RevealGroup className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 auto-rows-[minmax(220px,auto)] gap-4">
                     {/* B-1 hero card */}
-                    <div className="md:col-span-4 lg:col-span-4 md:row-span-2 bg-jade-900 border border-jade-900 rounded-[18px] p-8 text-paper overflow-hidden">
+                    <RevealItem className="md:col-span-4 lg:col-span-4 md:row-span-2 bg-jade-900 border border-jade-900 rounded-[18px] p-8 text-paper overflow-hidden">
                         <FeatureIcon dark icon={Banknote} />
                         <h3 className="font-bold text-[28px] tracking-[-0.015em] text-paper mb-3">
                             Track every rent payment in one place
@@ -84,7 +87,7 @@ export default function FeaturesSection() {
                                 </div>
                             ))}
                         </div>
-                    </div>
+                    </RevealItem>
 
                     {/* B-2 */}
                     <BentoCard className="md:col-span-2 lg:col-span-2">
@@ -160,7 +163,7 @@ export default function FeaturesSection() {
                     </BentoCard>
 
                     {/* B-6 reports stats */}
-                    <div className="md:col-span-4 lg:col-span-6 bg-cream-2 dark:bg-night-2 rounded-[18px] p-8 md:px-9">
+                    <RevealItem className="md:col-span-4 lg:col-span-6 bg-cream-2 dark:bg-night-2 rounded-[18px] p-8 md:px-9">
                         <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr_1fr_1fr_1fr] gap-6 items-center">
                             <div>
                                 <h3 className="text-[22px] font-bold text-jade-950 dark:text-jade-50 tracking-[-0.015em] mb-1.5">
@@ -182,8 +185,8 @@ export default function FeaturesSection() {
                                 </div>
                             ))}
                         </div>
-                    </div>
-                </div>
+                    </RevealItem>
+                </RevealGroup>
             </div>
         </section>
     );
@@ -191,11 +194,11 @@ export default function FeaturesSection() {
 
 function BentoCard({ children, className }: { children: React.ReactNode; className?: string }) {
     return (
-        <div
+        <RevealItem
             className={`bg-paper dark:bg-night-2 border border-rule-soft dark:border-white/10 rounded-[18px] p-7 relative overflow-hidden transition hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-12px_rgba(10,46,34,0.15)] ${className ?? ""}`}
         >
             {children}
-        </div>
+        </RevealItem>
     );
 }
 

@@ -1,3 +1,6 @@
+"use client";
+
+import { RevealGroup, RevealItem } from "@/src/components/Reveal";
 import SectionHead from "@/src/components/SectionHead";
 
 const steps = [
@@ -38,9 +41,9 @@ export default function HowItWorks() {
                     description={"No installer visits. No spreadsheet migrations. No “let me speak to your IT guy.”"}
                 />
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <RevealGroup className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {steps.map((s, i) => (
-                        <div key={s.title} className="pt-7 relative">
+                        <RevealItem key={s.title} className="pt-7 relative">
                             <div className="font-mono text-[12px] font-bold text-coral-600 pb-3.5 mb-4.5 border-b border-rule dark:border-white/15">
                                 {String(i + 1).padStart(2, "0")}
                             </div>
@@ -48,9 +51,9 @@ export default function HowItWorks() {
                                 {s.title}
                             </h4>
                             <p className="text-sm leading-[1.6] text-ink-soft dark:text-mist-soft">{s.text}</p>
-                        </div>
+                        </RevealItem>
                     ))}
-                </div>
+                </RevealGroup>
             </div>
         </section>
     );

@@ -24,8 +24,8 @@ export default function Navbar() {
   }, [openMobileMenu]);
 
   return (
-    <div className="sticky top-4 z-50 px-4">
-      <nav className="mx-auto flex w-fit max-w-full items-center gap-10 rounded-full border border-white/25 bg-white/15 py-2.5 pl-5 pr-2 backdrop-blur-xl shadow-[0_8px_32px_-12px_rgba(10,46,34,0.35)]">
+    <div className="sticky top-4 z-50 px-4 will-change-transform">
+      <nav className="mx-auto flex w-fit max-w-full items-center gap-10 rounded-full  border-b border-white/25  py-2.5 pl-5 pr-2 backdrop-blur-md shadow-[0_8px_32px_-12px_rgba(10,46,34,0.35)]">
         <Link
           href="/"
           className="flex shrink-0 flex-col items-center  text-jade-900 dark:text-jade-50 text-2xl font-bold tracking-tight relative"

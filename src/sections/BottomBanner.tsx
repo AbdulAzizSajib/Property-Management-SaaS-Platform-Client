@@ -1,3 +1,7 @@
+"use client";
+
+import Reveal from "@/src/components/Reveal";
+
 const trustItems = [
     "30-day free trial",
     "No credit card required",
@@ -23,7 +27,7 @@ export default function BottomBanner() {
                     backgroundSize: "28px 28px",
                 }}
             />
-            <div className="relative z-10">
+            <Reveal className="relative z-10">
                 <h2 className="font-bold tracking-[-0.035em] leading-[1.05] text-balance max-w-[880px] mx-auto mb-5 text-[40px] md:text-[52px] lg:text-[64px]">
                     Stop chasing rent.
                     <br />
@@ -67,7 +71,7 @@ export default function BottomBanner() {
                         </span>
                     ))}
                 </div>
-            </div>
+            </Reveal>
         </section>
     );
 }

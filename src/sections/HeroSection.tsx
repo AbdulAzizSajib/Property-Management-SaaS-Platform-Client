@@ -1,7 +1,7 @@
 "use client";
 
 import { Banknote, FileCheck2, Users } from "lucide-react";
-import Image from "next/image";
+import { RevealGroup, RevealItem } from "@/src/components/Reveal";
 
 const chips = [
   "Rent & dues tracking",
@@ -21,68 +21,77 @@ const stats = [
 export default function HeroSection() {
   return (
     <section className="relative isolate -mt-20 overflow-hidden pb-24 pt-40 lg:-mt-24 lg:pb-32 lg:pt-52">
-      {/* Background — illustrated skyline, full-bleed under the navbar */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
-        <Image
-          src="/assets/hero.webp"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-top dark:opacity-40"
-        />
-      </div>
+      {/* Background — static gradient, full-bleed under the navbar */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-0 dark:opacity-40"
+        style={{
+          background:
+            "radial-gradient(120% 100% at 20% 0%, #136A55 0%, #0d4f3f 35%, #0a2e22 60%, #061f17 100%), radial-gradient(80% 60% at 85% 100%, #E85D44 0%, transparent 60%)",
+        }}
+      />
 
-      <div className="relative z-10 mx-auto flex container flex-col items-center px-5 text-center md:px-8">
+      <RevealGroup
+        className="relative z-10 mx-auto flex container flex-col items-center px-5 text-center md:px-8"
+        stagger={0.1}
+      >
         {/* Eyebrow pill */}
-        <a
-          href="#report"
-          className="group inline-flex items-center gap-2.5 rounded-full border border-white/30 bg-white/15 py-1.5 pl-3.5 pr-1.5 text-[12.5px] text-white backdrop-blur transition-colors hover:border-white/50"
-        >
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute inset-0 animate-ping rounded-full bg-coral-500 opacity-60" />
-            <span className="relative h-1.5 w-1.5 rounded-full bg-coral-500" />
-          </span>
-          <span className="capitalize">Built for Bangladeshi Land Owners</span>
-          <span className="inline-flex items-center gap-1 rounded-full bg-jade-900 px-2.5 py-1 text-[12px] font-semibold text-paper transition-colors group-hover:bg-jade-950">
-            Read the data
-            <span className="transition-transform group-hover:translate-x-0.5">
-              →
+        <RevealItem>
+          <a
+            href="#report"
+            className="group inline-flex items-center gap-2.5 rounded-full border border-jade-950/20 bg-white/40 py-1.5 pl-3.5 pr-1.5 text-[12.5px] text-jade-950 backdrop-blur transition-colors hover:border-jade-950/40"
+          >
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inset-0 animate-ping rounded-full bg-coral-500 opacity-60" />
+              <span className="relative h-1.5 w-1.5 rounded-full bg-coral-500" />
             </span>
-          </span>
-        </a>
+            <span className="capitalize">Built for Bangladeshi Land Owners</span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-jade-900 px-2.5 py-1 text-[12px] font-semibold text-paper transition-colors group-hover:bg-jade-950">
+              Read the data
+              <span className="transition-transform group-hover:translate-x-0.5">
+                →
+              </span>
+            </span>
+          </a>
+        </RevealItem>
 
         {/* Headline */}
-        <h1 className="mt-7 max-w-4xl text-balance font-bold leading-[1.05] text-white text-[42px] drop-shadow-[0_2px_20px_rgba(10,46,34,0.25)] sm:text-[58px] lg:text-[72px]">
-          Manage your <span className="text-jade-200">property</span>{" "}
-          <span className="text-coral-400">finances</span>{" "}
-          <span className="font-serif font-normal italic tracking-[-0.02em]">
-            easily
-          </span>
-          <span className="text-coral-400">.</span>
-        </h1>
+        <RevealItem>
+          <h1 className="mt-7 max-w-4xl text-balance font-bold leading-[1.05] text-white text-[42px] sm:text-[58px] lg:text-[72px]">
+            Manage your <span className="text-white">property</span>{" "}
+            <span className="text-white">finances</span>{" "}
+            <span className="font-serif font-normal italic tracking-[-0.02em]">
+              easily
+            </span>
+            <span className="text-white">.</span>
+          </h1>
+        </RevealItem>
 
         {/* Sub-headline */}
-        <p className="mt-6 max-w-xl text-[16px] leading-[1.65] text-white/85">
-          Smartly manage your property, tenants, and finances in one place —
-          rent collection, bills, and reports, without the spreadsheet chaos.
-        </p>
+        <RevealItem>
+          <p className="mt-6 max-w-xl text-[16px] leading-[1.65] text-jade-950/80">
+            Smartly manage your property, tenants, and finances in one place —
+            rent collection, bills, and reports, without the spreadsheet chaos.
+          </p>
+        </RevealItem>
 
         {/* Inline feature list */}
-        <ul className="mt-7 flex max-w-xl flex-wrap items-center justify-center gap-x-5 gap-y-2">
-          {chips.map((c) => (
-            <li
-              key={c}
-              className="inline-flex items-center gap-1.5 text-[13.5px] font-medium text-white"
-            >
-              <CheckIcon className="text-jade-300" />
-              <span>{c}</span>
-            </li>
-          ))}
-        </ul>
+        <RevealItem>
+          <ul className="mt-7 flex max-w-xl flex-wrap items-center justify-center gap-x-5 gap-y-2">
+            {chips.map((c) => (
+              <li
+                key={c}
+                className="inline-flex items-center gap-1.5 text-[13.5px] font-medium text-jade-950"
+              >
+                <CheckIcon className="text-jade-700" />
+                <span>{c}</span>
+              </li>
+            ))}
+          </ul>
+        </RevealItem>
 
         {/* CTAs */}
-        <div className="mt-9 flex flex-wrap items-center justify-center gap-2">
+        <RevealItem className="mt-9 flex flex-wrap items-center justify-center gap-2">
           <button
             type="button"
             className="group relative rounded-[10px] bg-jade-900 dark:bg-jade-700 px-6 py-3.5 text-[15px] font-semibold text-paper transition-all duration-200 hover:bg-jade-950 dark:hover:bg-jade-500 hover:shadow-[0_10px_30px_-10px_rgba(13,79,63,0.5)]"
@@ -109,7 +118,7 @@ export default function HeroSection() {
 
           <button
             type="button"
-            className="group inline-flex items-center gap-2.5 rounded-[10px] px-5 py-3.5 text-[15px] font-semibold text-white transition-colors hover:text-coral-300"
+            className="group inline-flex items-center gap-2.5 rounded-[10px] px-5 py-3.5 text-[15px] font-semibold text-jade-950 transition-colors hover:text-coral-600"
           >
             <svg
               width="20"
@@ -130,10 +139,10 @@ export default function HeroSection() {
             </svg>
             Watch the 90-second demo
           </button>
-        </div>
+        </RevealItem>
 
         {/* Social proof */}
-        <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:gap-4">
+        <RevealItem className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:gap-4">
           <div className="flex items-center -space-x-2">
             {avatars.map((c, i) => (
               <span
@@ -142,36 +151,36 @@ export default function HeroSection() {
               />
             ))}
           </div>
-          <p className="inline-flex flex-wrap items-center justify-center gap-2 text-[13px] text-white/85">
+          <p className="inline-flex flex-wrap items-center justify-center gap-2 text-[13px] text-jade-950/80">
             <span className="inline-flex h-4.5 items-center rounded-full bg-coral-500 px-2 text-[10px] font-semibold uppercase tracking-wider text-white">
               Early access
             </span>
             Be one of the first landlords — free, no card required.
           </p>
-        </div>
+        </RevealItem>
 
         {/* Stat strip */}
-        <div className="mt-16 grid w-full max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
+        <RevealItem className="mt-16 grid w-full max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
           {stats.map(({ icon: Icon, value, label }) => (
             <div
               key={label}
-              className="flex items-center gap-3 rounded-2xl border border-white/25 bg-white/15 px-4 py-3.5 text-left backdrop-blur-md"
+              className="flex items-center gap-3 rounded-2xl border border-jade-950/15 bg-white/40 px-4 py-3.5 text-left backdrop-blur-md"
             >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-white/20 text-white">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-jade-950/10 text-jade-950">
                 <Icon size={18} strokeWidth={1.8} />
               </span>
               <div>
-                <div className="text-[15px] font-bold text-white">
+                <div className="text-[15px] font-bold text-jade-950">
                   {value}
                 </div>
-                <div className="text-[11.5px] text-white/75">
+                <div className="text-[11.5px] text-jade-950/70">
                   {label}
                 </div>
               </div>
             </div>
           ))}
-        </div>
-      </div>
+        </RevealItem>
+      </RevealGroup>
     </section>
   );
 }
