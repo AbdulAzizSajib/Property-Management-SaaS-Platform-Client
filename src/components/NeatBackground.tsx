@@ -25,7 +25,7 @@ const config: NeatConfig = {
     colorSaturation: 7,
     wireframe: false,
     colorBlending: 4,
-    // 136A55
+    
     backgroundColor: "#f8f5eb",
     backgroundAlpha: 1,
     grainScale: 0,
@@ -90,7 +90,7 @@ const config: NeatConfig = {
     flatShading: false,
     cameraLock: false,
     cameraX: 0,
-    cameraY: -12,
+    cameraY: -10,
     cameraZ: 0,
     cameraRotationX: 0,
     cameraRotationY: 0,

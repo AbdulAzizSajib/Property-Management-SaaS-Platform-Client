@@ -1,6 +1,7 @@
 "use client";
 
 import { Banknote, FileCheck2, Users } from "lucide-react";
+import NeatBackground from "@/src/components/NeatBackground";
 import { RevealGroup, RevealItem } from "@/src/components/Reveal";
 
 const chips = [
@@ -21,15 +22,10 @@ const stats = [
 export default function HeroSection() {
   return (
     <section className="relative isolate -mt-20 overflow-hidden pb-24 pt-40 lg:-mt-24 lg:pb-32 lg:pt-52">
-      {/* Background — static gradient, full-bleed under the navbar */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 z-0 dark:opacity-40"
-        style={{
-          background:
-            "radial-gradient(120% 100% at 20% 0%, #136A55 0%, #0d4f3f 35%, #0a2e22 60%, #061f17 100%), radial-gradient(80% 60% at 85% 100%, #E85D44 0%, transparent 60%)",
-        }}
-      />
+      {/* Background — animated gradient, full-bleed under the navbar */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
+        <NeatBackground className="h-full w-full dark:opacity-40" />
+      </div>
 
       <RevealGroup
         className="relative z-10 mx-auto flex container flex-col items-center px-5 text-center md:px-8"
@@ -69,7 +65,7 @@ export default function HeroSection() {
 
         {/* Sub-headline */}
         <RevealItem>
-          <p className="mt-6 max-w-xl text-[16px] leading-[1.65] text-jade-950/80">
+          <p className="mt-6 max-w-xl text-[16px] leading-[1.65] text-white">
             Smartly manage your property, tenants, and finances in one place —
             rent collection, bills, and reports, without the spreadsheet chaos.
           </p>
@@ -77,13 +73,13 @@ export default function HeroSection() {
 
         {/* Inline feature list */}
         <RevealItem>
-          <ul className="mt-7 flex max-w-xl flex-wrap items-center justify-center gap-x-5 gap-y-2">
+          <ul className="mt-7 flex max-w-2xl flex-wrap items-center justify-center gap-x-5 gap-y-2">
             {chips.map((c) => (
               <li
                 key={c}
-                className="inline-flex items-center gap-1.5 text-[13.5px] font-medium text-jade-950"
+                className="inline-flex items-center gap-1.5 text-[13.5px] font-medium text-white"
               >
-                <CheckIcon className="text-jade-700" />
+                <CheckIcon className="text-white" />
                 <span>{c}</span>
               </li>
             ))}
