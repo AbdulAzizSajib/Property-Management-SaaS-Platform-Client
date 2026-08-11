@@ -183,27 +183,29 @@
     "leaseCount": "{count} টি লিজ",
     "emptyTitle": "এখনো কোনো ভাড়াটিয়া নেই",
     "emptySubtitle": "লিজ ও ভাড়া আদায় ট্র্যাক করা শুরু করতে আপনার প্রথম ভাড়াটিয়া যোগ করুন।",
-    "addFirstTenant": "আপনার প্রথম ভাড়াটিয়া যোগ করুন"
+    "addFirstTenant": "আপনার প্রথম ভাড়াটিয়া যোগ করুন",
+    "colName": "নাম",
+    "colContact": "যোগাযোগ",
+    "colLocation": "অবস্থান",
+    "colLeases": "লিজ",
+    "colLeaseStatus": "লিজ অবস্থা",
+    "colStatus": "অবস্থা"
   },
   "leasesPage": {
     "eyebrow": "ভাড়াটিয়া চুক্তি",
     "title": "লিজ",
-
     "newLease": "নতুন লিজ",
     "createNewLease": "নতুন লিজ তৈরি করুন",
     "createNewLeaseDescription": "একটি ভাড়াটিয়াকে খালি ইউনিটের সাথে যুক্ত করুন। ইউনিটটি ভাড়া হয়ে যাবে এবং প্রথম বিল স্বয়ংক্রিয়ভাবে তৈরি হবে।",
     "createLease": "লিজ তৈরি করুন",
     "heroLabel": "সক্রিয় লিজ থেকে মাসিক ভাড়া",
-
     "heroFrom": "থেকে",
     "heroActiveLeases": "{count} টি সক্রিয় লিজ",
     "heroOnRecord": "রেকর্ডে",
     "pendingAwaiting": "{count} টি লিজ অপেক্ষমান, ব্যবস্থা প্রয়োজন",
     "statActive": "সক্রিয়",
-
     "statActiveSub": "ভাড়া তৈরি করছে",
     "statPending": "অপেক্ষমান",
-
     "statPendingNone": "কিছু অপেক্ষমান নেই",
     "statPendingSome": "আপনার মনোযোগ প্রয়োজন",
     "searchPlaceholder": "ভাড়াটিয়া, ইউনিট, বিল্ডিং দিয়ে খুঁজুন…",
@@ -222,7 +224,6 @@
     "dueDay": "নির্ধারিত দিন",
     "emptyTitle": "এখনো কোনো লিজ নেই",
     "emptySubtitle": "ভাড়া ও ভাড়াটিয়া চুক্তি ট্র্যাক করা শুরু করতে আপনার প্রথম লিজ তৈরি করুন।",
-
     "emptyCreateFirst": "আপনার প্রথম লিজ তৈরি করুন"
   },
   "invoicesPage": {
@@ -239,10 +240,8 @@
     "heroCollected": "{amount} আদায় হয়েছে",
     "overdueCount": "{count} টি বিল মেয়াদোত্তীর্ণ",
     "statCollected": "পরিশোধিত",
-
     "statCollectedSub": "এ পর্যন্ত পরিশোধিত",
     "statTotal": "মোট বিল",
-
     "statTotalSub": "সব অবস্থা",
     "searchPlaceholder": "বিল #, ভাড়াটিয়া, ইউনিট, বিল্ডিং দিয়ে খুঁজুন…",
     "buildingPlaceholder": "বিল্ডিং",
@@ -310,10 +309,8 @@
     "heroExpenses": "{count} টি খরচ",
     "heroThisMonth": "{amount} এই মাসে",
     "statThisMonth": "এই মাসে",
-  
     "statThisMonthSub": "এ পর্যন্ত খরচ",
     "statTotal": "মোট এন্ট্রি",
-   
     "statTotalSub": "লগ করা খরচ",
     "searchPlaceholder": "শিরোনাম, বিক্রেতা, বিল্ডিং, নোট দিয়ে খুঁজুন…",
     "categoryPlaceholder": "বিভাগ",
@@ -329,7 +326,6 @@
     "amount": "পরিমাণ",
     "emptyTitle": "এখনো কোনো খরচ নেই",
     "emptySubtitle": "পরিচালন খরচ ট্র্যাক করুন — ইউটিলিটি, মেরামত, বেতন, জ্বালানি, পরিষ্কার — টাকা আসলে কোথায় যায় তা জানতে।"
-  
   },
   "tenantDetailPage": {
     "backToTenants": "ভাড়াটিয়াতে ফিরে যান",

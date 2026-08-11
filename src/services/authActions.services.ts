@@ -20,6 +20,14 @@ import type {
 /** GET /auth/me — the currently authenticated user's profile. */
 export const getMe = async () => httpClient.get<CurrentUser>("/auth/me");
 
+/**
+ * PATCH /auth/me — self-service profile update (name, contactNumber, image).
+ * Scoped to the caller's own account; no id param and no isActive field.
+ * Multipart: `image` (if present) is an uploaded file, not a URL string.
+ */
+export const updateMyProfile = async (formData: FormData) =>
+    httpClient.upload<CurrentUser>("/auth/me", formData, { method: "PATCH" });
+
 /** POST /auth/change-password — caller must be logged in. */
 export const changePassword = async (payload: ChangePasswordPayload) =>
     httpClient.post<{ success: true }>("/auth/change-password", payload);

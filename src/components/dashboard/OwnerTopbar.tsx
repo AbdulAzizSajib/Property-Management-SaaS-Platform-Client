@@ -23,6 +23,7 @@ import { useRouter } from "@/src/i18n/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { ChangePasswordDialog } from "./auth/ChangePasswordDialog";
+import { EditProfileDialog } from "./auth/EditProfileDialog";
 import { OwnerSidebar } from "./OwnerSidebar";
 
 interface OwnerTopbarProps {
@@ -45,6 +46,7 @@ export function OwnerTopbar({ onSearchClick }: OwnerTopbarProps) {
   const { data: me } = useCurrentUser();
   const [loggingOut, setLoggingOut] = useState(false);
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
+  const [editProfileOpen, setEditProfileOpen] = useState(false);
 
   const user = {
     name: me?.name ?? "",
@@ -153,7 +155,10 @@ export function OwnerTopbar({ onSearchClick }: OwnerTopbarProps) {
                 </p>
               </DropdownMenuLabel>
               <DropdownMenuSeparator className="bg-rule-soft" />
-              <DropdownMenuItem className="text-[13px] text-ink focus:bg-cream focus:text-jade-900">
+              <DropdownMenuItem
+                onClick={() => setEditProfileOpen(true)}
+                className="text-[13px] text-ink focus:bg-cream focus:text-jade-900"
+              >
                 <User size={13} className="mr-2 text-ink-soft/70" />
                 My Profile
               </DropdownMenuItem>
@@ -185,6 +190,10 @@ export function OwnerTopbar({ onSearchClick }: OwnerTopbarProps) {
       <ChangePasswordDialog
         open={changePasswordOpen}
         onOpenChange={setChangePasswordOpen}
+      />
+      <EditProfileDialog
+        open={editProfileOpen}
+        onOpenChange={setEditProfileOpen}
       />
     </header>
   );

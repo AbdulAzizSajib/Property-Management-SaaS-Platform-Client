@@ -9,8 +9,8 @@ const config: NeatConfig = {
     colors: [
         { color: "#136A55", enabled: true }, // primary — jade
         { color: "#E85D44", enabled: true }, // primary — coral
-        // { color: "#0A2E22", enabled: true }, // deep jade (shadow/contrast)
-        // { color: "#1F9876", enabled: true }, // jade highlight
+        { color: "#0A2E22", enabled: true }, // deep jade (shadow/contrast)
+        { color: "#1F9876", enabled: true }, // jade highlight
         { color: "#F47358", enabled: true }, // coral highlight
     ],
     speed: 2.5,

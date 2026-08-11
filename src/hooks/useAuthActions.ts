@@ -7,6 +7,7 @@ import {
   getMe,
   resendVerificationOtp,
   resetPassword,
+  updateMyProfile,
   verifyEmail,
 } from "@/src/services/authActions.services";
 import type {
@@ -14,9 +15,10 @@ import type {
   ForgetPasswordPayload,
   ResendVerificationOtpPayload,
   ResetPasswordPayload,
+  UpdateMyProfilePayload,
   VerifyEmailPayload,
 } from "@/src/types/auth";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 export const currentUserKeys = {
@@ -32,6 +34,35 @@ export function useCurrentUser() {
       return res.data;
     },
     staleTime: 5 * 60 * 1000, // 5 min — avoids refetching on every mount
+  });
+}
+
+/**
+ * Self-service profile update (name, contactNumber, image file).
+ * PATCH /auth/me, multipart — mirrors useUploadDocument's FormData pattern.
+ */
+export function useUpdateMyProfile() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload: UpdateMyProfilePayload) => {
+      const formData = new FormData();
+      if (payload.name !== undefined) formData.append("name", payload.name);
+      if (payload.contactNumber !== undefined) {
+        formData.append("contactNumber", payload.contactNumber);
+      }
+      if (payload.image !== undefined) formData.append("image", payload.image);
+
+      const res = await updateMyProfile(formData);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: currentUserKeys.me });
+      toast.success("Profile updated");
+    },
+    onError: (error: unknown) => {
+      toast.error(getErrorMessage(error, "Failed to update profile"));
+    },
   });
 }
 

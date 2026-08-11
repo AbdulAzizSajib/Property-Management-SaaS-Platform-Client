@@ -183,12 +183,17 @@
     "leaseCount": "{count, plural, one {# lease} other {# leases}}",
     "emptyTitle": "No tenants yet",
     "emptySubtitle": "Add your first tenant to start tracking leases and rent collection.",
-    "addFirstTenant": "Add your first tenant"
+    "addFirstTenant": "Add your first tenant",
+    "colName": "Name",
+    "colContact": "Contact",
+    "colLocation": "Location",
+    "colLeases": "Leases",
+    "colLeaseStatus": "Lease status",
+    "colStatus": "Status"
   },
   "leasesPage": {
     "eyebrow": "Tenant agreements",
     "title": "Leases",
-
     "newLease": "New lease",
     "createNewLease": "Create new lease",
     "createNewLeaseDescription": "Connect a tenant to a vacant unit. The unit will become occupied and the first invoice will be generated automatically.",
@@ -199,10 +204,8 @@
     "heroOnRecord": "on record",
     "pendingAwaiting": "{count, plural, one {pending lease awaiting action} other {pending leases awaiting action}}",
     "statActive": "Active",
-
     "statActiveSub": "generating rent",
     "statPending": "Pending",
-
     "statPendingNone": "nothing waiting",
     "statPendingSome": "needs your attention",
     "searchPlaceholder": "Search by tenant, unit, building…",
@@ -221,7 +224,6 @@
     "dueDay": "Due day",
     "emptyTitle": "No leases yet",
     "emptySubtitle": "Create your first lease to start tracking rent and tenant agreements.",
-
     "emptyCreateFirst": "Create your first lease"
   },
   "invoicesPage": {
@@ -238,10 +240,8 @@
     "heroCollected": "{amount} collected",
     "overdueCount": "{count, plural, one {invoice overdue} other {invoices overdue}}",
     "statCollected": "Collected",
-
     "statCollectedSub": "paid to date",
     "statTotal": "Total invoices",
-
     "statTotalSub": "all statuses",
     "searchPlaceholder": "Search by invoice #, tenant, unit, building…",
     "buildingPlaceholder": "Building",
@@ -309,10 +309,8 @@
     "heroExpenses": "{count, plural, one {expense} other {expenses}}",
     "heroThisMonth": "{amount} this month",
     "statThisMonth": "This month",
-   
     "statThisMonthSub": "spent so far",
     "statTotal": "Total entries",
-   
     "statTotalSub": "logged expenses",
     "searchPlaceholder": "Search by title, vendor, building, notes…",
     "categoryPlaceholder": "Category",
@@ -328,7 +326,6 @@
     "amount": "Amount",
     "emptyTitle": "No expenses yet",
     "emptySubtitle": "Track operational costs — utilities, repairs, salaries, fuel, cleaning — to know where the money actually goes."
- 
   },
   "tenantDetailPage": {
     "backToTenants": "Back to tenants",

@@ -25,7 +25,9 @@ export default function Navbar() {
 
   return (
     <div className="sticky top-4 z-50 px-4 will-change-transform">
-      <nav className="mx-auto flex w-fit max-w-full items-center gap-10 rounded-full border-b border-rule-soft bg-paper py-2.5 pl-5 pr-2 shadow-md dark:border-white/10 dark:bg-night-2">
+      <div className="mx-auto flex w-fit max-w-full items-center gap-4">
+        
+        <nav className="flex w-fit max-w-full items-center gap-10 rounded-full border-b border-rule-soft bg-paper py-2.5 pl-5 pr-2 shadow-md dark:border-white/10 dark:bg-night-2">
         <Link
           href="/"
           className="flex shrink-0 flex-col items-center text-2xl font-bold tracking-tight relative"
@@ -35,7 +37,7 @@ export default function Navbar() {
             xmlns="http://www.w3.org/2000/svg"
             style={{ display: "block" }}
             viewBox="366.667 680 1230.667 682.667"
-            className="h-7 w-auto absolute -top-3.5 left-[-15.5px]"
+            className="h-7 w-auto absolute -top-2.5 left-[-15.5px]"
             preserveAspectRatio="none"
           >
             <path
@@ -64,46 +66,47 @@ export default function Navbar() {
               d="M 1177.96 977.928 L 1241.14 977.684 C 1241.64 997.869 1241.19 1020.46 1241.2 1040.81 L 1177.98 1040.94 C 1177.81 1019.94 1177.8 998.932 1177.96 977.928 z"
             ></path>
           </svg>
-          <h2 className="z-10 text-jade-900 dark:text-jade-50">Bariyan</h2>
+          <h2 className="z-10 text-coral-500 dark:text-jade-50">Bariyan</h2>
         </Link>
 
-        <div className="hidden lg:flex items-center gap-6 whitespace-nowrap text-[13.5px] font-medium text-ink-soft dark:text-mist-soft">
-          {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              className="relative py-2 transition-colors hover:text-jade-900 dark:hover:text-jade-50"
-            >
-              {link.name}
-            </a>
-          ))}
-        </div>
+          <div className="hidden lg:flex items-center gap-6 whitespace-nowrap text-[13.5px] font-medium text-ink-soft dark:text-mist-soft">
+            {navLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                className="relative py-2 transition-colors hover:text-jade-900 dark:hover:text-jade-50"
+              >
+                {link.name}
+              </a>
+            ))}
+          </div>
 
-        <div className="flex shrink-0 items-center gap-1.5">
-          <ModeToggle />
-          <Link
-            href="/login"
-            className="hidden sm:inline-flex items-center whitespace-nowrap text-ink transition px-3.5 py-2 rounded-full text-[13.5px] font-semibold hover:bg-jade-950/5 dark:text-mist dark:hover:bg-white/10"
-          >
-            Sign in
-          </Link>
-          <Link
-            href="/register"
-            className="hidden sm:inline-flex items-center gap-2 whitespace-nowrap bg-jade-900 hover:bg-jade-950 transition text-paper px-4 py-2 rounded-full text-[13.5px] font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_12px_rgba(13,79,63,0.25)] hover:-translate-y-0.5"
-          >
-            Get Started Free
-            <span className="font-mono">→</span>
-          </Link>
-          <button
-            type="button"
-            aria-label="Open menu"
-            onClick={() => setOpenMobileMenu((s) => !s)}
-            className="lg:hidden text-ink px-1.5 dark:text-mist"
-          >
-            {openMobileMenu ? <XIcon size={22} /> : <MenuIcon size={22} />}
-          </button>
-        </div>
-      </nav>
+          <div className="flex shrink-0 items-center gap-1.5">
+            <ModeToggle />
+            <Link
+              href="/login"
+              className="hidden sm:inline-flex items-center whitespace-nowrap text-ink transition px-3.5 py-2 rounded-full text-[13.5px] font-semibold hover:bg-jade-950/5 dark:text-mist dark:hover:bg-white/10"
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/register"
+              className="hidden sm:inline-flex items-center gap-2 whitespace-nowrap bg-jade-900 hover:bg-jade-950 transition text-paper px-4 py-2 rounded-full text-[13.5px] font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_12px_rgba(13,79,63,0.25)] hover:-translate-y-0.5"
+            >
+              Get Started Free
+              <span className="font-mono">→</span>
+            </Link>
+            <button
+              type="button"
+              aria-label="Open menu"
+              onClick={() => setOpenMobileMenu((s) => !s)}
+              className="lg:hidden text-ink px-1.5 dark:text-mist"
+            >
+              {openMobileMenu ? <XIcon size={22} /> : <MenuIcon size={22} />}
+            </button>
+          </div>
+        </nav>
+      </div>
 
       {openMobileMenu && (
         <div className="lg:hidden mt-2 rounded-2xl border border-rule-soft bg-paper px-5 py-5 flex flex-col gap-2 text-ink font-medium dark:border-white/10 dark:bg-night-2 dark:text-mist">

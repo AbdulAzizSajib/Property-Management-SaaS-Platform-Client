@@ -1,27 +1,12 @@
 "use client";
 
-import { Banknote, FileCheck2, Users } from "lucide-react";
+import Image from "next/image";
 import NeatBackground from "@/src/components/NeatBackground";
 import { RevealGroup, RevealItem } from "@/src/components/Reveal";
 
-const chips = [
-  "Rent & dues tracking",
-  "Bills & invoices",
-  "Income & expenses",
-  "One-click reports",
-];
-
-const avatars = ["bg-jade-500", "bg-coral-500", "bg-amber-500", "bg-jade-800"];
-
-const stats = [
-  { icon: Banknote, value: "৳4,82,000", label: "Collected this month" },
-  { icon: Users, value: "42", label: "Active tenants" },
-  { icon: FileCheck2, value: "100%", label: "Auto-generated receipts" },
-];
-
 export default function HeroSection() {
   return (
-    <section className="relative isolate -mt-20 overflow-hidden pb-24 pt-40 lg:-mt-24 lg:pb-32 lg:pt-52">
+    <section className="relative isolate -mt-20 overflow-hidden pb-16 pt-40 lg:-mt-24 lg:pb-20 lg:pt-52">
       {/* Background — animated gradient, full-bleed under the navbar */}
       <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
         <NeatBackground className="h-full w-full dark:opacity-40" />
@@ -68,21 +53,6 @@ export default function HeroSection() {
             Smartly manage your property, tenants, and finances in one place —
             rent collection, bills, and reports, without the spreadsheet chaos.
           </p>
-        </RevealItem>
-
-        {/* Inline feature list */}
-        <RevealItem>
-          <ul className="mt-7 flex max-w-2xl flex-wrap items-center justify-center gap-x-5 gap-y-2">
-            {chips.map((c) => (
-              <li
-                key={c}
-                className="inline-flex items-center gap-1.5 text-[13.5px] font-medium text-white/90"
-              >
-                <CheckIcon className="text-amber-500" />
-                <span>{c}</span>
-              </li>
-            ))}
-          </ul>
         </RevealItem>
 
         {/* CTAs */}
@@ -137,67 +107,30 @@ export default function HeroSection() {
           </button>
         </RevealItem>
 
-        {/* Social proof */}
-        <RevealItem className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:gap-4">
-          <div className="flex items-center -space-x-2">
-            {avatars.map((c, i) => (
-              <span
-                key={i}
-                className={`h-8 w-8 rounded-full ring-2 ring-white/80 ${c}`}
-              />
-            ))}
-          </div>
-          <p className="inline-flex flex-wrap items-center justify-center gap-2 text-[13px] text-white/85">
-            <span className="inline-flex h-4.5 items-center rounded-full bg-jade-950 px-2 text-[10px] font-semibold uppercase tracking-wider text-amber-500 shadow-[0_1px_0_0_rgba(255,255,255,0.12)_inset]">
-              Early access
-            </span>
-            Be one of the first landlords — free, no card required.
-          </p>
-        </RevealItem>
-
-        {/* Stat strip */}
-        <RevealItem className="mt-16 grid w-full max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
-          {stats.map(({ icon: Icon, value, label }) => (
-            <div
-              key={label}
-              className="flex items-center gap-3 rounded-2xl border border-white/25 bg-white/[0.14] px-4 py-3.5 text-left shadow-[0_1px_0_0_rgba(255,255,255,0.2)_inset,0_12px_28px_-14px_rgba(6,31,23,0.45)] backdrop-blur-xl transition-colors hover:bg-white/[0.18]"
-            >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-white/15 text-white shadow-[0_1px_0_0_rgba(255,255,255,0.2)_inset]">
-                <Icon size={18} strokeWidth={1.8} />
+        {/* Product preview screenshot */}
+        <RevealItem className="mt-10 w-full max-w-5xl">
+          <div className="overflow-hidden rounded-2xl border border-white/25 bg-white/10 shadow-[0_1px_0_0_rgba(255,255,255,0.2)_inset,0_30px_70px_-20px_rgba(6,31,23,0.55)] backdrop-blur-xl">
+            {/* window chrome */}
+            <div className="flex items-center gap-1.5 border-b border-white/15 bg-white/5 px-4 py-3">
+              <span className="h-2.5 w-2.5 rounded-full bg-white/30" />
+              <span className="h-2.5 w-2.5 rounded-full bg-white/30" />
+              <span className="h-2.5 w-2.5 rounded-full bg-white/30" />
+              <span className="ml-3 rounded-full bg-white/10 px-3 py-1 text-[11px] text-white/60">
+                app.bariyan.com/dashboard
               </span>
-              <div>
-                <div className="text-[15px] font-bold text-white">
-                  {value}
-                </div>
-                <div className="text-[11.5px] text-white/70">
-                  {label}
-                </div>
-              </div>
             </div>
-          ))}
+
+            <Image
+              src="/assets/banner.webp"
+              alt="Bariyan dashboard — collection pulse, buildings, units, and occupancy at a glance"
+              width={1894}
+              height={899}
+              priority
+              className="h-auto w-full"
+            />
+          </div>
         </RevealItem>
       </RevealGroup>
     </section>
-  );
-}
-
-function CheckIcon({ className = "text-jade-500 dark:text-jade-400" }: { className?: string }) {
-  return (
-    <svg
-      width="13"
-      height="13"
-      viewBox="0 0 13 13"
-      fill="none"
-      aria-hidden
-      className={className}
-    >
-      <path
-        d="M2.5 6.5l2.5 2.5 5.5-5.5"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
   );
 }

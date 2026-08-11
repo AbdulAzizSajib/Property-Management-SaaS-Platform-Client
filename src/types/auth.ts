@@ -115,6 +115,18 @@ export interface ChangePasswordPayload {
     newPassword: string;
 }
 
+/**
+ * PATCH /auth/me — self-service profile update. Deliberately excludes
+ * `isActive`: only the admin-facing PATCH /users/:id can change activation
+ * status. `image`, if provided, is an uploaded file (multipart), not a URL —
+ * the caller builds a FormData from this before calling the service.
+ */
+export interface UpdateMyProfilePayload {
+    name?: string;
+    contactNumber?: string;
+    image?: File;
+}
+
 export interface VerifyEmailPayload {
     email: string;
     otp: string;

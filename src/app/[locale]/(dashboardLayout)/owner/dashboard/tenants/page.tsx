@@ -15,10 +15,12 @@ import {
   DialogTrigger,
 } from "@/src/components/ui/dialog";
 import { Skeleton } from "@/src/components/ui/skeleton";
+import { DataTable } from "@/src/components/ui/data-table";
 import { useCreateTenant, useTenants } from "@/src/hooks/useTenants";
 import { fmtNum } from "@/src/lib/numerals";
 import { cn } from "@/src/lib/utils";
 import type { TenantListItem } from "@/src/types/tenant.types";
+import type { ColumnDef } from "@tanstack/react-table";
 import {
   Briefcase,
   Building2,
@@ -30,9 +32,9 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { Link } from "@/src/i18n/navigation";
+import { useRouter } from "@/src/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 type StatusFilter = "ALL" | "ACTIVE" | "INACTIVE";
 
@@ -215,9 +217,9 @@ export default function TenantsListPage() {
 
         {/* Content */}
         {isLoading ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="space-y-2">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <Skeleton key={i} className="h-[180px] rounded-[12px] bg-paper" />
+              <Skeleton key={i} className="h-12 rounded-[10px] bg-paper" />
             ))}
           </div>
         ) : isError ? (
@@ -243,11 +245,7 @@ export default function TenantsListPage() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((t) => (
-              <TenantCard key={t.id} tenant={t} />
-            ))}
-          </div>
+          <TenantsTable tenants={filtered} />
         )}
       </div>
     </div>
@@ -255,131 +253,183 @@ export default function TenantsListPage() {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// TenantCard
+// TenantsTable
 //
-// Status accent strip on the left (same pattern as UnitCard):
+// Status accent dot follows the same read as the old card:
 //   active + leased       → jade  (healthy)
 //   active + not on lease → coral (potential income, needs a lease)
 //   inactive              → ink-soft (archival)
 // ─────────────────────────────────────────────────────────────────
 
-function TenantCard({ tenant }: { tenant: TenantListItem }) {
+function TenantsTable({ tenants }: { tenants: TenantListItem[] }) {
   const t = useTranslations("tenantsPage");
-  const initials = (tenant.name ?? "")
-    .split(" ")
-    .filter(Boolean)
-    .map((p) => p[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
+  const router = useRouter();
 
-  const activeLease = tenant.leases.find((l) => l.status === "ACTIVE");
+  const columns = useMemo<ColumnDef<TenantListItem>[]>(
+    () => [
+      {
+        id: "name",
+        accessorKey: "name",
+        header: t("colName"),
+        cell: ({ row }) => {
+          const tenant = row.original;
+          const initials = (tenant.name ?? "")
+            .split(" ")
+            .filter(Boolean)
+            .map((p) => p[0])
+            .slice(0, 2)
+            .join("")
+            .toUpperCase();
+          const activeLease = tenant.leases.find(
+            (l) => l.status === "ACTIVE",
+          );
+          let accent = "bg-ink-soft/30";
+          if (tenant.isActive)
+            accent = activeLease ? "bg-jade-500" : "bg-coral-500";
 
-  let accent = "bg-ink-soft/30";
-  if (tenant.isActive) accent = activeLease ? "bg-jade-500" : "bg-coral-500";
-
-  const statusBadge = tenant.isActive
-    ? "bg-jade-50 text-jade-800 border-jade-100"
-    : "bg-cream text-ink-soft border-rule-soft";
-
-  return (
-    <Link
-      href={`/owner/dashboard/tenants/${tenant.id}`}
-      className="group relative block overflow-hidden  border border-rule-soft bg-paper p-4 transition-all hover:-translate-y-0.5 hover:border-jade-700/20 hover:shadow-[0_8px_24px_-12px_rgba(10,46,34,0.15)]"
-    >
-      {/* Accent strip */}
-      <span
-        aria-hidden
-        className={cn("absolute inset-y-0 left-0 w-0.75", accent)}
-      />
-
-      <div className="flex items-start gap-3">
-        {/* Avatar — jade-tinted */}
-        <span className="relative inline-flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-jade-50 ring-1 ring-jade-100">
-          {tenant.photoUrl ? (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img
-              src={tenant.photoUrl}
-              alt={tenant.name}
-              className="size-full object-cover"
-            />
-          ) : (
-            <span className="text-[13px] font-bold text-jade-800">
-              {initials}
-            </span>
-          )}
-        </span>
-
-        <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-2">
-            <p className="truncate text-[15px] font-bold tracking-[-0.01em] text-jade-950 group-hover:text-jade-900">
-              {tenant.name}
+          return (
+            <div className="flex items-center gap-2.5">
+              <span
+                aria-hidden
+                className={cn("size-1.5 shrink-0 rounded-full", accent)}
+              />
+              <span className="relative inline-flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-jade-50 ring-1 ring-jade-100">
+                {tenant.photoUrl ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={tenant.photoUrl}
+                    alt={tenant.name}
+                    className="size-full object-cover"
+                  />
+                ) : (
+                  <span className="text-[11px] font-bold text-jade-800">
+                    {initials}
+                  </span>
+                )}
+              </span>
+              <div className="min-w-0">
+                <p className="truncate text-[13.5px] font-bold tracking-[-0.01em] text-jade-950">
+                  {tenant.name}
+                </p>
+                {tenant.occupation && (
+                  <p className="truncate text-[11.5px] text-ink-soft">
+                    <Briefcase
+                      size={10}
+                      className="mr-1 inline -translate-y-px text-ink-soft/60"
+                    />
+                    {tenant.occupation}
+                  </p>
+                )}
+              </div>
+            </div>
+          );
+        },
+      },
+      {
+        id: "contact",
+        header: t("colContact"),
+        cell: ({ row }) => {
+          const tenant = row.original;
+          return (
+            <div className="space-y-0.5 text-[12px] text-ink-soft">
+              <p className="inline-flex items-center gap-1.5 tabular-nums">
+                <Phone size={11} className="text-ink-soft/60" />
+                {tenant.phone}
+              </p>
+              {tenant.email && (
+                <p className="flex items-center gap-1.5 truncate">
+                  <Mail size={11} className="shrink-0 text-ink-soft/60" />
+                  <span className="truncate">{tenant.email}</span>
+                </p>
+              )}
+            </div>
+          );
+        },
+      },
+      {
+        id: "location",
+        header: t("colLocation"),
+        cell: ({ row }) => {
+          const tenant = row.original;
+          if (!tenant.building) return <span className="text-ink-soft/50">—</span>;
+          return (
+            <p className="flex items-center gap-1.5 truncate text-[12px] text-ink-soft">
+              <Building2 size={11} className="shrink-0 text-ink-soft/60" />
+              <span className="truncate">
+                {[tenant.building.name, tenant.floor?.name, tenant.unit?.name]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </span>
             </p>
+          );
+        },
+      },
+      {
+        id: "leases",
+        header: t("colLeases"),
+        cell: ({ row }) => (
+          <span className="inline-flex items-center gap-1 text-[11.5px] text-ink-soft tabular-nums">
+            <FileText size={11} className="text-ink-soft/60" />
+            {t("leaseCount", { count: row.original.leases.length })}
+          </span>
+        ),
+      },
+      {
+        id: "lease-status",
+        header: t("colLeaseStatus"),
+        cell: ({ row }) => {
+          const tenant = row.original;
+          const activeLease = tenant.leases.find(
+            (l) => l.status === "ACTIVE",
+          );
+          return activeLease ? (
+            <span className="inline-flex items-center gap-1 rounded-md border border-jade-100 bg-jade-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-jade-800">
+              <span className="size-1 rounded-full bg-jade-700" />
+              {t("onLease")}
+            </span>
+          ) : tenant.isActive ? (
+            <span className="inline-flex items-center gap-1 rounded-md border border-coral-100 bg-coral-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-coral-600">
+              {t("noLease")}
+            </span>
+          ) : (
+            <span className="text-[11px] text-ink-soft/60">—</span>
+          );
+        },
+      },
+      {
+        id: "status",
+        accessorFn: (tenant) => (tenant.isActive ? 1 : 0),
+        header: t("colStatus"),
+        cell: ({ row }) => {
+          const tenant = row.original;
+          const statusBadge = tenant.isActive
+            ? "bg-jade-50 text-jade-800 border-jade-100"
+            : "bg-cream text-ink-soft border-rule-soft";
+          return (
             <span
               className={cn(
-                "shrink-0 rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
+                "inline-flex shrink-0 rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
                 statusBadge,
               )}
             >
               {tenant.isActive ? t("active") : t("inactive")}
             </span>
-          </div>
-          {tenant.occupation && (
-            <p className="mt-0.5 truncate text-[12px] text-ink-soft">
-              <Briefcase
-                size={11}
-                className="mr-1 inline -translate-y-px text-ink-soft/60"
-              />
-              {tenant.occupation}
-            </p>
-          )}
-        </div>
-      </div>
+          );
+        },
+      },
+    ],
+    [t],
+  );
 
-      {/* Contact */}
-      <div className="mt-3 space-y-1 border-t border-rule-soft pt-2.5 text-[12px] text-ink-soft">
-        <p className="inline-flex items-center gap-1.5 tabular-nums">
-          <Phone size={11} className="text-ink-soft/60" />
-          {tenant.phone}
-        </p>
-        {tenant.email && (
-          <p className="flex items-center gap-1.5 truncate">
-            <Mail size={11} className="shrink-0 text-ink-soft/60" />
-            <span className="truncate">{tenant.email}</span>
-          </p>
-        )}
-        {tenant.building && (
-          <p className="flex items-center gap-1.5 truncate">
-            <Building2 size={11} className="shrink-0 text-ink-soft/60" />
-            <span className="truncate">
-              {[tenant.building.name, tenant.floor?.name, tenant.unit?.name]
-                .filter(Boolean)
-                .join(" · ")}
-            </span>
-          </p>
-        )}
-      </div>
-
-      {/* Lease footer */}
-      <div className="mt-3 flex items-center justify-between border-t border-rule-soft pt-2.5">
-        <span className="inline-flex items-center gap-1 text-[11.5px] text-ink-soft tabular-nums">
-          <FileText size={11} className="text-ink-soft/60" />
-          {t("leaseCount", { count: tenant.leases.length })}
-        </span>
-        {activeLease ? (
-          <span className="inline-flex items-center gap-1 rounded-md border border-jade-100 bg-jade-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-jade-800">
-            <span className="size-1 rounded-full bg-jade-700" />
-            {t("onLease")}
-          </span>
-        ) : tenant.isActive ? (
-          <span className="inline-flex items-center gap-1 rounded-md border border-coral-100 bg-coral-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-coral-600">
-            {t("noLease")}
-          </span>
-        ) : (
-          <span className="text-[11px] text-ink-soft/60">—</span>
-        )}
-      </div>
-    </Link>
+  return (
+    <DataTable
+      columns={columns}
+      data={tenants}
+      onRowClick={(tenant) =>
+        router.push(`/owner/dashboard/tenants/${tenant.id}`)
+      }
+      emptyMessage={t("noMatch")}
+    />
   );
 }
 
