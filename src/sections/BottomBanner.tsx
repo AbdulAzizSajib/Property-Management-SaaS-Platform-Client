@@ -15,7 +15,7 @@ export default function BottomBanner() {
             className="relative mx-4 md:mx-8 mt-20 overflow-hidden rounded-[28px] py-24 lg:py-28 px-6 md:px-16 text-paper text-center"
             style={{
                 background:
-                    "radial-gradient(ellipse at 80% 20%, rgba(232,93,68,0.18), transparent 50%), radial-gradient(ellipse at 10% 80%, rgba(31,152,118,0.18), transparent 50%), var(--color-jade-950)",
+                    "radial-gradient(ellipse at 80% 20%, rgba(14,165,233,0.18), transparent 50%), radial-gradient(ellipse at 10% 80%, rgba(14,165,233,0.18), transparent 50%), var(--color-sky-950)",
             }}
         >
             <span
@@ -43,7 +43,7 @@ export default function BottomBanner() {
                 <div className="flex flex-wrap gap-3.5 justify-center mb-12">
                     <button
                         type="button"
-                        className="bg-coral-600 hover:bg-coral-500 transition text-paper font-semibold text-[15px] px-6 py-3.5 rounded-[10px] shadow-[inset_0_1px_0_rgba(255,255,255,0.2),inset_0_-2px_0_rgba(0,0,0,0.2),0_4px_12px_rgba(232,93,68,0.22)]"
+                        className="bg-sky-500 hover:bg-sky-400 transition text-paper font-semibold text-[15px] px-6 py-3.5 rounded-[10px] shadow-[inset_0_1px_0_rgba(255,255,255,0.2),inset_0_-2px_0_rgba(0,0,0,0.2),0_4px_12px_rgba(14,165,233,0.22)]"
                     >
                         Start free trial →
                     </button>

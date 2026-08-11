@@ -79,7 +79,7 @@ export default function Pricing() {
                             Priced for Bangladesh.
                             <br />
                             Not{" "}
-                            <em className="font-serif italic font-normal text-coral-600">
+                            <em className="font-serif italic font-normal text-sky-500">
                                 Silicon Valley
                             </em>
                             .
@@ -95,7 +95,7 @@ export default function Pricing() {
                 </RevealGroup>
 
                 <p className="text-center mt-10 text-[13px] text-ink-soft dark:text-mist-soft">
-                    All prices in BDT, inclusive of VAT. <b className="text-jade-900 dark:text-jade-50">Transaction fees</b>{" "}
+                    All prices in BDT, inclusive of VAT. <b className="text-sky-900 dark:text-sky-50">Transaction fees</b>{" "}
                     apply only to wallet payments — passed through at cost.
                 </p>
             </div>
@@ -106,8 +106,8 @@ export default function Pricing() {
 function PlanCard({ plan }: { plan: Plan }) {
     if (plan.featured) {
         return (
-            <RevealItem className="relative rounded-[18px] p-9 flex flex-col bg-jade-950 text-paper border border-jade-800 lg:scale-[1.03] shadow-[0_24px_48px_-16px_rgba(10,46,34,0.4)]">
-                <span className="absolute -top-3.5 left-8 bg-coral-600 text-paper text-[11px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
+            <RevealItem className="relative rounded-[18px] p-9 flex flex-col bg-sky-950 text-paper border border-sky-800 lg:scale-[1.03] shadow-[0_24px_48px_-16px_rgba(10,46,34,0.4)]">
+                <span className="absolute -top-3.5 left-8 bg-sky-500 text-paper text-[11px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
                     ★ Most popular
                 </span>
                 <div className="text-sm font-bold uppercase tracking-[0.12em] text-amber-500 mb-3">
@@ -123,7 +123,7 @@ function PlanCard({ plan }: { plan: Plan }) {
                 </ul>
                 <button
                     type="button"
-                    className="w-full py-3.5 rounded-[10px] font-semibold text-sm bg-coral-600 hover:bg-coral-500 text-paper shadow-[inset_0_1px_0_rgba(255,255,255,0.2),inset_0_-2px_0_rgba(0,0,0,0.2)]"
+                    className="w-full py-3.5 rounded-[10px] font-semibold text-sm bg-sky-500 hover:bg-sky-400 text-paper shadow-[inset_0_1px_0_rgba(255,255,255,0.2),inset_0_-2px_0_rgba(0,0,0,0.2)]"
                 >
                     {plan.cta}
                 </button>
@@ -132,7 +132,7 @@ function PlanCard({ plan }: { plan: Plan }) {
     }
     return (
         <RevealItem className="rounded-[18px] p-9 bg-paper dark:bg-night-2 border border-rule-soft dark:border-white/10 flex flex-col">
-            <div className="text-sm font-bold uppercase tracking-[0.12em] text-jade-800 dark:text-jade-300 mb-3">
+            <div className="text-sm font-bold uppercase tracking-[0.12em] text-sky-800 dark:text-sky-300 mb-3">
                 {plan.name}
             </div>
             <div className="text-[13px] text-ink-soft dark:text-mist-soft mb-6 leading-[1.5]">{plan.fit}</div>
@@ -145,7 +145,7 @@ function PlanCard({ plan }: { plan: Plan }) {
             </ul>
             <button
                 type="button"
-                className="w-full py-3.5 rounded-[10px] font-semibold text-sm border border-jade-900 dark:border-jade-300 text-jade-900 dark:text-jade-50 hover:bg-jade-900 hover:text-paper transition"
+                className="w-full py-3.5 rounded-[10px] font-semibold text-sm border border-sky-900 dark:border-sky-300 text-sky-900 dark:text-sky-50 hover:bg-sky-900 hover:text-paper transition"
             >
                 {plan.cta}
             </button>
@@ -156,12 +156,12 @@ function PlanCard({ plan }: { plan: Plan }) {
 function Price({ amount, featured }: { amount: string; featured?: boolean }) {
     return (
         <div className="flex items-baseline gap-1 mb-1">
-            <span className={`text-2xl font-medium ${featured ? "text-paper" : "text-jade-900 dark:text-jade-50"}`}>
+            <span className={`text-2xl font-medium ${featured ? "text-paper" : "text-sky-900 dark:text-sky-50"}`}>
                 ৳
             </span>
             <span
                 className={`text-5xl font-extrabold tracking-[-0.03em] leading-none ${
-                    featured ? "text-paper" : "text-jade-950 dark:text-jade-50"
+                    featured ? "text-paper" : "text-sky-950 dark:text-sky-50"
                 }`}
             >
                 {amount}
@@ -182,11 +182,11 @@ function FeatureLi({ feature, featured }: { feature: Feature; featured?: boolean
                 className={`w-3.5 h-3.5 mt-0.5 rounded ${
                     feature.check
                         ? featured
-                            ? "bg-jade-700"
-                            : "bg-jade-700"
+                            ? "bg-sky-700"
+                            : "bg-sky-700"
                         : featured
                           ? "bg-white/10"
-                          : "bg-jade-50 dark:bg-jade-500/15"
+                          : "bg-sky-50 dark:bg-sky-500/15"
                 } relative inline-flex items-center justify-center text-[10px] font-bold`}
             >
                 {feature.check ? (
@@ -200,7 +200,7 @@ function FeatureLi({ feature, featured }: { feature: Feature; featured?: boolean
                         />
                     </svg>
                 ) : (
-                    <span className={featured ? "text-amber-500" : "text-jade-700"}>×</span>
+                    <span className={featured ? "text-amber-500" : "text-sky-700"}>×</span>
                 )}
             </span>
             <span>{feature.text}</span>

@@ -33,7 +33,7 @@ export default function HowItWorks() {
                             From signup to every taka tracked
                             <br />
                             in{" "}
-                            <em className="font-serif italic font-normal text-coral-600">
+                            <em className="font-serif italic font-normal text-sky-500">
                                 under 10 minutes
                             </em>
                         </>
@@ -44,10 +44,10 @@ export default function HowItWorks() {
                 <RevealGroup className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {steps.map((s, i) => (
                         <RevealItem key={s.title} className="pt-7 relative">
-                            <div className="font-mono text-[12px] font-bold text-coral-600 pb-3.5 mb-4.5 border-b border-rule dark:border-white/15">
+                            <div className="font-mono text-[12px] font-bold text-sky-500 pb-3.5 mb-4.5 border-b border-rule dark:border-white/15">
                                 {String(i + 1).padStart(2, "0")}
                             </div>
-                            <h4 className="text-[18px] font-bold text-jade-950 dark:text-jade-50 tracking-[-0.015em] mb-2.5">
+                            <h4 className="text-[18px] font-bold text-sky-950 dark:text-sky-50 tracking-[-0.015em] mb-2.5">
                                 {s.title}
                             </h4>
                             <p className="text-sm leading-[1.6] text-ink-soft dark:text-mist-soft">{s.text}</p>

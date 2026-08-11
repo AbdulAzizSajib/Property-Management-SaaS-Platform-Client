@@ -46,7 +46,7 @@ export function FaqSection() {
                     title={
                         <>
                             Things landlords{" "}
-                            <em className="font-serif italic font-normal text-coral-600">
+                            <em className="font-serif italic font-normal text-sky-500">
                                 actually
                             </em>{" "}
                             ask us
@@ -71,14 +71,14 @@ export function FaqSection() {
                                     className="w-full text-left border-b border-rule dark:border-white/15 py-6 cursor-pointer"
                                 >
                                     <div className="flex justify-between items-center gap-6">
-                                        <h3 className="text-[17px] font-semibold text-jade-950 dark:text-jade-50 tracking-[-0.01em]">
+                                        <h3 className="text-[17px] font-semibold text-sky-950 dark:text-sky-50 tracking-[-0.01em]">
                                             {faq.q}
                                         </h3>
                                         <span
                                             className={`w-7 h-7 shrink-0 rounded-full flex items-center justify-center font-bold text-base transition ${
                                                 open
-                                                    ? "bg-coral-600 text-paper rotate-45"
-                                                    : "bg-cream-2 dark:bg-night-2 text-jade-900 dark:text-jade-50"
+                                                    ? "bg-sky-500 text-paper rotate-45"
+                                                    : "bg-cream-2 dark:bg-night-2 text-sky-900 dark:text-sky-50"
                                             }`}
                                         >
                                             +

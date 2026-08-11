@@ -18,6 +18,15 @@ body {
   font-family: var(--font-sans);
 }
 
+.wordmark {
+  text-shadow:
+    -1px 1px 0 #3aa0ff,
+    -2px 2px 0 #3aa0ff,
+    -3px 3px 0 #3aa0ff,
+    -4px 4px 0 #3aa0ff,
+    -10px 10px 16px rgba(0, 0, 0, 0);
+}
+
 @theme {
   --font-sans: var(--font-poppins), system-ui, sans-serif;
   --font-poppins: var(--font-poppins), system-ui, sans-serif;

@@ -25,7 +25,7 @@ const stats = [
         value: "৳44,500",
         change: "3 tenants overdue",
         down: true,
-        valueAccent: "coral" as const,
+        valueAccent: "warning" as const,
     },
     { label: "Service charge", value: "৳26,400", change: "Auto-split done" },
 ];
@@ -99,7 +99,7 @@ export default function ProductDeepDive() {
     const [activeInner, setActiveInner] = useState(innerTabs[0]);
 
     return (
-        <section id="product" className="bg-jade-950 text-paper py-24 lg:py-32 rounded-3xl mx-4 md:mx-8">
+        <section id="product" className="bg-sky-950 text-paper py-24 lg:py-32 rounded-3xl mx-4 md:mx-8">
             <div className="max-w-[1280px] mx-auto px-5 md:px-8">
                 <SectionHead
                     light
@@ -127,7 +127,7 @@ export default function ProductDeepDive() {
                                 onClick={() => setActiveTab(tab)}
                                 className={`px-4.5 py-2.5 rounded-full text-[13.5px] font-semibold border transition ${
                                     active
-                                        ? "bg-paper text-jade-950 border-paper"
+                                        ? "bg-paper text-sky-950 border-paper"
                                         : "bg-white/5 text-white/60 border-white/10 hover:bg-white/10 hover:text-paper"
                                 }`}
                             >
@@ -145,7 +145,7 @@ export default function ProductDeepDive() {
                     </div>
                     <div className="bg-cream dark:bg-night rounded-[10px] min-h-[480px] grid md:grid-cols-[220px_1fr] overflow-hidden">
                         <aside className="hidden md:block bg-paper dark:bg-night-2 p-5 border-r border-rule-soft dark:border-white/10">
-                            <div className="font-bold text-[17px] text-jade-900 dark:text-jade-50 mb-6 flex items-center gap-2.5">
+                            <div className="font-bold text-[17px] text-sky-900 dark:text-sky-50 mb-6 flex items-center gap-2.5">
                                 <LogoMark size="sm" />
                                 Bariyan
                             </div>
@@ -162,7 +162,7 @@ export default function ProductDeepDive() {
                         <main className="p-7">
                             <div className="flex flex-wrap gap-4 justify-between items-start mb-6">
                                 <div>
-                                    <h3 className="text-[22px] font-bold text-jade-950 dark:text-jade-50 tracking-[-0.02em] mb-1">
+                                    <h3 className="text-[22px] font-bold text-sky-950 dark:text-sky-50 tracking-[-0.02em] mb-1">
                                         Collections — May 2026
                                     </h3>
                                     <p className="text-[13px] text-ink-soft dark:text-mist-soft">
@@ -171,7 +171,7 @@ export default function ProductDeepDive() {
                                 </div>
                                 <button
                                     type="button"
-                                    className="bg-coral-600 hover:bg-coral-500 transition text-paper font-semibold text-sm px-4 py-2.5 rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.2),inset_0_-2px_0_rgba(0,0,0,0.2),0_4px_12px_rgba(232,93,68,0.22)]"
+                                    className="bg-sky-500 hover:bg-sky-400 transition text-paper font-semibold text-sm px-4 py-2.5 rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.2),inset_0_-2px_0_rgba(0,0,0,0.2),0_4px_12px_rgba(14,165,233,0.22)]"
                                 >
                                     + Record payment
                                 </button>
@@ -187,8 +187,8 @@ export default function ProductDeepDive() {
                                             onClick={() => setActiveInner(t)}
                                             className={`px-4 py-2.5 text-[13px] font-semibold border-b-2 -mb-px transition ${
                                                 active
-                                                    ? "text-jade-900 dark:text-jade-50 border-coral-600"
-                                                    : "text-ink-soft dark:text-mist-soft border-transparent hover:text-jade-900 dark:hover:text-jade-50"
+                                                    ? "text-sky-900 dark:text-sky-50 border-sky-500"
+                                                    : "text-ink-soft dark:text-mist-soft border-transparent hover:text-sky-900 dark:hover:text-sky-50"
                                             }`}
                                         >
                                             {t}
@@ -208,16 +208,16 @@ export default function ProductDeepDive() {
                                         </div>
                                         <div
                                             className={`text-[22px] font-bold tracking-[-0.02em] ${
-                                                s.valueAccent === "coral"
-                                                    ? "text-coral-600"
-                                                    : "text-jade-900 dark:text-jade-50"
+                                                s.valueAccent === "warning"
+                                                    ? "text-rose-600 dark:text-rose-400"
+                                                    : "text-sky-900 dark:text-sky-50"
                                             }`}
                                         >
                                             {s.value}
                                         </div>
                                         <div
                                             className={`text-[10.5px] font-semibold mt-1 ${
-                                                s.down ? "text-coral-600" : "text-jade-700 dark:text-jade-300"
+                                                s.down ? "text-rose-600 dark:text-rose-400" : "text-sky-700 dark:text-sky-300"
                                             }`}
                                         >
                                             {s.change}
@@ -228,7 +228,7 @@ export default function ProductDeepDive() {
 
                             <div className="bg-paper dark:bg-night-2 border border-rule-soft dark:border-white/10 rounded-[10px] overflow-hidden">
                                 <div className="px-4.5 py-3.5 border-b border-rule-soft dark:border-white/10 flex justify-between items-center">
-                                    <h4 className="text-sm font-bold text-jade-950 dark:text-jade-50">
+                                    <h4 className="text-sm font-bold text-sky-950 dark:text-sky-50">
                                         Tenant payments
                                     </h4>
                                     <span className="text-[11px] text-ink-soft dark:text-mist-soft font-medium bg-cream dark:bg-night px-2.5 py-1 rounded">
@@ -240,7 +240,7 @@ export default function ProductDeepDive() {
                                         key={r.flat}
                                         className="grid grid-cols-[30px_1.5fr_1fr_1fr_0.8fr_auto] gap-3 items-center px-4.5 py-3 border-b border-rule-soft dark:border-white/10 last:border-b-0 text-[13px]"
                                     >
-                                        <span className="font-mono text-[11px] font-bold text-jade-900 dark:text-jade-50 bg-jade-50 dark:bg-jade-500/15 px-1.5 py-0.5 rounded text-center">
+                                        <span className="font-mono text-[11px] font-bold text-sky-900 dark:text-sky-50 bg-sky-50 dark:bg-sky-500/15 px-1.5 py-0.5 rounded text-center">
                                             {r.flat}
                                         </span>
                                         <div>
@@ -257,7 +257,7 @@ export default function ProductDeepDive() {
                                             </span>
                                             {r.via.label}
                                         </div>
-                                        <div className="font-mono font-semibold text-jade-900 dark:text-jade-50">
+                                        <div className="font-mono font-semibold text-sky-900 dark:text-sky-50">
                                             {r.rent}
                                         </div>
                                         <div
@@ -299,17 +299,17 @@ function SideItem({
     return (
         <div
             className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] mb-0.5 ${
-                active ? "bg-jade-50 dark:bg-jade-500/15 text-jade-900 dark:text-jade-50 font-semibold" : "text-ink-soft dark:text-mist-soft font-medium"
+                active ? "bg-sky-50 dark:bg-sky-500/15 text-sky-900 dark:text-sky-50 font-semibold" : "text-ink-soft dark:text-mist-soft font-medium"
             }`}
         >
             <span
                 className={`w-3.5 h-3.5 rounded border-[1.4px] border-current opacity-70 ${
-                    active ? "bg-jade-800 border-jade-800" : ""
+                    active ? "bg-sky-800 border-sky-800" : ""
                 }`}
             />
             {label}
             {badge != null && (
-                <span className="ml-auto text-[10px] font-bold bg-coral-100 text-coral-600 px-1.5 py-px rounded-lg">
+                <span className="ml-auto text-[10px] font-bold bg-sky-100 text-sky-500 px-1.5 py-px rounded-lg">
                     {badge}
                 </span>
             )}

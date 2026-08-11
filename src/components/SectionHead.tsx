@@ -16,7 +16,7 @@ export default function SectionHead({ eyebrow, title, description, light }: Prop
             <Reveal>
                 <div
                     className={`inline-block font-mono text-[11px] uppercase tracking-[0.2em] mb-4 ${
-                        light ? "text-amber-500" : "text-coral-600"
+                        light ? "text-amber-500" : "text-sky-500"
                     }`}
                 >
                     — {eyebrow}
@@ -25,7 +25,7 @@ export default function SectionHead({ eyebrow, title, description, light }: Prop
             <Reveal delay={0.08}>
                 <h2
                     className={`font-bold tracking-[-0.03em] leading-[1.05] mb-4 text-balance text-[36px] md:text-[44px] lg:text-[56px] ${
-                        light ? "text-paper" : "text-jade-950 dark:text-jade-50"
+                        light ? "text-paper" : "text-sky-950 dark:text-sky-50"
                     }`}
                 >
                     {title}

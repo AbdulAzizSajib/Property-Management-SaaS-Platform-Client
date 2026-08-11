@@ -41,7 +41,7 @@ export default function FeaturesSection() {
                         <>
                             Built for the way Bangladesh
                             <br />
-                            <em className="font-serif italic font-normal text-coral-600">
+                            <em className="font-serif italic font-normal text-sky-500">
                                 actually
                             </em>{" "}
                             manages property
@@ -52,7 +52,7 @@ export default function FeaturesSection() {
 
                 <RevealGroup className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 auto-rows-[minmax(220px,auto)] gap-4">
                     {/* B-1 hero card */}
-                    <RevealItem className="md:col-span-4 lg:col-span-4 md:row-span-2 bg-jade-900 border border-jade-900 rounded-[18px] p-8 text-paper overflow-hidden">
+                    <RevealItem className="md:col-span-4 lg:col-span-4 md:row-span-2 bg-sky-900 border border-sky-900 rounded-[18px] p-8 text-paper overflow-hidden">
                         <FeatureIcon dark icon={Banknote} />
                         <h3 className="font-bold text-[28px] tracking-[-0.015em] text-paper mb-3">
                             Track every rent payment in one place
@@ -80,7 +80,7 @@ export default function FeaturesSection() {
                                         </small>
                                     </div>
                                     <div
-                                        className={`font-mono text-[11px] font-bold text-paper px-2 py-1 rounded ${row.due ? "bg-coral-600" : "bg-jade-700"}`}
+                                        className={`font-mono text-[11px] font-bold text-paper px-2 py-1 rounded ${row.due ? "bg-sky-600" : "bg-sky-700"}`}
                                     >
                                         {row.amount}
                                     </div>
@@ -92,7 +92,7 @@ export default function FeaturesSection() {
                     {/* B-2 */}
                     <BentoCard className="md:col-span-2 lg:col-span-2">
                         <FeatureIcon icon={Users} />
-                        <h3 className="text-[19px] font-bold tracking-[-0.015em] text-jade-950 dark:text-jade-50 mb-2">
+                        <h3 className="text-[19px] font-bold tracking-[-0.015em] text-sky-950 dark:text-sky-50 mb-2">
                             Tenant &amp; lease
                             <br />
                             management
@@ -106,7 +106,7 @@ export default function FeaturesSection() {
                     {/* B-3 */}
                     <BentoCard className="md:col-span-2 lg:col-span-2">
                         <FeatureIcon icon={Wrench} />
-                        <h3 className="text-[19px] font-bold tracking-[-0.015em] text-jade-950 dark:text-jade-50 mb-2">
+                        <h3 className="text-[19px] font-bold tracking-[-0.015em] text-sky-950 dark:text-sky-50 mb-2">
                             Maintenance &amp; complaints
                         </h3>
                         <p className="text-sm text-ink-soft dark:text-mist-soft leading-[1.55]">
@@ -118,15 +118,15 @@ export default function FeaturesSection() {
                     {/* B-4 SMS */}
                     <BentoCard className="md:col-span-2 lg:col-span-3">
                         <FeatureIcon icon={MessageSquare} />
-                        <h3 className="text-[19px] font-bold tracking-[-0.015em] text-jade-950 dark:text-jade-50 mb-2">
+                        <h3 className="text-[19px] font-bold tracking-[-0.015em] text-sky-950 dark:text-sky-50 mb-2">
                             Auto SMS reminders — in Bangla &amp; English
                         </h3>
                         <p className="text-sm text-ink-soft dark:text-mist-soft leading-[1.55]">
                             Send rent reminders, society notices, gas/water bills, eid greetings
                             — all scheduled, all in your tenants&apos; language.
                         </p>
-                        <div className="relative mt-4 bg-jade-50 dark:bg-jade-500/15 rounded-[10px] px-3.5 py-3 font-bangla text-[13px] leading-[1.5] text-jade-950 dark:text-jade-50">
-                            <span className="absolute -top-2 left-3.5 bg-jade-800 text-paper font-mono text-[9px] px-1.5 py-0.5 rounded tracking-wider font-semibold">
+                        <div className="relative mt-4 bg-sky-50 dark:bg-sky-500/15 rounded-[10px] px-3.5 py-3 font-bangla text-[13px] leading-[1.5] text-sky-950 dark:text-sky-50">
+                            <span className="absolute -top-2 left-3.5 bg-sky-800 text-paper font-mono text-[9px] px-1.5 py-0.5 rounded tracking-wider font-semibold">
                                 SMS
                             </span>
                             প্রিয় ভাড়াটিয়া, মে মাসের ভাড়া ৳১৮,৫০০ পরিশোধের শেষ তারিখ ১০ই মে। ধন্যবাদ। — রহমান টাওয়ার
@@ -136,7 +136,7 @@ export default function FeaturesSection() {
                     {/* B-5 utilities */}
                     <BentoCard className="md:col-span-2 lg:col-span-3">
                         <FeatureIcon icon={LayoutGrid} />
-                        <h3 className="text-[19px] font-bold tracking-[-0.015em] text-jade-950 dark:text-jade-50 mb-2">
+                        <h3 className="text-[19px] font-bold tracking-[-0.015em] text-sky-950 dark:text-sky-50 mb-2">
                             Service charge &amp; utilities, split automatically
                         </h3>
                         <p className="text-sm text-ink-soft dark:text-mist-soft leading-[1.55]">
@@ -151,13 +151,13 @@ export default function FeaturesSection() {
                                 >
                                     {u.name}
                                     <br />
-                                    <b className="text-jade-900 dark:text-jade-50 text-xs">{u.amount}</b>
+                                    <b className="text-sky-900 dark:text-sky-50 text-xs">{u.amount}</b>
                                 </div>
                             ))}
-                            <div className="bg-jade-50 dark:bg-jade-500/15 rounded-md p-2 text-center text-[10px] text-jade-700 dark:text-jade-300 font-semibold">
+                            <div className="bg-sky-50 dark:bg-sky-500/15 rounded-md p-2 text-center text-[10px] text-sky-700 dark:text-sky-300 font-semibold">
                                 Total
                                 <br />
-                                <b className="text-jade-900 dark:text-jade-50 text-xs">৳1,850</b>
+                                <b className="text-sky-900 dark:text-sky-50 text-xs">৳1,850</b>
                             </div>
                         </div>
                     </BentoCard>
@@ -166,7 +166,7 @@ export default function FeaturesSection() {
                     <RevealItem className="md:col-span-4 lg:col-span-6 bg-cream-2 dark:bg-night-2 rounded-[18px] p-8 md:px-9">
                         <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr_1fr_1fr_1fr] gap-6 items-center">
                             <div>
-                                <h3 className="text-[22px] font-bold text-jade-950 dark:text-jade-50 tracking-[-0.015em] mb-1.5">
+                                <h3 className="text-[22px] font-bold text-sky-950 dark:text-sky-50 tracking-[-0.015em] mb-1.5">
                                     Reports your accountant will love.
                                 </h3>
                                 <p className="text-[13px] text-ink-soft dark:text-mist-soft leading-[1.55]">
@@ -176,7 +176,7 @@ export default function FeaturesSection() {
                             </div>
                             {reportStats.map((s) => (
                                 <div key={s.l} className="text-center max-md:text-left">
-                                    <div className="text-[28px] font-bold text-jade-800 dark:text-jade-300 tracking-[-0.02em] mb-0.5">
+                                    <div className="text-[28px] font-bold text-sky-800 dark:text-sky-300 tracking-[-0.02em] mb-0.5">
                                         {s.n}
                                     </div>
                                     <div className="text-[11px] text-ink-soft dark:text-mist-soft uppercase tracking-wider font-semibold">
@@ -206,7 +206,7 @@ function FeatureIcon({ icon: Icon, dark }: { icon: LucideIcon; dark?: boolean })
     return (
         <div
             className={`w-10 h-10 rounded-[10px] flex items-center justify-center mb-4.5 ${
-                dark ? "bg-white/10 text-amber-500" : "bg-jade-50 dark:bg-jade-500/15 text-jade-800 dark:text-jade-300"
+                dark ? "bg-white/10 text-amber-500" : "bg-sky-50 dark:bg-sky-500/15 text-sky-800 dark:text-sky-300"
             }`}
         >
             <Icon size={22} strokeWidth={1.8} />
