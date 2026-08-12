@@ -11,6 +11,7 @@ import type {
     LoginPayload,
     VerifyEmailActionResult,
 } from "@/src/types/auth";
+import type { SubscriptionPlan } from "@/src/types/subscription.types";
 import { cookies } from "next/headers";
 
 const BASE_API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -95,15 +96,24 @@ export async function loginAction(
 export async function verifyEmailAction(payload: {
     email: string;
     otp: string;
+    /**
+     * Plan carried from the public pricing page's ?plan= param, through
+     * registration. When present and a paid (non-FREE) plan, the returned
+     * destination routes to the subscription page with the payment-request
+     * dialog pre-opened, instead of the default dashboard route.
+     */
+    plan?: SubscriptionPlan;
 }): Promise<VerifyEmailActionResult> {
     try {
+        const { plan, ...body } = payload;
+
         const res = await fetch(`${BASE_API_URL}/auth/verify-email`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 Accept: "application/json",
             },
-            body: JSON.stringify(payload),
+            body: JSON.stringify(body),
         });
 
         const json = await res.json().catch(() => null);
@@ -134,7 +144,13 @@ export async function verifyEmailAction(payload: {
             );
         }
 
-        return { ok: true, destination: getDefaultDashboardRoute(user.role) };
+        const fallback = getDefaultDashboardRoute(user.role);
+        const destination =
+            plan && plan !== "FREE"
+                ? `/owner/dashboard/subscription?openPayment=${plan}`
+                : fallback;
+
+        return { ok: true, destination };
     } catch (error) {
         console.error("Error during email verification:", error);
         return {

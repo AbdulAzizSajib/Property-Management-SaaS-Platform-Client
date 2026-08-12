@@ -222,6 +222,12 @@
     "rentSuffix": "{amount} rent",
     "svcSuffix": "+ {amount} svc",
     "dueDay": "Due day",
+    "colTenant": "Tenant",
+    "colProperty": "Property",
+    "colTerm": "Term",
+    "colRent": "Rent",
+    "colStatus": "Status",
+    "colId": "ID",
     "emptyTitle": "No leases yet",
     "emptySubtitle": "Create your first lease to start tracking rent and tenant agreements.",
     "emptyCreateFirst": "Create your first lease"
@@ -258,6 +264,8 @@
     "carriedForward": "Carried forward",
     "stillDue": "{amount} still due",
     "fullyPaid": "Fully paid",
+    "invoiceCount": "{count, plural, one {# invoice} other {# invoices}}",
+    "stillDueLabel": "still due",
     "emptyTitle": "No invoices yet",
     "emptySubtitle": "Generate your first invoice for an active lease, or run a monthly batch to invoice everyone at once.",
     "generateInvoice": "Generate invoice"
@@ -296,6 +304,8 @@
     "purposeUtility": "utility bill",
     "purposeOther": "charges",
     "purposeMonthWord": "{month} {word}",
+    "paymentCount": "{count, plural, one {# collection} other {# collections}}",
+    "collectedLabel": "collected",
     "emptyTitle": "No collections yet",
     "emptySubtitle": "Record a collection against an outstanding invoice — bKash, Nagad, cash, or bank transfer."
   },

@@ -36,14 +36,14 @@ export default function FeaturesSection() {
         <section id="features" className="py-24 lg:py-32">
             <div className="max-w-[1280px] mx-auto px-5 md:px-8">
                 <SectionHead
-                    eyebrow="What you get"
+                   
                     title={
                         <>
                             Built for the way Bangladesh
                             <br />
-                            <em className="font-serif italic font-normal text-sky-500">
+                            <span className=" text-sky-500">
                                 actually
-                            </em>{" "}
+                            </span>{" "}
                             manages property
                         </>
                     }
@@ -57,10 +57,9 @@ export default function FeaturesSection() {
                         <h3 className="font-bold text-[28px] tracking-[-0.015em] text-paper mb-3">
                             Track every rent payment in one place
                         </h3>
-                        <p className="text-[15px] text-white/70 leading-[1.55] max-w-[360px] mb-6">
-                            Record how each tenant paid — cash, bKash, Nagad, Rocket or bank
-                            transfer — and Bariyan auto-generates a PDF rent receipt for every
-                            payment.
+                        <p className="text-[15px] text-white/70 leading-[1.55] mb-6">
+                            Record how each tenant paid cash, bKash, Nagad, Rocket or bank
+                            transfer and Bariyan auto-generates a PDF rent receipt for every payment.
                         </p>
                         <div className="bg-white/[0.06] border border-white/10 rounded-xl p-3.5 grid gap-2">
                             {collectionRows.map((row) => (
@@ -129,7 +128,9 @@ export default function FeaturesSection() {
                             <span className="absolute -top-2 left-3.5 bg-sky-800 text-paper font-mono text-[9px] px-1.5 py-0.5 rounded tracking-wider font-semibold">
                                 SMS
                             </span>
-                            প্রিয় ভাড়াটিয়া, মে মাসের ভাড়া ৳১৮,৫০০ পরিশোধের শেষ তারিখ ১০ই মে। ধন্যবাদ। — রহমান টাওয়ার
+                            প্রিয় ভাড়াটিয়া, মে মাসের ভাড়া ৳১৮,৫০০ পরিশোধের শেষ তারিখ ১০ই মে। ধন্যবাদ। 
+                            <br />
+                            — রহমান টাওয়ার
                         </div>
                     </BentoCard>
 

@@ -16,7 +16,8 @@ import {
   type SubscriptionPlan,
   type SubscriptionStatus,
 } from "@/src/types/subscription.types";
-import { useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Building,
   Check,
@@ -90,6 +91,15 @@ function formatDate(iso: string): string {
 }
 
 export default function SubscriptionPage() {
+  return (
+    <Suspense fallback={null}>
+      <SubscriptionPageInner />
+    </Suspense>
+  );
+}
+
+function SubscriptionPageInner() {
+  const searchParams = useSearchParams();
   const { data: sub, isLoading, isError, error } = useSubscription();
   const { data: plans, isLoading: plansLoading } = usePlans();
   const { data: myRequests } = useMySubscriptionRequests();
@@ -98,6 +108,29 @@ export default function SubscriptionPage() {
   const reactivateSub = useReactivateSubscription();
   const [payOpen, setPayOpen] = useState(false);
   const [payPlan, setPayPlan] = useState<Plan | null>(null);
+  // Guards the ?openPayment= auto-open so it fires once per page load, not
+  // on every re-render or plans refetch.
+  const autoOpenedRef = useRef(false);
+
+  // Auto-open the payment dialog when arriving with ?openPayment=<PLAN>
+  // (e.g. straight from registration after selecting a paid plan on the
+  // public pricing page). Placed above the loading/error early-returns so
+  // hook order stays stable; the effect itself waits for data to be ready.
+  useEffect(() => {
+    if (autoOpenedRef.current) return;
+    const openPayment = searchParams.get("openPayment");
+    if (!openPayment || openPayment === "FREE") return;
+    if (!plans || plansLoading) return;
+    const myPendingRequest = myRequests?.find((r) => r.status === "PENDING");
+    if (myPendingRequest) return;
+
+    const match = plans.find((p) => p.plan === openPayment);
+    if (!match) return;
+
+    autoOpenedRef.current = true;
+    setPayPlan(match);
+    setPayOpen(true);
+  }, [searchParams, plans, plansLoading, myRequests]);
 
   if (isLoading) {
     return (

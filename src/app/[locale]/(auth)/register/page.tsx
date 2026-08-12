@@ -5,6 +5,8 @@ import { verifyEmailAction } from "@/src/services/auth.services";
 import { isBdPhone, isEmail } from "@/src/lib/validation";
 import type { RegisterPayload } from "@/src/types/auth";
 import { useResendVerificationOtp } from "@/src/hooks/useAuthActions";
+import { usePlans } from "@/src/hooks/useSubscription";
+import type { SubscriptionPlan } from "@/src/types/subscription.types";
 import {
   AlertCircle,
   ArrowRight,
@@ -12,10 +14,11 @@ import {
   EyeOff,
   Loader2,
   MailCheck,
+  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import NeatBackground from "@/src/components/NeatBackground";
 
 type Step = 1 | 2;
@@ -39,7 +42,27 @@ const initialForm: FormState = {
 };
 
 export default function RegisterPage() {
+  return (
+    <Suspense fallback={null}>
+      <RegisterPageInner />
+    </Suspense>
+  );
+}
+
+function RegisterPageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { data: plans } = usePlans();
+
+  // Plan carried from the pricing page (?plan=BASIC). Validated against the
+  // real catalog — an unrecognized/tampered value is treated as no plan.
+  const carriedPlanParam = searchParams.get("plan");
+  const carriedPlan = useMemo(() => {
+    if (!carriedPlanParam || !plans) return null;
+    const match = plans.find((p) => p.plan === carriedPlanParam);
+    return match ?? null;
+  }, [carriedPlanParam, plans]);
+
   const [step, setStep] = useState<Step>(1);
   const [form, setForm] = useState<FormState>(initialForm);
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -59,6 +82,7 @@ export default function RegisterPage() {
       const result = await verifyEmailAction({
         email: form.email.trim(),
         otp: otpDigits.join(""),
+        plan: carriedPlan?.plan as SubscriptionPlan | undefined,
       });
       if (result.ok) {
         router.push(result.destination);
@@ -156,6 +180,27 @@ export default function RegisterPage() {
                 Create your account
               </h1>
             </div>
+
+            {/* Carried plan summary — read-only, informs but doesn't re-decide */}
+            {step === 1 && carriedPlan && (
+              <div className="mb-5 flex items-center gap-3 rounded-[12px] bg-jade-50/60 border border-jade-100 px-4 py-3">
+                <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-[8px] bg-jade-100 text-jade-700">
+                  <Sparkles size={15} />
+                </span>
+                <p className="text-[12.5px] text-ink">
+                  You&apos;re signing up for the{" "}
+                  <span className="font-semibold text-jade-900">
+                    {carriedPlan.displayName}
+                  </span>{" "}
+                  plan —{" "}
+                  <span className="font-semibold text-jade-900 tabular-nums">
+                    {Number(carriedPlan.priceMonthly) === 0
+                      ? "Free"
+                      : `৳${new Intl.NumberFormat("en-BD", { maximumFractionDigits: 0 }).format(Number(carriedPlan.priceMonthly))}/mo`}
+                  </span>
+                </p>
+              </div>
+            )}
 
             {/* Progress bar */}
             <div className="mb-6">

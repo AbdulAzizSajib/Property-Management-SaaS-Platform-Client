@@ -33,13 +33,13 @@ export default function Navbar() {
           className="flex shrink-0  items-center text-2xl font-bold tracking-tight relative gap-2"
         > 
           <svg
-            viewBox="0 0 216 177"
+            viewBox="0 10 216 177"
             fill="none"
             aria-hidden="true"
-            className="h-8 w-auto text-sky-500 dark:text-sky-400"
+            className="h-8 w-auto text-sky-950 dark:text-sky-400"
           >
             <path d="M0 0H215L126 88V176H0V0Z" fill="currentColor" />
-            <rect x="176" y="100" width="39" height="50" fill="currentColor" />
+            <rect x="170" y="100" width="39" height="50" fill="currentColor" />
           </svg>
           <h2
             className="z-10 font-black text-white wordmark text-[22px] sm:text-[24px] md:text-[26px] lg:text-[28px]"
@@ -70,7 +70,7 @@ export default function Navbar() {
             </Link>
             <Link
               href="/register"
-              className="hidden sm:inline-flex items-center gap-2 whitespace-nowrap bg-zinc-800 hover:bg-sky-950 transition text-paper px-4 py-2 rounded-[10px] text-[13.5px] font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_12px_rgba(13,79,63,0.25)] hover:-translate-y-0.5"
+              className="hidden sm:inline-flex items-center gap-2 whitespace-nowrap bg-sky-950 hover:bg-sky-950 transition text-paper px-4 py-2 rounded-[10px] text-[13.5px] font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_12px_rgba(13,79,63,0.25)] hover:-translate-y-0.5"
             >
               Get Started Free
               <span className="font-mono">→</span>

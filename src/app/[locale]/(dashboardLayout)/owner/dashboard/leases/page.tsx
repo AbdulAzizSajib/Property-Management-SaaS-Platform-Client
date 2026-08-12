@@ -4,7 +4,6 @@
 
 import { LeaseForm } from "@/src/components/dashboard/leases/LeaseForm";
 import {
-  leaseStatusAccent,
   leaseStatusLabel,
   leaseStatusStyles,
 } from "@/src/components/dashboard/leases/leaseStyles";
@@ -18,6 +17,7 @@ import {
   DialogTrigger,
 } from "@/src/components/ui/dialog";
 import { Skeleton } from "@/src/components/ui/skeleton";
+import { DataTable } from "@/src/components/ui/data-table";
 import { useCreateLease, useLeases } from "@/src/hooks/useLeases";
 import { fmtNum } from "@/src/lib/numerals";
 import { cn } from "@/src/lib/utils";
@@ -34,12 +34,12 @@ import {
   Phone,
   Plus,
   Search,
-  User,
   X,
 } from "lucide-react";
-import { Link } from "@/src/i18n/navigation";
+import { useRouter } from "@/src/i18n/navigation";
+import type { ColumnDef } from "@tanstack/react-table";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 type StatusFilter = "ALL" | LeaseStatus;
 
@@ -274,9 +274,9 @@ export default function LeasesListPage() {
 
         {/* Content */}
         {isLoading ? (
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            {[1, 2, 3, 4].map((i) => (
-              <Skeleton key={i} className="h-45 rounded-[12px] bg-paper" />
+          <div className="space-y-2">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <Skeleton key={i} className="h-12 rounded-[10px] bg-paper" />
             ))}
           </div>
         ) : isError ? (
@@ -302,11 +302,7 @@ export default function LeasesListPage() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            {filtered.map((l) => (
-              <LeaseCard key={l.id} lease={l} />
-            ))}
-          </div>
+          <LeasesTable leases={filtered} />
         )}
       </div>
     </div>
@@ -314,117 +310,161 @@ export default function LeasesListPage() {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// LeaseCard — visually structured the same way as UnitCard / TenantCard
+// LeasesTable — same TanStack DataTable pattern as the Tenants list
 // ─────────────────────────────────────────────────────────────────
 
-function LeaseCard({ lease }: { lease: LeaseListItem }) {
+function LeasesTable({ leases }: { leases: LeaseListItem[] }) {
   const t = useTranslations("leasesPage");
-  const total = Number(lease.monthlyRent) + Number(lease.serviceCharge);
+  const router = useRouter();
 
-  const initials = lease.tenant.name
-    .split(" ")
-    .filter(Boolean)
-    .map((p) => p[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
+  const columns = useMemo<ColumnDef<LeaseListItem>[]>(
+    () => [
+      {
+        id: "tenant",
+        accessorFn: (lease) => lease.tenant.name,
+        header: t("colTenant"),
+        cell: ({ row }) => {
+          const lease = row.original;
+          const initials = lease.tenant.name
+            .split(" ")
+            .filter(Boolean)
+            .map((p) => p[0])
+            .slice(0, 2)
+            .join("")
+            .toUpperCase();
+          return (
+            <div className="flex items-center gap-2.5">
+              <span className="relative inline-flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-jade-50 text-[11px] font-bold text-jade-800">
+                {lease.tenant.photoUrl ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={lease.tenant.photoUrl}
+                    alt=""
+                    className="size-full object-cover"
+                  />
+                ) : (
+                  initials
+                )}
+              </span>
+              <div className="min-w-0">
+                <p className="truncate text-[13.5px] font-bold tracking-[-0.01em] text-jade-950">
+                  {lease.tenant.name}
+                </p>
+                <p className="inline-flex items-center gap-1 text-[11.5px] text-ink-soft tabular-nums">
+                  <Phone size={10} className="text-ink-soft/60" />
+                  {lease.tenant.phone}
+                </p>
+              </div>
+            </div>
+          );
+        },
+      },
+      {
+        id: "property",
+        accessorFn: (lease) => `${lease.unit.building.name} ${lease.unit.name}`,
+        header: t("colProperty"),
+        cell: ({ row }) => {
+          const lease = row.original;
+          return (
+            <div className="space-y-0.5 text-[12px] text-ink-soft">
+              <p className="flex items-center gap-1.5 truncate">
+                <Building size={11} className="shrink-0 text-ink-soft/60" />
+                <span className="truncate">{lease.unit.building.name}</span>
+              </p>
+              <p className="flex items-center gap-1.5 truncate">
+                <DoorOpen size={11} className="shrink-0 text-ink-soft/60" />
+                <span className="truncate">
+                  {t("unitPrefix", { name: lease.unit.name })}
+                </span>
+              </p>
+            </div>
+          );
+        },
+      },
+      {
+        id: "term",
+        accessorKey: "startDate",
+        header: t("colTerm"),
+        cell: ({ row }) => {
+          const lease = row.original;
+          return (
+            <span className="inline-flex items-center gap-1.5 text-[12px] text-ink-soft tabular-nums">
+              <Calendar size={11} className="shrink-0 text-ink-soft/60" />
+              {new Date(lease.startDate).toLocaleDateString()}
+              {" – "}
+              {lease.endDate
+                ? new Date(lease.endDate).toLocaleDateString()
+                : t("openEnded")}
+            </span>
+          );
+        },
+      },
+      {
+        id: "rent",
+        accessorFn: (lease) =>
+          Number(lease.monthlyRent) + Number(lease.serviceCharge),
+        header: t("colRent"),
+        cell: ({ row }) => {
+          const lease = row.original;
+          const total = Number(lease.monthlyRent) + Number(lease.serviceCharge);
+          return (
+            <div>
+              <p className="text-[13.5px] font-bold text-jade-950 tabular-nums">
+                {formatMoney(total)}
+                <span className="ml-1 text-[10.5px] font-medium text-ink-soft">
+                  {t("perMonth")}
+                </span>
+              </p>
+              <p className="text-[10.5px] text-ink-soft tabular-nums">
+                {t("dueDay")}{" "}
+                <span className="font-semibold text-ink">
+                  {lease.rentDueDay}
+                </span>
+              </p>
+            </div>
+          );
+        },
+      },
+      {
+        id: "status",
+        accessorKey: "status",
+        header: t("colStatus"),
+        cell: ({ row }) => {
+          const lease = row.original;
+          return (
+            <span
+              className={cn(
+                "inline-flex shrink-0 rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
+                leaseStatusStyles[lease.status],
+              )}
+            >
+              {leaseStatusLabel(lease.status)}
+            </span>
+          );
+        },
+      },
+      {
+        id: "id",
+        header: t("colId"),
+        cell: ({ row }) => (
+          <span className="font-mono text-[10.5px] text-ink-soft/65">
+            #{row.original.id.slice(-6).toUpperCase()}
+          </span>
+        ),
+      },
+    ],
+    [t],
+  );
 
   return (
-    <Link
-      href={`/owner/dashboard/leases/${lease.id}`}
-      className="group relative block overflow-hidden rounded-[12px] border border-rule-soft bg-paper p-4 transition-all hover:-translate-y-0.5 hover:border-jade-700/20 hover:shadow-[0_8px_24px_-12px_rgba(10,46,34,0.15)]"
-    >
-      {/* Status accent strip */}
-      <span
-        aria-hidden
-        className={cn(
-          "absolute inset-y-0 left-0 w-[3px]",
-          leaseStatusAccent[lease.status],
-        )}
-      />
-
-      <div className="flex items-start gap-3">
-        {/* Tenant avatar */}
-        <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-jade-50 text-[12px] font-bold text-jade-800">
-          {initials}
-        </span>
-
-        <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0">
-              <p className="truncate text-[15px] font-bold tracking-[-0.01em] text-jade-950 group-hover:text-jade-900">
-                {lease.tenant.name}
-              </p>
-              <p className="mt-0.5 inline-flex items-center gap-1 text-[11.5px] text-ink-soft tabular-nums">
-                <Phone size={11} className="text-ink-soft/60" />
-                {lease.tenant.phone}
-              </p>
-            </div>
-            <div className="flex shrink-0 flex-col items-end gap-1">
-              <span
-                className={cn(
-                  "rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
-                  leaseStatusStyles[lease.status],
-                )}
-              >
-                {leaseStatusLabel(lease.status)}
-              </span>
-              <span className="font-mono text-[10px] text-ink-soft/65">
-                #{lease.id.slice(-6).toUpperCase()}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Property + dates */}
-      <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 border-t border-rule-soft pt-3 text-[11.5px] text-ink-soft">
-        <span className="inline-flex items-center gap-1">
-          <Building size={11} className="text-ink-soft/60" />
-          {lease.unit.building.name}
-        </span>
-        <span className="inline-flex items-center gap-1">
-          <DoorOpen size={11} className="text-ink-soft/60" />
-          {t("unitPrefix", { name: lease.unit.name })}
-        </span>
-        <span className="inline-flex items-center gap-1 tabular-nums">
-          <Calendar size={11} className="text-ink-soft/60" />
-          {new Date(lease.startDate).toLocaleDateString()}
-          {" – "}
-          {lease.endDate
-            ? new Date(lease.endDate).toLocaleDateString()
-            : t("openEnded")}
-        </span>
-      </div>
-
-      {/* Money + due day */}
-      <div className="mt-3 flex items-baseline justify-between border-t border-rule-soft pt-3">
-        <div>
-          <p className="text-[18px] font-bold text-jade-950 tabular-nums">
-            {formatMoney(total)}
-            <span className="ml-1 text-[10.5px] font-medium text-ink-soft">
-              {t("perMonth")}
-            </span>
-          </p>
-          <p className="mt-0.5 text-[10.5px] text-ink-soft tabular-nums">
-            {t("rentSuffix", { amount: formatMoney(lease.monthlyRent) })}
-            {Number(lease.serviceCharge) > 0 && (
-              <>
-                {" "}
-                {t("svcSuffix", { amount: formatMoney(lease.serviceCharge) })}
-              </>
-            )}
-          </p>
-        </div>
-        <span className="inline-flex items-center gap-1 rounded-md bg-cream px-2 py-1 text-[11px] font-medium text-ink-soft">
-          <Calendar size={10} />
-          {t("dueDay")}{" "}
-          <span className="font-bold text-ink tabular-nums">
-            {lease.rentDueDay}
-          </span>
-        </span>
-      </div>
-    </Link>
+    <DataTable
+      columns={columns}
+      data={leases}
+      onRowClick={(lease) =>
+        router.push(`/owner/dashboard/leases/${lease.id}`)
+      }
+      emptyMessage={t("noMatch")}
+    />
   );
 }
 

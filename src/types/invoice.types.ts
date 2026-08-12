@@ -75,6 +75,7 @@ export interface InvoiceTenantSummary {
     id: string;
     name: string;
     phone: string;
+    photoUrl: string | null;
 }
 
 export interface InvoiceUnitSummary {

@@ -11,6 +11,12 @@ import {
 } from "@/src/components/dashboard/payments/paymentStyles";
 import { formatMoney } from "@/src/components/dashboard/units/unitStyles";
 import {
+  Accordion,
+  AccordionItem,
+  AccordionPanel,
+  AccordionTrigger,
+} from "@/src/components/ui/accordion";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -19,6 +25,7 @@ import {
 } from "@/src/components/ui/select";
 import { Skeleton } from "@/src/components/ui/skeleton";
 import { usePayments } from "@/src/hooks/usePayments";
+import { groupByTenant } from "@/src/lib/groupByTenant";
 import { fmtNum } from "@/src/lib/numerals";
 import { cn } from "@/src/lib/utils";
 import {
@@ -27,6 +34,7 @@ import {
   type PaymentListItem,
   type PaymentMethod,
   type PaymentStatus,
+  type PaymentTenantSummary,
 } from "@/src/types/payment.types";
 import { ArrowUpRight, Plus, Search, Wallet, X } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
@@ -276,18 +284,110 @@ function PaymentsListInner() {
             <p className="text-[13.5px] text-ink-soft">{t("noMatch")}</p>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-[14px] border border-rule-soft bg-paper">
-            <ul className="divide-y divide-rule-soft">
-              {filtered.map((p) => (
-                <PaymentRow key={p.id} payment={p} />
-              ))}
-            </ul>
-          </div>
+          <PaymentsAccordion payments={filtered} />
         )}
 
         {/* Dialog */}
         <RecordPaymentDialog open={recordOpen} onOpenChange={setRecordOpen} />
       </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────
+// PaymentsAccordion — one collapsed entry per tenant, sorted A→Z;
+// expanding reveals that tenant's month-by-month payment timeline.
+// ─────────────────────────────────────────────────────────────────
+
+function PaymentsAccordion({ payments }: { payments: PaymentListItem[] }) {
+  const t = useTranslations("collectionPage");
+  const groups = useMemo(
+    () => groupByTenant<PaymentTenantSummary, PaymentListItem>(payments),
+    [payments],
+  );
+
+  return (
+    <div className="overflow-hidden rounded-[14px] border border-rule-soft bg-paper">
+      <Accordion multiple>
+        {groups.map(({ tenant, items }) => {
+          const collected = items
+            .filter((p) => p.status === "PAID")
+            .reduce((sum, p) => sum + Number(p.amount), 0);
+          return (
+            <AccordionItem key={tenant.id} value={tenant.id}>
+              <AccordionTrigger className="px-4 py-3.5 hover:bg-cream/60 sm:px-5 sm:py-4">
+                <TenantSummaryHeader
+                  tenant={tenant}
+                  count={items.length}
+                  countLabel={t("paymentCount", { count: items.length })}
+                  amount={collected > 0 ? formatMoney(collected) : null}
+                  amountLabel={t("collectedLabel")}
+                />
+              </AccordionTrigger>
+              <AccordionPanel>
+                <ul className="divide-y divide-rule-soft border-t border-rule-soft">
+                  {items.map((p) => (
+                    <PaymentRow key={p.id} payment={p} />
+                  ))}
+                </ul>
+              </AccordionPanel>
+            </AccordionItem>
+          );
+        })}
+      </Accordion>
+    </div>
+  );
+}
+
+// Shared collapsed-header layout: avatar, name, phone, record count, and an
+// optional trailing amount (outstanding due / total collected).
+function TenantSummaryHeader({
+  tenant,
+  count,
+  countLabel,
+  amount,
+  amountLabel,
+}: {
+  tenant: PaymentTenantSummary;
+  count: number;
+  countLabel: string;
+  amount: string | null;
+  amountLabel: string;
+}) {
+  return (
+    <div className="flex flex-1 items-center gap-3 sm:gap-4">
+      <span className="relative grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-jade-50 text-[13px] font-bold text-jade-800 sm:size-10 sm:text-[14px]">
+        {tenant.photoUrl ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={tenant.photoUrl}
+            alt=""
+            className="size-full object-cover"
+          />
+        ) : (
+          tenantInitials(tenant.name)
+        )}
+      </span>
+
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-[14px] font-bold text-jade-950">
+          {tenant.name}
+        </p>
+        <p className="mt-0.5 truncate text-[12px] text-ink-soft">
+          {tenant.phone} · {countLabel}
+        </p>
+      </div>
+
+      {amount && (
+        <div className="shrink-0 text-right">
+          <p className="text-[15px] font-bold tabular-nums text-jade-800 sm:text-[16px]">
+            {amount}
+          </p>
+          <p className="mt-0.5 text-[10.5px] font-medium text-ink-soft">
+            {amountLabel}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
@@ -315,9 +415,18 @@ function PaymentRow({ payment }: { payment: PaymentListItem }) {
         {/* Avatar — instantly says "who" */}
         <span
           aria-hidden
-          className="grid size-9 shrink-0 place-items-center rounded-full bg-jade-50 text-[13px] font-bold text-jade-800 sm:size-10 sm:text-[14px]"
+          className="relative grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-jade-50 text-[13px] font-bold text-jade-800 sm:size-10 sm:text-[14px]"
         >
-          {tenantInitials(payment.tenant.name)}
+          {payment.tenant.photoUrl ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={payment.tenant.photoUrl}
+              alt=""
+              className="size-full object-cover"
+            />
+          ) : (
+            tenantInitials(payment.tenant.name)
+          )}
         </span>
 
         {/* WHO + WHAT, in plain words */}

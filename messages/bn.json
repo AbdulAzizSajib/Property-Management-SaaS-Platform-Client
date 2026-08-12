@@ -222,6 +222,12 @@
     "rentSuffix": "{amount} ভাড়া",
     "svcSuffix": "+ {amount} সার্ভিস",
     "dueDay": "নির্ধারিত দিন",
+    "colTenant": "ভাড়াটিয়া",
+    "colProperty": "সম্পত্তি",
+    "colTerm": "মেয়াদ",
+    "colRent": "ভাড়া",
+    "colStatus": "অবস্থা",
+    "colId": "আইডি",
     "emptyTitle": "এখনো কোনো লিজ নেই",
     "emptySubtitle": "ভাড়া ও ভাড়াটিয়া চুক্তি ট্র্যাক করা শুরু করতে আপনার প্রথম লিজ তৈরি করুন।",
     "emptyCreateFirst": "আপনার প্রথম লিজ তৈরি করুন"
@@ -258,6 +264,8 @@
     "carriedForward": "পরবর্তীতে স্থানান্তরিত",
     "stillDue": "{amount} এখনো বকেয়া",
     "fullyPaid": "সম্পূর্ণ পরিশোধিত",
+    "invoiceCount": "{count} টি বিল",
+    "stillDueLabel": "এখনো বকেয়া",
     "emptyTitle": "এখনো কোনো বিল নেই",
     "emptySubtitle": "একটি সক্রিয় লিজের জন্য আপনার প্রথম বিল তৈরি করুন, অথবা সবাইকে একসাথে বিল করতে মাসিক ব্যাচ চালান।",
     "generateInvoice": "বিল তৈরি করুন"
@@ -296,6 +304,8 @@
     "purposeUtility": "ইউটিলিটি বিল",
     "purposeOther": "অন্যান্য চার্জ",
     "purposeMonthWord": "{month} {word}",
+    "paymentCount": "{count} টি আদায়",
+    "collectedLabel": "আদায় হয়েছে",
     "emptyTitle": "এখনো কোনো আদায় নেই",
     "emptySubtitle": "একটি অপরিশোধিত বিলের বিপরীতে আদায় রেকর্ড করুন — বিকাশ, নগদ, ক্যাশ বা ব্যাংক ট্রান্সফার।"
   },

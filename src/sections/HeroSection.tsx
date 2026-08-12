@@ -26,9 +26,18 @@ export default function HeroSection() {
       > {/* Headline */}
         <RevealItem>
           <h1 className="mt-24 max-w-4xl text-balance font-bold leading-20 tracking-[-0.02em] text-white text-[42px] [text-shadow:0_2px_24px_rgba(6,31,23,0.35)] sm:text-[58px] lg:text-[72px]">
-            Manage your property{" "}
-            <span className=" tracking-[-0.02em] text-blue-200">
-              finances easily.
+            Manage your  property{" "}
+            <span className=" tracking-[-0.02em] ">
+              
+              <span className="text-rotate duration-10000 text-sky-1006">
+                <span className="justify-items-center mr-4">
+                  <span>finances</span>
+                  <span>rentals</span>
+                  <span>expenses</span>
+                  <span>income</span>
+                </span>
+              </span>
+               easily
             </span>
           </h1>
         </RevealItem>
@@ -45,10 +54,10 @@ export default function HeroSection() {
         <RevealItem className="mt-9 flex flex-wrap items-center justify-center gap-3">
           <button
             type="button"
-            className="group relative overflow-hidden rounded-[10px] bg-zinc-800 px-6 py-3.5 text-[15px] font-semibold text-paper shadow-[0_1px_0_0_rgba(255,255,255,0.16)_inset,0_14px_34px_-10px_rgba(6,31,23,0.55)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_1px_0_0_rgba(255,255,255,0.2)_inset,0_20px_40px_-12px_rgba(6,31,23,0.6)]"
+            className="group relative overflow-hidden rounded-[10px] bg-sky-950 px-6 py-3.5 text-[15px] font-semibold text-paper shadow-[0_1px_0_0_rgba(255,255,255,0.16)_inset,0_14px_34px_-10px_rgba(6,31,23,0.55)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_1px_0_0_rgba(255,255,255,0.2)_inset,0_20px_40px_-12px_rgba(6,31,23,0.6)]"
           >
             <span className="relative z-10 inline-flex items-center gap-2">
-              Get Started Free
+              Try Bariyan Now
               <svg
                 width="14"
                 height="14"
@@ -94,15 +103,15 @@ export default function HeroSection() {
 
         {/* Product preview screenshot */}
         <RevealItem className="mt-10 w-full max-w-7xl">
-          <div className="p-1 border rounded-2xl border-white/25 bg-white/10 shadow-[0_1px_0_0_rgba(255,255,255,0.2)_inset,0_30px_70px_-20px_rgba(6,31,23,0.55)] backdrop-blur-xl">
-          <div className="overflow-hidden rounded-2xl border border-white/25 bg-white/10 shadow-[0_1px_0_0_rgba(255,255,255,0.2)_inset,0_30px_70px_-20px_rgba(6,31,23,0.55)] backdrop-blur-xl">
+          <div className="aura aura-gold p-1 border rounded-2xl border-white/25 bg-white/10  backdrop-blur-xl">
+          <div className="card overflow-hidden rounded-2xl border border-white/25 bg-white/10  backdrop-blur-xl">
             {/* window chrome */}
             <div className="flex items-center gap-1.5 border-b border-white/15 bg-white/5 px-4 py-3">
               <span className="h-2.5 w-2.5 rounded-full bg-red-300" />
               <span className="h-2.5 w-2.5 rounded-full bg-yellow-300" />
               <span className="h-2.5 w-2.5 rounded-full bg-green-300" />
-              <span className="ml-3 rounded-full bg-white/10 px-3 py-1 text-[11px] text-white tracking-wider">
-                bariyan.com/owner/dashboard
+              <span className="ml-3 rounded-full bg-white/20 px-3 py-1 text-[11px] text-sky-950 tracking-wider">
+                https://bariyan.com/owner/dashboard
               </span>
             </div>
 

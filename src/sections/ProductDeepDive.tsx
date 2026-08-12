@@ -99,19 +99,18 @@ export default function ProductDeepDive() {
     const [activeInner, setActiveInner] = useState(innerTabs[0]);
 
     return (
-        <section id="product" className="bg-sky-950 text-paper py-24 lg:py-32 rounded-3xl mx-4 md:mx-8">
+        <section id="product" className="bg-sky-900 text-paper py-24 lg:py-32 rounded-3xl mx-4 md:mx-8">
             <div className="max-w-[1280px] mx-auto px-5 md:px-8">
                 <SectionHead
                     light
-                    eyebrow="The dashboard"
                     title={
                         <>
                             See what your portfolio looks like
                             <br />
                             at{" "}
-                            <em className="font-serif italic font-normal text-amber-500">
+                            <span className=" text-amber-500">
                                 4:32 PM today
-                            </em>
+                            </span>
                         </>
                     }
                     description="A live look at the Bariyan workspace — built for fast scanning, designed for landlords who don't have time for tutorials."

@@ -14,6 +14,12 @@ import {
 } from "@/src/components/dashboard/invoices/invoiceStyles";
 import { formatMoney } from "@/src/components/dashboard/units/unitStyles";
 import {
+  Accordion,
+  AccordionItem,
+  AccordionPanel,
+  AccordionTrigger,
+} from "@/src/components/ui/accordion";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -29,12 +35,14 @@ import {
 import { Skeleton } from "@/src/components/ui/skeleton";
 import { useBuildings } from "@/src/hooks/useBuildings";
 import { useInvoices } from "@/src/hooks/useInvoices";
+import { groupByTenant } from "@/src/lib/groupByTenant";
 import { fmtNum } from "@/src/lib/numerals";
 import { cn } from "@/src/lib/utils";
 import {
   INVOICE_STATUS_OPTIONS,
   type InvoiceListItem,
   type InvoiceStatus,
+  type InvoiceTenantSummary,
 } from "@/src/types/invoice.types";
 import {
   AlertTriangle,
@@ -395,13 +403,7 @@ function InvoicesListInner() {
             <p className="text-[13.5px] text-ink-soft">{t("noMatch")}</p>
           </div>
         ) : (
-          <div className="overflow-hidden rounded-[14px] border border-rule-soft bg-paper">
-            <ul className="divide-y divide-rule-soft">
-              {filtered.map((inv) => (
-                <InvoiceRow key={inv.id} invoice={inv} />
-              ))}
-            </ul>
-          </div>
+          <InvoicesAccordion invoices={filtered} />
         )}
 
         {/* Dialogs */}
@@ -414,6 +416,105 @@ function InvoicesListInner() {
           onOpenChange={setBatchOpen}
         />
       </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────
+// InvoicesAccordion — one collapsed entry per tenant, sorted A→Z;
+// expanding reveals that tenant's month-by-month invoice timeline.
+// ─────────────────────────────────────────────────────────────────
+
+function InvoicesAccordion({ invoices }: { invoices: InvoiceListItem[] }) {
+  const t = useTranslations("invoicesPage");
+  const groups = useMemo(
+    () => groupByTenant<InvoiceTenantSummary, InvoiceListItem>(invoices),
+    [invoices],
+  );
+
+  return (
+    <div className="overflow-hidden rounded-[14px] border border-rule-soft bg-paper">
+      <Accordion multiple>
+        {groups.map(({ tenant, items }) => {
+          const outstanding = items.reduce(
+            (sum, inv) => sum + Number(inv.dueAmount),
+            0,
+          );
+          return (
+            <AccordionItem key={tenant.id} value={tenant.id}>
+              <AccordionTrigger className="px-4 py-3.5 hover:bg-cream/60 sm:px-5 sm:py-4">
+                <TenantSummaryHeader
+                  tenant={tenant}
+                  count={items.length}
+                  countLabel={t("invoiceCount", { count: items.length })}
+                  amount={outstanding > 0 ? formatMoney(outstanding) : null}
+                  amountLabel={t("stillDueLabel")}
+                />
+              </AccordionTrigger>
+              <AccordionPanel>
+                <ul className="divide-y divide-rule-soft border-t border-rule-soft">
+                  {items.map((inv) => (
+                    <InvoiceRow key={inv.id} invoice={inv} />
+                  ))}
+                </ul>
+              </AccordionPanel>
+            </AccordionItem>
+          );
+        })}
+      </Accordion>
+    </div>
+  );
+}
+
+// Shared collapsed-header layout: avatar, name, phone, record count, and an
+// optional trailing amount (outstanding due / total collected).
+function TenantSummaryHeader({
+  tenant,
+  count,
+  countLabel,
+  amount,
+  amountLabel,
+}: {
+  tenant: InvoiceTenantSummary;
+  count: number;
+  countLabel: string;
+  amount: string | null;
+  amountLabel: string;
+}) {
+  return (
+    <div className="flex flex-1 items-center gap-3 sm:gap-4">
+      <span className="relative grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-jade-50 text-[13px] font-bold text-jade-800 sm:size-10 sm:text-[14px]">
+        {tenant.photoUrl ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={tenant.photoUrl}
+            alt=""
+            className="size-full object-cover"
+          />
+        ) : (
+          tenantInitials(tenant.name)
+        )}
+      </span>
+
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-[14px] font-bold text-jade-950">
+          {tenant.name}
+        </p>
+        <p className="mt-0.5 truncate text-[12px] text-ink-soft">
+          {tenant.phone} · {countLabel}
+        </p>
+      </div>
+
+      {amount && (
+        <div className="shrink-0 text-right">
+          <p className="text-[15px] font-bold tabular-nums text-coral-600 sm:text-[16px]">
+            {amount}
+          </p>
+          <p className="mt-0.5 text-[10.5px] font-medium text-ink-soft">
+            {amountLabel}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
@@ -446,9 +547,18 @@ function InvoiceRow({ invoice }: { invoice: InvoiceListItem }) {
         {/* Avatar — instantly says "who" */}
         <span
           aria-hidden
-          className="grid size-9 shrink-0 place-items-center rounded-full bg-jade-50 text-[13px] font-bold text-jade-800 sm:size-10 sm:text-[14px]"
+          className="relative grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-jade-50 text-[13px] font-bold text-jade-800 sm:size-10 sm:text-[14px]"
         >
-          {tenantInitials(invoice.tenant.name)}
+          {invoice.tenant.photoUrl ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={invoice.tenant.photoUrl}
+              alt=""
+              className="size-full object-cover"
+            />
+          ) : (
+            tenantInitials(invoice.tenant.name)
+          )}
         </span>
 
         {/* WHO + WHAT, in plain words */}
