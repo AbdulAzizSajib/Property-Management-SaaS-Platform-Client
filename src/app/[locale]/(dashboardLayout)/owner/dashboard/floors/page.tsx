@@ -194,7 +194,7 @@ function EmptyBuildings() {
             <div className="mt-5">
                 <Link
                     href="/owner/dashboard/buildings"
-                    className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
+                    className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-sky-950 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-sky-950"
                 >
                     {t("goToBuildings")}
                 </Link>

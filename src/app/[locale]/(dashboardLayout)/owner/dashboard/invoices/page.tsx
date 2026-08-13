@@ -152,7 +152,7 @@ function InvoicesListInner() {
                 render={
                   <button
                     type="button"
-                    className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
+                    className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-sky-950 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-sky-950"
                   >
                     <Plus size={14} />
                     {t("generate")}
@@ -181,7 +181,7 @@ function InvoicesListInner() {
             className={cn(
               "relative overflow-hidden rounded-[18px] px-5 py-5 sm:px-6 sm:py-6",
               totalDue > 0
-                ? "bg-jade-900 text-paper"
+                ? "bg-sky-950 text-paper"
                 : "border border-rule-soft bg-paper",
             )}
             style={
@@ -724,7 +724,7 @@ function EmptyState({
         <button
           type="button"
           onClick={onGenerate}
-          className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
+          className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-sky-950 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-sky-950"
         >
           <Plus size={14} />
           {t("generateInvoice")}

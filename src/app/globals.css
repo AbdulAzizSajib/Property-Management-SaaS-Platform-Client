@@ -19,12 +19,17 @@ body {
 }
 
 .wordmark {
+  color: #ff893b;
   text-shadow:
     -1px 1px 0 #3aa0ff,
     -2px 2px 0 #3aa0ff,
     -3px 3px 0 #3aa0ff,
     -4px 4px 0 #3aa0ff,
-    -10px 10px 16px rgba(0, 0, 0, 0);
+    -10px 10px 16px rgba(255, 0, 0, 0);
+}
+
+.dark .wordmark {
+  color: #ffffff;
 }
 
 @theme {

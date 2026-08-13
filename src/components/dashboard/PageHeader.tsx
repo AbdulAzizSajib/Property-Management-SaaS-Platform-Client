@@ -49,7 +49,7 @@ export function PageHeader({ name }: { name: string }) {
         <div className="relative inline-flex">
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-l-[9px] bg-jade-900 px-4 py-2 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
+            className="inline-flex items-center gap-2 rounded-l-[9px] bg-sky-950 px-4 py-2 text-[13px] font-semibold text-paper transition-colors hover:bg-sky-950"
           >
             <Plus size={14} />
             {/* Add new */}
@@ -58,7 +58,7 @@ export function PageHeader({ name }: { name: string }) {
           <button
             type="button"
             aria-label="More actions"
-            className="inline-flex items-center rounded-r-[9px] border-l border-jade-700/40 bg-jade-900 px-2 py-2 text-paper transition-colors hover:bg-jade-950"
+            className="inline-flex items-center rounded-r-[9px] border-l border-jade-700/40 bg-sky-950 px-2 py-2 text-paper transition-colors hover:bg-sky-950"
           >
             <ChevronDown size={14} />
           </button>

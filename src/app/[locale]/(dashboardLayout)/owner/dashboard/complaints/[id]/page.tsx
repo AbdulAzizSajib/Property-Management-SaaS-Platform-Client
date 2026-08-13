@@ -144,7 +144,7 @@ export default function ComplaintDetailPage() {
                         "relative overflow-hidden rounded-[18px] px-5 py-5 sm:px-6 sm:py-6",
                         isResolved
                             ? "border border-rule-soft bg-paper"
-                            : "bg-jade-950 text-paper",
+                            : "bg-sky-950 text-paper",
                     )}
                     style={
                         isResolved

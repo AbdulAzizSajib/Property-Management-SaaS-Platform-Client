@@ -33,7 +33,7 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
       {/* Thin jade rail — the dark accent that keeps this from blurring into the page */}
       <span
         aria-hidden
-        className="absolute inset-y-0 left-0 w-[3px] bg-jade-900"
+        className="absolute inset-y-0 left-0 w-[3px] bg-sky-950"
       />
 
       {/* Brand header */}

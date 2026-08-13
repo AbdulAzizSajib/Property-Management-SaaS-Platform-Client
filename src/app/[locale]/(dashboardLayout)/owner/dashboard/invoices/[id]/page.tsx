@@ -148,7 +148,7 @@ export default function InvoiceDetailPage() {
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                             {/* Brand mark */}
                             <div className="flex items-center gap-3">
-                                <span className="relative inline-flex size-11 items-center justify-center rounded-[9px] bg-jade-900 text-paper">
+                                <span className="relative inline-flex size-11 items-center justify-center rounded-[9px] bg-sky-950 text-paper">
                                     <span className="text-[16px] font-bold leading-none">
                                         B
                                     </span>

@@ -40,7 +40,7 @@ export function HeroKpi() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease, delay: 0.25 }}
-            className="relative overflow-hidden rounded-[18px] bg-jade-950 px-6 py-6 text-paper sm:px-7 sm:py-7"
+            className="relative overflow-hidden rounded-[18px] bg-sky-950 px-6 py-6 text-paper sm:px-7 sm:py-7"
             style={{
                 boxShadow:
                     "0 1px 0 rgba(255,255,255,0.06) inset, 0 22px 50px -22px rgba(10,46,34,0.55)",
@@ -58,7 +58,7 @@ export function HeroKpi() {
 
             <div className="relative flex items-start justify-between">
                 <div>
-                    <p className="font-serif text-[14px] italic text-paper/60">
+                    <p className="font-serif text-[14px]  text-paper/60">
                         {t("collectedThisMonth")}
                     </p>
                 </div>
@@ -111,7 +111,7 @@ export function HeroKpi() {
 
             {/* delta vs last month */}
             <div className="relative mt-5 flex items-center gap-2 border-t border-paper/10 pt-4">
-                <span className="inline-flex items-center gap-1 rounded-full bg-jade-700/40 px-2 py-0.5 text-[11px] font-semibold text-paper">
+                <span className="inline-flex items-center gap-1 rounded-full bg-sky-950 px-2 py-0.5 text-[11px] font-semibold text-paper">
                     {up ? "↑" : "↓"} {bn(Math.abs(deltaPct).toFixed(1))}%
                 </span>
                 <span className="text-[12.5px] text-paper/65">

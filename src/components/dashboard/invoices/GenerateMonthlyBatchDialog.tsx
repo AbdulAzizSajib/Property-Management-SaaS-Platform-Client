@@ -113,7 +113,7 @@ export function GenerateMonthlyBatchDialog({
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* How-it-works callout */}
           <div className="flex items-start gap-2.5 rounded-[10px] border border-jade-100 bg-jade-50/60 p-3">
-            <span className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-md bg-jade-900 text-paper">
+            <span className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-md bg-sky-950 text-paper">
               <Zap size={11} />
             </span>
             <div className="text-[12px] leading-relaxed">

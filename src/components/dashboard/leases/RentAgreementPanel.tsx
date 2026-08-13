@@ -122,7 +122,7 @@ export function RentAgreementPanel({ leaseId }: { leaseId: string }) {
                                         },
                                     )
                                 }
-                                className="bg-jade-900 text-paper hover:bg-jade-950"
+                                className="bg-sky-950 text-paper hover:bg-sky-950"
                             >
                                 {createMut.isPending ? (
                                     <>
@@ -153,7 +153,7 @@ export function RentAgreementPanel({ leaseId }: { leaseId: string }) {
                 <Button
                     size="sm"
                     onClick={() => setDrafting(true)}
-                    className="mt-3 bg-jade-900 text-paper hover:bg-jade-950"
+                    className="mt-3 bg-sky-950 text-paper hover:bg-sky-950"
                 >
                     <PenLine size={12} />
                     Draft agreement
@@ -248,7 +248,7 @@ export function RentAgreementPanel({ leaseId }: { leaseId: string }) {
                                     { onSuccess: () => setSigning(null) },
                                 )
                             }
-                            className="bg-jade-900 text-paper hover:bg-jade-950"
+                            className="bg-sky-950 text-paper hover:bg-sky-950"
                         >
                             {signMut.isPending ? (
                                 <>

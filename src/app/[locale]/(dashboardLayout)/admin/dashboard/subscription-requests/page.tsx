@@ -69,7 +69,7 @@ export default function AdminSubscriptionRequestsPage() {
               className={cn(
                 "rounded-[9px] border px-3 py-1.5 text-[12.5px] font-medium transition-colors",
                 filter === f.value
-                  ? "border-jade-700 bg-jade-900 text-paper"
+                  ? "border-jade-700 bg-sky-950 text-paper"
                   : "border-rule-soft bg-paper text-ink-soft hover:text-jade-900",
               )}
             >
@@ -212,7 +212,7 @@ function RequestCard({
               type="button"
               disabled={approving || rejecting}
               onClick={onApprove}
-              className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-3.5 text-[12.5px] font-semibold text-paper transition-colors hover:bg-jade-950 disabled:opacity-60"
+              className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-sky-950 px-3.5 text-[12.5px] font-semibold text-paper transition-colors hover:bg-sky-950 disabled:opacity-60"
             >
               {approving ? (
                 <Loader2 size={13} className="animate-spin" />

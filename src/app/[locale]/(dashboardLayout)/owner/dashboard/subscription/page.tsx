@@ -214,7 +214,7 @@ function SubscriptionPageInner() {
               type="button"
               disabled={reactivateSub.isPending}
               onClick={() => reactivateSub.mutate()}
-              className="inline-flex h-9 items-center gap-1.5 rounded-[10px] bg-jade-900 px-3 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950 disabled:opacity-60"
+              className="inline-flex h-9 items-center gap-1.5 rounded-[10px] bg-sky-950 px-3 text-[13px] font-semibold text-paper transition-colors hover:bg-sky-950 disabled:opacity-60"
             >
               {reactivateSub.isPending ? (
                 <Loader2 size={14} className="animate-spin" />
@@ -272,7 +272,7 @@ function SubscriptionPageInner() {
         <div className="rounded-[14px] border border-rule-soft bg-paper p-5 sm:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex items-start gap-4">
-              <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-[12px] bg-jade-900 text-paper">
+              <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-[12px] bg-sky-950 text-paper">
                 <CreditCard size={22} />
               </span>
               <div>
@@ -580,7 +580,7 @@ function PlanCard({
       )}
 
       {isCurrent && (
-        <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-jade-900 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-paper">
+        <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-sky-950 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-paper">
           Current plan
         </span>
       )}
@@ -628,7 +628,7 @@ function PlanCard({
             ? "border border-rule-soft bg-cream text-ink-soft"
             : highlight
               ? "bg-coral-600 text-paper hover:bg-coral-700 shadow-[0_10px_24px_-12px_rgba(232,93,68,0.55)]"
-              : "bg-jade-900 text-paper hover:bg-jade-950",
+              : "bg-sky-950 text-paper hover:bg-sky-950",
         )}
       >
         {pending ? (

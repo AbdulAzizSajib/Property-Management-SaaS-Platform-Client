@@ -74,7 +74,7 @@ export function RentIncreasesPanel({
                 <Button
                     size="sm"
                     onClick={() => setOpen((v) => !v)}
-                    className="bg-jade-900 text-paper hover:bg-jade-950"
+                    className="bg-sky-950 text-paper hover:bg-sky-950"
                 >
                     <Plus size={12} />
                     {open ? "Cancel" : "Record"}
@@ -126,7 +126,7 @@ export function RentIncreasesPanel({
                             createMut.isPending || !newRent || !effectiveFrom
                         }
                         onClick={submit}
-                        className="bg-jade-900 text-paper hover:bg-jade-950"
+                        className="bg-sky-950 text-paper hover:bg-sky-950"
                     >
                         {createMut.isPending ? (
                             <>

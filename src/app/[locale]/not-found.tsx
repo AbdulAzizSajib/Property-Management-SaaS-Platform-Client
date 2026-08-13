@@ -110,7 +110,7 @@ export default function NotFound() {
         <div className="mt-7 flex flex-col items-center justify-center gap-2 sm:flex-row">
           <Link
             href="/"
-            className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-[10px] bg-jade-900 hover:bg-jade-950 transition-colors px-5 py-3 text-[14px] font-semibold text-paper shadow-[0_10px_30px_-12px_rgba(13,79,63,0.45)]"
+            className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-[10px] bg-sky-950 hover:bg-sky-950 transition-colors px-5 py-3 text-[14px] font-semibold text-paper shadow-[0_10px_30px_-12px_rgba(13,79,63,0.45)]"
           >
             <Home size={15} />
             Back to home

@@ -97,7 +97,7 @@ function ResetPasswordForm() {
                     <Button
                         type="submit"
                         disabled={mut.isPending}
-                        className="w-full bg-jade-900 text-paper hover:bg-jade-950"
+                        className="w-full bg-sky-950 text-paper hover:bg-sky-950"
                     >
                         {mut.isPending ? (
                             <>

@@ -27,7 +27,7 @@ export default function Navbar() {
     <div className="sticky top-4 z-50 px-4 will-change-transform ">
       <div className="mx-auto flex w-fit max-w-full items-center gap-6">
         
-        <nav className="flex w-fit max-w-full items-center gap-10 rounded-[10px] border border-white/20  bg-white/10 backdrop-blur-md py-2 pl-5 pr-2  dark:border-white/10 dark:bg-night-2 text-white shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset]  transition-colors ">
+        <nav className="flex w-fit max-w-full items-center gap-10 rounded-[10px] border border-white/20  bg-white/40 backdrop-blur-md py-2 pl-5 pr-2  dark:border-white/10 dark:bg-night-2 text-white shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset]  transition-colors ">
         <Link
           href="/"
           className="flex shrink-0  items-center text-2xl font-bold tracking-tight relative gap-2"
@@ -42,18 +42,18 @@ export default function Navbar() {
             <rect x="170" y="100" width="39" height="50" fill="currentColor" />
           </svg>
           <h2
-            className="z-10 font-black text-white wordmark text-[22px] sm:text-[24px] md:text-[26px] lg:text-[28px]"
+            className="z-10 text-sky-950  text-[22px] sm:text-[24px] md:text-[26px] lg:text-[28px]"
           >
             Bariyan
           </h2>
         </Link>
 
-          <div className="hidden lg:flex items-center gap-6 whitespace-nowrap text-[13.5px] font-medium text-white dark:text-mist-soft">
+          <div className="hidden lg:flex items-center gap-6 whitespace-nowrap text-[13.5px] font-medium text-sky-950 dark:text-mist-soft">
             {navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
-                className="relative py-2 transition-colors hover:text-sky-900 dark:hover:text-sky-50"
+                className="relative py-2  hover:text-sky-950 dark:hover:text-sky-50 transform transition-transform duration-300 hover:scale-[1.05] hover:translate-y-[-1px]"
               >
                 {link.name}
               </a>

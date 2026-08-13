@@ -115,7 +115,7 @@ export function FloorsPanel({ buildingId, totalFloors }: FloorsPanelProps) {
                 <button
                     type="button"
                     onClick={() => setCreateOpen(true)}
-                    className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-[8px] bg-jade-900 px-3 text-[12.5px] font-semibold text-paper transition-colors hover:bg-jade-950"
+                    className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-[8px] bg-sky-950 px-3 text-[12.5px] font-semibold text-paper transition-colors hover:bg-sky-950"
                 >
                     <Plus size={13} />
                     Add floor

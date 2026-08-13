@@ -205,8 +205,8 @@ function RegisterPageInner() {
             {/* Progress bar */}
             <div className="mb-6">
               <div className="flex items-center gap-2">
-                <div className={`h-1.5 flex-1 rounded-full transition-colors ${step >= 1 ? "bg-jade-900" : "bg-rule-soft"}`} />
-                <div className={`h-1.5 flex-1 rounded-full transition-colors ${step >= 2 ? "bg-jade-900" : "bg-rule-soft"}`} />
+                <div className={`h-1.5 flex-1 rounded-full transition-colors ${step >= 1 ? "bg-sky-950" : "bg-rule-soft"}`} />
+                <div className={`h-1.5 flex-1 rounded-full transition-colors ${step >= 2 ? "bg-sky-950" : "bg-rule-soft"}`} />
               </div>
               <p className="mt-2 text-[11.5px] text-ink-soft tabular-nums">
                 Step <span className="font-semibold text-ink">{step}</span> of{" "}
@@ -304,7 +304,7 @@ function RegisterPageInner() {
                   type="button"
                   disabled={verifying || otpDigits.some((d) => d === "")}
                   onClick={handleVerify}
-                  className="w-full inline-flex items-center justify-center gap-2 bg-jade-900 hover:bg-jade-950 transition-colors px-4 py-3 rounded-[10px] text-paper text-[14px] font-semibold disabled:opacity-60 disabled:cursor-not-allowed shadow-[0_10px_30px_-12px_rgba(13,79,63,0.45)]"
+                  className="w-full inline-flex items-center justify-center gap-2 bg-sky-950 hover:bg-sky-950 transition-colors px-4 py-3 rounded-[10px] text-paper text-[14px] font-semibold disabled:opacity-60 disabled:cursor-not-allowed shadow-[0_10px_30px_-12px_rgba(13,79,63,0.45)]"
                 >
                   {verifying ? (
                     <>
@@ -428,7 +428,7 @@ function RegisterPageInner() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full mt-2 inline-flex items-center justify-center gap-2 bg-jade-900 hover:bg-jade-950 transition-colors px-4 py-3 rounded-[10px] text-paper text-[14px] font-semibold disabled:opacity-60 disabled:cursor-not-allowed shadow-[0_10px_30px_-12px_rgba(13,79,63,0.45)]"
+                  className="w-full mt-2 inline-flex items-center justify-center gap-2 bg-sky-950 hover:bg-sky-950 transition-colors px-4 py-3 rounded-[10px] text-paper text-[14px] font-semibold disabled:opacity-60 disabled:cursor-not-allowed shadow-[0_10px_30px_-12px_rgba(13,79,63,0.45)]"
                 >
                   {submitting ? (
                     <>

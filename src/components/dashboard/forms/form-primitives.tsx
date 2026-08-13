@@ -77,7 +77,7 @@ export function FormActions({
       <button
         type="submit"
         disabled={submitting}
-        className="inline-flex h-9 items-center gap-1.5 rounded-[8px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950 disabled:opacity-70"
+        className="inline-flex h-9 items-center gap-1.5 rounded-[8px] bg-sky-950 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-sky-950 disabled:opacity-70"
       >
         {submitting ? (
           <>

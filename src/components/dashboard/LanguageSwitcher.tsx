@@ -45,7 +45,7 @@ export function LanguageSwitcher() {
                     className={cn(
                         "rounded-[5px] px-2 py-1 text-[11.5px] font-semibold transition-colors disabled:opacity-60",
                         l === locale
-                            ? "bg-jade-900 text-paper"
+                            ? "bg-sky-950 text-paper"
                             : "text-ink-soft hover:bg-paper hover:text-jade-900",
                         l === "bn" && "font-bangla",
                     )}

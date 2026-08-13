@@ -337,7 +337,7 @@ function LoginForm() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full mt-3 inline-flex items-center justify-center gap-2 bg-jade-950 hover:bg-jade-900 transition-colors px-4 py-3 rounded-[10px] text-paper text-[14px] font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full mt-3 inline-flex items-center justify-center gap-2 bg-sky-950 hover:bg-sky-950 transition-colors px-4 py-3 rounded-[10px] text-paper text-[14px] font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {submitting ? (
                     <>
@@ -389,7 +389,7 @@ function LoginForm() {
                 <button
                   type="submit"
                   disabled={forgetMut.isPending}
-                  className="w-full mt-3 inline-flex items-center justify-center gap-2 bg-jade-950 hover:bg-jade-900 transition-colors px-4 py-3 rounded-[10px] text-paper text-[14px] font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full mt-3 inline-flex items-center justify-center gap-2 bg-sky-950 hover:bg-sky-950 transition-colors px-4 py-3 rounded-[10px] text-paper text-[14px] font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {forgetMut.isPending ? (
                     <>
@@ -483,7 +483,7 @@ function LoginForm() {
                 <button
                   type="submit"
                   disabled={resetMut.isPending}
-                  className="w-full mt-3 inline-flex items-center justify-center gap-2 bg-jade-950 hover:bg-jade-900 transition-colors px-4 py-3 rounded-[10px] text-paper text-[14px] font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full mt-3 inline-flex items-center justify-center gap-2 bg-sky-950 hover:bg-sky-950 transition-colors px-4 py-3 rounded-[10px] text-paper text-[14px] font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {resetMut.isPending ? (
                     <>

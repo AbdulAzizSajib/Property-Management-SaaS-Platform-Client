@@ -105,15 +105,14 @@ export default function ProductDeepDive() {
                     light
                     title={
                         <>
-                            See what your portfolio looks like
+                            One workspace.
                             <br />
-                            at{" "}
                             <span className=" text-amber-500">
-                                4:32 PM today
+                                Everything you manage.
                             </span>
                         </>
                     }
-                    description="A live look at the Bariyan workspace — built for fast scanning, designed for landlords who don't have time for tutorials."
+                    description="A live look at the Bariyan workspace built for fast scanning, designed for landlords who don't have time for tutorials."
                 />
 
                 <div className="flex flex-wrap justify-center gap-2 mb-10">

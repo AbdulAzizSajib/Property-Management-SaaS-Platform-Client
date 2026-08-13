@@ -90,7 +90,7 @@ export default function BuildingsListPage() {
               render={
                 <button
                   type="button"
-                  className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-sky-950 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-sky-950"
                 >
                   <Plus size={14} />
                   {t("addBuilding")}
@@ -292,7 +292,7 @@ function BuildingCard({
 
           <Link
             href={`/owner/dashboard/buildings/${building.id}`}
-            className="inline-flex items-center gap-1 rounded-[8px] bg-jade-900 px-3 py-1.5 text-[12px] font-semibold text-paper transition-colors hover:bg-jade-950"
+            className="inline-flex items-center gap-1 rounded-[8px] bg-sky-950 px-3 py-1.5 text-[12px] font-semibold text-paper transition-colors hover:bg-sky-950"
           >
             {t("view")}
             <ArrowRight size={12} />
@@ -496,7 +496,7 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
         <button
           type="button"
           onClick={onCreate}
-          className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
+          className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-sky-950 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-sky-950"
         >
           <Plus size={14} />
           {t("addFirstBuilding")}

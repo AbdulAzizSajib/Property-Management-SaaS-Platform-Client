@@ -48,7 +48,7 @@ export default function HeroSection() {
               <span className="relative h-1.5 w-1.5 rounded-full bg-coral-600" />
             </span>
             <span className="capitalize">Built for Bangladeshi Land Owners</span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-jade-900 px-2.5 py-1 text-[12px] font-semibold text-paper transition-colors group-hover:bg-jade-950">
+            <span className="inline-flex items-center gap-1 rounded-full bg-sky-950 px-2.5 py-1 text-[12px] font-semibold text-paper transition-colors group-hover:bg-sky-950">
               Read the data
               <span className="transition-transform group-hover:translate-x-0.5">
                 →
@@ -88,7 +88,7 @@ export default function HeroSection() {
           <div className="mt-8 flex flex-wrap items-center gap-2">
             <button
               type="button"
-              className="group relative rounded-[10px] bg-jade-900 dark:bg-jade-700 px-6 py-3.5 text-[15px] font-semibold text-paper transition-all duration-200 hover:bg-jade-950 dark:hover:bg-jade-500 hover:shadow-[0_10px_30px_-10px_rgba(13,79,63,0.5)]"
+              className="group relative rounded-[10px] bg-sky-950 dark:bg-jade-700 px-6 py-3.5 text-[15px] font-semibold text-paper transition-all duration-200 hover:bg-sky-950 dark:hover:bg-jade-500 hover:shadow-[0_10px_30px_-10px_rgba(13,79,63,0.5)]"
             >
               <span className="relative z-10 inline-flex items-center gap-2">
                 Get Started Free

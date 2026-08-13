@@ -105,7 +105,7 @@ export default function LeasesListPage() {
               render={
                 <button
                   type="button"
-                  className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-sky-950 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-sky-950"
                 >
                   <Plus size={14} />
                   {t("newLease")}
@@ -138,7 +138,7 @@ export default function LeasesListPage() {
         {/* Money hero — promotes monthly cash flow to the primary KPI */}
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.4fr_1fr]">
           <div
-            className="relative overflow-hidden rounded-[18px] bg-jade-900 px-5 py-5 text-white sm:px-6 sm:py-6"
+            className="relative overflow-hidden rounded-[18px] bg-sky-950 px-5 py-5 text-white sm:px-6 sm:py-6"
             style={{
               boxShadow:
                 "0 1px 0 rgba(255,255,255,0.06) inset, 0 18px 40px -22px rgba(10,46,34,0.5)",
@@ -236,7 +236,7 @@ export default function LeasesListPage() {
                   className={cn(
                     "rounded-[6px] px-2.5 py-1 text-[11.5px] font-semibold transition-colors",
                     statusFilter === s
-                      ? "bg-jade-900 text-paper"
+                      ? "bg-sky-950 text-paper"
                       : "text-ink-soft hover:bg-paper hover:text-jade-900",
                   )}
                 >
@@ -532,7 +532,7 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
         <button
           type="button"
           onClick={onCreate}
-          className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
+          className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-sky-950 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-sky-950"
         >
           <Plus size={14} />
           {t("emptyCreateFirst")}

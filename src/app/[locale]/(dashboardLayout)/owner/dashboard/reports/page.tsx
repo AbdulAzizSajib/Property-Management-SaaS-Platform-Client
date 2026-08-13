@@ -253,7 +253,7 @@ export default function ReportsPage() {
                 className={cn(
                   "relative overflow-hidden rounded-[18px] px-5 py-5 sm:px-6 sm:py-6",
                   isProfit
-                    ? "bg-jade-950 text-paper"
+                    ? "bg-sky-950 text-paper"
                     : "border border-coral-100 bg-coral-50/60",
                 )}
                 style={
@@ -686,7 +686,7 @@ function ReportLink({
       className={cn(
         "inline-flex h-8 items-center rounded-full px-3 text-[12.5px] font-semibold transition-colors",
         active
-          ? "bg-jade-900 text-paper"
+          ? "bg-sky-950 text-paper"
           : "border border-rule-soft bg-paper text-ink-soft hover:border-jade-700/30 hover:text-jade-900",
       )}
     >

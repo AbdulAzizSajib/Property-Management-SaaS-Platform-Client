@@ -205,7 +205,7 @@ export function EditProfileDialog({ open, onOpenChange }: Props) {
                         <Button
                             disabled={mut.isPending}
                             onClick={submit}
-                            className="bg-jade-900 text-paper hover:bg-jade-950"
+                            className="bg-sky-950 text-paper hover:bg-sky-950"
                         >
                             {mut.isPending ? (
                                 <>

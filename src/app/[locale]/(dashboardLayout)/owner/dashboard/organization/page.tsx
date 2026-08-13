@@ -352,7 +352,7 @@ export default function OrganizationPage() {
                             <button
                                 type="submit"
                                 disabled={!isDirty || update.isPending}
-                                className="inline-flex h-9 items-center gap-1.5 rounded-[8px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950 disabled:opacity-60 disabled:cursor-not-allowed"
+                                className="inline-flex h-9 items-center gap-1.5 rounded-[8px] bg-sky-950 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-sky-950 disabled:opacity-60 disabled:cursor-not-allowed"
                             >
                                 {update.isPending ? (
                                     <>

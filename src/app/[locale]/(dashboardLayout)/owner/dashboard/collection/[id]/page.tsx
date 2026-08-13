@@ -111,7 +111,7 @@ export default function PaymentDetailPage() {
                     <div className="border-b border-rule-soft px-6 py-5 sm:px-8 sm:py-6">
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                             <div className="flex items-center gap-3">
-                                <span className="relative inline-flex size-11 items-center justify-center rounded-[9px] bg-jade-900 text-paper">
+                                <span className="relative inline-flex size-11 items-center justify-center rounded-[9px] bg-sky-950 text-paper">
                                     <span className="text-[16px] font-bold leading-none">
                                         B
                                     </span>

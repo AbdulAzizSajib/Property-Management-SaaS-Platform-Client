@@ -142,7 +142,7 @@ export default function ExpenseDetailPage() {
 
                 {/* Hero */}
                 <div
-                    className="relative overflow-hidden rounded-[18px] bg-jade-950 px-5 py-5 text-paper sm:px-6 sm:py-6"
+                    className="relative overflow-hidden rounded-[18px] bg-sky-950 px-5 py-5 text-paper sm:px-6 sm:py-6"
                     style={{
                         boxShadow:
                             "0 1px 0 rgba(255,255,255,0.06) inset, 0 18px 40px -22px rgba(10,46,34,0.5)",

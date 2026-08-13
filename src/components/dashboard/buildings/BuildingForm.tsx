@@ -274,7 +274,7 @@ function Section({
   return (
     <section className="space-y-3">
       <div className="flex items-center gap-2">
-        <span className="flex h-6 w-6 items-center justify-center rounded-[7px] bg-jade-900/8 text-jade-900">
+        <span className="flex h-6 w-6 items-center justify-center rounded-[7px] bg-sky-950/8 text-jade-900">
           <Icon size={15} />
         </span>
         <h3 className="text-[12px] font-semibold uppercase tracking-[0.08em] text-ink">

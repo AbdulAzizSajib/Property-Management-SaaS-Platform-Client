@@ -187,7 +187,7 @@ export function StaffForm({ submitting, onSubmit, onCancel }: StaffFormProps) {
                     type="button"
                     onClick={submit}
                     disabled={submitting}
-                    className="bg-jade-900 text-paper hover:bg-jade-950"
+                    className="bg-sky-950 text-paper hover:bg-sky-950"
                 >
                     {submitting ? (
                         <>

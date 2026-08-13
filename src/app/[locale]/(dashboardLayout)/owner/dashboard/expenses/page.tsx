@@ -163,7 +163,7 @@ function ExpensesListInner() {
                     <button
                         type="button"
                         onClick={() => setRecordOpen(true)}
-                        className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
+                        className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-sky-950 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-sky-950"
                     >
                         <Plus size={14} />
                         {t("recordExpense")}
@@ -173,7 +173,7 @@ function ExpensesListInner() {
                 {/* Money hero — total spent is THE number */}
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.4fr_1fr]">
                     <div
-                        className="relative overflow-hidden rounded-[18px] bg-jade-950 px-5 py-5 text-paper sm:px-6 sm:py-6"
+                        className="relative overflow-hidden rounded-[18px] bg-sky-950 px-5 py-5 text-paper sm:px-6 sm:py-6"
                         style={{
                             boxShadow:
                                 "0 1px 0 rgba(255,255,255,0.06) inset, 0 18px 40px -22px rgba(10,46,34,0.5)",
@@ -584,7 +584,7 @@ function EmptyState({ onRecord }: { onRecord: () => void }) {
                 <button
                     type="button"
                     onClick={onRecord}
-                    className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-jade-900 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-jade-950"
+                    className="inline-flex h-9 items-center gap-1.5 rounded-[9px] bg-sky-950 px-4 text-[13px] font-semibold text-paper transition-colors hover:bg-sky-950"
                 >
                     <Plus size={14} />
                     {t("recordExpense")}
