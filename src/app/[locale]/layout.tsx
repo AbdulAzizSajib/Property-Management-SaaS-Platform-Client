@@ -1,6 +1,6 @@
 import QueryProviders from "@/src/providers/QueryProvider";
 import type { Metadata } from "next";
-import {  Hind_Siliguri,  Noto_Sans_Bengali , Poppins } from "next/font/google";
+import {  Hind_Siliguri,  Noto_Sans_Bengali , Poppins, Space_Grotesk } from "next/font/google";
 import localFont from "next/font/local";
 import type { ReactNode } from "react";
 import { ToastContainer } from "react-toastify";
@@ -29,6 +29,13 @@ const hind = Hind_Siliguri({
     variable: "--font-bangla",
     subsets: ["bengali", "latin"],
     weight: ["400", "500", "600", "700"],
+});
+
+const spaceGrotesk = Space_Grotesk({
+    variable: "--font-space-grotesk",
+    subsets: ["latin"],
+    weight: ["300", "400", "500", "600", "700"],
+    display: "swap",
 });
 
 
@@ -75,7 +82,7 @@ export default async function LocaleLayout({
     return (
         <html
             lang={locale} suppressHydrationWarning
-            className={` ${poppins.variable} ${hind.variable} ${rubita.variable} ${NotoSansBengali.variable}  ${Shadhinata.variable}  ${locale === "bn" ? "locale-bn" : "locale-en"}`}
+            className={` ${poppins.variable} ${hind.variable} ${rubita.variable} ${NotoSansBengali.variable}  ${Shadhinata.variable} ${spaceGrotesk.variable}  ${locale === "bn" ? "locale-bn" : "locale-en"}`}
         >
             <body>
                 <NextIntlClientProvider>

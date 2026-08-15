@@ -1,8 +1,9 @@
 "use client";
-import { MenuIcon, XIcon } from "lucide-react";
+import { MenuIcon, XIcon,  } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ModeToggle } from "./ModeToggle";
+import { Icon } from "@iconify/react";
 
 const navLinks = [
   { name: "Features", href: "#features" },
@@ -27,7 +28,7 @@ export default function Navbar() {
     <div className="sticky top-4 z-50 px-4 will-change-transform ">
       <div className="mx-auto flex w-fit max-w-full items-center gap-6">
         
-        <nav className="flex w-fit max-w-full items-center gap-10 rounded-[10px] border border-white/20  bg-white/40 backdrop-blur-md py-2 pl-5 pr-2  dark:border-white/10 dark:bg-night-2 text-white shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset]  transition-colors ">
+        <nav className="flex w-fit max-w-full items-center gap-10 rounded-[10px] border border-black  bg-white/80 backdrop-blur-md py-1 pl-5 pr-2    shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset,0_3px_0_0_#000]  transition-colors ">
         <Link
           href="/"
           className="flex shrink-0  items-center text-2xl font-bold tracking-tight relative gap-2"
@@ -36,13 +37,13 @@ export default function Navbar() {
             viewBox="0 10 216 177"
             fill="none"
             aria-hidden="true"
-            className="h-8 w-auto text-sky-950 dark:text-sky-400"
+            className="h-6 w-auto text-black "
           >
             <path d="M0 0H215L126 88V176H0V0Z" fill="currentColor" />
             <rect x="170" y="100" width="39" height="50" fill="currentColor" />
           </svg>
           <h2
-            className="z-10 text-sky-950  text-[22px] sm:text-[24px] md:text-[26px] lg:text-[28px]"
+            className="z-10 text-black  space-grotesk text-[22px] sm:text-[24px] md:text-[26px] lg:text-[28px]"
           >
             Bariyan
           </h2>
@@ -53,28 +54,31 @@ export default function Navbar() {
               <a
                 key={link.name}
                 href={link.href}
-                className="relative py-2  hover:text-sky-950 dark:hover:text-sky-50 transform transition-transform duration-300 hover:scale-[1.05] hover:translate-y-[-1px]"
+                className="relative py-2 space-grotesk   hover:text-sky-950 dark:hover:text-sky-50 transform transition-transform duration-300 hover:scale-[1.05] hover:-translate-y-px"
               >
                 {link.name}
               </a>
             ))}
           </div>
 
-          <div className="flex shrink-0 items-center gap-1.5">
+          <div className="flex shrink-0 items-center gap-1.5 space-grotesk">
             {/* <ModeToggle /> */}
             <Link
               href="/login"
-              className="hidden sm:inline-flex items-center whitespace-nowrap text-ink transition px-3.5 py-2 rounded-[10px] text-[13.5px] font-semibold hover:bg-sky-950/5 dark:text-mist dark:hover:bg-white/10"
+              className="hidden sm:inline-flex items-center whitespace-nowrap text-ink transition px-3.5 py-2 rounded-[10px] text-[13.5px] font-semibold  dark:text-mist dark:hover:bg-white/10"
             >
               Sign in
             </Link>
             <Link
               href="/register"
-              className="hidden sm:inline-flex items-center gap-2 whitespace-nowrap bg-sky-950 hover:bg-sky-950 transition text-paper px-4 py-2 rounded-[10px] text-[13.5px] font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_12px_rgba(13,79,63,0.25)] hover:-translate-y-0.5"
+              className="hidden sm:inline-flex items-center gap-2 whitespace-nowrap bg-black  transition text-paper pl-4 pr-2 py-1.5 rounded-full text-[13.5px] font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_12px_rgba(13,79,63,0.25)] hover:-translate-y-0.5"
             >
-              Get Started Free
-              <span className="font-mono">→</span>
-            </Link>
+              Try it Free
+              
+          
+             <Icon className="text-lg  p-0.5 bg-white rounded-full text-stone-600" icon="mdi-light:arrow-right" />
+
+              </Link>
             <button
               type="button"
               aria-label="Open menu"

@@ -18,6 +18,10 @@ body {
   font-family: var(--font-sans);
 }
 
+.space-grotesk {
+  font-family: var(--font-space-grotesk), sans-serif;
+}
+
 .wordmark {
   color: #ff893b;
   text-shadow:
@@ -39,6 +43,7 @@ body {
  
   --font-rubita: var(--font-rubita), system-ui, sans-serif;
   --font-NotoSansBengali: var(--font-NotoSansBengali), system-ui, sans-serif;
+  --font-space-grotesk: var(--font-space-grotesk), sans-serif;
 
 
   --color-jade-50: #e6f4ef;
