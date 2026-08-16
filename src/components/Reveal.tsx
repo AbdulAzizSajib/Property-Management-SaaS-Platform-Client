@@ -2,6 +2,7 @@
 
 import { motion, type Variants } from "framer-motion";
 import type { ReactNode } from "react";
+import { cn } from "@/src/lib/utils";
 
 type Props = {
     children: ReactNode;
@@ -70,6 +71,7 @@ export function RevealGroup({
     );
 }
 
+
 export function RevealItem({
     children,
     className,
@@ -81,7 +83,7 @@ export function RevealItem({
 }) {
     return (
         <motion.div
-            className={className}
+            className={cn(className)}
             variants={{
                 hidden: { opacity: 0, y },
                 visible: {

@@ -2,6 +2,7 @@
 
 import { RevealGroup, RevealItem } from "@/src/components/Reveal";
 import SectionHead from "@/src/components/SectionHead";
+import { Avatar, AvatarFallback } from "@/src/components/ui/avatar";
 import {
     Banknote,
     LayoutGrid,
@@ -34,53 +35,50 @@ const collectionRows = [
 export default function FeaturesSection() {
     return (
         <section id="features" className="py-16 lg:py-20">
-            <div className="max-w-[1280px] mx-auto px-5 md:px-8">
+            <div className="max-w-7xl space-grotesk mx-auto px-5  md:px-8">
                 <SectionHead
                    
                     title={
                         <>
-                            Built for the way Bangladesh
+                            Everything your property
                             <br />
-                            <span className=" text-sky-500">
-                                actually
-                            </span>{" "}
-                            manages property
+                            needs, in  one dashboard
                         </>
                     }
-                    description="From a single flat in Mirpur to a 30-storey tower in Bashundhara, Bariyan adapts to how you already work."
+                    description="From a single flat to a 30-storey tower — no spreadsheets, no paperwork."
                 />
 
                 <RevealGroup className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 auto-rows-[minmax(200px,auto)] gap-3">
                     {/* B-1 hero card */}
-                    <RevealItem className="md:col-span-4 lg:col-span-4 md:row-span-2 bg-sky-900 border border-sky-900 rounded-[18px] p-6 text-paper overflow-hidden flex flex-col">
+                    <RevealItem className="md:col-span-4 lg:col-span-4 md:row-span-2 bg-sky-900 rounded-[18px] p-6 text-white overflow-hidden flex flex-col shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset,0_3px_0_0_#000] border border-white/10">
                         <FeatureIcon dark icon={Banknote} />
-                        <h3 className="font-bold text-[26px] tracking-[-0.015em] text-paper mb-2">
+                        <h3 className="font-bold text-[26px] tracking-[-0.015em]  mb-2">
                             Track every rent payment in one place
                         </h3>
-                        <p className="text-[14px] text-white/70 leading-[1.5] mb-4">
-                            Record how each tenant paid — cash, bKash, Nagad, Rocket, or bank
-                            transfer — against their invoice. Every payment gets a unique receipt
-                            number and updates the tenant&apos;s balance instantly.
+                        <p className="text-[14px]  leading-normal mb-4">
+                            Cash, bKash, Nagad, or bank — every payment gets a receipt, instantly.
                         </p>
-                        <div className="flex-1 bg-white/[0.06] border border-white/10 rounded-xl p-3 grid gap-1">
+                        <div className="flex-1  border border-white/10 rounded-xl p-3 grid gap-1">
                             {collectionRows.map((row) => (
                                 <div
                                     key={row.name}
-                                    className="grid grid-cols-[20px_1fr_auto] gap-6 items-center text-xs bg-white/5 rounded-lg px-2.5 py-1.5"
+                                    className="grid grid-cols-[20px_1fr_auto] gap-6 items-center text-xs  rounded-lg px-2.5 py-1.5"
                                 >
-                                    <div
-                                        className={`w-8 h-8 rounded-md font-mono text-[10px] font-extrabold text-white flex items-center justify-center tracking-tighter ${row.color}`}
-                                    >
-                                        {row.code}
-                                    </div>
-                                    <div className="text-paper font-semibold">
+                                    <Avatar>
+                                        <AvatarFallback
+                                            className={`font-mono text-[10px] font-extrabold tracking-tighter text-black ${row.color}`}
+                                        >
+                                            {row.code}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <div className=" font-semibold">
                                         {row.name}
                                         <small className="block text-white/50 text-[10px] font-normal">
                                             {row.meta}
                                         </small>
                                     </div>
                                     <div
-                                        className={`font-mono text-[11px] font-bold text-paper px-2 py-1 rounded ${row.due ? "bg-sky-600" : "bg-sky-700"}`}
+                                        className={`font-mono text-[11px] font-bold px-2 py-1 rounded ${row.due ? "bg-sky-600" : "bg-sky-700"}`}
                                     >
                                         {row.amount}
                                     </div>
@@ -90,7 +88,7 @@ export default function FeaturesSection() {
                     </RevealItem>
 
                     {/* B-2 */}
-                    <BentoCard className="md:col-span-2 lg:col-span-2">
+                    <BentoCard className="md:col-span-2 lg:col-span-2 shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset,0_3px_0_0_#000] border border-black/40">
                         <FeatureIcon icon={Users} />
                         <h3 className="text-[19px] font-bold tracking-[-0.015em] text-sky-950 dark:text-sky-50 mb-2">
                             Tenant &amp; lease
@@ -98,34 +96,29 @@ export default function FeaturesSection() {
                             management
                         </h3>
                         <p className="text-sm text-ink-soft dark:text-mist-soft leading-[1.55]">
-                            Keep tenant details, NID, and emergency contacts on file. Issue
-                            digital lease agreements that owner and tenant sign in-app, and
-                            track each lease&apos;s security deposit from move-in to move-out.
+                            Store tenant details, sign digital leases, and track deposits in-app.
                         </p>
                     </BentoCard>
 
                     {/* B-3 */}
-                    <BentoCard className="md:col-span-2 lg:col-span-2">
+                    <BentoCard className="md:col-span-2 lg:col-span-2 shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset,0_3px_0_0_#000] border border-black/40">
                         <FeatureIcon icon={Wrench} />
                         <h3 className="text-[19px] font-bold tracking-[-0.015em] text-sky-950 dark:text-sky-50 mb-2">
                             Maintenance &amp; complaints
                         </h3>
                         <p className="text-sm text-ink-soft dark:text-mist-soft leading-[1.55]">
-                            Tenants raise issues from their phone. Assign them to a caretaker
-                            and track status from open to resolved.
+                            Tenants report issues from their phone — assign, track, resolve.
                         </p>
                     </BentoCard>
 
                     {/* B-4 Bilingual dashboard */}
-                    <BentoCard className="md:col-span-2 lg:col-span-3">
+                    <BentoCard className="md:col-span-2 lg:col-span-3 shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset,0_3px_0_0_#000] border border-black/40">
                         <FeatureIcon icon={Languages} />
                         <h3 className="text-[19px] font-bold tracking-[-0.015em] text-sky-950 dark:text-sky-50 mb-2">
                             One dashboard, two languages
                         </h3>
                         <p className="text-sm text-ink-soft dark:text-mist-soft leading-[1.55]">
-                            Switch the entire dashboard between Bangla and English with one
-                            click — for you and every staff member you add. No separate app,
-                            no translation guesswork.
+                            Switch the whole dashboard between Bangla and English in one click.
                         </p>
                         <div className="mt-3 inline-flex items-center gap-1 rounded-full border border-rule-soft dark:border-white/10 bg-cream-2 dark:bg-night-2 p-1 text-xs font-semibold">
                             <span className="rounded-full bg-sky-800 px-3 py-1.5 font-bangla text-paper">
@@ -138,15 +131,13 @@ export default function FeaturesSection() {
                     </BentoCard>
 
                     {/* B-5 utilities */}
-                    <BentoCard className="md:col-span-2 lg:col-span-3">
+                    <BentoCard className="md:col-span-2 lg:col-span-3 shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset,0_3px_0_0_#000] border border-black/40">
                         <FeatureIcon icon={LayoutGrid} />
                         <h3 className="text-[19px] font-bold tracking-[-0.015em] text-sky-950 dark:text-sky-50 mb-2">
                             Log service charges &amp; utility bills
                         </h3>
                         <p className="text-sm text-ink-soft dark:text-mist-soft leading-[1.55]">
-                            Record gas, water, lift, security, and generator bills against a
-                            building or a specific unit, categorized and searchable — so nothing
-                            gets lost in a notebook.
+                            Log gas, water, lift, and generator bills — categorized, never lost.
                         </p>
                         <div className="grid grid-cols-5 gap-1 mt-3">
                             {utilities.map((u) => (
@@ -168,16 +159,14 @@ export default function FeaturesSection() {
                     </BentoCard>
 
                     {/* B-6 reports stats */}
-                    <RevealItem className="md:col-span-4 lg:col-span-6 bg-cream-2 dark:bg-night-2 rounded-[18px] p-6 md:px-7">
+                    <RevealItem className="md:col-span-4 lg:col-span-6 bg-cream-2 dark:bg-night-2 rounded-[18px] p-6 md:px-7 shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset,0_3px_0_0_#000] border border-black/40">
                         <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr_1fr_1fr_1fr] gap-4 items-center">
                             <div>
                                 <h3 className="text-[22px] font-bold text-sky-950 dark:text-sky-50 tracking-[-0.015em] mb-1.5">
                                     Reports that show you where you stand
                                 </h3>
                                 <p className="text-[13px] text-ink-soft dark:text-mist-soft leading-[1.55]">
-                                    Financial summaries, rent collection status, occupancy, and
-                                    expense breakdowns — four report views, ready whenever you
-                                    need them.
+                                    Financials, collections, occupancy, expenses — four reports, always ready.
                                 </p>
                             </div>
                             {reportStats.map((s) => (
@@ -201,7 +190,7 @@ export default function FeaturesSection() {
 function BentoCard({ children, className }: { children: React.ReactNode; className?: string }) {
     return (
         <RevealItem
-            className={`bg-paper dark:bg-night-2 border border-rule-soft dark:border-white/10 rounded-[18px] p-5 relative overflow-hidden transition hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-12px_rgba(10,46,34,0.15)] ${className ?? ""}`}
+            className={`bg-paper dark:bg-night-2 border border-rule-soft dark:border-white/10 rounded-[18px] p-5 relative overflow-hidden transition] ${className ?? ""}`}
         >
             {children}
         </RevealItem>

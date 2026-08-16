@@ -14,21 +14,17 @@ export default function Pricing() {
 
     return (
         <section id="pricing" className="bg-paper dark:bg-night-2 py-24 lg:py-32">
-            <div className="max-w-[1280px] mx-auto px-5 md:px-8">
+            <div className="max-w-7xl mx-auto px-5 md:px-8">
                 <SectionHead
 
                     title={
                         <>
-                            Priced for Bangladesh.
-                            <br />
-                            Not{" "}
-                            <em className="font-serif italic font-normal text-sky-500">
-                                Silicon Valley
-                            </em>
-                            .
+                            Simple pricing.
+
+                            No surprises.
                         </>
                     }
-                    description="Pay monthly in taka. Cancel anytime. All plans include a 30-day free trial and Bangla-speaking support."
+                    description="Pay monthly in taka. Start free, upgrade anytime. Every plan includes Bangla-speaking support."
                 />
 
                 {isLoading ? (
@@ -85,7 +81,7 @@ function PlanCard({ plan }: { plan: Plan }) {
 
     if (plan.isPopular) {
         return (
-            <RevealItem className="relative rounded-[18px] p-7 flex flex-col bg-sky-950 text-paper border border-sky-800 lg:-translate-y-2 shadow-[0_24px_48px_-16px_rgba(10,46,34,0.4)]">
+            <RevealItem className="relative rounded-[18px] p-7 flex flex-col bg-sky-950 text-paper lg:-translate-y-2  shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset,0_3px_0_0_#000] border border-black/40">
                 <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 lg:left-7 lg:translate-x-0 bg-sky-500 text-paper text-[10.5px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider whitespace-nowrap">
                     ★ Most popular
                 </span>
@@ -113,11 +109,11 @@ function PlanCard({ plan }: { plan: Plan }) {
         );
     }
     return (
-        <RevealItem className="rounded-[18px] p-7 bg-paper dark:bg-night-2 border border-rule-soft dark:border-white/10 flex flex-col">
+        <RevealItem className="rounded-[18px] p-7 bg-paper dark:bg-night-2 flex flex-col shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset,0_3px_0_0_#000] border border-black/40">
             <div className="text-sm font-bold uppercase tracking-[0.12em] text-sky-800 dark:text-sky-300 mb-3">
                 {plan.displayName}
             </div>
-            <div className="text-[13px] text-ink-soft dark:text-mist-soft mb-6 leading-[1.5]">
+            <div className="text-[13px] text-ink-soft dark:text-mist-soft mb-6 leading-normal">
                 {plan.description}
             </div>
             <Price amount={price} />

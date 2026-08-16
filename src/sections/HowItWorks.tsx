@@ -25,17 +25,12 @@ const steps = [
 export default function HowItWorks() {
     return (
         <section className="bg-paper dark:bg-night-2 py-24 lg:py-32 border-t border-b border-rule-soft dark:border-white/10">
-            <div className="max-w-[1280px] mx-auto px-5 md:px-8">
+            <div className="max-w-7xl mx-auto px-5 md:px-8 space-grotesk">
                 <SectionHead
-                    eyebrow="Get started"
+                   
                     title={
                         <>
-                            From signup to every taka tracked
-                            <br />
-                            in{" "}
-                            <em className="font-serif italic font-normal text-sky-500">
-                                under 10 minutes
-                            </em>
+                            From signup to every taka tracked in under 10 minutes
                         </>
                     }
                     description={"No installer visits. No spreadsheet migrations. No “let me speak to your IT guy.”"}
@@ -43,7 +38,7 @@ export default function HowItWorks() {
 
                 <RevealGroup className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {steps.map((s, i) => (
-                        <RevealItem key={s.title} className="pt-7 relative">
+                        <RevealItem key={s.title} className="p-5 rounded-2xl relative shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset,0_3px_0_0_#000] border border-black/40">
                             <div className="font-mono text-[12px] font-bold text-sky-500 pb-3.5 mb-4.5 border-b border-rule dark:border-white/15">
                                 {String(i + 1).padStart(2, "0")}
                             </div>

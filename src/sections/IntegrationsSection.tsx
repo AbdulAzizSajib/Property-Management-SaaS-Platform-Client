@@ -70,7 +70,7 @@ const providers: Provider[] = [
 export default function IntegrationsSection() {
     return (
         <section id="integrations" className="py-24 lg:py-32">
-            <div className="max-w-[1280px] mx-auto px-5 md:px-8">
+            <div className="max-w-7xl mx-auto px-5 md:px-8">
                 <SectionHead
                     eyebrow="Native integrations"
                     title={

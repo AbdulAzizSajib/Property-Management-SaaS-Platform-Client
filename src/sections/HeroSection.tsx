@@ -1,40 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import {
-  AnimatePresence,
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import { RevealGroup, RevealItem } from "@/src/components/Reveal";
 import { Icon } from "@iconify/react";
 
-const rotatingWords = ["finances", "rentals", "expenses", "income"];
-// Widest word reserves the rotating slot's width so swapping words never
-// changes the h1's line width/height — see the grid-stack trick below.
-const longestRotatingWord = rotatingWords.reduce((a, b) => (b.length > a.length ? b : a));
-
 export default function HeroSection() {
-  const [wordIndex, setWordIndex] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setWordIndex((prev) => (prev + 1) % rotatingWords.length);
-    }, 2200);
-    return () => clearInterval(interval);
-  }, []);
-
   const prefersReducedMotion = useReducedMotion();
-
-  // Background parallax: confined to the hero section (never fixed to the
-  // whole page). The image is rendered taller than its clipped window and
-  // translated upward as the hero scrolls, so more of the tall photo (sky
-  // → flower field) is revealed — no scaling, just a vertical reveal.
   const { scrollYProgress: heroScrollProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
@@ -42,19 +18,11 @@ export default function HeroSection() {
   const bgYRaw = useTransform(heroScrollProgress, [0, 1], ["0%", "-18%"]);
   const bgY = prefersReducedMotion ? "0%" : bgYRaw;
 
-  // Product preview screenshot: scales up in place as it scrolls into view.
-  // Tracked against the screenshot's own element (not the whole tall hero
-  // section) so the growth stays in sync with when it's actually visible —
-  // progress 0 as it enters from the bottom of the viewport, progress 1 once
-  // it's mostly scrolled past center. The range is deliberately wider than
-  // "start end" -> "center center" (its own height + ~half the viewport more)
-  // so that with Lenis's eased smooth-scroll, a light/brief scroll input only
-  // covers a small fraction of it instead of visibly swinging the whole scale.
   const { scrollYProgress: previewScrollProgress } = useScroll({
     target: previewRef,
     offset: ["start end", "end center"],
   });
-  const previewScaleRaw = useTransform(previewScrollProgress, [0, 1], [0.6, 1.15]);
+  const previewScaleRaw = useTransform(previewScrollProgress, [0, 1], [0.6, 1.04]);
   const previewScale = prefersReducedMotion ? 1 : previewScaleRaw;
 
   return (
@@ -86,28 +54,7 @@ export default function HeroSection() {
           <h1 className="mt-24 space-grotesk max-w-4xl text-balance font-bold leading-20 tracking-[-0.02em] text-[#1d1d1d] text-[42px] sm:text-[58px] lg:text-[72px]">
             Manage your  property{" "}
             <span className="">
-              {/* Grid-stack: an invisible copy of the widest word reserves this
-                  slot's size, so swapping the visible word never resizes the
-                  h1 — a resize here would cascade into a layout shift that
-                  retriggers scroll-linked animations further down the page
-                  (e.g. the product preview's scale). */}
-              <span className="relative mr-4 inline-grid align-baseline text-left">
-                <span aria-hidden className="invisible col-start-1 row-start-1 whitespace-nowrap">
-                  {longestRotatingWord}
-                </span>
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={rotatingWords[wordIndex]}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -12 }}
-                    transition={{ duration: 0.4, ease: "easeInOut" }}
-                    className="col-start-1 row-start-1 inline-block whitespace-nowrap text-sky-900"
-                  >
-                    {rotatingWords[wordIndex]}
-                  </motion.span>
-                </AnimatePresence>
-              </span>
+              <span className="mr-4 text-black">finances</span>
               easily
             </span>
           </h1>
@@ -159,25 +106,11 @@ export default function HeroSection() {
 
         {/* Product preview screenshot */}
         <RevealItem className="mt-10 w-full max-w-7xl">
-          {/* Scroll tracking lives on this OUTER, never-transformed wrapper.
-              The scale itself is applied one level down. If both were on the
-              same element, getBoundingClientRect() (which reflects the live
-              CSS transform) would feed the already-scaled rect back into the
-              scroll-progress calculation — scale grows -> rect grows -> scale
-              recalculated -> rect changes again -> repeat, i.e. a feedback
-              loop that looks like it's endlessly shrinking/growing on its own. */}
+         
           <div ref={previewRef}>
             <motion.div style={{ scale: previewScale, transformOrigin: "top center" }}>
-              {/* daisyUI's `.aura` glow runs a 6s-infinite CSS animation that
-                  also drives `transform` (a repaint-forcing hack, see its
-                  `@keyframes aura`). A running CSS animation always wins the
-                  cascade over an inline style, so if it lived on the same
-                  element as the scale above, the browser would keep
-                  interpolating between the two competing `transform`s every
-                  6s — which bleeds into the scale and looks like it's
-                  auto-zooming in and out on a loop, independent of scroll.
-                  Keeping `.aura` one level down avoids that collision. */}
-              <div className="aura aura-gold text-orange-500 aura-xl p-1 border rounded-3xl">
+             
+              <div className="p-2  border-2 rounded-3xl">
                 <div className="mockup-browser overflow-hidden rounded-2xl  bg-white backdrop-blur-xl">
                   <div className="mockup-browser-toolbar before:opacity-100! before:shadow-[1.4em_0_#fca5a5,2.8em_0_#fde047,4.2em_0_#86efac]!">
                     <div className="input bg-stone-100 rounded-full py-1.5 text-[11px] text-sky-950 tracking-wider">

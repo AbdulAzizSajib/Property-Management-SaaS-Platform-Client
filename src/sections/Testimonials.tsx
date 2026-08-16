@@ -34,25 +34,19 @@ const others = [
 export default function Testimonials() {
     return (
         <section className="py-24 lg:py-32">
-            <div className="max-w-[1280px] mx-auto px-5 md:px-8">
+            <div className="max-w-7xl mx-auto px-5 md:px-8">
                 <SectionHead
-                    eyebrow="Loved by landlords"
+                  
                     title={
                         <>
-                            From Dhaka to Chattogram,
-                            <br />
-                            1,200+ landlords sleep{" "}
-                            <em className="font-serif italic font-normal text-sky-500">
-                                better
-                            </em>{" "}
-                            at night
+                            Built so landlords from Dhaka to Chattogram can sleep better at night
                         </>
                     }
                 />
 
                 <RevealGroup className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr] gap-4">
                     {/* Featured card spans 2 rows */}
-                    <RevealItem className="md:col-span-2 lg:col-span-1 lg:row-span-2 bg-sky-900 border border-sky-900 text-paper rounded-2xl p-9 flex flex-col justify-between">
+                    <RevealItem className="md:col-span-2 lg:col-span-1 lg:row-span-2 bg-sky-900  text-paper rounded-2xl p-9 flex flex-col justify-between shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset,0_3px_0_0_#000] border border-black/40 ">
                         <div>
                             <p className="font-serif italic text-[26px] leading-[1.3] mb-8 text-pretty">
                                 &quot;Rent collection used to take me a full week every month. With
@@ -81,7 +75,7 @@ export default function Testimonials() {
                     {others.map((t) => (
                         <RevealItem
                             key={t.name}
-                            className="bg-paper dark:bg-night-2 border border-rule-soft dark:border-white/10 rounded-2xl p-7 flex flex-col"
+                            className="bg-paper dark:bg-night-2 border border-rule-soft dark:border-white/10 rounded-2xl p-7 flex flex-col shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset,0_3px_0_0_#000] border border-black/40"
                         >
                             <p
                                 className={`text-[18px] leading-[1.45] text-sky-950 dark:text-sky-50 mb-6 text-pretty ${

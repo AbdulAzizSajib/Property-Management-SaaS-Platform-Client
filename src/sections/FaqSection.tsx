@@ -40,22 +40,18 @@ export function FaqSection() {
 
     return (
         <section id="faq" className="py-24 lg:py-32">
-            <div className="max-w-[1280px] mx-auto px-5 md:px-8">
+            <div className="max-w-7xl mx-auto px-5 md:px-8">
                 <SectionHead
                
                     title={
                         <>
-                            Things landlords{" "}
-                            <em className="font-serif italic font-normal text-sky-500">
-                                actually
-                            </em>{" "}
-                            ask us
+                            Things landlords actually ask us
                         </>
                     }
                     description={
                         <>
-                            If your question isn&apos;t here, WhatsApp us at +880 1700-000000. Real
-                            humans, Bangla &amp; English, ৯ AM – ১০ PM.
+                            If your question isn&apos;t here, WhatsApp us at +880 1782521705. <br /> Real
+                            humans, Bangla &amp; English, 9 AM – 10 PM.
                         </>
                     }
                 />

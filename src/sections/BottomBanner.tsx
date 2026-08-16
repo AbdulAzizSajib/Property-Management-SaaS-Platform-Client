@@ -3,9 +3,9 @@
 import Reveal from "@/src/components/Reveal";
 
 const trustItems = [
-    "30-day free trial",
+    "Free plan",
     "No credit card required",
-    "Setup in 17 minutes",
+    "Setup in 10/15 minutes",
     "Cancel anytime",
 ];
 
@@ -32,12 +32,12 @@ export default function BottomBanner() {
                     Stop chasing rent.
                     <br />
                     Start{" "}
-                    <em className="font-serif italic font-normal text-amber-500">
+                    <span className=" text-amber-500">
                         collecting it.
-                    </em>
+                    </span>
                 </h2>
                 <p className="text-lg leading-[1.5] text-white/70 mb-9 max-w-[540px] mx-auto">
-                    Join 1,200+ landlords across Bangladesh already managing their properties
+                    Join landlords across Bangladesh managing their properties
                     with Bariyan.
                 </p>
                 <div className="flex flex-wrap gap-3.5 justify-center mb-12">
@@ -45,7 +45,7 @@ export default function BottomBanner() {
                         type="button"
                         className="bg-sky-500 hover:bg-sky-400 transition text-paper font-semibold text-[15px] px-6 py-3.5 rounded-[10px] shadow-[inset_0_1px_0_rgba(255,255,255,0.2),inset_0_-2px_0_rgba(0,0,0,0.2),0_4px_12px_rgba(14,165,233,0.22)]"
                     >
-                        Start free trial →
+                        Get started Free  →
                     </button>
                     <button
                         type="button"

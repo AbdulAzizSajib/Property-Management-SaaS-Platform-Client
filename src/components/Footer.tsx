@@ -36,19 +36,32 @@ export default function Footer() {
     const [lang, setLang] = useState<"en" | "bn">("en");
 
     return (
-        <footer className="max-w-[1280px] mx-auto px-5 md:px-8 pt-20 pb-10">
+        <footer className="max-w-7xl mx-auto px-5 md:px-8 pt-20 pb-10">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.6fr_1fr_1fr_1fr_1fr] gap-12 pb-12 border-b border-rule dark:border-white/15">
                 <div className="col-span-2 md:col-span-3 lg:col-span-1">
-                    <Link href="/" className="flex items-center gap-2.5 text-sky-900 dark:text-sky-50 font-bold text-[19px] tracking-tight mb-4">
-                        {/* <LogoMark /> */}
-                        <span>
-                            <b className="text-sky-500">Bariyan</b>
-                        </span>
-                    </Link>
+                    <Link
+          href="/"
+          className="flex shrink-0  items-center text-2xl font-bold tracking-tight relative gap-2"
+        > 
+          <svg
+            viewBox="0 10 216 177"
+            fill="none"
+            aria-hidden="true"
+            className="h-6 w-auto text-black "
+          >
+            <path d="M0 0H215L126 88V176H0V0Z" fill="currentColor" />
+            <rect x="170" y="100" width="39" height="50" fill="currentColor" />
+          </svg>
+          <h2
+            className="z-10 text-black  space-grotesk text-[22px] sm:text-[24px] md:text-[26px] lg:text-[28px]"
+          >
+            Bariyan
+          </h2>
+        </Link>
                     <p className="text-sm text-ink-soft dark:text-mist-soft leading-[1.6] max-w-[320px] mb-5">
-                        Bangladesh&apos;s modern property management platform — built for
-                        landlords, real estate firms and housing societies to collect rent,
-                        manage tenants, and grow their portfolio with confidence.
+                        A modern property management platform built for
+                        landlords, real estate firms and housing societies in Bangladesh to
+                        collect rent, manage tenants, and grow their portfolio with confidence.
                     </p>
                     <div className="flex gap-2.5">
                         {socials.map((s) => (
