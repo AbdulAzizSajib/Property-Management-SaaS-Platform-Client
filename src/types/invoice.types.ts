@@ -125,7 +125,7 @@ export interface InvoiceDetail extends Invoice {
     tenant: Tenant;
     unit: Unit & { building: Building };
     lease: Lease;
-    payments: InvoicePaymentSummary[];
+    payments?: InvoicePaymentSummary[];
     lineItems: InvoiceLineItem[];
     /** Older invoices whose unpaid balances this invoice absorbed. */
     carriedForwardFrom?: InvoiceCarryRef[];

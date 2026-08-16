@@ -74,7 +74,7 @@ export function ListPageSkeleton({ rows = 6 }: { rows?: number }) {
 export function DetailPageSkeleton() {
   return (
     <div className="min-h-screen bg-cream">
-      <div className="mx-auto max-w-[1080px] space-y-5 p-4 sm:p-6 lg:p-8">
+      <div className="mx-auto max-w-270 space-y-5 p-4 sm:p-6 lg:p-8">
         {/* Back link */}
         <Sk className="h-4 w-28" />
 

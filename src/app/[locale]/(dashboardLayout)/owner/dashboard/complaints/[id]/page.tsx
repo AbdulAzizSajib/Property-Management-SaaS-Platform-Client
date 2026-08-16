@@ -61,7 +61,7 @@ export default function ComplaintDetailPage() {
     if (isLoading) {
         return (
             <div className="min-h-screen bg-cream">
-                <div className="mx-auto max-w-[1080px] space-y-5 p-4 sm:p-6 lg:p-8">
+                <div className="mx-auto max-w-270 space-y-5 p-4 sm:p-6 lg:p-8">
                     <Skeleton className="h-5 w-32 bg-paper" />
                     <Skeleton className="h-44 w-full rounded-[18px] bg-paper" />
                     <Skeleton className="h-72 w-full rounded-[14px] bg-paper" />
@@ -73,7 +73,7 @@ export default function ComplaintDetailPage() {
     if (isError || !c) {
         return (
             <div className="min-h-screen bg-cream">
-                <div className="mx-auto max-w-[1080px] p-4 sm:p-6 lg:p-8">
+                <div className="mx-auto max-w-270 p-4 sm:p-6 lg:p-8">
                     <Link
                         href="/owner/dashboard/complaints"
                         className="mb-4 inline-flex items-center gap-1 text-[12.5px] font-medium text-ink-soft hover:text-jade-900"
@@ -100,7 +100,7 @@ export default function ComplaintDetailPage() {
 
     return (
         <div className="min-h-screen bg-cream">
-            <div className="mx-auto max-w-[1080px] space-y-5 p-4 sm:p-6 lg:p-8">
+            <div className="mx-auto max-w-270 space-y-5 p-4 sm:p-6 lg:p-8">
                 {/* Toolbar */}
                 <div className="flex items-center justify-between">
                     <Link

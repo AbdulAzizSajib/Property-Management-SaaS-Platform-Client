@@ -48,7 +48,7 @@ export default function InvoiceDetailPage() {
     if (isLoading) {
         return (
             <div className="min-h-screen bg-cream">
-                <div className="mx-auto max-w-[1080px] space-y-5 p-4 sm:p-6 lg:p-8">
+                <div className="mx-auto max-w-270 space-y-5 p-4 sm:p-6 lg:p-8">
                     <Skeleton className="h-5 w-32 bg-paper" />
                     <Skeleton className="h-44 w-full bg-paper rounded-[18px]" />
                     <Skeleton className="h-72 w-full bg-paper rounded-[14px]" />
@@ -60,7 +60,7 @@ export default function InvoiceDetailPage() {
     if (isError || !inv) {
         return (
             <div className="min-h-screen bg-cream">
-                <div className="mx-auto max-w-[1080px] p-4 sm:p-6 lg:p-8">
+                <div className="mx-auto max-w-270 p-4 sm:p-6 lg:p-8">
                     <Link
                         href="/owner/dashboard/invoices"
                         className="mb-4 inline-flex items-center gap-1 text-[12.5px] font-medium text-ink-soft hover:text-jade-900"
@@ -84,6 +84,7 @@ export default function InvoiceDetailPage() {
     }
 
     const hasDue = Number(inv.dueAmount) > 0;
+    const payments = inv.payments ?? [];
 
     return (
         <div className="min-h-screen bg-cream print:bg-white">
@@ -95,7 +96,7 @@ export default function InvoiceDetailPage() {
                 }
             `}</style>
 
-            <div className="mx-auto max-w-[1080px] space-y-5 p-4 sm:p-6 lg:p-8 print:max-w-full print:p-0 print:space-y-4">
+            <div className="mx-auto max-w-270 space-y-5 p-4 sm:p-6 lg:p-8 print:max-w-full print:p-0 print:space-y-4">
                 {/* Toolbar — hidden in print */}
                 <div className="flex items-center justify-between gap-2 print:hidden">
                     <Link
@@ -449,15 +450,15 @@ export default function InvoiceDetailPage() {
                                 Payment history
                             </h3>
                             <p className="mt-1 text-[12px] text-ink-soft">
-                                {inv.payments.length === 0
+                                {payments.length === 0
                                     ? "No payments recorded yet"
-                                    : `${inv.payments.length} payment${inv.payments.length === 1 ? "" : "s"} totalling ${formatMoney(inv.paidAmount)}`}
+                                    : `${payments.length} payment${payments.length === 1 ? "" : "s"} totalling ${formatMoney(inv.paidAmount)}`}
                             </p>
                         </div>
                     </div>
 
                     <div className="mt-4">
-                        {inv.payments.length === 0 ? (
+                        {payments.length === 0 ? (
                             <div className="rounded-[10px] border border-dashed border-rule-soft px-4 py-8 text-center">
                                 <CreditCard
                                     className="mx-auto text-ink-soft/40"
@@ -477,7 +478,7 @@ export default function InvoiceDetailPage() {
                             </div>
                         ) : (
                             <ul className="divide-y divide-rule-soft">
-                                {inv.payments.map((p) => (
+                                {payments.map((p) => (
                                     <li
                                         key={p.id}
                                         className="flex items-center justify-between gap-3 py-3 first:pt-1 last:pb-1"

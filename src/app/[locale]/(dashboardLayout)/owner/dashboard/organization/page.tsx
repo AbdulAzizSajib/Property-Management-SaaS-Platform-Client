@@ -95,7 +95,7 @@ export default function OrganizationPage() {
     if (isLoading) {
         return (
             <div className="min-h-screen bg-cream">
-                <div className="mx-auto max-w-[1080px] space-y-5 p-4 sm:p-6 lg:p-8">
+                <div className="mx-auto max-w-270 space-y-5 p-4 sm:p-6 lg:p-8">
                     <Skeleton className="h-5 w-32 bg-paper" />
                     <Skeleton className="h-44 w-full rounded-[14px] bg-paper" />
                     <Skeleton className="h-80 w-full rounded-[14px] bg-paper" />
@@ -107,7 +107,7 @@ export default function OrganizationPage() {
     if (isError || !org) {
         return (
             <div className="min-h-screen bg-cream">
-                <div className="mx-auto max-w-[1080px] p-4 sm:p-6 lg:p-8">
+                <div className="mx-auto max-w-270 p-4 sm:p-6 lg:p-8">
                     <div className="rounded-[14px] border border-coral-100 bg-coral-50/60 px-6 py-12 text-center">
                         <h2 className="text-[15px] font-bold text-coral-600">
                             Couldn&apos;t load organization
@@ -134,7 +134,7 @@ export default function OrganizationPage() {
 
     return (
         <div className="min-h-screen bg-cream">
-            <div className="mx-auto max-w-[1080px] space-y-5 p-4 sm:p-6 lg:p-8">
+            <div className="mx-auto max-w-270 space-y-5 p-4 sm:p-6 lg:p-8">
                 {/* Heading */}
                 <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                     <div>

@@ -46,7 +46,7 @@ export default function AdminSubscriptionRequestsPage() {
 
   return (
     <div className="min-h-screen bg-cream">
-      <div className="mx-auto max-w-[1080px] space-y-6 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+      <div className="mx-auto max-w-270 space-y-6 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         <header>
           <p className="font-serif text-[13px] italic text-coral-600/85">
             Manual payments

@@ -35,7 +35,8 @@ export function CancelInvoiceDialog({
         if (open) setReason("");
     }, [open]);
 
-    const hasPayments = invoice.payments.length > 0;
+    const payments = invoice.payments ?? [];
+    const hasPayments = payments.length > 0;
     const paidAmount = Number(invoice.paidAmount) || 0;
 
     return (
@@ -56,8 +57,8 @@ export function CancelInvoiceDialog({
                         <p>
                             This invoice already has{" "}
                             <strong>
-                                {invoice.payments.length} payment
-                                {invoice.payments.length === 1 ? "" : "s"}
+                                {payments.length} payment
+                                {payments.length === 1 ? "" : "s"}
                             </strong>{" "}
                             ({paidAmount.toLocaleString("en-BD")} BDT collected).
                             The backend may reject cancellation — you might need to

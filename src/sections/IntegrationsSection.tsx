@@ -72,7 +72,6 @@ export default function IntegrationsSection() {
         <section id="integrations" className="py-24 lg:py-32">
             <div className="max-w-7xl mx-auto px-5 md:px-8">
                 <SectionHead
-                    eyebrow="Native integrations"
                     title={
                         <>
                             Built for the way
