@@ -3,8 +3,6 @@
 import { BuildingForm } from "@/src/components/dashboard/buildings/BuildingForm";
 import {
   typeBadgeStyles,
-  typeLabel,
-  typeLabelBn,
   statusBadgeStyles,
 } from "@/src/components/dashboard/buildings/building-helpers";
 import {
@@ -17,21 +15,20 @@ import {
 } from "@/src/components/ui/dialog";
 import { Skeleton } from "@/src/components/ui/skeleton";
 import { useBuildings, useCreateBuilding } from "@/src/hooks/useBuildings";
-import { useFloorsByBuilding } from "@/src/hooks/useFloors";
 import { cn } from "@/src/lib/utils";
-import { fmtNum } from "@/src/lib/numerals";
+import { fmtNum, fmtTaka } from "@/src/lib/numerals";
 import type { BuildingListItem } from "@/src/types/building.types";
 import {
   ArrowRight,
   Building2,
-  ChevronDown,
-  ChevronUp,
+  CircleCheck,
+  CircleDashed,
   DoorOpen,
   Layers,
   MapPin,
   Plus,
   Search,
-  User,
+  Wallet,
 } from "lucide-react";
 import { Link } from "@/src/i18n/navigation";
 import { useTranslations, useLocale } from "next-intl";
@@ -46,7 +43,6 @@ export default function BuildingsListPage() {
 
   const [createOpen, setCreateOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const filtered = (buildings ?? []).filter((b) => {
     const q = query.trim().toLowerCase();
@@ -65,6 +61,10 @@ export default function BuildingsListPage() {
   );
   const totalUnits = (buildings ?? []).reduce(
     (sum, b) => sum + b._count.units,
+    0,
+  );
+  const portfolioRentRoll = (buildings ?? []).reduce(
+    (sum, b) => sum + rentRoll(b),
     0,
   );
 
@@ -179,265 +179,171 @@ export default function BuildingsListPage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {filtered.map((b) => (
-              <BuildingCard
-                key={b.id}
-                building={b}
-                isExpanded={expandedId === b.id}
-                onToggle={() =>
-                  setExpandedId((cur) => (cur === b.id ? null : b.id))
-                }
-              />
-            ))}
-          </div>
+          <BuildingLedger buildings={filtered} portfolioRentRoll={portfolioRentRoll} />
         )}
       </div>
     </div>
   );
 }
 
-function BuildingCard({
-  building,
-  isExpanded,
-  onToggle,
+function rentRoll(building: BuildingListItem) {
+  return (building.units ?? [])
+    .filter((u) => u.status === "OCCUPIED")
+    .reduce((sum, u) => sum + Number(u.baseRent) + Number(u.serviceCharge), 0);
+}
+
+function BuildingLedger({
+  buildings,
+  portfolioRentRoll,
 }: {
-  building: BuildingListItem;
-  isExpanded: boolean;
-  onToggle: () => void;
+  buildings: BuildingListItem[];
+  portfolioRentRoll: number;
 }) {
   const t = useTranslations("buildingsPage");
   const locale = useLocale();
   const bn = locale === "bn";
+
   return (
-    <article
-      className={cn(
-        "group flex flex-col overflow-hidden rounded-[14px] border border-rule-soft bg-paper transition-shadow hover:shadow-[0_2px_18px_-12px_rgba(0,0,0,0.18)]",
-        isExpanded && "shadow-[0_2px_18px_-12px_rgba(0,0,0,0.22)]",
-      )}
+    <div className="overflow-hidden rounded-[14px] border border-rule-soft bg-paper">
+      {/* Column headers — hairline-divided, mirrors a ledger sheet */}
+      <div className="hidden items-center gap-4 border-b border-rule-soft bg-cream/60 px-5 py-2.5 text-[10.5px] font-semibold uppercase tracking-[0.1em] text-ink-soft md:flex">
+        <span className="w-[30%]">{t("colBuilding")}</span>
+        <span className="w-[14%] text-center">{t("cardFloors")}</span>
+        <span className="w-[14%] text-center">{t("cardUnits")}</span>
+        <span className="w-[16%] text-center">{t("colOccupancy")}</span>
+        <span className="w-[16%] text-right">{t("cardRentRoll")}</span>
+        <span className="w-[10%]" />
+      </div>
+
+      <div className="divide-y divide-rule-soft">
+        {buildings.map((b) => (
+          <LedgerRow key={b.id} building={b} />
+        ))}
+      </div>
+
+      {/* Portfolio total — the ledger's balance line */}
+      <div className="flex flex-wrap items-center justify-between gap-2 border-t-2 border-jade-950/15 bg-cream/60 px-5 py-3">
+        <span className="text-[11.5px] font-semibold uppercase tracking-[0.08em] text-ink-soft">
+          {t("portfolioTotal", { count: buildings.length })}
+        </span>
+        <span className="flex items-center gap-1.5 text-[15px] font-bold tabular-nums text-jade-950">
+          <Wallet size={14} className="text-jade-700" />
+          {fmtTaka(portfolioRentRoll, { bn, compact: true })}
+          <span className="text-[11px] font-medium text-ink-soft">
+            /{t("perMonth")}
+          </span>
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function LedgerRow({ building }: { building: BuildingListItem }) {
+  const t = useTranslations("buildingsPage");
+  const locale = useLocale();
+  const bn = locale === "bn";
+
+  const location = [building.address, building.area, building.city]
+    .filter(Boolean)
+    .join(", ");
+
+  const units = building.units ?? [];
+  const occupiedCount = units.filter((u) => u.status === "OCCUPIED").length;
+  const vacantCount = units.filter((u) => u.status === "VACANT").length;
+  const monthlyRentRoll = rentRoll(building);
+
+  return (
+    <Link
+      href={`/owner/dashboard/buildings/${building.id}`}
+      className="group flex flex-col gap-3 px-5 py-4 transition-colors hover:bg-cream/50 md:flex-row md:items-center md:gap-4"
     >
-      {/* Header strip */}
-      <div className="flex items-center justify-between px-4 pt-4">
+      {/* Building identity */}
+      <div className="flex min-w-0 items-start gap-3 md:w-[30%]">
         <span
           className={cn(
-            "inline-flex items-center rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
+            "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-[8px] border",
             typeBadgeStyles[building.type],
           )}
         >
-          {locale === "bn"
-            ? typeLabelBn(building.type)
-            : typeLabel(building.type)}
+          <Building2 size={14} />
         </span>
-
-        <span
-          className={cn(
-            "inline-flex items-center rounded-md border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
-            statusBadgeStyles(building.isActive),
-          )}
-        >
-          {building.isActive ? t("active") : t("inactive")}
-        </span>
-      </div>
-
-      {/* Body */}
-      <div className="flex flex-1 flex-col gap-3 px-4 py-3.5">
         <div className="min-w-0">
-          <h3 className="truncate text-[16px] font-bold tracking-[-0.01em] text-jade-950 group-hover:text-jade-900">
-            {building.name}
-          </h3>
-          <p className="mt-0.5 flex items-center gap-1 truncate text-[12px] text-ink-soft">
-            <MapPin size={11} className="shrink-0" />
-            <span className="truncate">
-              {building.address}
-              {building.area ? `, ${building.area}` : ""}, {building.city}
-            </span>
+          <div className="flex items-center gap-1.5">
+            <h3 className="truncate text-[14.5px] font-bold tracking-[-0.01em] text-jade-950 group-hover:text-jade-800">
+              {building.name}
+            </h3>
+            {!building.isActive && (
+              <span
+                className={cn(
+                  "inline-flex shrink-0 items-center rounded-md border px-1.5 py-0.5 text-[9.5px] font-semibold uppercase tracking-wider",
+                  statusBadgeStyles(building.isActive),
+                )}
+              >
+                {t("inactive")}
+              </span>
+            )}
+          </div>
+          <p className="mt-0.5 flex items-center gap-1 truncate text-[11.5px] text-ink-soft">
+            <MapPin size={10} className="shrink-0" />
+            <span className="truncate">{location}</span>
           </p>
         </div>
-
-        <div className="grid grid-cols-3 gap-2 rounded-[10px] border border-rule-soft bg-cream/50 px-3 py-2">
-          <CardStat
-            icon={Layers}
-            label={t("cardFloors")}
-            value={`${fmtNum(building._count.floors, bn)}/${fmtNum(building.totalFloors, bn)}`}
-          />
-          <CardStat
-            icon={DoorOpen}
-            label={t("cardUnits")}
-            value={fmtNum(building._count.units, bn)}
-          />
-          <CardStat
-            icon={User}
-            label={t("cardCaretaker")}
-            value={building.caretaker ? building.caretaker.name : "—"}
-            truncate
-          />
-        </div>
-
-        <div className="mt-auto flex items-center justify-between gap-2 pt-1">
-          <button
-            type="button"
-            onClick={onToggle}
-            className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[12px] font-semibold text-ink-soft transition-colors hover:bg-cream hover:text-jade-900"
-          >
-            {isExpanded ? (
-              <>
-                {t("hideDetails")} <ChevronUp size={12} />
-              </>
-            ) : (
-              <>
-                {t("moreDetails")} <ChevronDown size={12} />
-              </>
-            )}
-          </button>
-
-          <Link
-            href={`/owner/dashboard/buildings/${building.id}`}
-            className="inline-flex items-center gap-1 rounded-[8px] bg-sky-950 px-3 py-1.5 text-[12px] font-semibold text-paper transition-colors hover:bg-sky-950"
-          >
-            {t("view")}
-            <ArrowRight size={12} />
-          </Link>
-        </div>
       </div>
 
-      {isExpanded && <ExpandedPanel building={building} />}
-    </article>
-  );
-}
-
-function CardStat({
-  icon: Icon,
-  label,
-  value,
-  truncate,
-}: {
-  icon: React.ComponentType<{ size?: number; className?: string }>;
-  label: string;
-  value: string;
-  truncate?: boolean;
-}) {
-  return (
-    <div className="min-w-0">
-      <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-widest text-ink-soft">
-        <Icon size={10} />
-        {label}
-      </div>
-      <p
-        className={cn(
-          "mt-0.5 text-[13px] font-semibold tabular-nums text-jade-950",
-          truncate && "truncate",
-        )}
-        title={truncate ? value : undefined}
-      >
-        {value}
-      </p>
-    </div>
-  );
-}
-
-function ExpandedPanel({ building }: { building: BuildingListItem }) {
-  const t = useTranslations("buildingsPage");
-  const locale = useLocale();
-  const bn = locale === "bn";
-  return (
-    <div className="space-y-4 border-t border-rule-soft bg-cream/40 px-4 py-4">
-      <div>
-        <SectionLabel>{t("sectionAbout")}</SectionLabel>
-        <p className="mt-1.5 text-[12.5px] text-ink">
-          {building.description || (
-            <span className="text-ink-soft/60">{t("noDescription")}</span>
-          )}
-        </p>
-
-        <dl className="mt-2.5 space-y-1.5 text-[12px]">
-          <KV label={t("kvCity")} value={building.city} />
-          {building.area && <KV label={t("kvArea")} value={building.area} />}
-          <KV
-            label={t("kvTotalFloors")}
-            value={fmtNum(building.totalFloors, bn)}
-          />
-          <KV
-            label={t("kvCreated")}
-            value={new Date(building.createdAt).toLocaleDateString(
-              bn ? "bn-BD" : undefined,
-            )}
-          />
-        </dl>
-      </div>
-
-      <div>
-        <SectionLabel>{t("sectionFloors")}</SectionLabel>
-        <FloorsMiniList buildingId={building.id} />
-      </div>
-
-      {building.caretaker && (
-        <div>
-          <SectionLabel>{t("sectionCaretaker")}</SectionLabel>
-          <div className="mt-1.5 rounded-[10px] border border-rule-soft bg-paper p-3 text-[12px]">
-            <p className="font-semibold text-ink">{building.caretaker.name}</p>
-            {building.caretaker.email && (
-              <p className="mt-0.5 text-ink-soft">{building.caretaker.email}</p>
-            )}
-            {building.caretaker.contactNumber && (
-              <p className="text-ink-soft tabular-nums">
-                {building.caretaker.contactNumber}
-              </p>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function FloorsMiniList({ buildingId }: { buildingId: string }) {
-  const t = useTranslations("buildingsPage");
-  const locale = useLocale();
-  const bn = locale === "bn";
-  const { data: floors, isLoading } = useFloorsByBuilding(buildingId);
-
-  if (isLoading) {
-    return (
-      <div className="mt-1.5 space-y-1.5">
-        <Skeleton className="h-7 w-full rounded bg-paper" />
-        <Skeleton className="h-7 w-full rounded bg-paper" />
-        <Skeleton className="h-7 w-3/4 rounded bg-paper" />
-      </div>
-    );
-  }
-
-  if (!floors || floors.length === 0) {
-    return (
-      <p className="mt-1.5 text-[12px] text-ink-soft/60">{t("noFloorsYet")}</p>
-    );
-  }
-
-  const sorted = [...floors].sort((a, b) => a.floorNumber - b.floorNumber);
-
-  return (
-    <ul className="mt-1.5 space-y-1">
-      {sorted.slice(0, 6).map((f) => (
-        <li
-          key={f.id}
-          className="flex items-center justify-between gap-2 rounded-md bg-paper px-2 py-1.5 text-[12px]"
-        >
-          <div className="flex min-w-0 items-center gap-2">
-            <span className="flex size-5 shrink-0 items-center justify-center rounded bg-jade-50 text-[10.5px] font-bold text-jade-800">
-              {f.floorNumber === 0 ? "G" : fmtNum(f.floorNumber, bn)}
-            </span>
-            <span className="truncate text-ink">{f.name}</span>
-          </div>
-          <span className="text-[10.5px] tabular-nums text-ink-soft">
-            {t("unitsSuffix", { count: f._count.units })}
+      {/* Floors / Units — tabular columns on desktop, inline chips on mobile */}
+      <div className="flex items-center gap-4 text-[12.5px] text-ink md:w-[28%] md:justify-center md:gap-0">
+        <span className="flex items-center gap-1.5 tabular-nums md:w-1/2 md:justify-center">
+          <Layers size={11} className="text-ink-soft/70 md:hidden" />
+          <span className="font-semibold">
+            {fmtNum(building._count.floors, bn)}/{fmtNum(building.totalFloors, bn)}
           </span>
-        </li>
-      ))}
-      {sorted.length > 6 && (
-        <li className="px-2 text-[10.5px] text-ink-soft">
-          {t("moreCount", { count: sorted.length - 6 })}
-        </li>
-      )}
-    </ul>
+        </span>
+        <span className="flex items-center gap-1.5 tabular-nums md:w-1/2 md:justify-center">
+          <DoorOpen size={11} className="text-ink-soft/70 md:hidden" />
+          <span className="font-semibold">{fmtNum(building._count.units, bn)}</span>
+        </span>
+      </div>
+
+      {/* Occupancy */}
+      <div className="flex items-center gap-3 text-[12px] md:w-[16%] md:justify-center">
+        {units.length > 0 ? (
+          <>
+            <span className="flex items-center gap-1 font-medium text-jade-800">
+              <CircleCheck size={12} className="shrink-0" />
+              {fmtNum(occupiedCount, bn)}
+            </span>
+            {vacantCount > 0 && (
+              <span className="flex items-center gap-1 text-coral-600">
+                <CircleDashed size={12} className="shrink-0" />
+                {fmtNum(vacantCount, bn)}
+              </span>
+            )}
+          </>
+        ) : (
+          <span className="text-ink-soft/60">—</span>
+        )}
+      </div>
+
+      {/* Rent roll — the balance figure */}
+      <div className="flex items-center justify-between gap-3 md:w-[16%] md:justify-end">
+        <span className="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-soft md:hidden">
+          {t("cardRentRoll")}
+        </span>
+        <span className="text-[14px] font-bold tabular-nums text-jade-950">
+          {monthlyRentRoll > 0
+            ? fmtTaka(monthlyRentRoll, { bn, compact: true })
+            : "—"}
+        </span>
+      </div>
+
+      {/* Action */}
+      <div className="flex justify-end md:w-[10%]">
+        <span className="inline-flex items-center gap-1 rounded-[8px] bg-sky-950 px-3 py-1.5 text-[12px] font-semibold text-paper transition-colors group-hover:bg-jade-900">
+          {t("view")}
+          <ArrowRight size={12} />
+        </span>
+      </div>
+    </Link>
   );
 }
 
@@ -459,23 +365,6 @@ function SummaryStat({
         </span>
         <span className="text-[12px] text-ink-soft">{label}</span>
       </div>
-    </div>
-  );
-}
-
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <h4 className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
-      {children}
-    </h4>
-  );
-}
-
-function KV({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between">
-      <dt className="text-ink-soft">{label}</dt>
-      <dd className="font-medium text-ink">{value}</dd>
     </div>
   );
 }

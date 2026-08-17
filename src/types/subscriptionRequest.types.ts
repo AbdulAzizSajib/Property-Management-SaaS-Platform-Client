@@ -2,6 +2,9 @@ import type { SubscriptionPlan } from "./subscription.types";
 
 export type SubscriptionRequestStatus = "PENDING" | "APPROVED" | "REJECTED";
 
+/** Billing cycle a subscription request is priced/activated for. */
+export type BillingCycle = "MONTHLY" | "YEARLY";
+
 /** Mobile-money / bank methods accepted for manual subscription payments. */
 export type RequestPaymentMethod =
     | "BKASH"
@@ -50,6 +53,7 @@ export interface AdminSubscriptionRequest extends SubscriptionRequest {
 
 export interface CreateSubscriptionRequestPayload {
     targetPlan: SubscriptionPlan;
+    billingCycle: BillingCycle;
     method: RequestPaymentMethod;
     senderNumber: string;
     transactionId: string;

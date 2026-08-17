@@ -27,6 +27,8 @@ export interface Subscription {
     multiAdmin: boolean;
     /** Backend returns Prisma Decimal as a string. */
     priceMonthly: string;
+    /** Backend returns Prisma Decimal as a string; null when unset. */
+    priceYearly: string | null;
     trialEndsAt: string | null;
     startDate: string;
     endDate: string | null;
@@ -72,6 +74,8 @@ export interface Plan {
     description: string;
     /** Backend returns Prisma Decimal as a string. */
     priceMonthly: string;
+    /** Backend returns Prisma Decimal as a string; null when yearly billing isn't offered for this plan. */
+    priceYearly: string | null;
     buildingLimit: number;
     floorLimit: number;
     unitLimit: number;

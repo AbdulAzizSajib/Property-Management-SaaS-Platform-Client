@@ -37,7 +37,6 @@ import { cn } from "@/src/lib/utils";
 import { fmtNum } from "@/src/lib/numerals";
 import {
     ArrowLeft,
-    Building2,
     Calendar,
     DoorOpen,
     Layers,
@@ -124,8 +123,8 @@ export default function BuildingDetailPage() {
                     <div className="px-5 py-4 sm:px-6 sm:py-5">
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                             <div className="min-w-0 flex-1">
-                                <div className="flex flex-wrap items-center gap-2">
-                                    <h1 className="truncate text-[26px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[28px]">
+                                <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                                    <h1 className="min-w-0 max-w-full truncate text-[26px] font-bold tracking-[-0.02em] text-jade-950 sm:text-[28px]">
                                         {building.name}
                                     </h1>
                                     <span
@@ -200,36 +199,30 @@ export default function BuildingDetailPage() {
                         </div>
 
                         {building.description && (
-                            <p className="mt-3 rounded-[10px] border-l-[2.5px] border-coral-500 bg-cream/70 px-3 py-2 text-[13.5px] text-ink">
+                            <p className="mt-3 rounded-[10px] bg-cream/70 px-3 py-2 text-[13.5px] text-ink">
                                 {building.description}
                             </p>
                         )}
                     </div>
                 </div>
 
-                {/* Stats — no rainbow, single brand row */}
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {/* Stats — no rainbow, single brand row. Floor progress lives in the
+                    FloorsPanel below, so this row surfaces what that panel doesn't. */}
+                <div className="grid grid-cols-3 gap-3">
                     <StatTile
                         icon={Layers}
-                        label="Total floors"
-                        value={building.totalFloors}
-                    />
-                    <StatTile
-                        icon={Layers}
-                        label="Floors added"
-                        value={building.floors.length}
+                        label="Floors"
+                        value={`${fmtNum(building.floors.length)}/${fmtNum(building.totalFloors)}`}
                     />
                     <StatTile
                         icon={DoorOpen}
                         label="Units"
-                      
-                        value={building.units.length}
+                        value={fmtNum(building.units.length)}
                     />
                     <StatTile
                         icon={User}
                         label="Managers"
-                      
-                        value={building.managers.length}
+                        value={fmtNum(building.managers.length)}
                     />
                 </div>
 
@@ -241,7 +234,7 @@ export default function BuildingDetailPage() {
                     />
 
                     <div className="rounded-[14px] border border-rule-soft bg-paper p-5">
-                        <p className="font-serif text-[13px]  text-coral-600/85">
+                        <p className="font-serif text-[13px] text-coral-600/85">
                             On-site contact
                         </p>
                         <h3 className="mt-0.5 text-[16px] font-bold tracking-[-0.015em] text-jade-950">
@@ -384,13 +377,11 @@ export default function BuildingDetailPage() {
 function StatTile({
     icon: Icon,
     label,
-   
     value,
 }: {
     icon: React.ComponentType<{ size?: number; className?: string }>;
     label: string;
-   
-    value: number;
+    value: string;
 }) {
     return (
         <div className="rounded-[12px] border border-rule-soft bg-paper px-4 py-3">
@@ -403,7 +394,7 @@ function StatTile({
                 <Icon size={14} className="text-ink-soft/60 shrink-0" />
             </div>
             <p className="mt-1.5 text-[24px] font-bold tracking-[-0.025em] text-jade-950 tabular-nums leading-none">
-                {fmtNum(value)}
+                {value}
             </p>
         </div>
     );

@@ -24,9 +24,11 @@ import {
     useCreateSubscriptionRequest,
     useSubscriptionPaymentInfo,
 } from "@/src/hooks/useSubscriptionRequests";
+import { getPriceForCycle } from "@/src/lib/subscriptionPricing";
 import type { Plan } from "@/src/types/subscription.types";
 import {
     REQUEST_PAYMENT_METHODS,
+    type BillingCycle,
     type RequestPaymentMethod,
 } from "@/src/types/subscriptionRequest.types";
 import { Info } from "lucide-react";
@@ -56,17 +58,20 @@ export function RequestPaymentDialog({
     const [method, setMethod] = useState<RequestPaymentMethod>("BKASH");
     const [senderNumber, setSenderNumber] = useState("");
     const [transactionId, setTransactionId] = useState("");
+    const [cycle, setCycle] = useState<BillingCycle>("MONTHLY");
 
     useEffect(() => {
         if (open) {
             setMethod("BKASH");
             setSenderNumber("");
             setTransactionId("");
+            setCycle("MONTHLY");
         }
     }, [open]);
 
     if (!plan) return null;
-    const amount = parseFloat(plan.priceMonthly) || 0;
+    const { amount } = getPriceForCycle(plan, cycle);
+    const yearlyAvailable = Boolean(plan.priceYearly);
 
     function handleSubmit(ev: React.FormEvent) {
         ev.preventDefault();
@@ -74,6 +79,7 @@ export function RequestPaymentDialog({
         mutation.mutate(
             {
                 targetPlan: plan.plan,
+                billingCycle: cycle,
                 method,
                 senderNumber: senderNumber.trim(),
                 transactionId: transactionId.trim(),
@@ -101,6 +107,34 @@ export function RequestPaymentDialog({
                         <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-jade-800">
                             Step 1 · Send Money
                         </p>
+
+                        {yearlyAvailable && (
+                            <div className="mt-2 inline-flex rounded-[8px] border border-jade-100 bg-paper p-0.5 text-[12px] font-semibold">
+                                <button
+                                    type="button"
+                                    onClick={() => setCycle("MONTHLY")}
+                                    className={`rounded-[6px] px-2.5 py-1 transition-colors ${
+                                        cycle === "MONTHLY"
+                                            ? "bg-jade-800 text-paper"
+                                            : "text-ink-soft hover:text-ink"
+                                    }`}
+                                >
+                                    Monthly
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setCycle("YEARLY")}
+                                    className={`rounded-[6px] px-2.5 py-1 transition-colors ${
+                                        cycle === "YEARLY"
+                                            ? "bg-jade-800 text-paper"
+                                            : "text-ink-soft hover:text-ink"
+                                    }`}
+                                >
+                                    Yearly
+                                </button>
+                            </div>
+                        )}
+
                         <div className="mt-1.5 flex items-baseline justify-between">
                             <span className="text-[13px] text-ink">
                                 Send{" "}

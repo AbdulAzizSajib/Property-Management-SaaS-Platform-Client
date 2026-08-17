@@ -2,7 +2,6 @@
 
 import { RevealGroup, RevealItem } from "@/src/components/Reveal";
 import SectionHead from "@/src/components/SectionHead";
-import { Avatar, AvatarFallback } from "@/src/components/ui/avatar";
 import {
     Banknote,
     LayoutGrid,
@@ -37,12 +36,11 @@ export default function FeaturesSection() {
         <section id="features" className="py-16 lg:py-20">
             <div className="max-w-7xl space-grotesk mx-auto px-5  md:px-8">
                 <SectionHead
-                   
                     title={
                         <>
                             Everything your property
                             <br />
-                            needs, in  one dashboard
+                            needs, in one dashboard
                         </>
                     }
                     description="From a single flat to a 30-storey tower — no spreadsheets, no paperwork."
@@ -50,7 +48,7 @@ export default function FeaturesSection() {
 
                 <RevealGroup className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 auto-rows-[minmax(200px,auto)] gap-3">
                     {/* B-1 hero card */}
-                    <RevealItem className="md:col-span-4 lg:col-span-4 md:row-span-2 bg-sky-900 rounded-[18px] p-6 text-white overflow-hidden flex flex-col shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset,0_3px_0_0_#000] border border-white/10">
+                    <RevealItem className="md:col-span-4 lg:col-span-4 md:row-span-2 bg-sky-900 rounded-[18px] p-6 text-white overflow-hidden flex flex-col shadow-[0_1px_0_0_rgba(255,255,255,0.15)_inset,0_3px_0_0_#000] border border-black/40">
                         <FeatureIcon dark icon={Banknote} />
                         <h3 className="font-bold text-[26px] tracking-[-0.015em]  mb-2">
                             Track every rent payment in one place
@@ -58,20 +56,18 @@ export default function FeaturesSection() {
                         <p className="text-[14px]  leading-normal mb-4">
                             Cash, bKash, Nagad, or bank — every payment gets a receipt, instantly.
                         </p>
-                        <div className="flex-1  border border-white/10 rounded-xl p-3 grid gap-1">
+                        <div className="flex-1 border border-white/10 rounded-xl p-3 grid gap-1">
                             {collectionRows.map((row) => (
                                 <div
                                     key={row.name}
-                                    className="grid grid-cols-[20px_1fr_auto] gap-6 items-center text-xs  rounded-lg px-2.5 py-1.5"
+                                    className="grid grid-cols-[28px_1fr_auto] gap-3 items-center text-xs rounded-lg px-2.5 py-1.5"
                                 >
-                                    <Avatar>
-                                        <AvatarFallback
-                                            className={`font-mono text-[10px] font-extrabold tracking-tighter text-black ${row.color}`}
-                                        >
-                                            {row.code}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <div className=" font-semibold">
+                                    <span
+                                        className={`w-7 h-7 rounded-full flex items-center justify-center font-mono text-[11px] font-extrabold tracking-tighter text-black ${row.color}`}
+                                    >
+                                        {row.code}
+                                    </span>
+                                    <div className="font-semibold">
                                         {row.name}
                                         <small className="block text-white/50 text-[10px] font-normal">
                                             {row.meta}
@@ -190,7 +186,7 @@ export default function FeaturesSection() {
 function BentoCard({ children, className }: { children: React.ReactNode; className?: string }) {
     return (
         <RevealItem
-            className={`bg-paper dark:bg-night-2 border border-rule-soft dark:border-white/10 rounded-[18px] p-5 relative overflow-hidden transition] ${className ?? ""}`}
+            className={`bg-paper dark:bg-night-2 border border-rule-soft dark:border-white/10 rounded-[18px] p-5 relative overflow-hidden ${className ?? ""}`}
         >
             {children}
         </RevealItem>

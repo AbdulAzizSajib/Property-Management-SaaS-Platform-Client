@@ -2,6 +2,7 @@
 
 import { RequestPaymentDialog } from "@/src/components/dashboard/subscription/RequestPaymentDialog";
 import { Skeleton } from "@/src/components/ui/skeleton";
+import { getPriceForCycle } from "@/src/lib/subscriptionPricing";
 import {
   useCancelSubscription,
   useChangePlan,
@@ -303,6 +304,12 @@ function SubscriptionPageInner() {
                     <span className="text-[13px] text-ink-soft">/month</span>
                   )}
                 </div>
+                {price > 0 && currentPlanMeta?.priceYearly && (
+                  <p className="mt-1 text-[12px] text-jade-700">
+                    or {fmt(parseFloat(currentPlanMeta.priceYearly))}/yr —
+                    save 2 months
+                  </p>
+                )}
               </div>
             </div>
 
@@ -559,6 +566,7 @@ function PlanCard({
   const isCurrent = current !== null && plan.plan === current;
   const highlight = plan.isPopular;
   const price = parseFloat(plan.priceMonthly) || 0;
+  const yearly = getPriceForCycle(plan, "YEARLY");
   const blocked = !isCurrent && !!blockedReason;
 
   return (
@@ -599,6 +607,11 @@ function PlanCard({
           </span>
           {price > 0 && <span className="text-[12px] text-ink-soft">/mo</span>}
         </div>
+        {!yearly.unavailable && price > 0 && (
+          <p className="mt-1 text-[11px] text-jade-700">
+            or {fmt(yearly.amount)}/yr — save 2 months
+          </p>
+        )}
       </div>
 
       {/* Limits row — compact summary */}

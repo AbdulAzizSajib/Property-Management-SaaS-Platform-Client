@@ -1,6 +1,7 @@
 "use client";
 
-import Reveal from "@/src/components/Reveal";
+import { ArrowRight, Check } from "lucide-react";
+import { RevealGroup, RevealItem } from "@/src/components/Reveal";
 
 const trustItems = [
     "Free plan",
@@ -27,29 +28,36 @@ export default function BottomBanner() {
                     backgroundSize: "28px 28px",
                 }}
             />
-            <Reveal className="relative z-10">
-                <h2 className="font-bold tracking-[-0.035em] leading-[1.05] text-balance max-w-[880px] mx-auto mb-5 text-[40px] md:text-[52px] lg:text-[64px]">
-                    Stop chasing rent.
-                    <br />
-                    Start{" "}
-                    <span className=" text-amber-500">
-                        collecting it.
-                    </span>
-                </h2>
-                <p className="text-lg leading-[1.5] text-white/70 mb-9 max-w-[540px] mx-auto">
-                    Join landlords across Bangladesh managing their properties
-                    with Bariyan.
-                </p>
-                <div className="flex flex-wrap gap-3.5 justify-center mb-12">
+            <RevealGroup className="relative z-10" stagger={0.1}>
+                <RevealItem>
+                    <h2 className="font-bold tracking-[-0.035em] leading-[1.05] text-balance max-w-[880px] mx-auto mb-5 text-[40px] md:text-[52px] lg:text-[64px]">
+                        Stop chasing rent.
+                        <br />
+                        Start <span className="text-amber-500">collecting it.</span>
+                    </h2>
+                </RevealItem>
+                <RevealItem>
+                    <p className="text-lg leading-[1.5] text-white/70 mb-9 max-w-[540px] mx-auto text-pretty">
+                        Join landlords across Bangladesh managing their properties
+                        with Bariyan.
+                    </p>
+                </RevealItem>
+                <RevealItem className="flex flex-wrap gap-3.5 justify-center mb-12">
                     <button
                         type="button"
-                        className="bg-sky-500 hover:bg-sky-400 transition text-paper font-semibold text-[15px] px-6 py-3.5 rounded-[10px] shadow-[inset_0_1px_0_rgba(255,255,255,0.2),inset_0_-2px_0_rgba(0,0,0,0.2),0_4px_12px_rgba(14,165,233,0.22)]"
+                        className="group inline-flex items-center gap-1.5 bg-sky-500 hover:bg-sky-400 transition-colors text-paper font-semibold text-[15px] px-6 py-3.5 rounded-[10px] shadow-[inset_0_1px_0_rgba(255,255,255,0.2),inset_0_-2px_0_rgba(0,0,0,0.2),0_4px_12px_rgba(14,165,233,0.22)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-paper focus-visible:ring-offset-2 focus-visible:ring-offset-sky-950"
                     >
-                        Get started Free  →
+                        Get started free
+                        <ArrowRight
+                            size={16}
+                            strokeWidth={2.25}
+                            className="transition-transform duration-200 group-hover:translate-x-0.5"
+                            aria-hidden
+                        />
                     </button>
                     <button
                         type="button"
-                        className="inline-flex items-center gap-2 bg-[#25d366] hover:bg-[#1fb455] transition text-paper font-semibold text-[15px] px-6 py-3.5 rounded-[10px] shadow-[0_4px_14px_rgba(37,211,102,0.3)]"
+                        className="inline-flex items-center gap-2 bg-[#25d366] hover:bg-[#1fb455] transition-colors text-paper font-semibold text-[15px] px-6 py-3.5 rounded-[10px] shadow-[0_4px_14px_rgba(37,211,102,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-paper focus-visible:ring-offset-2 focus-visible:ring-offset-sky-950"
                     >
                         <svg
                             width="18"
@@ -58,20 +66,25 @@ export default function BottomBanner() {
                             fill="currentColor"
                             aria-hidden
                         >
-                            <path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9s-.5-.1-.7.1c-.2.3-.8.9-1 1.1-.2.2-.4.2-.7.1-.3-.1-1.3-.5-2.5-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.7.4-.3.3-1 1-1 2.4 0 1.4 1 2.7 1.2 2.9.2.2 2 3.1 4.9 4.4 1.5.6 2.3.7 2.9.6.7-.1 1.7-.7 2-1.4.3-.7.3-1.3.2-1.4 0-.1-.2-.2-.5-.3M12 2A10 10 0 002 12c0 1.7.4 3.4 1.3 4.9L2 22l5.3-1.4A10 10 0 0012 22a10 10 0 0010-10A10 10 0 0012 2" />
+                            <path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9s-.5-.1-.7.1c-.2.3-.8.9-1 1.1-.2.2-.4.2-.7.1-.3-.1-1.3-.5-2.5-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.7.4-.3.3-1 1-1 2.4 0 1.4 1 2.7 1.2 2.9.2.2 2 3.1 4.9 4.4 1.5.6 2.3.7 2.9.6.7-.1 1.7-.7 2-1.4.3-.7.3-1.3.2-1.4 0-.1-.2-.2-.5-.3M12 2A10 10 0 0 0 2 12c0 1.7.4 3.4 1.3 4.9L2 22l5.3-1.4A10 10 0 0 0 12 22a10 10 0 0 0 10-10A10 10 0 0 0 12 2" />
                         </svg>
                         Talk to sales on WhatsApp
                     </button>
-                </div>
-                <div className="flex flex-wrap justify-center gap-9 text-[13px] text-white/60">
+                </RevealItem>
+                <RevealItem className="flex flex-wrap justify-center gap-9 text-[13px] text-white/60">
                     {trustItems.map((t) => (
                         <span key={t} className="flex items-center gap-1.5">
-                            <span className="text-amber-500 font-bold">✓</span>
+                            <Check
+                                size={14}
+                                strokeWidth={3}
+                                className="text-amber-500"
+                                aria-hidden
+                            />
                             {t}
                         </span>
                     ))}
-                </div>
-            </Reveal>
+                </RevealItem>
+            </RevealGroup>
         </section>
     );
 }

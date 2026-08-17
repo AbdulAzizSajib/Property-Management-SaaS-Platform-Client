@@ -51,8 +51,10 @@ export interface Building {
   caretaker: CaretakerSummary | null;
 }
 
-// GET /buildings — list item shape (includes counts for cards)
+// GET /buildings — list item shape (includes lean floors/units + counts for cards)
 export interface BuildingListItem extends Building {
+  floors: Pick<Floor, "id" | "floorNumber" | "name">[];
+  units: Pick<Unit, "id" | "type" | "status" | "baseRent" | "serviceCharge">[];
   _count: {
     floors: number;
     units: number;

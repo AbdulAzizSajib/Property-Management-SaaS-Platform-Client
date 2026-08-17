@@ -88,7 +88,7 @@ export default function HeroSection() {
           <div className="mt-8 flex flex-wrap items-center gap-2">
             <button
               type="button"
-              className="group relative rounded-[10px] bg-sky-950 dark:bg-jade-700 px-6 py-3.5 text-[15px] font-semibold text-paper transition-all duration-200 hover:bg-sky-950 dark:hover:bg-jade-500 hover:shadow-[0_10px_30px_-10px_rgba(13,79,63,0.5)]"
+              className="group relative rounded-[10px] bg-zinc-900 dark:bg-jade-700 px-6 py-3.5 text-[15px] font-semibold text-paper transition-all duration-200  dark:hover:bg-jade-500 hover:shadow-[0_10px_30px_-10px_rgba(13,79,63,0.5)]"
             >
               <span className="relative z-10 inline-flex items-center gap-2">
                 Get Started Free
