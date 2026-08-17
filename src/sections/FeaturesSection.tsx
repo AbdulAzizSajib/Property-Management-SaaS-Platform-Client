@@ -33,7 +33,7 @@ const collectionRows = [
 
 export default function FeaturesSection() {
     return (
-        <section id="features" className="py-16 lg:py-20">
+        <section id="features" className="py-24 lg:py-32">
             <div className="max-w-7xl space-grotesk mx-auto px-5  md:px-8">
                 <SectionHead
                     title={
@@ -57,6 +57,7 @@ export default function FeaturesSection() {
                             Cash, bKash, Nagad, or bank — every payment gets a receipt, instantly.
                         </p>
                         <div className="flex-1 border border-white/10 rounded-xl p-3 grid gap-1">
+                            {/* px-2.5/py-1.5 kept off the coarse scale: sized to fit tightly around the 28px avatar circle */}
                             {collectionRows.map((row) => (
                                 <div
                                     key={row.name}
@@ -167,7 +168,7 @@ export default function FeaturesSection() {
                             </div>
                             {reportStats.map((s) => (
                                 <div key={s.l} className="text-center max-md:text-left">
-                                    <div className="text-[28px] font-bold text-sky-800 dark:text-sky-300 tracking-[-0.02em] mb-0.5">
+                                    <div className="text-[28px] font-bold text-sky-800 dark:text-sky-300 tracking-[-0.02em] mb-1">
                                         {s.n}
                                     </div>
                                     <div className="text-[11px] text-ink-soft dark:text-mist-soft uppercase tracking-wider font-semibold">

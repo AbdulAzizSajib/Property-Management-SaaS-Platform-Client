@@ -65,7 +65,9 @@ function DocumentsListInner() {
   };
 
   const { data: documents, isLoading, isError, error } = useDocuments(filters);
-  const { data: tenants } = useTenants();
+  // Full roster for the filter dropdown — not the paginated table view.
+  const { data: tenantsRes } = useTenants({ limit: 1000 });
+  const tenants = tenantsRes?.data;
   const { data: buildings } = useBuildings();
 
   const filtered = useMemo(

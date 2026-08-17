@@ -56,7 +56,9 @@ export function UploadDocumentDialog({
     defaultBuildingId,
     defaultLeaseId,
 }: UploadDocumentDialogProps) {
-    const { data: tenants } = useTenants();
+    // Full roster for the picker — not the paginated table view.
+    const { data: tenantsRes } = useTenants({ limit: 1000 });
+    const tenants = tenantsRes?.data;
     const { data: buildings } = useBuildings();
     const { data: leases } = useLeases();
     const mutation = useUploadDocument();

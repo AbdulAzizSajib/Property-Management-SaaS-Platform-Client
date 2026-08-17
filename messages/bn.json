@@ -182,7 +182,10 @@
     "colLocation": "অবস্থান",
     "colLeases": "লিজ",
     "colLeaseStatus": "লিজ অবস্থা",
-    "colStatus": "অবস্থা"
+    "colStatus": "অবস্থা",
+    "pageOf": "পৃষ্ঠা {page} / {totalPages}",
+    "previous": "পূর্ববর্তী",
+    "next": "পরবর্তী"
   },
   "leasesPage": {
     "eyebrow": "ভাড়াটিয়া চুক্তি",

@@ -123,7 +123,7 @@ export default function ProductDeepDive() {
                                 key={tab}
                                 type="button"
                                 onClick={() => setActiveTab(tab)}
-                                className={`px-4.5 py-2.5 rounded-full text-[13.5px] font-semibold border transition ${
+                                className={`px-4 py-2 rounded-full text-[13.5px] font-semibold border transition ${
                                     active
                                         ? "bg-paper text-sky-950 border-paper"
                                         : "bg-white/5 text-white/60 border-white/10 hover:bg-white/10 hover:text-paper"

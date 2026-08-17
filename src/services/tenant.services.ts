@@ -4,6 +4,7 @@ import { httpClient } from "@/src/lib/axios/httpClient";
 import type {
     Tenant,
     TenantDetail,
+    TenantFilters,
     TenantListItem,
 } from "@/src/types/tenant.types";
 
@@ -16,9 +17,18 @@ import type {
 export const createTenant = async (formData: FormData) =>
     httpClient.upload<Tenant>("/tenants", formData);
 
-/** GET /tenants — list all tenants in caller's organization. */
-export const getTenants = async () =>
-    httpClient.get<TenantListItem[]>("/tenants");
+/**
+ * GET /tenants — paginated list of tenants in caller's organization.
+ * Defaults to page 1 / limit 10 when no filters are given; response `meta`
+ * carries { page, limit, total, totalPages }.
+ */
+export const getTenants = async (filters?: TenantFilters) =>
+    httpClient.get<TenantListItem[]>("/tenants", {
+        params: {
+            page: filters?.page ?? 1,
+            limit: filters?.limit ?? 10,
+        },
+    });
 
 /** GET /tenants/:id — full detail with linked user and leases. */
 export const getTenantById = async (id: string) =>

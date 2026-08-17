@@ -28,7 +28,7 @@ export default function HeroSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative isolate -mt-20 overflow-hidden pb-16 pt-16 lg:-mt-24 lg:pb-20 lg:pt-20"
+      className="relative isolate -mt-20 overflow-hidden pb-24 pt-24 lg:-mt-24 lg:pb-32 lg:pt-32"
     >
       {/* Background — sky/flower-field artwork, parallax-reveals within the hero only */}
       <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">

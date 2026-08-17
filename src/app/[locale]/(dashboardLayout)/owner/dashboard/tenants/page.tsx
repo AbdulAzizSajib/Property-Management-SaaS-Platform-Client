@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from "@/src/components/ui/dialog";
 import { Skeleton } from "@/src/components/ui/skeleton";
+import { Button } from "@/src/components/ui/button";
 import { DataTable } from "@/src/components/ui/data-table";
 import { useCreateTenant, useTenants } from "@/src/hooks/useTenants";
 import { fmtNum } from "@/src/lib/numerals";
@@ -38,15 +39,25 @@ import { useMemo, useState } from "react";
 
 type StatusFilter = "ALL" | "ACTIVE" | "INACTIVE";
 
+const PAGE_SIZE = 10;
+
 export default function TenantsListPage() {
   const t = useTranslations("tenantsPage");
-  const { data: tenants, isLoading, isError, error } = useTenants();
+  const [page, setPage] = useState(1);
+  const { data: res, isLoading, isError, error } = useTenants({
+    page,
+    limit: PAGE_SIZE,
+  });
+  const tenants = res?.data;
+  const meta = res?.meta;
   const createMutation = useCreateTenant();
 
   const [createOpen, setCreateOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
 
+  // Search/status filter only refine the tenants already loaded on this
+  // page — the API paginates server-side and doesn't take a search param.
   const filtered = (tenants ?? []).filter((t) => {
     if (statusFilter === "ACTIVE" && !t.isActive) return false;
     if (statusFilter === "INACTIVE" && t.isActive) return false;
@@ -61,7 +72,9 @@ export default function TenantsListPage() {
     );
   });
 
-  const totalCount = tenants?.length ?? 0;
+  // Total reflects the whole organization (from API meta); active/on-lease
+  // counts are scoped to the current page only.
+  const totalCount = meta?.total ?? tenants?.length ?? 0;
   const activeCount = (tenants ?? []).filter((t) => t.isActive).length;
   const withLeaseCount = (tenants ?? []).filter((t) =>
     t.leases.some((l) => l.status === "ACTIVE"),
@@ -232,7 +245,20 @@ export default function TenantsListPage() {
             </p>
           </div>
         ) : !tenants || tenants.length === 0 ? (
-          <EmptyState onCreate={() => setCreateOpen(true)} />
+          page > 1 ? (
+            <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-12 text-center">
+              <p className="text-[13.5px] text-ink-soft">{t("noMatch")}</p>
+              <button
+                type="button"
+                onClick={() => setPage(1)}
+                className="mt-3 inline-flex items-center gap-1 text-[12.5px] font-semibold text-jade-900 hover:text-coral-600 transition-colors"
+              >
+                <X size={12} /> {t("clearFilters")}
+              </button>
+            </div>
+          ) : (
+            <EmptyState onCreate={() => setCreateOpen(true)} />
+          )
         ) : filtered.length === 0 ? (
           <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-12 text-center">
             <p className="text-[13.5px] text-ink-soft">{t("noMatch")}</p>
@@ -246,6 +272,20 @@ export default function TenantsListPage() {
           </div>
         ) : (
           <TenantsTable tenants={filtered} />
+        )}
+
+        {/* Pagination — server-side, 10 tenants per page */}
+        {!isLoading && !isError && !!meta?.totalPages && meta.totalPages > 1 && (
+          <PaginationBar
+            page={page}
+            totalPages={meta.totalPages}
+            total={meta.total ?? 0}
+            onPageChange={setPage}
+            label={t("pageOf", { page, totalPages: meta.totalPages })}
+            totalLabel={t("summaryTotal").toLowerCase()}
+            previousLabel={t("previous")}
+            nextLabel={t("next")}
+          />
         )}
       </div>
     </div>
@@ -454,6 +494,52 @@ function SummaryStat({
           {value}
         </span>
         <span className="text-[12px] text-ink-soft">{label}</span>
+      </div>
+    </div>
+  );
+}
+
+function PaginationBar({
+  page,
+  totalPages,
+  total,
+  onPageChange,
+  label,
+  totalLabel,
+  previousLabel,
+  nextLabel,
+}: {
+  page: number;
+  totalPages: number;
+  total: number;
+  onPageChange: (updater: (p: number) => number) => void;
+  label: string;
+  totalLabel: string;
+  previousLabel: string;
+  nextLabel: string;
+}) {
+  return (
+    <div className="flex items-center justify-between text-[12px] text-ink-soft">
+      <span className="tabular-nums">
+        {label} · {fmtNum(total)} {totalLabel}
+      </span>
+      <div className="flex gap-1">
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={page <= 1}
+          onClick={() => onPageChange((p) => Math.max(1, p - 1))}
+        >
+          {previousLabel}
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={page >= totalPages}
+          onClick={() => onPageChange((p) => p + 1)}
+        >
+          {nextLabel}
+        </Button>
       </div>
     </div>
   );

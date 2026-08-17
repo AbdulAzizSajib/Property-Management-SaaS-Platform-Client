@@ -81,7 +81,7 @@ export function FaqSection() {
                                         </span>
                                     </div>
                                     {open && (
-                                        <div className="mt-3.5 max-w-[680px] text-[15px] leading-[1.65] text-ink-soft dark:text-mist-soft">
+                                        <div className="mt-4 max-w-[680px] text-[15px] leading-[1.65] text-ink-soft dark:text-mist-soft">
                                             {faq.a}
                                         </div>
                                     )}

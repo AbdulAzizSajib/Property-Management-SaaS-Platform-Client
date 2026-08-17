@@ -182,7 +182,10 @@
     "colLocation": "Location",
     "colLeases": "Leases",
     "colLeaseStatus": "Lease status",
-    "colStatus": "Status"
+    "colStatus": "Status",
+    "pageOf": "Page {page} of {totalPages}",
+    "previous": "Previous",
+    "next": "Next"
   },
   "leasesPage": {
     "eyebrow": "Tenant agreements",

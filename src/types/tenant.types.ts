@@ -76,6 +76,12 @@ export interface TenantDetail extends Tenant {
     unit: TenantUnitSummary | null;
 }
 
+// Query params for GET /tenants.
+export interface TenantFilters {
+    page?: number;
+    limit?: number;
+}
+
 export interface UpdateTenantPayload {
     name?: string;
     phone?: string;

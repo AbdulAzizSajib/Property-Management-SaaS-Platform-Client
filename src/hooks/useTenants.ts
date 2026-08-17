@@ -8,21 +8,27 @@ import {
     updateTenant,
 } from "@/src/services/tenant.services";
 import { getErrorMessage } from "@/src/lib/utils";
+import type { TenantFilters } from "@/src/types/tenant.types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 export const tenantKeys = {
     all: ["tenants"] as const,
-    list: () => [...tenantKeys.all, "list"] as const,
+    // Base prefix shared by every filter variant — invalidate with this so a
+    // mutation refreshes the list regardless of which page/filters are active.
+    lists: () => [...tenantKeys.all, "list"] as const,
+    list: (filters?: TenantFilters) =>
+        [...tenantKeys.lists(), filters ?? {}] as const,
     detail: (id: string) => [...tenantKeys.all, "detail", id] as const,
 };
 
-export function useTenants() {
+/** Returns { data: TenantListItem[], meta: { page, limit, total, totalPages } }. */
+export function useTenants(filters?: TenantFilters) {
     return useQuery({
-        queryKey: tenantKeys.list(),
+        queryKey: tenantKeys.list(filters),
         queryFn: async () => {
-            const res = await getTenants();
-            return res.data;
+            const res = await getTenants(filters);
+            return { data: res.data, meta: res.meta };
         },
     });
 }
@@ -48,7 +54,7 @@ export function useCreateTenant() {
             return res.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: tenantKeys.list() });
+            queryClient.invalidateQueries({ queryKey: tenantKeys.lists() });
             toast.success("Tenant created");
         },
         onError: (error: unknown) => {
@@ -69,7 +75,7 @@ export function useUpdateTenant(id: string) {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: tenantKeys.detail(id) });
-            queryClient.invalidateQueries({ queryKey: tenantKeys.list() });
+            queryClient.invalidateQueries({ queryKey: tenantKeys.lists() });
             toast.success("Tenant updated");
         },
         onError: (error: unknown) => {
@@ -91,7 +97,7 @@ export function useDeactivateTenant() {
         onSuccess: (id) => {
             // Soft delete — keep the detail cache and invalidate so it reflects isActive=false.
             queryClient.invalidateQueries({ queryKey: tenantKeys.detail(id) });
-            queryClient.invalidateQueries({ queryKey: tenantKeys.list() });
+            queryClient.invalidateQueries({ queryKey: tenantKeys.lists() });
             toast.success("Tenant deactivated");
         },
         onError: (error: unknown) => {

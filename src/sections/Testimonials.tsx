@@ -65,7 +65,7 @@ export default function Testimonials() {
                             </span>
                             <div>
                                 <div className="font-bold text-sm text-paper">Tanvir Ahmed</div>
-                                <div className="text-xs text-white/50 mt-0.5">
+                                <div className="text-xs text-white/50 mt-1">
                                     Owner · Bashundhara R/A · Customer since 2024
                                 </div>
                             </div>
@@ -90,7 +90,7 @@ export default function Testimonials() {
                                 </span>
                                 <div>
                                     <div className="font-bold text-sm text-sky-950 dark:text-sky-50">{t.name}</div>
-                                    <div className="text-xs text-ink-soft dark:text-mist-soft mt-0.5">{t.meta}</div>
+                                    <div className="text-xs text-ink-soft dark:text-mist-soft mt-1">{t.meta}</div>
                                 </div>
                             </div>
                         </RevealItem>

@@ -77,7 +77,9 @@ export function LeaseForm({
   const [buildingId, setBuildingId] = useState("");
 
   const { data: buildings } = useBuildings();
-  const { data: tenants } = useTenants();
+  // Full roster for the picker — not the paginated table view.
+  const { data: tenantsRes } = useTenants({ limit: 1000 });
+  const tenants = tenantsRes?.data;
 
   const buildingList = useMemo(() => buildings ?? [], [buildings]);
 
@@ -271,7 +273,7 @@ export function LeaseForm({
               <span className="text-ink">
                 Defaults from{" "}
                 <span className="font-semibold text-jade-900">
-                  {selectedUnit.floor.name} · {selectedUnit.name}
+                  {selectedUnit.floor.name} | {selectedUnit.name}
                 </span>
               </span>
             </div>

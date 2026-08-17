@@ -55,7 +55,10 @@ type PoliceFilter = "ALL" | "SUBMITTED" | "PENDING";
 export default function TenantFormsPage() {
     const t = useTranslations("tenantsFormPage");
     const { data: forms, isLoading, isError, error } = useTenantForms();
-    const { data: tenants } = useTenants();
+    // Full tenant roster for the picker below — not the paginated table view,
+    // so ask for a high limit rather than the page-1-of-10 default.
+    const { data: tenantsRes } = useTenants({ limit: 1000 });
+    const tenants = tenantsRes?.data;
     const createMutation = useCreateTenantForm();
     const deleteMutation = useDeleteTenantForm();
 

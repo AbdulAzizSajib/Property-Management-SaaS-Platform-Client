@@ -151,16 +151,13 @@ export function TenantForm({
                     </div>
 
                     <div className="space-y-1.5">
-                        <Label htmlFor="t-phone">
-                            Phone <span className="text-rose-500">*</span>
-                        </Label>
+                        <Label htmlFor="t-phone">Phone</Label>
                         <Input
                             id="t-phone"
                             type="tel"
                             value={values.phone}
                             onChange={(e) => set("phone", e.target.value)}
                             placeholder="01711000333"
-                            required
                         />
                     </div>
 
@@ -540,7 +537,7 @@ export function TenantForm({
 export function buildCreateTenantFormData(values: TenantFormValues): FormData {
     const data = {
         name: values.name.trim(),
-        phone: values.phone.trim(),
+        ...(values.phone.trim() && { phone: values.phone.trim() }),
         ...(values.email.trim() && { email: values.email.trim() }),
         ...(values.nidNumber.trim() && { nidNumber: values.nidNumber.trim() }),
         ...(values.occupation.trim() && { occupation: values.occupation.trim() }),

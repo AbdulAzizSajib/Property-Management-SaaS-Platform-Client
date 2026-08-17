@@ -13,7 +13,7 @@ const trustItems = [
 export default function BottomBanner() {
     return (
         <section
-            className="relative mx-4 md:mx-8 mt-20 overflow-hidden rounded-[28px] py-24 lg:py-28 px-6 md:px-16 text-paper text-center"
+            className="relative mx-4 md:mx-8 overflow-hidden rounded-[28px] py-24 lg:py-28 px-6 md:px-16 text-paper text-center"
             style={{
                 background:
                     "radial-gradient(ellipse at 80% 20%, rgba(14,165,233,0.18), transparent 50%), radial-gradient(ellipse at 10% 80%, rgba(14,165,233,0.18), transparent 50%), var(--color-sky-950)",

@@ -62,7 +62,7 @@ export default function Pricing() {
                 </div>
 
                 {isLoading ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-[1320px] mx-auto items-stretch">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mx-auto items-stretch">
                         {[1, 2, 3, 4].map((i) => (
                             <div
                                 key={i}
@@ -86,7 +86,7 @@ export default function Pricing() {
                     </p>
                 ) : (
                     <>
-                        <RevealGroup className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-[1320px] mx-auto items-stretch">
+                        <RevealGroup className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mx-auto items-stretch">
                             {plans.map((plan) => (
                                 <PlanCard key={plan.plan} plan={plan} cycle={cycle} />
                             ))}
