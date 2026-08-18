@@ -20,13 +20,18 @@ export const createTenant = async (formData: FormData) =>
 /**
  * GET /tenants — paginated list of tenants in caller's organization.
  * Defaults to page 1 / limit 10 when no filters are given; response `meta`
- * carries { page, limit, total, totalPages }.
+ * carries { page, limit, total, totalPages }. Pass buildingId (+ optional
+ * floorId/unitId) to scope to tenants assigned to that building, e.g. for
+ * the lease-creation tenant picker.
  */
 export const getTenants = async (filters?: TenantFilters) =>
     httpClient.get<TenantListItem[]>("/tenants", {
         params: {
             page: filters?.page ?? 1,
             limit: filters?.limit ?? 10,
+            ...(filters?.buildingId && { buildingId: filters.buildingId }),
+            ...(filters?.floorId && { floorId: filters.floorId }),
+            ...(filters?.unitId && { unitId: filters.unitId }),
         },
     });
 

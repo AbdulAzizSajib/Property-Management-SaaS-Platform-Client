@@ -205,6 +205,14 @@
     "statPendingNone": "কিছু অপেক্ষমান নেই",
     "statPendingSome": "আপনার মনোযোগ প্রয়োজন",
     "searchPlaceholder": "ভাড়াটিয়া, ইউনিট, বিল্ডিং দিয়ে খুঁজুন…",
+    "filterAll": "সব",
+    "buildingPlaceholder": "বিল্ডিং",
+    "allBuildings": "সব বিল্ডিং",
+    "selectBuildingFirst": "প্রথমে একটি বিল্ডিং নির্বাচন করুন",
+    "floorPlaceholder": "ফ্লোর",
+    "allFloors": "সব ফ্লোর",
+    "unitPlaceholder": "ইউনিট",
+    "allUnits": "সব ইউনিট",
     "resultCount": "টি ফলাফল",
     "onlySuffix": "· শুধু {label}",
     "clear": "মুছুন",
@@ -226,7 +234,10 @@
     "colId": "আইডি",
     "emptyTitle": "এখনো কোনো লিজ নেই",
     "emptySubtitle": "ভাড়া ও ভাড়াটিয়া চুক্তি ট্র্যাক করা শুরু করতে আপনার প্রথম লিজ তৈরি করুন।",
-    "emptyCreateFirst": "আপনার প্রথম লিজ তৈরি করুন"
+    "emptyCreateFirst": "আপনার প্রথম লিজ তৈরি করুন",
+    "pageOf": "পৃষ্ঠা {page} / {totalPages}",
+    "previous": "পূর্ববর্তী",
+    "next": "পরবর্তী"
   },
   "invoicesPage": {
     "eyebrow": "বিলিং ও আদায়",
@@ -248,6 +259,9 @@
     "searchPlaceholder": "বিল #, ভাড়াটিয়া, ইউনিট, বিল্ডিং দিয়ে খুঁজুন…",
     "buildingPlaceholder": "বিল্ডিং",
     "allBuildings": "সব বিল্ডিং",
+    "selectBuildingFirst": "প্রথমে একটি বিল্ডিং নির্বাচন করুন",
+    "floorPlaceholder": "ফ্লোর",
+    "allFloors": "সব ফ্লোর",
     "statusPlaceholder": "অবস্থা",
     "allStatuses": "সব অবস্থা",
     "resultCount": "টি ফলাফল",
@@ -264,7 +278,10 @@
     "stillDueLabel": "এখনো বকেয়া",
     "emptyTitle": "এখনো কোনো বিল নেই",
     "emptySubtitle": "একটি সক্রিয় লিজের জন্য আপনার প্রথম বিল তৈরি করুন, অথবা সবাইকে একসাথে বিল করতে মাসিক ব্যাচ চালান।",
-    "generateInvoice": "বিল তৈরি করুন"
+    "generateInvoice": "বিল তৈরি করুন",
+    "pageOf": "পৃষ্ঠা {page} / {totalPages}",
+    "previous": "পূর্ববর্তী",
+    "next": "পরবর্তী"
   },
   "collectionPage": {
     "eyebrow": "আয়",
@@ -279,6 +296,11 @@
     "statFailed": "ব্যর্থ",
     "statFailedSub": "পর্যালোচনা প্রয়োজন",
     "searchPlaceholder": "রিসিট #, বিল, ভাড়াটিয়া, লেনদেন আইডি দিয়ে খুঁজুন…",
+    "buildingPlaceholder": "বিল্ডিং",
+    "allBuildings": "সব বিল্ডিং",
+    "selectBuildingFirst": "প্রথমে একটি বিল্ডিং নির্বাচন করুন",
+    "floorPlaceholder": "ফ্লোর",
+    "allFloors": "সব ফ্লোর",
     "statusPlaceholder": "অবস্থা",
     "allStatuses": "সব অবস্থা",
     "methodPlaceholder": "পদ্ধতি",
@@ -303,7 +325,10 @@
     "paymentCount": "{count} টি আদায়",
     "collectedLabel": "আদায় হয়েছে",
     "emptyTitle": "এখনো কোনো আদায় নেই",
-    "emptySubtitle": "একটি অপরিশোধিত বিলের বিপরীতে আদায় রেকর্ড করুন — বিকাশ, নগদ, ক্যাশ বা ব্যাংক ট্রান্সফার।"
+    "emptySubtitle": "একটি অপরিশোধিত বিলের বিপরীতে আদায় রেকর্ড করুন — বিকাশ, নগদ, ক্যাশ বা ব্যাংক ট্রান্সফার।",
+    "pageOf": "পৃষ্ঠা {page} / {totalPages}",
+    "previous": "পূর্ববর্তী",
+    "next": "পরবর্তী"
   },
   "expensesPage": {
     "eyebrow": "ব্যয়",

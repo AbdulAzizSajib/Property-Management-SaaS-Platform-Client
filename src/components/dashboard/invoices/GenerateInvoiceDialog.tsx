@@ -48,7 +48,8 @@ export function GenerateInvoiceDialog({
   onOpenChange,
   fixedLeaseId,
 }: GenerateInvoiceDialogProps) {
-  const { data: leases } = useLeases();
+  const { data: leasesRes } = useLeases({ limit: 1000 });
+  const leases = leasesRes?.data;
   const mutation = useGenerateSingleInvoice();
 
   const [leaseId, setLeaseId] = useState(fixedLeaseId ?? "");
@@ -95,10 +96,11 @@ export function GenerateInvoiceDialog({
 
   // Earlier unpaid invoices of the selected lease — the owner picks which to
   // carry forward. Fetched only once a lease is chosen.
-  const { data: leaseInvoices } = useInvoices(
-    leaseId ? { leaseId } : undefined,
+  const { data: leaseInvoicesRes } = useInvoices(
+    leaseId ? { leaseId, limit: 1000 } : undefined,
     { enabled: !!leaseId },
   );
+  const leaseInvoices = leaseInvoicesRes?.data;
 
   const carryCandidates = useMemo(() => {
     if (!leaseId) return [];

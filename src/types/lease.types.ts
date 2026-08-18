@@ -128,3 +128,32 @@ export interface TerminateLeasePayload {
     moveOutDate: string; // YYYY-MM-DD
     notes?: string;
 }
+
+// GET /leases — optional filters + pagination. buildingId/floorId scope via
+// the unit relation (unit.buildingId / unit.floorId on the backend).
+export interface LeaseFilters {
+    buildingId?: string;
+    floorId?: string;
+    unitId?: string;
+    tenantId?: string;
+    status?: LeaseStatus;
+    page?: number;
+    limit?: number;
+}
+
+// GET /leases/summary — org-wide (or building/floor/unit-scoped) stats,
+// independent of pagination. Decimal returned as a string.
+export interface LeaseSummary {
+    totalCount: number;
+    activeCount: number;
+    pendingCount: number;
+    terminatedCount: number;
+    expiredCount: number;
+    totalMonthlyRent: string;
+}
+
+export interface LeaseSummaryFilters {
+    buildingId?: string;
+    floorId?: string;
+    unitId?: string;
+}

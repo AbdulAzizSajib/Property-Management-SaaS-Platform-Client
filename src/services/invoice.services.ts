@@ -10,20 +10,23 @@ import type {
     InvoiceDetail,
     InvoiceFilters,
     InvoiceListItem,
+    InvoiceSummary,
+    InvoiceSummaryFilters,
     UpdateInvoicePayload,
 } from "@/src/types/invoice.types";
 
 function buildInvoiceQuery(filters?: InvoiceFilters): string {
-    if (!filters) return "";
     const params = new URLSearchParams();
-    if (filters.status) params.set("status", filters.status);
-    if (filters.leaseId) params.set("leaseId", filters.leaseId);
-    if (filters.tenantId) params.set("tenantId", filters.tenantId);
-    if (filters.unitId) params.set("unitId", filters.unitId);
-    if (filters.buildingId) params.set("buildingId", filters.buildingId);
-    if (filters.billingMonth) params.set("billingMonth", filters.billingMonth);
-    const qs = params.toString();
-    return qs ? `?${qs}` : "";
+    params.set("page", String(filters?.page ?? 1));
+    params.set("limit", String(filters?.limit ?? 10));
+    if (filters?.status) params.set("status", filters.status);
+    if (filters?.leaseId) params.set("leaseId", filters.leaseId);
+    if (filters?.tenantId) params.set("tenantId", filters.tenantId);
+    if (filters?.unitId) params.set("unitId", filters.unitId);
+    if (filters?.buildingId) params.set("buildingId", filters.buildingId);
+    if (filters?.floorId) params.set("floorId", filters.floorId);
+    if (filters?.billingMonth) params.set("billingMonth", filters.billingMonth);
+    return `?${params.toString()}`;
 }
 
 /** POST /invoices/generate — generate a single invoice for a lease + billing month. */
@@ -46,6 +49,20 @@ export const generateMonthlyBatch = async (
 /** GET /invoices — list with optional status / lease / tenant / unit filters. */
 export const getInvoices = async (filters?: InvoiceFilters) =>
     httpClient.get<InvoiceListItem[]>(`/invoices${buildInvoiceQuery(filters)}`);
+
+/**
+ * GET /invoices/summary — org-wide (or building/floor/unit-scoped) invoice
+ * stats, independent of pagination. Use for hero/KPI cards on the list page
+ * so numbers don't fluctuate as the user pages through the table.
+ */
+export const getInvoiceSummary = async (filters?: InvoiceSummaryFilters) =>
+    httpClient.get<InvoiceSummary>("/invoices/summary", {
+        params: {
+            ...(filters?.buildingId && { buildingId: filters.buildingId }),
+            ...(filters?.floorId && { floorId: filters.floorId }),
+            ...(filters?.unitId && { unitId: filters.unitId }),
+        },
+    });
 
 /** GET /invoices/:id — full detail with embedded tenant, unit, lease, payments. */
 export const getInvoiceById = async (id: string) =>

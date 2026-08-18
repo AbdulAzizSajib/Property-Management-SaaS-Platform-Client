@@ -5,10 +5,12 @@ import { leaseKeys } from "@/src/hooks/useLeases";
 import {
     getCollectionById,
     getCollections,
+    getCollectionSummary,
     recordCollection,
 } from "@/src/services/payment.services";
 import type {
     PaymentFilters,
+    PaymentSummaryFilters,
     RecordPaymentPayload,
 } from "@/src/types/payment.types";
 import { getErrorMessage } from "@/src/lib/utils";
@@ -17,16 +19,33 @@ import { toast } from "react-toastify";
 
 export const paymentKeys = {
     all: ["payments"] as const,
+    // Base prefix shared by every filter variant — invalidate with this so a
+    // mutation refreshes the list regardless of which page/filters are active.
+    lists: () => [...paymentKeys.all, "list"] as const,
     list: (filters?: PaymentFilters) =>
-        [...paymentKeys.all, "list", filters ?? {}] as const,
+        [...paymentKeys.lists(), filters ?? {}] as const,
     detail: (id: string) => [...paymentKeys.all, "detail", id] as const,
+    summary: (filters?: PaymentSummaryFilters) =>
+        [...paymentKeys.all, "summary", filters ?? {}] as const,
 };
 
+/** Returns { data: PaymentListItem[], meta: { page, limit, total, totalPages } }. */
 export function usePayments(filters?: PaymentFilters) {
     return useQuery({
         queryKey: paymentKeys.list(filters),
         queryFn: async () => {
             const res = await getCollections(filters);
+            return { data: res.data, meta: res.meta };
+        },
+    });
+}
+
+/** Org-wide (or building/floor/unit-scoped) stats — not paginated, for hero/KPI cards. */
+export function usePaymentSummary(filters?: PaymentSummaryFilters) {
+    return useQuery({
+        queryKey: paymentKeys.summary(filters),
+        queryFn: async () => {
+            const res = await getCollectionSummary(filters);
             return res.data;
         },
     });

@@ -8,6 +8,7 @@ import {
   leaseStatusStyles,
 } from "@/src/components/dashboard/leases/leaseStyles";
 import { formatMoney } from "@/src/components/dashboard/units/unitStyles";
+import { Button } from "@/src/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -16,9 +17,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/src/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/src/components/ui/select";
 import { Skeleton } from "@/src/components/ui/skeleton";
 import { DataTable } from "@/src/components/ui/data-table";
-import { useCreateLease, useLeases } from "@/src/hooks/useLeases";
+import { useBuildings } from "@/src/hooks/useBuildings";
+import { useFloorsByBuilding } from "@/src/hooks/useFloors";
+import { useCreateLease, useLeaseSummary, useLeases } from "@/src/hooks/useLeases";
+import { useUnits } from "@/src/hooks/useUnits";
 import { fmtNum } from "@/src/lib/numerals";
 import { cn } from "@/src/lib/utils";
 import {
@@ -43,18 +54,86 @@ import { useMemo, useState } from "react";
 
 type StatusFilter = "ALL" | LeaseStatus;
 
+const ALL = "ALL";
+const PAGE_SIZE = 10;
+
 export default function LeasesListPage() {
   const t = useTranslations("leasesPage");
-  const { data: leases, isLoading, isError, error } = useLeases();
-  const createMutation = useCreateLease();
 
   const [createOpen, setCreateOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
 
-  const filtered = (leases ?? []).filter((l) => {
-    if (statusFilter !== "ALL" && l.status !== statusFilter) return false;
+  // Cascade: Building -> Floor -> Unit. Each step is disabled until its
+  // parent is chosen, and changing a parent clears everything that depended
+  // on it — same pattern as LeaseForm's picker.
+  const [buildingFilter, setBuildingFilter] = useState<string>(ALL);
+  const [floorFilter, setFloorFilter] = useState<string>(ALL);
+  const [unitFilter, setUnitFilter] = useState<string>(ALL);
+  const [page, setPage] = useState(1);
 
+  const { data: buildings } = useBuildings();
+  const { data: floors } = useFloorsByBuilding(
+    buildingFilter !== ALL ? buildingFilter : undefined,
+  );
+  const { data: units } = useUnits(
+    {
+      buildingId: buildingFilter !== ALL ? buildingFilter : undefined,
+      floorId: floorFilter !== ALL ? floorFilter : undefined,
+    },
+    { enabled: buildingFilter !== ALL },
+  );
+
+  const createMutation = useCreateLease();
+
+  const filters = {
+    page,
+    limit: PAGE_SIZE,
+    ...(statusFilter !== ALL && { status: statusFilter }),
+    ...(buildingFilter !== ALL && { buildingId: buildingFilter }),
+    ...(floorFilter !== ALL && { floorId: floorFilter }),
+    ...(unitFilter !== ALL && { unitId: unitFilter }),
+  };
+
+  const { data: res, isLoading, isError, error } = useLeases(filters);
+  const leases = res?.data;
+  const meta = res?.meta;
+
+  // Hero/KPI stats — org-wide (scoped to the building/floor/unit filter, but
+  // not status/search/page), so the numbers don't fluctuate as the user
+  // pages through the table.
+  const { data: summary } = useLeaseSummary({
+    ...(buildingFilter !== ALL && { buildingId: buildingFilter }),
+    ...(floorFilter !== ALL && { floorId: floorFilter }),
+    ...(unitFilter !== ALL && { unitId: unitFilter }),
+  });
+
+  function handleBuildingChange(value: string) {
+    setBuildingFilter(value);
+    setFloorFilter(ALL);
+    setUnitFilter(ALL);
+    setPage(1);
+  }
+
+  function handleFloorChange(value: string) {
+    setFloorFilter(value);
+    setUnitFilter(ALL);
+    setPage(1);
+  }
+
+  function handleUnitChange(value: string) {
+    setUnitFilter(value);
+    setPage(1);
+  }
+
+  function handleStatusChange(s: StatusFilter) {
+    setStatusFilter(s);
+    setPage(1);
+  }
+
+  // Search only refines the leases already loaded on this page — the API
+  // paginates server-side and doesn't take a search param.
+  const filtered = (leases ?? []).filter((l) => {
     const q = query.trim().toLowerCase();
     if (!q) return true;
     return (
@@ -65,25 +144,25 @@ export default function LeasesListPage() {
     );
   });
 
-  const totalCount = leases?.length ?? 0;
-  const activeCount = (leases ?? []).filter(
-    (l) => l.status === "ACTIVE",
-  ).length;
-  const pendingCount = (leases ?? []).filter(
-    (l) => l.status === "PENDING",
-  ).length;
-  const totalMonthly = (leases ?? [])
-    .filter((l) => l.status === "ACTIVE")
-    .reduce(
-      (sum, l) => sum + Number(l.monthlyRent) + Number(l.serviceCharge),
-      0,
-    );
+  const totalCount = summary?.totalCount ?? meta?.total ?? 0;
+  const activeCount = summary?.activeCount ?? 0;
+  const pendingCount = summary?.pendingCount ?? 0;
+  const totalMonthly = Number(summary?.totalMonthlyRent ?? 0);
 
-  const hasActiveFilters = !!query.trim() || statusFilter !== "ALL";
+  const hasActiveFilters =
+    !!query.trim() ||
+    statusFilter !== ALL ||
+    buildingFilter !== ALL ||
+    floorFilter !== ALL ||
+    unitFilter !== ALL;
 
   function clearFilters() {
     setQuery("");
-    setStatusFilter("ALL");
+    setStatusFilter(ALL);
+    setBuildingFilter(ALL);
+    setFloorFilter(ALL);
+    setUnitFilter(ALL);
+    setPage(1);
   }
 
   return (
@@ -155,7 +234,7 @@ export default function LeasesListPage() {
             <p className="relative font-serif text-[13px]  text-white">
               {t("heroLabel")}
             </p>
-           
+
             <p className="relative mt-3 text-[40px] font-bold leading-none tracking-tight tabular-nums sm:text-[46px]">
               {totalMonthly > 0 ? formatMoney(totalMonthly) : "—"}
             </p>
@@ -185,14 +264,14 @@ export default function LeasesListPage() {
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
             <SmallStat
               label={t("statActive")}
-             
+
               value={fmtNum(activeCount)}
               sub={t("statActiveSub")}
               tone="jade"
             />
             <SmallStat
               label={t("statPending")}
-            
+
               value={fmtNum(pendingCount)}
               sub={
                 pendingCount === 0
@@ -205,7 +284,7 @@ export default function LeasesListPage() {
         </div>
 
         {/* Filters */}
-        {/* <div className="rounded-[14px] border border-rule-soft bg-paper p-4"> */}
+        <div className="space-y-3">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="relative flex-1">
               <Search
@@ -232,7 +311,7 @@ export default function LeasesListPage() {
                 <button
                   key={s}
                   type="button"
-                  onClick={() => setStatusFilter(s)}
+                  onClick={() => handleStatusChange(s)}
                   className={cn(
                     "rounded-[6px] px-2.5 py-1 text-[11.5px] font-semibold transition-colors",
                     statusFilter === s
@@ -240,14 +319,82 @@ export default function LeasesListPage() {
                       : "text-ink-soft hover:bg-paper hover:text-jade-900",
                   )}
                 >
-                  {leaseStatusLabel(s)}
+                  {s === "ALL" ? t("filterAll") : leaseStatusLabel(s)}
                 </button>
               ))}
             </div>
           </div>
 
+          {/* Cascading location filter: Building -> Floor -> Unit */}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <Select
+              value={buildingFilter}
+              onValueChange={(v) => handleBuildingChange(v ?? ALL)}
+            >
+              <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
+                <SelectValue placeholder={t("buildingPlaceholder")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ALL}>{t("allBuildings")}</SelectItem>
+                {(buildings ?? []).map((b) => (
+                  <SelectItem key={b.id} value={b.id}>
+                    {b.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={floorFilter}
+              onValueChange={(v) => handleFloorChange(v ?? ALL)}
+              disabled={buildingFilter === ALL}
+            >
+              <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
+                <SelectValue
+                  placeholder={
+                    buildingFilter === ALL
+                      ? t("selectBuildingFirst")
+                      : t("floorPlaceholder")
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ALL}>{t("allFloors")}</SelectItem>
+                {(floors ?? []).map((f) => (
+                  <SelectItem key={f.id} value={f.id}>
+                    {f.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={unitFilter}
+              onValueChange={(v) => handleUnitChange(v ?? ALL)}
+              disabled={buildingFilter === ALL}
+            >
+              <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
+                <SelectValue
+                  placeholder={
+                    buildingFilter === ALL
+                      ? t("selectBuildingFirst")
+                      : t("unitPlaceholder")
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ALL}>{t("allUnits")}</SelectItem>
+                {(units ?? []).map((u) => (
+                  <SelectItem key={u.id} value={u.id}>
+                    {u.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           {(filtered.length > 0 || hasActiveFilters) && (
-            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-rule-soft pt-3 text-[12px] text-ink-soft">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-rule-soft pt-3 text-[12px] text-ink-soft">
               <span className="tabular-nums">
                 <span className="font-semibold text-ink">
                   {fmtNum(filtered.length)}
@@ -270,7 +417,7 @@ export default function LeasesListPage() {
               )}
             </div>
           )}
-        {/* </div> */}
+        </div>
 
         {/* Content */}
         {isLoading ? (
@@ -289,7 +436,20 @@ export default function LeasesListPage() {
             </p>
           </div>
         ) : !leases || leases.length === 0 ? (
-          <EmptyState onCreate={() => setCreateOpen(true)} />
+          page > 1 || hasActiveFilters ? (
+            <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-12 text-center">
+              <p className="text-[13.5px] text-ink-soft">{t("noMatch")}</p>
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="mt-3 inline-flex items-center gap-1 text-[12.5px] font-semibold text-jade-900 hover:text-coral-600 transition-colors"
+              >
+                <X size={12} /> {t("clearFilters")}
+              </button>
+            </div>
+          ) : (
+            <EmptyState onCreate={() => setCreateOpen(true)} />
+          )
         ) : filtered.length === 0 ? (
           <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-12 text-center">
             <p className="text-[13.5px] text-ink-soft">{t("noMatch")}</p>
@@ -303,6 +463,20 @@ export default function LeasesListPage() {
           </div>
         ) : (
           <LeasesTable leases={filtered} />
+        )}
+
+        {/* Pagination — server-side, 10 leases per page */}
+        {!isLoading && !isError && !!meta?.totalPages && meta.totalPages > 1 && (
+          <PaginationBar
+            page={page}
+            totalPages={meta.totalPages}
+            total={meta.total ?? 0}
+            onPageChange={setPage}
+            label={t("pageOf", { page, totalPages: meta.totalPages })}
+            totalLabel={t("resultCount", { count: meta.total ?? 0 })}
+            previousLabel={t("previous")}
+            nextLabel={t("next")}
+          />
         )}
       </div>
     </div>
@@ -474,13 +648,13 @@ function LeasesTable({ leases }: { leases: LeaseListItem[] }) {
 
 function SmallStat({
   label,
-  
+
   value,
   sub,
   tone,
 }: {
   label: string;
-  
+
   value: string;
   sub: string;
   tone: "jade" | "coral" | "neutral";
@@ -498,7 +672,7 @@ function SmallStat({
         <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-ink-soft">
           {label}
         </p>
-   
+
       </div>
       <p
         className={cn(
@@ -509,6 +683,52 @@ function SmallStat({
         {value}
       </p>
       <p className="mt-1.5 text-[12px] text-ink-soft">{sub}</p>
+    </div>
+  );
+}
+
+function PaginationBar({
+  page,
+  totalPages,
+  total,
+  onPageChange,
+  label,
+  totalLabel,
+  previousLabel,
+  nextLabel,
+}: {
+  page: number;
+  totalPages: number;
+  total: number;
+  onPageChange: (updater: (p: number) => number) => void;
+  label: string;
+  totalLabel: string;
+  previousLabel: string;
+  nextLabel: string;
+}) {
+  return (
+    <div className="flex items-center justify-between text-[12px] text-ink-soft">
+      <span className="tabular-nums">
+        {label} · {fmtNum(total)} {totalLabel}
+      </span>
+      <div className="flex gap-1">
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={page <= 1}
+          onClick={() => onPageChange((p) => Math.max(1, p - 1))}
+        >
+          {previousLabel}
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={page >= totalPages}
+          onClick={() => onPageChange((p) => p + 1)}
+        >
+          {nextLabel}
+        </Button>
+      </div>
     </div>
   );
 }
@@ -526,8 +746,8 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
       <p className="mx-auto mt-1.5 max-w-sm text-[13.5px] text-ink-soft">
         {t("emptySubtitle")}
       </p>
-     
-      
+
+
       <div className="mt-5">
         <button
           type="button"

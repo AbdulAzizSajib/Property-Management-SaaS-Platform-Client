@@ -17,10 +17,12 @@ import {
   SelectValue,
 } from "@/src/components/ui/select";
 import { useBuildings } from "@/src/hooks/useBuildings";
+import { useFloorsByBuilding } from "@/src/hooks/useFloors";
 import { useTenants } from "@/src/hooks/useTenants";
+import { useUnits } from "@/src/hooks/useUnits";
 import { type CreateLeasePayload } from "@/src/types/lease.types";
 import { Info, Sparkles } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export interface LeaseFormValues {
   tenantId: string;
@@ -71,33 +73,51 @@ export function LeaseForm({
     service: boolean;
   }>({ rent: false, service: false });
 
-  // Building filter — pick a building first, then tenants narrow to it. Each
-  // tenant already carries their assigned unit (set at tenant-creation time),
-  // so there's no separate unit picker — selecting a tenant resolves the unit.
+  // Cascade: Building -> Floor -> vacant Unit -> Tenant (scoped to the
+  // selected building, further narrowed by floor). Each step is disabled
+  // until its parent is chosen, and changing a parent clears everything
+  // that depended on it.
   const [buildingId, setBuildingId] = useState("");
+  const [floorId, setFloorId] = useState("");
 
   const { data: buildings } = useBuildings();
-  // Full roster for the picker — not the paginated table view.
-  const { data: tenantsRes } = useTenants({ limit: 1000 });
+  const { data: floors } = useFloorsByBuilding(buildingId || undefined);
+  const { data: vacantUnits } = useUnits(
+    { buildingId, floorId: floorId || undefined, status: "VACANT" },
+    { enabled: !!buildingId },
+  );
+  const { data: tenantsRes } = useTenants(
+    { buildingId, floorId: floorId || undefined, limit: 1000 },
+    { enabled: !!buildingId },
+  );
   const tenants = tenantsRes?.data;
 
   const buildingList = useMemo(() => buildings ?? [], [buildings]);
+  const floorList = useMemo(() => floors ?? [], [floors]);
+  const unitList = useMemo(() => vacantUnits ?? [], [vacantUnits]);
 
-  // Active tenants assigned to the selected building. A tenant carries a direct
-  // buildingId (set when the tenant is created), so we filter on that.
-  const activeTenants = useMemo(() => {
-    const active = (tenants ?? []).filter((t) => t.isActive);
-    if (!buildingId) return active;
-    return active.filter((t) => t.buildingId === buildingId);
-  }, [tenants, buildingId]);
+  // Active tenants assigned to the selected building/floor. The API already
+  // scopes this; isActive is filtered client-side since it's not a query param.
+  const activeTenants = useMemo(
+    () => (tenants ?? []).filter((t) => t.isActive),
+    [tenants],
+  );
 
+  const selectedUnit = unitList.find((u) => u.id === values.unitId) ?? null;
   const selectedTenant = activeTenants.find((t) => t.id === values.tenantId);
-  const selectedUnit = selectedTenant?.unit ?? null;
 
-  // Switching building invalidates any tenant picked under the old one.
+  // Switching building invalidates floor, unit, and tenant selections.
   function handleBuildingChange(id: string) {
     setBuildingId(id);
-    setValues((v) => ({ ...v, tenantId: "", unitId: "" }));
+    setFloorId("");
+    setValues((v) => ({ ...v, unitId: "", tenantId: "" }));
+    setAutoFilled({ rent: false, service: false });
+  }
+
+  // Switching floor invalidates unit and tenant selections.
+  function handleFloorChange(id: string) {
+    setFloorId(id);
+    setValues((v) => ({ ...v, unitId: "", tenantId: "" }));
     setAutoFilled({ rent: false, service: false });
   }
 
@@ -108,9 +128,8 @@ export function LeaseForm({
     setValues((v) => ({ ...v, [key]: value }));
   }
 
-  function handleTenantChange(tenantId: string) {
-    const tenant = activeTenants.find((t) => t.id === tenantId);
-    const unit = tenant?.unit ?? null;
+  function handleUnitChange(unitId: string) {
+    const unit = unitList.find((u) => u.id === unitId) ?? null;
 
     setValues((v) => {
       // Replace rent/service if they were either blank OR previously auto-filled
@@ -119,8 +138,11 @@ export function LeaseForm({
 
       return {
         ...v,
-        tenantId,
-        unitId: unit?.id ?? "",
+        unitId,
+        // Selecting a different unit invalidates any tenant chosen for the
+        // previous unit (tenants aren't scoped to a single unit, but keeping
+        // a stale selection around is confusing).
+        tenantId: "",
         monthlyRent:
           shouldReplaceRent && unit ? String(unit.baseRent) : v.monthlyRent,
         serviceCharge:
@@ -135,6 +157,39 @@ export function LeaseForm({
       service: !!unit,
     });
   }
+
+  function handleTenantChange(tenantId: string) {
+    set("tenantId", tenantId);
+  }
+
+  // If the floor list, unit list, or tenant list re-fetches and the current
+  // selection is no longer present in the new scope, clear it rather than
+  // silently keep a stale id from a previous building/floor.
+  useEffect(() => {
+    if (floorId && floors && !floors.some((f) => f.id === floorId)) {
+      setFloorId("");
+    }
+  }, [floors, floorId]);
+
+  useEffect(() => {
+    if (
+      values.unitId &&
+      vacantUnits &&
+      !vacantUnits.some((u) => u.id === values.unitId)
+    ) {
+      setValues((v) => ({ ...v, unitId: "", tenantId: "" }));
+    }
+  }, [vacantUnits, values.unitId]);
+
+  useEffect(() => {
+    if (
+      values.tenantId &&
+      tenants &&
+      !tenants.some((t) => t.id === values.tenantId)
+    ) {
+      setValues((v) => ({ ...v, tenantId: "" }));
+    }
+  }, [tenants, values.tenantId]);
 
   function handleStartDateChange(value: string) {
     setValues((v) => ({
@@ -214,16 +269,92 @@ export function LeaseForm({
           </Select>
         </Field>
 
+        <Field label="Floor" htmlFor="l-floor" required>
+          <Select
+            value={floorId}
+            onValueChange={(v) => handleFloorChange(v ?? "")}
+            disabled={!buildingId}
+          >
+            <SelectTrigger id="l-floor" className={`w-full ${fieldClass}`}>
+              <SelectValue
+                placeholder={
+                  buildingId ? "Select floor" : "Select a building first"
+                }
+              >
+                {(value) => {
+                  const f = floorList.find((x) => x.id === value);
+                  return f ? f.name : null;
+                }}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {floorList.length === 0 ? (
+                <div className="px-2 py-2 text-[12px] text-ink-soft">
+                  No floors in this building
+                </div>
+              ) : (
+                floorList.map((f) => (
+                  <SelectItem key={f.id} value={f.id}>
+                    <span className="flex w-full items-center justify-between gap-3">
+                      <span>{f.name}</span>
+                      <span className="text-ink-soft tabular-nums">
+                        {f.vacantUnitCount} vacant / {f._count.units}
+                      </span>
+                    </span>
+                  </SelectItem>
+                ))
+              )}
+            </SelectContent>
+          </Select>
+        </Field>
+
+        <Field label="Unit" htmlFor="l-unit" required>
+          <Select
+            value={values.unitId}
+            onValueChange={(v) => handleUnitChange(v ?? "")}
+            disabled={!floorId}
+          >
+            <SelectTrigger id="l-unit" className={`w-full ${fieldClass}`}>
+              <SelectValue
+                placeholder={floorId ? "Select unit" : "Select a floor first"}
+              >
+                {(value) => {
+                  const u = unitList.find((x) => x.id === value);
+                  return u ? u.name : null;
+                }}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {unitList.length === 0 ? (
+                <div className="px-2 py-2 text-[12px] text-ink-soft">
+                  No vacant units on this floor
+                </div>
+              ) : (
+                unitList.map((u) => (
+                  <SelectItem key={u.id} value={u.id}>
+                    <span className="flex w-full items-center justify-between gap-3">
+                      <span>{u.name}</span>
+                      <span className="text-ink-soft tabular-nums">
+                        {formatMoney(u.baseRent)}
+                      </span>
+                    </span>
+                  </SelectItem>
+                ))
+              )}
+            </SelectContent>
+          </Select>
+        </Field>
+
         <Field label="Tenant" htmlFor="l-tenant" required>
           <Select
             value={values.tenantId}
             onValueChange={(v) => handleTenantChange(v ?? "")}
-            disabled={!buildingId}
+            disabled={!values.unitId}
           >
             <SelectTrigger id="l-tenant" className={`w-full ${fieldClass}`}>
               <SelectValue
                 placeholder={
-                  buildingId ? "Select tenant" : "Select a building first"
+                  values.unitId ? "Select tenant" : "Select a unit first"
                 }
               >
                 {(value) => {
@@ -250,13 +381,7 @@ export function LeaseForm({
                           .join("")
                           .toUpperCase()}
                       </span>
-                      <span>
-                        {t.name}
-                        <span className="ml-1.5 text-ink-soft tabular-nums">
-                          · {t.phone}
-                          {!t.unit && " · no unit assigned"}
-                        </span>
-                      </span>
+                      <span>{t.name}</span>
                     </span>
                   </SelectItem>
                 ))
@@ -265,8 +390,8 @@ export function LeaseForm({
           </Select>
         </Field>
 
-        {/* Selected tenant's assigned unit — replaces the bare numeric hint */}
-        {selectedTenant && selectedUnit && (
+        {/* Selected unit's rent/service defaults */}
+        {selectedUnit && (
           <div className="flex items-center justify-between gap-3 rounded-[10px] border border-jade-100 bg-jade-50/60 px-3 py-2 text-[12px]">
             <div className="flex items-center gap-2">
               <Sparkles size={12} className="text-jade-700" />
@@ -291,16 +416,6 @@ export function LeaseForm({
                   </span>
                 </>
               )}
-            </span>
-          </div>
-        )}
-
-        {selectedTenant && !selectedUnit && (
-          <div className="flex items-center gap-2 rounded-[10px] border border-coral-200 bg-coral-50/60 px-3 py-2 text-[12px] text-coral-800">
-            <Info size={12} />
-            <span>
-              {selectedTenant.name} has no unit assigned yet. Assign a unit to
-              this tenant before creating a lease.
             </span>
           </div>
         )}

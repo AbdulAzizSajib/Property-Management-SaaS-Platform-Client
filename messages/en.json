@@ -205,6 +205,14 @@
     "statPendingNone": "nothing waiting",
     "statPendingSome": "needs your attention",
     "searchPlaceholder": "Search by tenant, unit, building…",
+    "filterAll": "All",
+    "buildingPlaceholder": "Building",
+    "allBuildings": "All buildings",
+    "selectBuildingFirst": "Select a building first",
+    "floorPlaceholder": "Floor",
+    "allFloors": "All floors",
+    "unitPlaceholder": "Unit",
+    "allUnits": "All units",
     "resultCount": "{count, plural, one {result} other {results}}",
     "onlySuffix": "· {label} only",
     "clear": "Clear",
@@ -226,7 +234,10 @@
     "colId": "ID",
     "emptyTitle": "No leases yet",
     "emptySubtitle": "Create your first lease to start tracking rent and tenant agreements.",
-    "emptyCreateFirst": "Create your first lease"
+    "emptyCreateFirst": "Create your first lease",
+    "pageOf": "Page {page} of {totalPages}",
+    "previous": "Previous",
+    "next": "Next"
   },
   "invoicesPage": {
     "eyebrow": "Billing & collections",
@@ -248,6 +259,9 @@
     "searchPlaceholder": "Search by invoice #, tenant, unit, building…",
     "buildingPlaceholder": "Building",
     "allBuildings": "All buildings",
+    "selectBuildingFirst": "Select a building first",
+    "floorPlaceholder": "Floor",
+    "allFloors": "All floors",
     "statusPlaceholder": "Status",
     "allStatuses": "All statuses",
     "resultCount": "{count, plural, one {result} other {results}}",
@@ -264,7 +278,10 @@
     "stillDueLabel": "still due",
     "emptyTitle": "No invoices yet",
     "emptySubtitle": "Generate your first invoice for an active lease, or run a monthly batch to invoice everyone at once.",
-    "generateInvoice": "Generate invoice"
+    "generateInvoice": "Generate invoice",
+    "pageOf": "Page {page} of {totalPages}",
+    "previous": "Previous",
+    "next": "Next"
   },
   "collectionPage": {
     "eyebrow": "Money in",
@@ -279,6 +296,11 @@
     "statFailed": "Failed",
     "statFailedSub": "need review",
     "searchPlaceholder": "Search by receipt #, invoice, tenant, txn ID…",
+    "buildingPlaceholder": "Building",
+    "allBuildings": "All buildings",
+    "selectBuildingFirst": "Select a building first",
+    "floorPlaceholder": "Floor",
+    "allFloors": "All floors",
     "statusPlaceholder": "Status",
     "allStatuses": "All statuses",
     "methodPlaceholder": "Method",
@@ -303,7 +325,10 @@
     "paymentCount": "{count, plural, one {# collection} other {# collections}}",
     "collectedLabel": "collected",
     "emptyTitle": "No collections yet",
-    "emptySubtitle": "Record a collection against an outstanding invoice — bKash, Nagad, cash, or bank transfer."
+    "emptySubtitle": "Record a collection against an outstanding invoice — bKash, Nagad, cash, or bank transfer.",
+    "pageOf": "Page {page} of {totalPages}",
+    "previous": "Previous",
+    "next": "Next"
   },
   "expensesPage": {
     "eyebrow": "Money out",

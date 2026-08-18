@@ -6,11 +6,14 @@ import { unitKeys } from "@/src/hooks/useUnits";
 import {
     createLease,
     getLeaseById,
+    getLeaseSummary,
     getLeases,
     terminateLease,
 } from "@/src/services/lease.services";
 import type {
     CreateLeasePayload,
+    LeaseFilters,
+    LeaseSummaryFilters,
     TerminateLeasePayload,
 } from "@/src/types/lease.types";
 import { getErrorMessage } from "@/src/lib/utils";
@@ -19,15 +22,33 @@ import { toast } from "react-toastify";
 
 export const leaseKeys = {
     all: ["leases"] as const,
-    list: () => [...leaseKeys.all, "list"] as const,
+    // Base prefix shared by every filter variant — invalidate with this so a
+    // mutation refreshes the list regardless of which page/filters are active.
+    lists: () => [...leaseKeys.all, "list"] as const,
+    list: (filters?: LeaseFilters) =>
+        [...leaseKeys.lists(), filters ?? {}] as const,
     detail: (id: string) => [...leaseKeys.all, "detail", id] as const,
+    summary: (filters?: LeaseSummaryFilters) =>
+        [...leaseKeys.all, "summary", filters ?? {}] as const,
 };
 
-export function useLeases() {
+/** Returns { data: LeaseListItem[], meta: { page, limit, total, totalPages } }. */
+export function useLeases(filters?: LeaseFilters) {
     return useQuery({
-        queryKey: leaseKeys.list(),
+        queryKey: leaseKeys.list(filters),
         queryFn: async () => {
-            const res = await getLeases();
+            const res = await getLeases(filters);
+            return { data: res.data, meta: res.meta };
+        },
+    });
+}
+
+/** Org-wide (or building/floor/unit-scoped) stats — not paginated, for hero/KPI cards. */
+export function useLeaseSummary(filters?: LeaseSummaryFilters) {
+    return useQuery({
+        queryKey: leaseKeys.summary(filters),
+        queryFn: async () => {
+            const res = await getLeaseSummary(filters);
             return res.data;
         },
     });

@@ -167,8 +167,26 @@ export interface InvoiceFilters {
     tenantId?: string;
     unitId?: string;
     buildingId?: string;
+    floorId?: string;
     /** "YYYY-MM" — filters invoices belonging to a specific billing month. */
     billingMonth?: string;
+    page?: number;
+    limit?: number;
+}
+
+// GET /invoices/summary — org-wide (or building/floor/unit-scoped) stats,
+// independent of pagination. Decimal returned as a string.
+export interface InvoiceSummary {
+    totalCount: number;
+    overdueCount: number;
+    totalDue: string;
+    totalCollected: string;
+}
+
+export interface InvoiceSummaryFilters {
+    buildingId?: string;
+    floorId?: string;
+    unitId?: string;
 }
 
 /**

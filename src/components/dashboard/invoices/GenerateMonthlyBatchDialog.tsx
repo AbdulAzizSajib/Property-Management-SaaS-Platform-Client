@@ -48,7 +48,8 @@ export function GenerateMonthlyBatchDialog({
   onOpenChange,
 }: GenerateMonthlyBatchDialogProps) {
   const mutation = useGenerateMonthlyBatch();
-  const { data: leases } = useLeases();
+  const { data: leasesRes } = useLeases({ limit: 1000 });
+  const leases = leasesRes?.data;
   const [billingMonth, setBillingMonth] = useState(nextMonthYearMonth());
   const [buildingId, setBuildingId] = useState("");
   const [carryForward, setCarryForward] = useState(true);

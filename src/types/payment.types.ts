@@ -101,4 +101,28 @@ export interface PaymentFilters {
     leaseId?: string;
     tenantId?: string;
     invoiceId?: string;
+    buildingId?: string;
+    floorId?: string;
+    unitId?: string;
+    page?: number;
+    limit?: number;
+}
+
+// GET /collections/summary — org-wide (or building/floor/unit-scoped) stats,
+// independent of pagination. Decimal returned as a string.
+export interface PaymentSummary {
+    totalCount: number;
+    advanceCount: number;
+    /**
+     * Collection.status only ever reaches CANCELLED as an outcome that needs
+     * review — there's no separate "failed" state on this model.
+     */
+    cancelledCount: number;
+    totalCollected: string;
+}
+
+export interface PaymentSummaryFilters {
+    buildingId?: string;
+    floorId?: string;
+    unitId?: string;
 }

@@ -7,6 +7,7 @@ import {
     generateMonthlyBatch,
     generateSingleInvoice,
     getInvoiceById,
+    getInvoiceSummary,
     getInvoices,
     updateInvoice,
 } from "@/src/services/invoice.services";
@@ -15,6 +16,7 @@ import type {
     GenerateMonthlyBatchPayload,
     GenerateSingleInvoicePayload,
     InvoiceFilters,
+    InvoiceSummaryFilters,
     UpdateInvoicePayload,
 } from "@/src/types/invoice.types";
 import { getErrorMessage } from "@/src/lib/utils";
@@ -23,11 +25,17 @@ import { toast } from "react-toastify";
 
 export const invoiceKeys = {
     all: ["invoices"] as const,
+    // Base prefix shared by every filter variant — invalidate with this so a
+    // mutation refreshes the list regardless of which page/filters are active.
+    lists: () => [...invoiceKeys.all, "list"] as const,
     list: (filters?: InvoiceFilters) =>
-        [...invoiceKeys.all, "list", filters ?? {}] as const,
+        [...invoiceKeys.lists(), filters ?? {}] as const,
     detail: (id: string) => [...invoiceKeys.all, "detail", id] as const,
+    summary: (filters?: InvoiceSummaryFilters) =>
+        [...invoiceKeys.all, "summary", filters ?? {}] as const,
 };
 
+/** Returns { data: InvoiceListItem[], meta: { page, limit, total, totalPages } }. */
 export function useInvoices(
     filters?: InvoiceFilters,
     options?: { enabled?: boolean },
@@ -36,9 +44,20 @@ export function useInvoices(
         queryKey: invoiceKeys.list(filters),
         queryFn: async () => {
             const res = await getInvoices(filters);
-            return res.data;
+            return { data: res.data, meta: res.meta };
         },
         enabled: options?.enabled ?? true,
+    });
+}
+
+/** Org-wide (or building/floor/unit-scoped) stats — not paginated, for hero/KPI cards. */
+export function useInvoiceSummary(filters?: InvoiceSummaryFilters) {
+    return useQuery({
+        queryKey: invoiceKeys.summary(filters),
+        queryFn: async () => {
+            const res = await getInvoiceSummary(filters);
+            return res.data;
+        },
     });
 }
 
@@ -66,7 +85,7 @@ export function useGenerateSingleInvoice() {
             queryClient.invalidateQueries({ queryKey: invoiceKeys.all });
             // The lease detail page embeds invoices[], so refresh it too.
             queryClient.invalidateQueries({ queryKey: leaseKeys.detail(data.leaseId) });
-            queryClient.invalidateQueries({ queryKey: leaseKeys.list() });
+            queryClient.invalidateQueries({ queryKey: leaseKeys.lists() });
             toast.success(`Invoice ${data.invoiceNumber} generated`);
         },
         onError: (error: unknown) => {

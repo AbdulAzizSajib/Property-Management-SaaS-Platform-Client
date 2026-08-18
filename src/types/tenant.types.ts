@@ -80,6 +80,11 @@ export interface TenantDetail extends Tenant {
 export interface TenantFilters {
     page?: number;
     limit?: number;
+    // Scope to tenants assigned to a building (and optionally its floor/unit)
+    // — used by the lease-creation cascade.
+    buildingId?: string;
+    floorId?: string;
+    unitId?: string;
 }
 
 export interface UpdateTenantPayload {

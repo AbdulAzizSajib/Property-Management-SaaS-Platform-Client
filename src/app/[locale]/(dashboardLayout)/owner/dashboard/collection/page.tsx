@@ -16,6 +16,7 @@ import {
   AccordionPanel,
   AccordionTrigger,
 } from "@/src/components/ui/accordion";
+import { Button } from "@/src/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -24,7 +25,9 @@ import {
   SelectValue,
 } from "@/src/components/ui/select";
 import { Skeleton } from "@/src/components/ui/skeleton";
-import { usePayments } from "@/src/hooks/usePayments";
+import { useBuildings } from "@/src/hooks/useBuildings";
+import { useFloorsByBuilding } from "@/src/hooks/useFloors";
+import { usePaymentSummary, usePayments } from "@/src/hooks/usePayments";
 import { groupByTenant } from "@/src/lib/groupByTenant";
 import { fmtNum } from "@/src/lib/numerals";
 import { cn } from "@/src/lib/utils";
@@ -42,6 +45,7 @@ import { useTranslations } from "next-intl";
 import { Suspense, useMemo, useState } from "react";
 
 const ALL = "All";
+const PAGE_SIZE = 10;
 
 export default function PaymentsListPage() {
   return (
@@ -55,10 +59,56 @@ function PaymentsListInner() {
   const t = useTranslations("collectionPage");
   const [statusFilter, setStatusFilter] = useState<string>(ALL);
   const [methodFilter, setMethodFilter] = useState<string>(ALL);
+  const [buildingFilter, setBuildingFilter] = useState<string>(ALL);
+  const [floorFilter, setFloorFilter] = useState<string>(ALL);
   const [query, setQuery] = useState("");
   const [recordOpen, setRecordOpen] = useState(false);
+  const [page, setPage] = useState(1);
 
-  const { data: payments, isLoading, isError, error } = usePayments();
+  const { data: buildings } = useBuildings();
+  const { data: floors } = useFloorsByBuilding(
+    buildingFilter !== ALL ? buildingFilter : undefined,
+  );
+
+  function handleBuildingChange(value: string) {
+    setBuildingFilter(value);
+    setFloorFilter(ALL);
+    setPage(1);
+  }
+
+  function handleFloorChange(value: string) {
+    setFloorFilter(value);
+    setPage(1);
+  }
+
+  function handleStatusChange(value: string) {
+    setStatusFilter(value);
+    setPage(1);
+  }
+
+  function handleMethodChange(value: string) {
+    setMethodFilter(value);
+    setPage(1);
+  }
+
+  const filters = {
+    page,
+    limit: PAGE_SIZE,
+    ...(buildingFilter !== ALL && { buildingId: buildingFilter }),
+    ...(floorFilter !== ALL && { floorId: floorFilter }),
+  };
+
+  const { data: res, isLoading, isError, error } = usePayments(filters);
+  const payments = res?.data;
+  const meta = res?.meta;
+
+  // Hero/KPI stats — org-wide (scoped to the building/floor filter, but not
+  // status/method/search/page), so the numbers don't fluctuate as the user
+  // pages through the table.
+  const { data: summary } = usePaymentSummary({
+    ...(buildingFilter !== ALL && { buildingId: buildingFilter }),
+    ...(floorFilter !== ALL && { floorId: floorFilter }),
+  });
 
   const filtered = useMemo(
     () =>
@@ -78,17 +128,26 @@ function PaymentsListInner() {
     [payments, query, statusFilter, methodFilter],
   );
 
-  const totalCollected = (payments ?? [])
-    .filter((p) => p.status === "PAID")
-    .reduce((sum, p) => sum + Number(p.amount), 0);
-
-  const advanceCount = (payments ?? []).filter((p) => p.isAdvance).length;
-  const failedCount = (payments ?? []).filter(
-    (p) => p.status === "FAILED",
-  ).length;
+  const totalCollected = Number(summary?.totalCollected ?? 0);
+  const totalCount = summary?.totalCount ?? meta?.total ?? 0;
+  const advanceCount = summary?.advanceCount ?? 0;
+  const failedCount = summary?.cancelledCount ?? 0;
 
   const hasActiveFilters =
-    statusFilter !== ALL || methodFilter !== ALL || query.trim() !== "";
+    statusFilter !== ALL ||
+    methodFilter !== ALL ||
+    buildingFilter !== ALL ||
+    floorFilter !== ALL ||
+    query.trim() !== "";
+
+  function clearFilters() {
+    setQuery("");
+    setStatusFilter(ALL);
+    setMethodFilter(ALL);
+    setBuildingFilter(ALL);
+    setFloorFilter(ALL);
+    setPage(1);
+  }
 
   return (
     <div className="min-h-screen bg-cream">
@@ -145,9 +204,9 @@ function PaymentsListInner() {
             <p className="relative mt-3 text-[12.5px] text-paper/70">
               {t("heroAcross")}{" "}
               <span className="font-semibold tabular-nums text-paper">
-                {fmtNum(payments?.length ?? 0)}
+                {fmtNum(totalCount)}
               </span>{" "}
-              {t("heroPayments", { count: payments?.length ?? 0 })}
+              {t("heroPayments", { count: totalCount })}
             </p>
           </div>
 
@@ -189,8 +248,60 @@ function PaymentsListInner() {
 
             <div className="w-full sm:w-44">
               <Select
+                value={buildingFilter}
+                onValueChange={(v) => handleBuildingChange(v ?? ALL)}
+              >
+                <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
+                  <SelectValue placeholder={t("buildingPlaceholder")}>
+                    {(value) =>
+                      value === ALL
+                        ? t("allBuildings")
+                        : (buildings?.find((b) => b.id === value)?.name ??
+                          t("buildingPlaceholder"))
+                    }
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ALL}>{t("allBuildings")}</SelectItem>
+                  {(buildings ?? []).map((b) => (
+                    <SelectItem key={b.id} value={b.id}>
+                      {b.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="w-full sm:w-40">
+              <Select
+                value={floorFilter}
+                onValueChange={(v) => handleFloorChange(v ?? ALL)}
+                disabled={buildingFilter === ALL}
+              >
+                <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
+                  <SelectValue
+                    placeholder={
+                      buildingFilter === ALL
+                        ? t("selectBuildingFirst")
+                        : t("floorPlaceholder")
+                    }
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={ALL}>{t("allFloors")}</SelectItem>
+                  {(floors ?? []).map((f) => (
+                    <SelectItem key={f.id} value={f.id}>
+                      {f.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="w-full sm:w-44">
+              <Select
                 value={statusFilter}
-                onValueChange={(v) => setStatusFilter(v ?? ALL)}
+                onValueChange={(v) => handleStatusChange(v ?? ALL)}
               >
                 <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
                   <SelectValue placeholder={t("statusPlaceholder")} />
@@ -209,7 +320,7 @@ function PaymentsListInner() {
             <div className="w-full sm:w-44">
               <Select
                 value={methodFilter}
-                onValueChange={(v) => setMethodFilter(v ?? ALL)}
+                onValueChange={(v) => handleMethodChange(v ?? ALL)}
               >
                 <SelectTrigger className="w-full border-rule-soft bg-paper text-ink focus-visible:border-jade-700 focus-visible:ring-2 focus-visible:ring-jade-700/20">
                   <SelectValue placeholder={t("methodPlaceholder")} />
@@ -251,11 +362,7 @@ function PaymentsListInner() {
               {hasActiveFilters && (
                 <button
                   type="button"
-                  onClick={() => {
-                    setQuery("");
-                    setStatusFilter(ALL);
-                    setMethodFilter(ALL);
-                  }}
+                  onClick={clearFilters}
                   className="inline-flex items-center gap-1 font-medium text-ink-soft transition-colors hover:text-coral-600"
                 >
                   <X size={11} /> {t("clearFilters")}
@@ -278,13 +385,40 @@ function PaymentsListInner() {
             </p>
           </div>
         ) : !payments || payments.length === 0 ? (
-          <EmptyState onRecord={() => setRecordOpen(true)} />
+          page > 1 || hasActiveFilters ? (
+            <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-12 text-center">
+              <p className="text-[13.5px] text-ink-soft">{t("noMatch")}</p>
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="mt-3 inline-flex items-center gap-1 text-[12.5px] font-semibold text-jade-900 hover:text-coral-600 transition-colors"
+              >
+                <X size={12} /> {t("clearFilters")}
+              </button>
+            </div>
+          ) : (
+            <EmptyState onRecord={() => setRecordOpen(true)} />
+          )
         ) : filtered.length === 0 ? (
           <div className="rounded-[14px] border border-rule-soft bg-paper px-6 py-12 text-center">
             <p className="text-[13.5px] text-ink-soft">{t("noMatch")}</p>
           </div>
         ) : (
           <PaymentsAccordion payments={filtered} />
+        )}
+
+        {/* Pagination — server-side, 10 collections per page */}
+        {!isLoading && !isError && !!meta?.totalPages && meta.totalPages > 1 && (
+          <PaginationBar
+            page={page}
+            totalPages={meta.totalPages}
+            total={meta.total ?? 0}
+            onPageChange={setPage}
+            label={t("pageOf", { page, totalPages: meta.totalPages })}
+            totalLabel={t("resultCount", { count: meta.total ?? 0 })}
+            previousLabel={t("previous")}
+            nextLabel={t("next")}
+          />
         )}
 
         {/* Dialog */}
@@ -558,9 +692,55 @@ function paymentPurpose(
   return month ?? word ?? null;
 }
 
+function PaginationBar({
+  page,
+  totalPages,
+  total,
+  onPageChange,
+  label,
+  totalLabel,
+  previousLabel,
+  nextLabel,
+}: {
+  page: number;
+  totalPages: number;
+  total: number;
+  onPageChange: (updater: (p: number) => number) => void;
+  label: string;
+  totalLabel: string;
+  previousLabel: string;
+  nextLabel: string;
+}) {
+  return (
+    <div className="flex items-center justify-between text-[12px] text-ink-soft">
+      <span className="tabular-nums">
+        {label} · {fmtNum(total)} {totalLabel}
+      </span>
+      <div className="flex gap-1">
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={page <= 1}
+          onClick={() => onPageChange((p) => Math.max(1, p - 1))}
+        >
+          {previousLabel}
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={page >= totalPages}
+          onClick={() => onPageChange((p) => p + 1)}
+        >
+          {nextLabel}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 function MiniStat({
   label,
-  
+
   value,
   sub,
   tone,

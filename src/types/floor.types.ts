@@ -9,11 +9,13 @@ export interface Floor {
     updatedAt: string;
 }
 
-// GET /floors?buildingId=... — list item shape includes unit count
+// GET /floors?buildingId=... — list item shape includes unit count and
+// vacant unit count (for the lease-creation building → floor cascade).
 export interface FloorListItem extends Floor {
     _count: {
         units: number;
     };
+    vacantUnitCount: number;
 }
 
 // GET /floors/:id — detail shape includes related units

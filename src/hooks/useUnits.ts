@@ -25,13 +25,14 @@ export const unitKeys = {
     detail: (id: string) => [...unitKeys.all, "detail", id] as const,
 };
 
-export function useUnits(filters?: UnitFilters) {
+export function useUnits(filters?: UnitFilters, options?: { enabled?: boolean }) {
     return useQuery({
         queryKey: unitKeys.list(filters),
         queryFn: async () => {
             const res = await getUnits(filters);
             return res.data;
         },
+        enabled: options?.enabled,
     });
 }
 

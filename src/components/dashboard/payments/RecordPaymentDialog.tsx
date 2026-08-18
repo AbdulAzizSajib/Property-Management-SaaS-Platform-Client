@@ -59,13 +59,15 @@ export function RecordPaymentDialog({
   const outstandingFilter = useMemo(
     () => ({
       status: "DUE,PARTIAL",
+      limit: 1000,
       ...(billingMonth && { billingMonth }),
       ...(buildingId && { buildingId }),
     }),
     [billingMonth, buildingId],
   );
 
-  const { data: outstanding } = useInvoices(outstandingFilter);
+  const { data: outstandingRes } = useInvoices(outstandingFilter);
+  const outstanding = outstandingRes?.data;
   const mutation = useRecordPayment();
 
   const [invoiceId, setInvoiceId] = useState(fixedInvoiceId ?? "");

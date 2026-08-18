@@ -60,7 +60,8 @@ export function UploadDocumentDialog({
     const { data: tenantsRes } = useTenants({ limit: 1000 });
     const tenants = tenantsRes?.data;
     const { data: buildings } = useBuildings();
-    const { data: leases } = useLeases();
+    const { data: leasesRes } = useLeases({ limit: 1000 });
+    const leases = leasesRes?.data;
     const mutation = useUploadDocument();
     // Force the list to refetch after upload — covers cases where the
     // useDocuments hook on the parent page used filters we don't match.

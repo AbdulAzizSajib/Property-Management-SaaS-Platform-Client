@@ -23,13 +23,17 @@ export const tenantKeys = {
 };
 
 /** Returns { data: TenantListItem[], meta: { page, limit, total, totalPages } }. */
-export function useTenants(filters?: TenantFilters) {
+export function useTenants(
+    filters?: TenantFilters,
+    options?: { enabled?: boolean },
+) {
     return useQuery({
         queryKey: tenantKeys.list(filters),
         queryFn: async () => {
             const res = await getTenants(filters);
             return { data: res.data, meta: res.meta };
         },
+        enabled: options?.enabled,
     });
 }
 
